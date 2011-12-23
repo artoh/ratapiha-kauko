@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/r">
+        <file>pic/ikkuna-uusi.png</file>
+    </qresource>
+</RCC>
