@@ -47,7 +47,7 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     else
         painter->setPen( QPen(QBrush(Qt::black),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
 
-    painter->drawLine(0.0, 0.0, pituus(), 0.0);
+    painter->drawLine(0.5, 0.0, pituus()-0.5, 0.0);
 
     if( naytaraidenumero_)
     {
