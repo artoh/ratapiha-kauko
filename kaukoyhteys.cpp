@@ -8,6 +8,7 @@
 
 #include <QMessageBox>
 #include <QSqlError>
+#include <QSqlQuery>
 
 KaukoYhteys::KaukoYhteys(QObject *parent) :
     QObject(parent)
@@ -26,6 +27,7 @@ KaukoYhteys::KaukoYhteys(QObject *parent) :
 
         QMessageBox::critical(0, tr("Tietokantavirhe"),tietokanta_.lastError().text());
     }
+
 }
 
 KaukoYhteys::~KaukoYhteys()

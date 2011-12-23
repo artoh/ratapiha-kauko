@@ -7,13 +7,15 @@ TEMPLATE = app
 HEADERS += \
     kaukoikkuna.h \
     kaukoyhteys.h \
-    kaukokisko.h
+    kaukokisko.h \
+    kaukoscene.h
 
 SOURCES += \
     kaukoikkuna.cpp \
     main.cpp \
     kaukoyhteys.cpp \
-    kaukokisko.cpp
+    kaukokisko.cpp \
+    kaukoscene.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
