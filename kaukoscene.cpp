@@ -19,7 +19,8 @@ bool KaukoScene::haeNakyma(int nakyma)
     kiskot_.clear();
 
     // Hakee näkymän kiskot
-    QSqlQuery nkys( QString("select kkid, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, laituri, tyyppi_kisko, tyyppi_etela, tyyppi_pohjoinen, nayta_raidenumero, nayta_junanumero from kaukokisko where nakyma=%1").arg(nakyma) );
+
+    QSqlQuery nkys( QString("select kisko, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kisko_data, etela_data, pohjoinen_data from kisko where nakyma=%1").arg(nakyma) );
 
  qDebug() << nkys.lastError().text();
 
@@ -30,19 +31,12 @@ bool KaukoScene::haeNakyma(int nakyma)
         QLineF viiva( QLine( nkys.value(2).toInt(), nkys.value(3).toInt(),
                              nkys.value(4).toInt(), nkys.value(5).toInt())  );
 
-        // Käsitellää laituri (6)
-        KaukoKisko::Laituri laituri = KaukoKisko::LaituriEi;
-        // Oikea käsittely voisi olla fiksumpaa siten, että tässä numeerinen arvo - kuitenkin
-
-        char kiskotyyppi = nkys.value(7).toChar().toAscii();
-        char etelatyyppi = nkys.value(8).toChar().toAscii();
-        char pohjoistyyppi = nkys.value(9).toChar().toAscii();
-
-        bool naytaraidenumero = nkys.value(10).toBool();
-        bool naytajunanumero = nkys.value(11).toBool();
+        QString kiskodata = nkys.value(6).toString();
+        QString eteladata = nkys.value(7).toString();
+        QString pohjoisdata = nkys.value(8).toString();
 
 
-        KaukoKisko* kisko = new KaukoKisko(this, viiva, raide, laituri, kiskotyyppi, etelatyyppi, pohjoistyyppi, naytajunanumero, naytaraidenumero);
+        KaukoKisko* kisko = new KaukoKisko(this, viiva, raide, kiskodata, eteladata, pohjoisdata);
         kiskot_.insert(kkid, kisko);
     }
 

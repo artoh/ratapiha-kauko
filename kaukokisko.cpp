@@ -10,22 +10,18 @@
 #include <QPainter>
 
 
-KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int numero, Laituri laituri, char kiskotyyppi, char etelatyyppi, char pohjoistyyppi, bool naytajunanumero, bool naytaraidenumero) :
-    skene_(skene), laituri_(laituri), kiskotyyppi_(kiskotyyppi), etelatyyppi_(etelatyyppi), pohjoistyyppi_(pohjoistyyppi), naytajunanumero_(naytajunanumero), naytaraidenumero_(naytaraidenumero)
+KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int numero, const QString &kiskodata, const QString &eteladata, const QString &pohjoisdata)
 {
     // Ensin sijoitetaan viivan fyysinen sijainti
     pituus_ = viiva.length();
     setRotation( 0.0 - viiva.angle());
     setPos( viiva.p1());
 
+    naytaraidenumero_ = kiskodata.contains("R");
+
     // Sijoitetaan tunnus, jos numero sopii
     if( naytaraidenumero_ )
     {
-        if( kiskotyyppi_ == 'v')
-            raidetunnus_ = QString("V%1").arg(numero,3,10,QChar('0'));
-        else if( kiskotyyppi_ == 'r')
-            raidetunnus_ = QString("Rr%1").arg(numero,3,10,QChar('0'));
-        else
             raidetunnus_ = QString("%1").arg(numero,3,10,QChar('0'));
     }
     // Lisätään vielä skeneen

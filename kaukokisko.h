@@ -20,9 +20,8 @@ public:
     enum Laituri { LaituriEi, LaituriVasen, LaituriOikea };
 
     KaukoKisko(KaukoScene* skene,
-               const QLineF& viiva, int numero, Laituri laituri,
-               char kiskotyyppi, char etelatyyppi, char pohjoistyyppi,
-               bool naytajunanumero, bool naytaraidenumero);
+               const QLineF& viiva, int numero,
+               const QString& kiskodata, const QString& eteladata, const QString& pohjoisdata);
 
     enum { Type = UserType + 1 } ;
 
