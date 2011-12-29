@@ -5,47 +5,40 @@
 ** 14.6.2011
 **************************************************************************/
 
-#ifndef KAUKOIKKUNA_H
-#define KAUKOIKKUNA_H
+#ifndef EDITORIIKKUNA_H
+#define EDITORIIKKUNA_H
 
-#include "kaukoscene.h"
-#include <QGraphicsView>
+#include "editoriikkuna.h"
+#include "editoriscene.h"
+#include "editoriview.h"
 
 #include <QMainWindow>
 #include <QComboBox>
 #include <QToolBar>
 #include <QAction>
+#include <QMainWindow>
 
-
-class KaukoIkkuna : public QMainWindow
+class EditoriIkkuna : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit KaukoIkkuna(QWidget *parent = 0);
+    explicit EditoriIkkuna(int nakyma, QWidget *parent = 0);
     
 signals:
     
 public slots:
-    void uusiIkkuna();
     void nakymanVaihto(int valintaind);
-    void editori();
-
 
 protected:
-    void luoTyoPalkki();
     void luoAktiot();
-
+    void luoTyoPalkki();
 
     QToolBar* hallintaToolBar_;
     QComboBox* nakymaValinta_;
 
-    QAction* uusiIkkunaAktio_;
-    QAction* editoriAktio_;
-
-
-    KaukoScene* skene_;
-    QGraphicsView* view_;
-
+    EditoriScene *skene_;
+    EditoriView* view_;
+    
 };
 
-#endif // KAUKOIKKUNA_H
+#endif // EDITORIIKKUNA_H

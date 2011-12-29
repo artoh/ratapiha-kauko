@@ -12,7 +12,10 @@ HEADERS += \
     editorikisko.h \
     kisko.h \
     kiskoscene.h \
-    editoriscene.h
+    editoriscene.h \
+    editoriikkuna.h \
+    editoriview.h \
+    ruudukko.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -23,7 +26,10 @@ SOURCES += \
     editorikisko.cpp \
     kisko.cpp \
     kiskoscene.cpp \
-    editoriscene.cpp
+    editoriscene.cpp \
+    editoriikkuna.cpp \
+    editoriview.cpp \
+    ruudukko.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

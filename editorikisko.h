@@ -16,7 +16,17 @@ class EditoriScene;
 class EditoriKisko : public Kisko
 {
 public:
-    EditoriKisko(EditoriScene* skene, const QLineF& viiva);
+    EditoriKisko(EditoriScene* skene, const QLineF& viiva, int kiskoid=0, const QString& liikennepaikka=QString(), int raide = 0,
+                 const QString& kiskodata = QString(), int sn=0);
+
+
+    enum { Type = UserType + 2 } ;
+
+    QRectF boundingRect() const;
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+    int type() const { return Type; }
 
 
 protected:

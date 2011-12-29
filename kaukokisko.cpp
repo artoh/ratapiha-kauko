@@ -10,8 +10,8 @@
 #include <QPainter>
 
 
-KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int numero, const QString &kiskodata)
-    : Kisko(viiva)
+KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata)
+    : Kisko(viiva, kiskoid, liikennepaikka, raide, kiskodata)
 {
 
     naytaraidenumero_ = kiskodata.contains("Nr");
@@ -19,10 +19,8 @@ KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int numero, const
     // Sijoitetaan tunnus, jos numero sopii
     if( naytaraidenumero_ )
     {
-            raidetunnus_ = QString("%1").arg(numero,3,10,QChar('0'));
+            raidetunnus_ = QString("%1").arg(raide,3,10,QChar('0'));
     }
-    // Lisätään vielä skeneen
-    skene->addItem(this);
 }
 
 QRectF KaukoKisko::boundingRect() const
@@ -48,5 +46,28 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         painter->setPen( QPen(Qt::black));
         painter->drawText(QRectF(0.0, -9.0, pituus(), 5.0), raidetunnus_, QTextOption(Qt::AlignCenter));
     }
+
+    // Laiturin piirtäminenn
+    // Piirretään laituri.
+    if( laituri() == LaituriVasemmalla  || laituri() == LaituriOikealla )
+    {
+        painter->setPen( QPen(QBrush( Qt::black), 1.0, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin) );
+        QPolygonF laituriviiva;
+        if( laituri() == LaituriVasemmalla )
+            laituriviiva << QPointF(10.0, -14.0) << QPointF(10.0, -11.0) << QPointF( pituus()-10.0, -11.0) << QPointF(pituus()-10.0,-14.0);
+        else
+            laituriviiva << QPointF(10.0, 14.0) << QPointF(10.0, 11.0) << QPointF( pituus()-10.0, 11.0) << QPointF(pituus()-10.0,14.0);
+        painter->drawPolyline(laituriviiva);
+
+        painter->setFont(QFont("Helvetica",3));
+        QString laituriteksti = QString("%1 %2").arg(liikennePaikka()).arg(raidetunnus_.right(1));
+
+        if( laituri() == LaituriVasemmalla )
+            painter->drawText(QRectF(0.0, -15.0, pituus(), 4.0), laituriteksti, QTextOption(Qt::AlignCenter));
+        else
+            painter->drawText(QRectF(0.0, 11.5, pituus(), 4.0), laituriteksti, QTextOption(Qt::AlignCenter));
+       }
+
+
 
 }

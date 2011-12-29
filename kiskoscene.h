@@ -16,6 +16,7 @@ class KiskoScene : public QGraphicsScene
 public:
     explicit KiskoScene(QObject *parent = 0);
 
+
     /** Palauttaa skenen kuvaaman näkymän id:n */
     virtual int nakyma() = 0;
     

@@ -7,6 +7,8 @@
 
 #include "kaukoikkuna.h"
 
+#include "editoriikkuna.h"
+
 #include <QSqlQuery>
 #include <QIcon>
 
@@ -39,12 +41,22 @@ void KaukoIkkuna::nakymanVaihto(int valintaind)
     skene_->haeNakyma( nakymaValinta_->itemData(valintaind).toInt() );
 }
 
+void KaukoIkkuna::editori()
+{
+    EditoriIkkuna* editoriIkkuna = new EditoriIkkuna(skene_->nakyma());
+    editoriIkkuna->show();
+}
+
 
 void KaukoIkkuna::luoAktiot()
 {
     uusiIkkunaAktio_ = new QAction( QIcon(":/r/pic/ikkuna-uusi.png"), tr("Uusi ikkuna"), this );
     uusiIkkunaAktio_->setToolTip(tr("Avaa uuden ikkunan"));
     connect( uusiIkkunaAktio_, SIGNAL(triggered()), this, SLOT(uusiIkkuna()));
+
+    editoriAktio_ = new QAction( QIcon(":/r/pic/muokkaa.png"), tr("Muokkaa"), this );
+    editoriAktio_->setToolTip(tr("Muokkaa rataa tai näkymiä"));
+    connect( editoriAktio_, SIGNAL(triggered()), this, SLOT(editori()));
 
 }
 
@@ -65,6 +77,8 @@ void KaukoIkkuna::luoTyoPalkki()
     }
     connect( nakymaValinta_, SIGNAL(currentIndexChanged(int)), this, SLOT(nakymanVaihto(int)));
     hallintaToolBar_->addWidget(nakymaValinta_);
+
+    hallintaToolBar_->addAction(editoriAktio_);
 
 
 }

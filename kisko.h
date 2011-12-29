@@ -19,14 +19,20 @@
 class Kisko : public QGraphicsItem
 {
 public:
-    enum Laituri { LaituriEi, LaituriVasen, LaituriOikea };
+    enum Laituri { LaituriEi, LaituriVasemmalla, LaituriOikealla };
 
-
-    Kisko( const QLineF& viiva);
+    Kisko( const QLineF& viiva, int kiskoid=0, const QString& liikennepaikka=QString(), int raide = 0,
+           const QString& kiskodata = QString(), int sn=0);
 
 
     qreal pituus() const { return pituus_; }
-    
+    Laituri laituri() const { return laituri_; }
+    QString liikennePaikka() const {return liikennepaikka_; }
+    int raide() const { return raide_; }
+
+    QPointF etelainen() const { return viiva_.p1(); }
+    QPointF pohjoinen() const { return viiva_.p2(); }
+
 signals:
     
 public slots:
@@ -38,6 +44,7 @@ protected:
     int raide_;
     int sn_;
     Laituri laituri_;
+    QLineF viiva_;
 
     qreal pituus_; /** Kiskon pituus */
 

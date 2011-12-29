@@ -10,12 +10,17 @@
 
 #include "kiskoscene.h"
 
+class Ruudukko;
+
 class EditoriScene : public KiskoScene
 {
     Q_OBJECT
 public:
     explicit EditoriScene(QObject *parent = 0);
     
+    /** Hakee sanotun näkymän editoitavaksi */
+    bool haeNakyma(int nakyma);
+
     int nakyma() { return nakyma_; }
 
 signals:
@@ -23,7 +28,11 @@ signals:
 public slots:
 
 private:
+    // Hakee radalle liikennepaikkojen sijainnit
+    void haeLiikennePaikat();
+
     int nakyma_;
+    Ruudukko* ruudukko_;
     
 };
 

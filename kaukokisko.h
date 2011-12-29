@@ -21,7 +21,10 @@ public:
 
 
     KaukoKisko(KaukoScene* skene,
-               const QLineF& viiva, int numero,
+               const QLineF& viiva,
+               int kiskoid,
+               const QString& liikennepaikka,
+               int raide,
                const QString& kiskodata);
 
     enum { Type = UserType + 1 } ;

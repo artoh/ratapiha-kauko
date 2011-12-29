@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/r">
         <file>pic/ikkuna-uusi.png</file>
+        <file>pic/muokkaa.png</file>
     </qresource>
 </RCC>
