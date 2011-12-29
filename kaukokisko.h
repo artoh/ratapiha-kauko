@@ -8,20 +8,21 @@
 #ifndef KAUKOKISKO_H
 #define KAUKOKISKO_H
 
-#include <QGraphicsItem>
+#include "kisko.h"
+
 #include <QString>
 #include <QLineF>
 
 class KaukoScene;
 
-class KaukoKisko : public QGraphicsItem
+class KaukoKisko : public Kisko
 {
 public:
-    enum Laituri { LaituriEi, LaituriVasen, LaituriOikea };
+
 
     KaukoKisko(KaukoScene* skene,
                const QLineF& viiva, int numero,
-               const QString& kiskodata, const QString& eteladata, const QString& pohjoisdata);
+               const QString& kiskodata);
 
     enum { Type = UserType + 1 } ;
 
@@ -31,17 +32,13 @@ public:
 
     int type() const { return Type; }
 
-    qreal pituus() const { return pituus_; }
 
 protected:
     KaukoScene* skene_;
-    qreal pituus_;
     QString raidetunnus_;
     Laituri laituri_;
 
-    char kiskotyyppi_;
-    char etelatyyppi_;
-    char pohjoistyyppi_;
+
     bool naytajunanumero_;
     bool naytaraidenumero_;
 

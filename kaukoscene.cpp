@@ -8,7 +8,7 @@
 #include <QSqlError>
 
 KaukoScene::KaukoScene(QObject *parent) :
-    QGraphicsScene(parent)
+   KiskoScene(parent)
 {
 }
 
@@ -20,7 +20,7 @@ bool KaukoScene::haeNakyma(int nakyma)
 
     // Hakee näkymän kiskot
 
-    QSqlQuery nkys( QString("select kisko, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kisko_data, etela_data, pohjoinen_data from kisko where nakyma=%1").arg(nakyma) );
+    QSqlQuery nkys( QString("select kisko, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto from kisko where nakyma=%1").arg(nakyma) );
 
  qDebug() << nkys.lastError().text();
 
@@ -32,14 +32,12 @@ bool KaukoScene::haeNakyma(int nakyma)
                              nkys.value(4).toInt(), nkys.value(5).toInt())  );
 
         QString kiskodata = nkys.value(6).toString();
-        QString eteladata = nkys.value(7).toString();
-        QString pohjoisdata = nkys.value(8).toString();
 
-
-        KaukoKisko* kisko = new KaukoKisko(this, viiva, raide, kiskodata, eteladata, pohjoisdata);
+        KaukoKisko* kisko = new KaukoKisko(this, viiva, raide, kiskodata);
         kiskot_.insert(kkid, kisko);
     }
 
     // Nyt on näkymä haettu...
+    nakyma_ = nakyma;
     return true;
 }

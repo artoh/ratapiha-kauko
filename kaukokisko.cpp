@@ -10,14 +10,11 @@
 #include <QPainter>
 
 
-KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int numero, const QString &kiskodata, const QString &eteladata, const QString &pohjoisdata)
+KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int numero, const QString &kiskodata)
+    : Kisko(viiva)
 {
-    // Ensin sijoitetaan viivan fyysinen sijainti
-    pituus_ = viiva.length();
-    setRotation( 0.0 - viiva.angle());
-    setPos( viiva.p1());
 
-    naytaraidenumero_ = kiskodata.contains("R");
+    naytaraidenumero_ = kiskodata.contains("Nr");
 
     // Sijoitetaan tunnus, jos numero sopii
     if( naytaraidenumero_ )

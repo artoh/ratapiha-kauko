@@ -5,26 +5,17 @@
 ** 14.6.2011
 **************************************************************************/
 
-#ifndef KAUKOSCENE_H
-#define KAUKOSCENE_H
+#ifndef EDITORISCENE_H
+#define EDITORISCENE_H
 
 #include "kiskoscene.h"
-#include <QMap>
 
-class KaukoKisko;
-
-class KaukoScene : public KiskoScene
+class EditoriScene : public KiskoScene
 {
     Q_OBJECT
 public:
-    explicit KaukoScene(QObject *parent = 0);
+    explicit EditoriScene(QObject *parent = 0);
     
-    /** Hakee sanotun näkymän esiin */
-    bool haeNakyma(int nakyma);
-
-    /** Onko tiedonsiirtovirhettä, jolloin tila piirretään magentalla */
-    bool onkoVikatilassa() { return true; }
-
     int nakyma() { return nakyma_; }
 
 signals:
@@ -33,8 +24,7 @@ public slots:
 
 private:
     int nakyma_;
-    QMap<int,KaukoKisko*> kiskot_;
     
 };
 
-#endif // KAUKOSCENE_H
+#endif // EDITORISCENE_H
