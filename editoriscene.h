@@ -21,6 +21,9 @@ public:
     /** Hakee sanotun näkymän editoitavaksi */
     bool haeNakyma(int nakyma);
 
+    /** Aloittaa uuden näkymän muokkaamisen*/
+    void uusiNakyma(const QString& nimi);
+
     int nakyma() { return nakyma_; }
 
 signals:

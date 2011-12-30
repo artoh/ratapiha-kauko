@@ -2,5 +2,7 @@
     <qresource prefix="/r">
         <file>pic/ikkuna-uusi.png</file>
         <file>pic/muokkaa.png</file>
+        <file>pic/kyna.png</file>
+        <file>pic/valintanuoli.png</file>
     </qresource>
 </RCC>

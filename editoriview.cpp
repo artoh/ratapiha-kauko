@@ -6,14 +6,16 @@
 
 #include "editoriview.h"
 #include "editorikisko.h"
+#include "editoriikkuna.h"
 
 #include <QMouseEvent>
 #include <QPointF>
 #include <QScrollBar>
 #include <cmath>
 
-EditoriView::EditoriView(EditoriScene *skene) :
-    QGraphicsView(skene), skene_(skene), tila_(Piirto), piirtoViiva_(0)
+EditoriView::EditoriView(EditoriScene *skene, EditoriIkkuna *ikkuna) :
+    QGraphicsView(skene), skene_(skene), ikkuna_(ikkuna), tila_(0), piirtoViiva_(0),
+    valittuKisko_(0)
 {
     setMouseTracking(true);
 
@@ -21,15 +23,76 @@ EditoriView::EditoriView(EditoriScene *skene) :
     setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn);
 }
 
+void EditoriView::valitseTila(int tila)
+{
+    tila_ = tila;
+    switch(tila)
+    {
+    case Osoitin :
+        setCursor( Qt::ArrowCursor);
+        break;
+    case Piirto:
+        setCursor( QCursor(QPixmap(":/r/pic/kyna.png"),1,30));
+        poistaValinta();
+        break;
+
+    }
+    emit editorinTilaVaihtunut(tila_);
+}
+
+void EditoriView::poistaValinta()
+{
+    if( valittuKisko())
+        valittuKisko()->valitse(false);
+    valittuKisko_ = 0;
+}
 
 void EditoriView::mousePressEvent(QMouseEvent *event)
 {
     QPointF sijainti = mapToScene( event->pos());
+    // Kokeillaan löytyykö tuolta kiskoa
+    EditoriKisko* kisko = 0;
+    qreal viivaetaisyys = 99.9; // Valinnan etäisyys raideviivasta
+
+    QList<QGraphicsItem*> lista = items( event->pos() );
+
+    // Koska kiskot voivat olla osittain päällekkäin, etsitään se,
+    // joka lähimpänä keskiviivaa
+    foreach( QGraphicsItem* item, lista)
+    {
+        EditoriKisko* koekisko = qgraphicsitem_cast<EditoriKisko*>(item);
+        if( koekisko)
+        {
+            QPointF itemkoord = koekisko->mapFromScene( sijainti);
+            if( qAbs(itemkoord.y()) < viivaetaisyys)
+            {
+                kisko = koekisko;
+                viivaetaisyys = qAbs(itemkoord.y());
+                   // Jee, lähin kisko on löytynyt !!!
+            }
+         }
+    }
+
 
     if( event->button() == Qt::LeftButton)
     {
-        if( tila()==Piirto )
+        switch( tila())
         {
+        case Osoitin:
+            if( kisko)
+            {
+                if( valittuKisko())
+                    valittuKisko()->valitse(false);
+                valittuKisko_ = kisko;
+                valittuKisko()->valitse(true);
+                emit kiskoValittu( valittuKisko()); // Päivitetään muokattavat esille
+
+            }
+            break;
+
+
+        case Piirto:
+
             // Aloitetaan piirtäminen
 
             // Kohdistetaan tasalukuun.. tähän voitaisiin tarvita magneettia
@@ -38,6 +101,7 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
             // Laitetaan piirtoviiva paikalleen
             piirtoViiva_ = new QGraphicsLineItem( QLineF(kohdistettu,kohdistettu));
             skene_->addItem(piirtoViiva_);
+            break;
         }
 
 
@@ -81,7 +145,7 @@ void EditoriView::mouseReleaseEvent(QMouseEvent *event)
         {
             if( tila_ == Piirto)
             {
-               EditoriKisko* kisko = new EditoriKisko(skene_, piirtoViiva_->line());
+               EditoriKisko* kisko = new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka());
                skene_->addItem(kisko);
             }
             else

@@ -48,7 +48,7 @@ void Ruudukko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
 
     int tarkkuus = 10;
 
-    QPen kyna10( QColor(200,125,75));
+    QPen kyna10( QColor(175,175,175));
     QPen kyna100( QColor(200,200,200), 2.0 / detail);
     QPen kyna1000( QColor(200,200,200), 4.0 / detail);
     QPen kyna10000( QColor(200,200,200), 6.0 / detail);

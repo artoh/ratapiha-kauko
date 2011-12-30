@@ -69,7 +69,7 @@ void KaukoIkkuna::luoTyoPalkki()
     nakymaValinta_ = new QComboBox;
 
 
-    QSqlQuery nakymaKysely("select nakyma,nakymanimi from kaukonakyma");
+    QSqlQuery nakymaKysely("select nakyma,nakymanimi from nakyma");
     while( nakymaKysely.next())
     {
         // Viedään näkymätiedot valintalaatikkoon

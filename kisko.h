@@ -20,6 +20,7 @@ class Kisko : public QGraphicsItem
 {
 public:
     enum Laituri { LaituriEi, LaituriVasemmalla, LaituriOikealla };
+    enum PaanTyyppi { Valille, Paa, VaihdeVasen, VaihdeOikea };
 
     Kisko( const QLineF& viiva, int kiskoid=0, const QString& liikennepaikka=QString(), int raide = 0,
            const QString& kiskodata = QString(), int sn=0);
@@ -33,6 +34,9 @@ public:
     QPointF etelainen() const { return viiva_.p1(); }
     QPointF pohjoinen() const { return viiva_.p2(); }
 
+    PaanTyyppi etelaTyyppi() const { return etelapaaTyyppi_; }
+    PaanTyyppi pohjoisTyyppi() const { return pohjoispaaTyyppi_; }
+
 signals:
     
 public slots:
@@ -45,6 +49,8 @@ protected:
     int sn_;
     Laituri laituri_;
     QLineF viiva_;
+    PaanTyyppi etelapaaTyyppi_;
+    PaanTyyppi pohjoispaaTyyppi_;
 
     qreal pituus_; /** Kiskon pituus */
 

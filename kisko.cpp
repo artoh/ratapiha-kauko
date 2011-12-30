@@ -10,7 +10,9 @@
 Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata, int sn) :
     QGraphicsItem(),
     kiskoid_(kiskoid), liikennepaikka_(liikennepaikka), raide_(raide), sn_(sn),
-    viiva_(viiva)
+    viiva_(viiva),
+    etelapaaTyyppi_(Valille),
+    pohjoispaaTyyppi_(Valille)
 {
     // Ensin sijoitetaan viivan fyysinen sijainti
     pituus_ = viiva.length();
@@ -24,6 +26,22 @@ Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, in
         laituri_ = LaituriOikealla;
     else
         laituri_ = LaituriEi;
+
+    // Päitten tyypit
+    if( kiskodata.contains("E="))
+        etelapaaTyyppi_ = Paa;
+    else if(kiskodata.contains("E-"))
+        etelapaaTyyppi_ = VaihdeVasen;
+    else if(kiskodata.contains("E+"))
+        etelapaaTyyppi_ = VaihdeOikea;
+
+
+    if( kiskodata.contains("P="))
+        pohjoispaaTyyppi_ = Paa;
+    else if(kiskodata.contains("P-"))
+        pohjoispaaTyyppi_ = VaihdeVasen;
+    else if(kiskodata.contains("P+"))
+        pohjoispaaTyyppi_ = VaihdeOikea;
 
 }
 

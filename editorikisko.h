@@ -28,9 +28,14 @@ public:
 
     int type() const { return Type; }
 
+    void valitse(bool onko=true);
+
+    void asetaLiikennepaikka(const QString& lyhenne);
+    void asetaRaide(int raide);
 
 protected:
     EditoriScene* skene_;
+    bool valittu_;
 
 };
 

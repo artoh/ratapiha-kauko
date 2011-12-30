@@ -12,19 +12,28 @@
 #include <QGraphicsView>
 #include <QGraphicsLineItem>
 
+class EditoriKisko;
+class EditoriIkkuna;
+
 class EditoriView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit EditoriView(EditoriScene* skene);
+    explicit EditoriView(EditoriScene* skene, EditoriIkkuna* ikkuna);
     enum EditoriTila { Osoitin, Piirto } ;
 
-    
+    EditoriKisko* valittuKisko() { return valittuKisko_; }
+
 signals:
     void editorinTilaVaihtunut(int tila);
     void naytettavaRaiteenPituus(qreal pituus);
+    void kiskoValittu(EditoriKisko* kisko);
     
 public slots:
+    /** Valitsee käytettävän näyttötilan */
+    void valitseTila( int tila);
+
+    void poistaValinta();
 
 protected:
     void wheelEvent(QWheelEvent *event);
@@ -36,12 +45,14 @@ protected:
     static QPointF kohdista(const QPointF& pos);
 
 public:
-    EditoriTila tila() const { return tila_; }
+    int tila() const { return tila_; }
 
 private:
     EditoriScene* skene_;
-    EditoriTila tila_;
+    EditoriIkkuna* ikkuna_;
+    int tila_;  // int jotta tilaa voidaan muuttaa
     QGraphicsLineItem* piirtoViiva_;
+    EditoriKisko* valittuKisko_;
 };
 
 #endif // EDITORIVIEW_H

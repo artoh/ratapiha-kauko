@@ -25,7 +25,7 @@ KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int kiskoid, cons
 
 QRectF KaukoKisko::boundingRect() const
 {
-    return QRectF(0.0, 10.0, pituus(), 20.0);
+    return QRectF(-0.0, -10.0, pituus(), 20.0);
 }
 
 
@@ -37,6 +37,16 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         painter->setPen( QPen(QBrush(Qt::magenta),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
     else
         painter->setPen( QPen(QBrush(Qt::black),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+
+
+    // Tyyppien mukaista piirtämistä...
+    qreal alku = 0.0;
+    qreal loppu = pituus();
+
+    if( etelaTyyppi() == Paa)
+        alku = 0.5;
+    if( pohjoisTyyppi() == Paa)
+        alku = pituus() - 0.5;
 
     painter->drawLine(0.5, 0.0, pituus()-0.5, 0.0);
 

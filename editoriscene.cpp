@@ -55,6 +55,25 @@ bool EditoriScene::haeNakyma(int nakyma)
 
 }
 
+void EditoriScene::uusiNakyma(const QString &nimi)
+{
+
+    // Lisätään näkymä ja saadaan sen id...
+    QSqlQuery kysely;
+    kysely.prepare("INSERT INTO nakyma (nakymanimi) VALUES (:nimi)");
+    kysely.bindValue(":nimi",nimi);
+    kysely.exec();
+
+    int nakymaId = kysely.lastInsertId().toInt();
+    if( nakymaId > 0)
+    {
+        nakyma_ = nakymaId;
+        clear();
+        ruudukko_ = new Ruudukko(this);
+    }
+
+}
+
 void EditoriScene::haeLiikennePaikat()
 {
     QSqlQuery kysely;
