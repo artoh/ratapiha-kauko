@@ -145,8 +145,7 @@ void EditoriView::mouseReleaseEvent(QMouseEvent *event)
         {
             if( tila_ == Piirto)
             {
-               EditoriKisko* kisko = new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka());
-               skene_->addItem(kisko);
+               new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka());
             }
             else
                 ; //rata_->addItem( new MittaNauha(piirtoviiva_->line()) );

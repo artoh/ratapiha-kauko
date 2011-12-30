@@ -9,6 +9,8 @@
 #define KISKO_H
 
 #include <QGraphicsItem>
+#include <QList>
+
 
 /** Kiskojen abstrakti kantaluokka
 
@@ -20,7 +22,7 @@ class Kisko : public QGraphicsItem
 {
 public:
     enum Laituri { LaituriEi, LaituriVasemmalla, LaituriOikealla };
-    enum PaanTyyppi { Valille, Paa, VaihdeVasen, VaihdeOikea };
+    enum PaanTyyppi { Virhe = 0, Valille = 1, Paa = 2, VaihdeJatkos = 10, VaihdeVasen = 11, VaihdeOikea = 12 };
 
     Kisko( const QLineF& viiva, int kiskoid=0, const QString& liikennepaikka=QString(), int raide = 0,
            const QString& kiskodata = QString(), int sn=0);
@@ -36,6 +38,15 @@ public:
 
     PaanTyyppi etelaTyyppi() const { return etelapaaTyyppi_; }
     PaanTyyppi pohjoisTyyppi() const { return pohjoispaaTyyppi_; }
+
+    /** Hakee naapurikiskot sanotusta sijainnista (yleensä päästä) */
+    QList<Kisko*> haeNaapurit(QPointF sijainnista);
+
+    QLineF viiva() const { return viiva_; }
+    void tarkistaPaanTyypit();
+
+    /** Vaihtaa etelan pohjoiseksi ja pohjoisen eteläksi*/
+    void kaannaSuunta();
 
 signals:
     
@@ -53,6 +64,9 @@ protected:
     PaanTyyppi pohjoispaaTyyppi_;
 
     qreal pituus_; /** Kiskon pituus */
+
+private:
+    PaanTyyppi tarkistaTyyppiPaalle( QPointF piste );
 
     
 };

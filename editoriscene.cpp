@@ -33,13 +33,13 @@ bool EditoriScene::haeNakyma(int nakyma)
         int kkid = nkys.value(0).toInt();
         QString liikennepaikka = nkys.value(1).toString();
         int raide = nkys.value(2).toInt();
-        QLineF viiva( QLine( nkys.value(3).toInt(), nkys.value(4).toInt(),
-                             nkys.value(5).toInt(), nkys.value(6).toInt())  );
+        QLineF viiva( QLine( nkys.value(3).toInt(), 0-nkys.value(4).toInt(),
+                             nkys.value(5).toInt(), 0-nkys.value(6).toInt())  );
 
         QString kiskodata = nkys.value(7).toString();
 
-        EditoriKisko* kisko = new EditoriKisko(this, viiva, kkid, liikennepaikka, raide, kiskodata );
-        addItem(kisko);
+        new EditoriKisko(this, viiva, kkid, liikennepaikka, raide, kiskodata );
+
     }
 
     // Jos ollaan editoimassa varsinaista rataa, niin sitten haetaan taustalle

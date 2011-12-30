@@ -32,8 +32,13 @@ public:
 
     void asetaLiikennepaikka(const QString& lyhenne);
     void asetaRaide(int raide);
+    /** Asettaa raiteen ja liikenenpaikan myös vaihdekavereille*/
+    void levitaRaiteenAsetus();
 
 protected:
+    // Tarkastetaan päiden tyypit ja kaverit tekee myös saman
+    void paidenTarkistusToimet();
+
     EditoriScene* skene_;
     bool valittu_;
 

@@ -21,11 +21,13 @@ KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int kiskoid, cons
     {
             raidetunnus_ = QString("%1").arg(raide,3,10,QChar('0'));
     }
+
+    skene->addItem(this);
 }
 
 QRectF KaukoKisko::boundingRect() const
 {
-    return QRectF(-0.0, -10.0, pituus(), 20.0);
+    return QRectF(-3.0, -15.0, pituus()+6.0, 30.0);
 }
 
 

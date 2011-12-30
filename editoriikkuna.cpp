@@ -9,6 +9,7 @@
 #include "editorikisko.h"
 #include <QSqlQuery>
 #include <QInputDialog>
+#include <QIntValidator>
 
 
 EditoriIkkuna::EditoriIkkuna(int nakyma, QWidget *parent) :
@@ -113,7 +114,10 @@ void EditoriIkkuna::haeLiikennepaikkaLista()
 void EditoriIkkuna::liikennePaikkaValittu(int index)
 {
     if( view_->valittuKisko())
+    {
         view_->valittuKisko()->asetaLiikennepaikka(liikennepaikkaCombo_->itemData(index).toString()  );
+        view_->valittuKisko()->levitaRaiteenAsetus();
+    }
 }
 
 
@@ -146,7 +150,10 @@ QString EditoriIkkuna::nykyLiikennePaikka() const
 void EditoriIkkuna::raideNumeroaMuutettu()
 {
     if( view_->valittuKisko())
+    {
         view_->valittuKisko()->asetaRaide( raideLineEdit_->text().toInt());
+        view_->valittuKisko()->levitaRaiteenAsetus();
+    }
 }
 
 
@@ -170,7 +177,8 @@ void EditoriIkkuna::luoTyoPalkki()
     tunnisteToolBar_->addWidget(liikennepaikkaCombo_);
 
     raideLineEdit_ = new QLineEdit();
-    raideLineEdit_->setInputMask("0000");
+  //  raideLineEdit_->setInputMask("0000");
+    raideLineEdit_->setValidator(new QIntValidator(0,9999,raideLineEdit_));
     connect( raideLineEdit_, SIGNAL(editingFinished()), this, SLOT(raideNumeroaMuutettu()));
     tunnisteToolBar_->addWidget(raideLineEdit_);
 
