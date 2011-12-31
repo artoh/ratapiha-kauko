@@ -145,20 +145,30 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
         case Teksti:
             // Luo uuden tekstikentän
             // Myöhemmin tänne tulee parempi editoridialogi, jossa fontin valintaa tms.
-            QGraphicsItem* item = skene_->itemAt(sijainti);
-            QGraphicsSimpleTextItem* tItem = qgraphicsitem_cast<QGraphicsSimpleTextItem*>(item);
+            QList<QGraphicsItem*> items = skene_->items(sijainti);
+            QGraphicsSimpleTextItem* tItem = 0;
+            foreach( QGraphicsItem* item, items)
+            {
+                if( qgraphicsitem_cast<QGraphicsSimpleTextItem*>(item) )
+                    tItem = qgraphicsitem_cast<QGraphicsSimpleTextItem*>(item);
+            }
 
 
             if( tItem && tItem->data(1).toInt() > 0 )  // Siellä on jo tekstiä, eli muokataan
             {
-                QString teksti = QInputDialog::getText(this, tr("Editori"),tr("Muokattava teksti"),QLineEdit::Normal, tItem->text() );
-                if( teksti.isEmpty())
+                bool ok;
+                QString teksti = QInputDialog::getText(this, tr("Editori"),tr("Muokattava teksti"),QLineEdit::Normal, tItem->text(), &ok );
+                if( !ok)
+                {
+                    ;
+                }
+                else if( teksti.isEmpty())
                 {
                     skene_->removeItem(tItem);
-                    delete tItem;
                     QSqlQuery kysely;
                     kysely.exec( QString("DELETE FROM teksti WHERE tekstiid=%1")
                                  .arg(tItem->data(1).toInt()));
+                    delete tItem;
                 }
                 else
                 {
