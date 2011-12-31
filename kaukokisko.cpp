@@ -72,7 +72,7 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         painter->drawPolyline(laituriviiva);
 
         painter->setFont(QFont("Helvetica",3));
-        QString laituriteksti = QString("%1 %2").arg(liikennePaikka()).arg(raidetunnus_.right(1));
+        QString laituriteksti = QString("%1 %2").arg(liikennePaikka()).arg( raide() % 100 );
 
         if( laituri() == LaituriVasemmalla )
             painter->drawText(QRectF(0.0, -15.0, pituus(), 4.0), laituriteksti, QTextOption(Qt::AlignCenter));

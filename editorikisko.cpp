@@ -175,8 +175,30 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
     if( etelaTyyppi() == Virhe || pohjoisTyyppi() == Virhe )
         painter->setPen( QPen(QBrush(Qt::red),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
 
-
+    // Raiteen piirtäminen
     painter->drawLine(2.5, 0.0, pituus()-2.5, 0.0);
+
+
+    // Laiturin piirtäminenn
+    // Piirretään laituri.
+    if( laituri() == LaituriVasemmalla  || laituri() == LaituriOikealla )
+    {
+        painter->setPen( QPen(QBrush( Qt::black), 1.0, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin) );
+        QPolygonF laituriviiva;
+        if( laituri() == LaituriVasemmalla )
+            laituriviiva << QPointF(10.0, -14.0) << QPointF(10.0, -11.0) << QPointF( pituus()-10.0, -11.0) << QPointF(pituus()-10.0,-14.0);
+        else
+            laituriviiva << QPointF(10.0, 14.0) << QPointF(10.0, 11.0) << QPointF( pituus()-10.0, 11.0) << QPointF(pituus()-10.0,14.0);
+        painter->drawPolyline(laituriviiva);
+
+        painter->setFont(QFont("Helvetica",3));
+        QString laituriteksti = QString("%1 %2").arg(liikennePaikka()).arg( raide() % 100 );
+
+        if( laituri() == LaituriVasemmalla )
+            painter->drawText(QRectF(0.0, -15.0, pituus(), 4.0), laituriteksti, QTextOption(Qt::AlignCenter));
+        else
+            painter->drawText(QRectF(0.0, 11.5, pituus(), 4.0), laituriteksti, QTextOption(Qt::AlignCenter));
+       }
 
 }
 
