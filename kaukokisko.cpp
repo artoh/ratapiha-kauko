@@ -50,9 +50,9 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     if( pohjoisTyyppi() == Paa)
         alku = pituus() - 0.5;
 
-    painter->drawLine(0.5, 0.0, pituus()-0.5, 0.0);
+    painter->drawLine(alku, 0.0, loppu, 0.0);
 
-    if( naytaraidenumero_)
+    if( 1 == 1 ) // Nyt näytetään aina raidenumero!
     {
         painter->setFont( QFont("Helvetica",4,QFont::Bold));
         painter->setPen( QPen(Qt::black));

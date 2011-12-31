@@ -37,7 +37,7 @@ Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, in
         etelapaaTyyppi_ = VaihdeVasen;
     else if(kiskodata.contains("E+"))
         etelapaaTyyppi_ = VaihdeOikea;
-    else if( kiskodata.contains("E"))
+    else if( kiskodata.contains("E*"))
         etelapaaTyyppi_ = Paa;
 
 
@@ -47,7 +47,7 @@ Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, in
         pohjoispaaTyyppi_ = VaihdeVasen;
     else if(kiskodata.contains("P+"))
         pohjoispaaTyyppi_ = VaihdeOikea;
-    else if(kiskodata.contains("P"))
+    else if(kiskodata.contains("P*"))
         pohjoispaaTyyppi_ = Paa;
 
 }

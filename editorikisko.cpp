@@ -10,7 +10,10 @@
 #include <QPainter>
 #include <QPen>
 #include <QList>
+#include <QSqlQuery>
 
+#include <QDebug>
+#include <QSqlError>
 
 EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata, int sn) :
     Kisko(viiva, kiskoid, liikennepaikka, raide, kiskodata, sn), skene_(skene),
@@ -21,7 +24,7 @@ EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid
     paidenTarkistusToimet();
 }
 
-void EditoriKisko::paidenTarkistusToimet()
+void EditoriKisko::paidenTarkistusToimet(bool tallenna)
 {
     // Tarkistetaan kaverit
     tarkistaPaanTyypit();
@@ -31,8 +34,14 @@ void EditoriKisko::paidenTarkistusToimet()
     foreach( QGraphicsItem* item, tormaajat)
     {
         if( EditoriKisko* ekisko = qgraphicsitem_cast<EditoriKisko*>(item))
+        {
             ekisko->tarkistaPaanTyypit();
+            if( tallenna)       // Siltä varalta, että päässä on jotain muuttunut!
+                ekisko->talletaKisko();
+        }
     }
+    if( tallenna )
+        talletaKisko();
 }
 
 QRectF EditoriKisko::boundingRect() const
@@ -86,7 +95,7 @@ void EditoriKisko::levitaRaiteenAsetus()
             }
         }
     }
-    paidenTarkistusToimet();
+    paidenTarkistusToimet(true);
 }
 
 void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
@@ -116,7 +125,7 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
         // Raidetunnus laitetaan kiskon ylle
         if( etelapaaTyyppi_ > 9 || pohjoispaaTyyppi_ > 9)
         {
-            painter->setFont( QFont("Helvetica",2,QFont::Normal));
+            painter->setFont( QFont("Helvetica",2,QFont::DemiBold));
             painter->setPen( QPen(Qt::blue));   // Vaihde tai RR
             if( etelaTyyppi() == VaihdeJatkos || pohjoisTyyppi() == VaihdeJatkos)
             {
@@ -124,13 +133,13 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
                 painter->drawText(QRectF(0.0, -9.0, pituus(), 5.0), QString("%1").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
             }
             else if( etelaTyyppi() == VaihdeVasen )
-                painter->drawText(QRectF(0.0, -7.0, pituus(), 3.0), QString("%1c").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
+                painter->drawText(QRectF(0.0, -7.0, pituus(), 4.0), QString("%1c").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
             else if( etelaTyyppi() == VaihdeOikea )
-                painter->drawText(QRectF(0.0, -7.0, pituus(), 3.0), QString("%1d").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
+                painter->drawText(QRectF(0.0, -7.0, pituus(), 4.0), QString("%1d").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
             else if( pohjoisTyyppi() == VaihdeVasen )
-                painter->drawText(QRectF(0.0, -7.0, pituus(), 3.0), QString("%1b").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
+                painter->drawText(QRectF(0.0, -7.0, pituus(), 4.0), QString("%1b").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
             else if( pohjoisTyyppi() == VaihdeOikea )
-                painter->drawText(QRectF(0.0, -7.0, pituus(), 3.0), QString("%1a").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
+                painter->drawText(QRectF(0.0, -7.0, pituus(), 4.0), QString("%1a").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
         }
         else
         {
@@ -153,4 +162,102 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
 
     painter->drawLine(2.5, 0.0, pituus()-2.5, 0.0);
 
+}
+
+
+void EditoriKisko::talletaKisko()
+{
+
+    if( !raide() || liikennePaikka().isEmpty() || skene_->nakyma()<0)
+        return;     // Ei tallennettavaa!
+
+    QSqlQuery kysely;
+    if( kiskoid_ == 0)
+    {
+        // Kiskoa ei ole vielä talletettu, eli se pitää lisätä
+        kysely.prepare("INSERT INTO kisko (nakyma, liikennepaikka, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, sn, kiskotieto )"
+                       "VALUES (:nakyma, :liikennepaikka, :raide, :etela_x, :etela_y, :pohjoinen_x, :pohjoinen_y, :sn, :kiskotieto)");
+
+        kysely.bindValue(":nakyma",skene_->nakyma());
+        kysely.bindValue(":liikennepaikka",liikennePaikka());
+        kysely.bindValue(":raide",raide());
+        kysely.bindValue(":etela_x",viiva().x1());
+        kysely.bindValue(":etela_y",0-viiva().y1());
+        kysely.bindValue(":pohjoinen_x",viiva().x2());
+        kysely.bindValue("pohjoinen_y",0-viiva().y2());
+        if( sn())
+            kysely.bindValue(":sn",sn());
+        else
+            kysely.bindValue( ":sn", QVariant(QVariant::Int));  // NULL jos ei ole sn-asetusta
+        kysely.bindValue(":kiskotieto",kiskoTietoTalletettavaksi());
+        kysely.exec();
+        kiskoid_ = kysely.lastInsertId().toInt();
+
+    }
+    else
+    {
+        QString kysymys = QString("UPDATE kisko SET nakyma=%1, liikennepaikka=\"%2\", raide=%3, etela_x=%4, etela_y=%5, pohjoinen_x=%6, pohjoinen_y=%7, sn=%8, kiskotieto=\"%10\" where kisko=%11")
+                .arg( skene_->nakyma()  ).arg(liikennePaikka()).arg( raide()).arg(viiva().x1()).arg(viiva().y1()).arg(viiva().x2()).arg(viiva().y2()).arg(sn()).arg(kiskoTietoTalletettavaksi()).arg(kiskoid_ );
+        kysely.exec(kysymys);
+    }
+
+    qDebug() << kysely.lastQuery();
+    qDebug() << kysely.lastError().text();
+
+}
+
+
+QString EditoriKisko::kiskoTietoTalletettavaksi() const
+{
+    // Sitten pitäisi vielä kyhätä kiskotietolauselma ;)
+    QString kiskotieto;
+
+    // Kiskonpään tiedot
+    switch(etelaTyyppi())
+    {
+    case Paa :
+        kiskotieto.append("E* ");
+        break;
+    case VaihdeJatkos:
+        kiskotieto.append("E= ");
+        break;
+    case VaihdeVasen:
+        kiskotieto.append("E- ");
+        break;
+    case VaihdeOikea:
+        kiskotieto.append("E+ ");
+        break;
+    case Virhe:
+    case Valille:
+        break;
+    }
+
+    switch(pohjoisTyyppi())
+    {
+    case Paa :
+        kiskotieto.append("P* ");
+        break;
+    case VaihdeJatkos:
+        kiskotieto.append("P= ");
+        break;
+    case VaihdeVasen:
+        kiskotieto.append("P- ");
+        break;
+    case VaihdeOikea:
+        kiskotieto.append("P+ ");
+        break;
+    case Virhe:
+    case Valille:
+        break;
+    }
+
+    // Laiturin tiedot
+    if( laituri() == LaituriVasemmalla )
+        kiskotieto.append("Lv ");
+    else if(laituri() == LaituriOikealla)
+        kiskotieto.append("Lo ");
+
+    // Vielä: Nr, Nj, Kj, Kt, Kv, EoE, EoP
+
+    return kiskotieto;
 }

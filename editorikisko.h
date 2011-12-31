@@ -35,9 +35,12 @@ public:
     /** Asettaa raiteen ja liikenenpaikan myös vaihdekavereille*/
     void levitaRaiteenAsetus();
 
+    void talletaKisko();
+
 protected:
     // Tarkastetaan päiden tyypit ja kaverit tekee myös saman
-    void paidenTarkistusToimet();
+    void paidenTarkistusToimet(bool tallenna=false);
+    QString kiskoTietoTalletettavaksi() const;
 
     EditoriScene* skene_;
     bool valittu_;

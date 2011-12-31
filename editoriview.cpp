@@ -148,9 +148,8 @@ void EditoriView::mouseReleaseEvent(QMouseEvent *event)
                new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka());
             }
             else
-                ; //rata_->addItem( new MittaNauha(piirtoviiva_->line()) );
-
-            ;
+                //rata_->addItem( new MittaNauha(piirtoviiva_->line()) );
+            {;}
         }
 
         // Poistetaan tilapäinen piirtoviiva

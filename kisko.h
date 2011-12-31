@@ -32,6 +32,7 @@ public:
     Laituri laituri() const { return laituri_; }
     QString liikennePaikka() const {return liikennepaikka_; }
     int raide() const { return raide_; }
+    int sn() const { return sn_; }
 
     QPointF etelainen() const { return viiva_.p1(); }
     QPointF pohjoinen() const { return viiva_.p2(); }
