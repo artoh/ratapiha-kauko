@@ -17,6 +17,9 @@
 Ruudukko::Ruudukko(QGraphicsScene *sceene) :
     QGraphicsObject()
 {
+    // Huolehditaan riittävästä ruudusta
+    sceene->addRect(-0.0, -50.0, 200, 100, Qt::NoPen, Qt::NoBrush);
+
     setZValue(-125);
     sceene->addItem(this);
     koko_ = scene()->sceneRect();
@@ -48,10 +51,10 @@ void Ruudukko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
 
     int tarkkuus = 10;
 
-    QPen kyna10( QColor(175,175,175));
-    QPen kyna100( QColor(200,200,200), 2.0 / detail);
-    QPen kyna1000( QColor(200,200,200), 4.0 / detail);
-    QPen kyna10000( QColor(200,200,200), 6.0 / detail);
+    QPen kyna10( QColor(200,200,200));
+    QPen kyna100( QColor(225,225,225), 2.0 / detail);
+    QPen kyna1000( QColor(225,225,225), 4.0 / detail);
+    QPen kyna10000( QColor(225,225,225), 6.0 / detail);
 
     // Piirretään ensin nollaympyrä
     painter->setBrush( Qt::NoBrush);
@@ -77,7 +80,7 @@ void Ruudukko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
 
     int x = (int)koko_.x() - ((int)koko_.x()) % 10000 - 10000 ;
 
-    while( x < koko_.x() + koko_.width() + 10 )
+    while( x < koko_.x() + koko_.width()  )
     {
         if( x % 10000 == 0)
             painter->setPen( kyna10000);
@@ -97,7 +100,7 @@ void Ruudukko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
 
     int y = (int)koko_.y() - ( (int)koko_.y()) % 10000 - 10000;
 
-    while( y < koko_.y() + koko_.height() + 20 )
+    while( y < koko_.y() + koko_.height() )
     {
         if( y % 10000 == 0)
             painter->setPen( kyna10000);

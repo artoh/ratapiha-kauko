@@ -152,7 +152,7 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
     else
     {
         // Ei raidetunnusta
-        painter->setPen( QPen(QBrush(Qt::magenta),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->setPen( QPen(Qt::darkGray,2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
     }
 
     // Virheelliset punaisella !
@@ -197,7 +197,7 @@ void EditoriKisko::talletaKisko()
     else
     {
         QString kysymys = QString("UPDATE kisko SET nakyma=%1, liikennepaikka=\"%2\", raide=%3, etela_x=%4, etela_y=%5, pohjoinen_x=%6, pohjoinen_y=%7, sn=%8, kiskotieto=\"%10\" where kisko=%11")
-                .arg( skene_->nakyma()  ).arg(liikennePaikka()).arg( raide()).arg(viiva().x1()).arg(viiva().y1()).arg(viiva().x2()).arg(viiva().y2()).arg(sn()).arg(kiskoTietoTalletettavaksi()).arg(kiskoid_ );
+                .arg( skene_->nakyma()  ).arg(liikennePaikka()).arg( raide()).arg(viiva().x1()).arg(0-viiva().y1()).arg(viiva().x2()).arg(0-viiva().y2()).arg(sn()).arg(kiskoTietoTalletettavaksi()).arg(kiskoid_ );
         kysely.exec(kysymys);
     }
 

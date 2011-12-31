@@ -17,7 +17,7 @@ KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int kiskoid, cons
     naytaraidenumero_ = kiskodata.contains("Nr");
 
     // Sijoitetaan tunnus, jos numero sopii
-    if( naytaraidenumero_ )
+    if( 1 )
     {
             raidetunnus_ = QString("%1").arg(raide,3,10,QChar('0'));
     }
@@ -48,7 +48,7 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     if( etelaTyyppi() == Paa)
         alku = 0.5;
     if( pohjoisTyyppi() == Paa)
-        alku = pituus() - 0.5;
+        loppu = pituus() - 0.5;
 
     painter->drawLine(alku, 0.0, loppu, 0.0);
 
