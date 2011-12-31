@@ -19,6 +19,9 @@ public:
 
     /** Palauttaa skenen kuvaaman näkymän id:n */
     virtual int nakyma() = 0;
+
+    /** Hakee tekstit-taulusta tekstit */
+    void haeTekstit();
     
 signals:
     

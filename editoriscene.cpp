@@ -48,7 +48,7 @@ bool EditoriScene::haeNakyma(int nakyma)
     if( nakyma == 0)
         haeLiikennePaikat();
 
-
+    haeTekstit();
 
     new Ruudukko(this);
     return true;

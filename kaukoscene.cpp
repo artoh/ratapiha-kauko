@@ -40,5 +40,8 @@ bool KaukoScene::haeNakyma(int nakyma)
 
     // Nyt on näkymä haettu...
     nakyma_ = nakyma;
+
+    haeTekstit();
+
     return true;
 }

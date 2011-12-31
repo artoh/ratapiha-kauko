@@ -7,13 +7,14 @@
 #include "editoriview.h"
 #include "editorikisko.h"
 #include "editoriikkuna.h"
-#include "editoritekstikentta.h"
 
 #include <QMouseEvent>
 #include <QPointF>
 #include <QScrollBar>
 #include <cmath>
 #include <QSqlQuery>
+#include <QInputDialog>
+#include <QRegExp>
 
 EditoriView::EditoriView(EditoriScene *skene, EditoriIkkuna *ikkuna) :
     QGraphicsView(skene), skene_(skene), ikkuna_(ikkuna), tila_(0), piirtoViiva_(0),
@@ -143,8 +144,47 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
 
         case Teksti:
             // Luo uuden tekstikentän
-            EditoriTekstiKentta* tkentta = new EditoriTekstiKentta(skene_, sijainti);
-            valitseTila(Osoitin);
+            // Myöhemmin tänne tulee parempi editoridialogi, jossa fontin valintaa tms.
+            QGraphicsItem* item = skene_->itemAt(sijainti);
+            QGraphicsSimpleTextItem* tItem = qgraphicsitem_cast<QGraphicsSimpleTextItem*>(item);
+
+
+            if( tItem && tItem->data(1).toInt() > 0 )  // Siellä on jo tekstiä, eli muokataan
+            {
+                QString teksti = QInputDialog::getText(this, tr("Editori"),tr("Muokattava teksti"),QLineEdit::Normal, tItem->text() );
+                if( teksti.isEmpty())
+                {
+                    skene_->removeItem(tItem);
+                    delete tItem;
+                    QSqlQuery kysely;
+                    kysely.exec( QString("DELETE FROM teksti WHERE tekstiid=%1")
+                                 .arg(tItem->data(1).toInt()));
+                }
+                else
+                {
+                    tItem->setText(teksti);
+                    QSqlQuery kysely;
+                    kysely.exec( QString("UPDATE kisko SET teksti=\"%1\" WHERE tekstiid=%2")
+                                 .arg(teksti).arg(tItem->data(1).toInt() ));
+
+                }
+            }
+            else
+            {
+                // Uusi teksti
+                QString teksti = QInputDialog::getText(this, tr("Editori"),tr("Lisättävä teksti"));
+                if( !teksti.isEmpty())
+                {
+                    QGraphicsSimpleTextItem* tItem = skene_->addSimpleText(teksti, QFont("Helvetica",8));
+                    tItem->setPos(sijainti);
+
+                    QSqlQuery kysely;
+                    kysely.exec( QString("INSERT INTO teksti (nakyma,sijainti_x,sijainti_y,teksti) VALUES (%1,%2,%3,\"%4\");")
+                                 .arg(skene_->nakyma()).arg( qRound(sijainti.x())).arg( qRound(sijainti.y())).arg(teksti.remove(QRegExp("[\"\']"))) );
+                    tItem->setData(1, kysely.lastInsertId().toInt()); // Tästä tunnistaa itemin...
+                }
+            }
+
             break;
         }
 
