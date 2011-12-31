@@ -49,6 +49,7 @@ protected:
 
     QAction* osoitinAktio_;
     QAction* piirraAktio_;
+    QAction* pyyhiAktio_;
 
     QToolBar* hallintaToolBar_;
     QToolBar* muokkausToolBar_;

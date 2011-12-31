@@ -22,6 +22,21 @@ EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid
 
     skene->addItem(this);
     paidenTarkistusToimet();
+
+    // Jos ollaan vaihteessa, pyydetään numerotiedot naapurilta
+    if( etelaTyyppi() > 9 || pohjoisTyyppi() > 9)
+    {
+        QList<QGraphicsItem*> tormaajat = collidingItems();
+        foreach( QGraphicsItem* item, tormaajat)
+        {
+            if( EditoriKisko* ekisko = qgraphicsitem_cast<EditoriKisko*>(item))
+            {
+                ekisko->levitaRaiteenAsetus();
+            }
+        }
+    }
+
+
 }
 
 void EditoriKisko::paidenTarkistusToimet(bool tallenna)
@@ -43,6 +58,7 @@ void EditoriKisko::paidenTarkistusToimet(bool tallenna)
     if( tallenna )
         talletaKisko();
 }
+
 
 QRectF EditoriKisko::boundingRect() const
 {
@@ -178,7 +194,7 @@ void EditoriKisko::talletaKisko()
         kysely.prepare("INSERT INTO kisko (nakyma, liikennepaikka, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, sn, kiskotieto )"
                        "VALUES (:nakyma, :liikennepaikka, :raide, :etela_x, :etela_y, :pohjoinen_x, :pohjoinen_y, :sn, :kiskotieto)");
 
-        kysely.bindValue(":nakyma",skene_->nakyma());
+        kysely.bindValue(":nakyma", skene_->nakyma()  );
         kysely.bindValue(":liikennepaikka",liikennePaikka());
         kysely.bindValue(":raide",raide());
         kysely.bindValue(":etela_x",viiva().x1());

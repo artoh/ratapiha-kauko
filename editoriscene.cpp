@@ -15,7 +15,7 @@
 #include <cmath>
 
 EditoriScene::EditoriScene(QObject *parent) :
-    KiskoScene(parent)
+    KiskoScene(parent), nakyma_(-1)
 {
 
 }
@@ -24,6 +24,7 @@ EditoriScene::EditoriScene(QObject *parent) :
 bool EditoriScene::haeNakyma(int nakyma)
 {
     clear();
+    nakyma_ = nakyma;
 
     QSqlQuery nkys( QString("select kisko, liikennepaikka, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto from kisko where nakyma=%1").arg(nakyma) );
 
@@ -47,9 +48,9 @@ bool EditoriScene::haeNakyma(int nakyma)
     if( nakyma == 0)
         haeLiikennePaikat();
 
-    nakyma_ = nakyma;
 
-    ruudukko_ = new Ruudukko(this);
+
+    new Ruudukko(this);
     return true;
 
 
@@ -69,7 +70,7 @@ void EditoriScene::uusiNakyma(const QString &nimi)
     {
         nakyma_ = nakymaId;
         clear();
-        ruudukko_ = new Ruudukko(this);
+        new Ruudukko(this);
     }
 
 }

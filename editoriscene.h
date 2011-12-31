@@ -10,7 +10,6 @@
 
 #include "kiskoscene.h"
 
-class Ruudukko;
 
 class EditoriScene : public KiskoScene
 {
@@ -35,7 +34,6 @@ private:
     void haeLiikennePaikat();
 
     int nakyma_;
-    Ruudukko* ruudukko_;
     
 };
 

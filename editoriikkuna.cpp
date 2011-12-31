@@ -78,12 +78,21 @@ void EditoriIkkuna::luoAktiot()
     piirraAktio_->setCheckable(true);
     piirraAktio_->setData( EditoriView::Piirto );
     connect( piirraAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTilaActionilta()));
+
+    pyyhiAktio_ = new QAction( tr("Pyyhi"), this);
+    pyyhiAktio_->setIcon(QIcon(":/r/pic/pyyhekumi.png"));
+    pyyhiAktio_->setCheckable(true);
+    pyyhiAktio_->setData( EditoriView::Pyyhi );
+    connect( pyyhiAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTilaActionilta()));
+
 }
 
 void EditoriIkkuna::laitaTilaNappiAlas(int valittuTila)
 {
     osoitinAktio_->setChecked( valittuTila == EditoriView::Osoitin);
     piirraAktio_->setChecked( valittuTila == EditoriView::Piirto);
+    pyyhiAktio_->setChecked( valittuTila == EditoriView::Pyyhi);
+
 }
 
 void EditoriIkkuna::haeNakymaLista()
@@ -126,12 +135,15 @@ void EditoriIkkuna::kiskoValittu(EditoriKisko *kisko)
     if( kisko )
     {
 
-        if( liikennepaikkaCombo_->findData( kisko->liikennePaikka() )  )
+        if( liikennepaikkaCombo_->findData( kisko->liikennePaikka()) > -1 )
             liikennepaikkaCombo_->setCurrentIndex( liikennepaikkaCombo_->findData( kisko->liikennePaikka() )  );
+
         if( kisko->raide())
             raideLineEdit_->setText(QString("%1").arg(kisko->raide(),3,10,QChar('0')) );
         else
             raideLineEdit_->setText(QString());
+
+        raideLineEdit_->setFocus();     // Helpottaa raidenumeron syöttämisen
     }
     else
     {
@@ -153,6 +165,7 @@ void EditoriIkkuna::raideNumeroaMuutettu()
     {
         view_->valittuKisko()->asetaRaide( raideLineEdit_->text().toInt());
         view_->valittuKisko()->levitaRaiteenAsetus();
+        raideLineEdit_->setText(QString("%1").arg(view_->valittuKisko()->raide(),3,10,QChar('0')) );
     }
 }
 
@@ -169,6 +182,7 @@ void EditoriIkkuna::luoTyoPalkki()
     muokkausToolBar_ = addToolBar( tr("Muokkaus"));
     muokkausToolBar_->addAction(osoitinAktio_);
     muokkausToolBar_->addAction(piirraAktio_);
+    muokkausToolBar_->addAction(pyyhiAktio_);
 
     tunnisteToolBar_ = addToolBar( tr("Raide"));
     liikennepaikkaCombo_ = new QComboBox;

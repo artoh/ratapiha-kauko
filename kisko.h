@@ -31,6 +31,7 @@ public:
     qreal pituus() const { return pituus_; }
     Laituri laituri() const { return laituri_; }
     QString liikennePaikka() const {return liikennepaikka_; }
+    int kiskoId() const { return kiskoid_; }
     int raide() const { return raide_; }
     int sn() const { return sn_; }
 

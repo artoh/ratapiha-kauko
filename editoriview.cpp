@@ -12,6 +12,7 @@
 #include <QPointF>
 #include <QScrollBar>
 #include <cmath>
+#include <QSqlQuery>
 
 EditoriView::EditoriView(EditoriScene *skene, EditoriIkkuna *ikkuna) :
     QGraphicsView(skene), skene_(skene), ikkuna_(ikkuna), tila_(0), piirtoViiva_(0),
@@ -35,6 +36,10 @@ void EditoriView::valitseTila(int tila)
         setCursor( QCursor(QPixmap(":/r/pic/kyna.png"),1,30));
         poistaValinta();
         break;
+    case Pyyhi:
+        setCursor( QCursor(QPixmap(":/r/pic/pyyhekumi.png"),3,28));
+        poistaValinta();
+        break;
 
     }
     emit editorinTilaVaihtunut(tila_);
@@ -51,6 +56,7 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
 {
     QPointF sijainti = mapToScene( event->pos());
     // Kokeillaan löytyykö tuolta kiskoa
+
     EditoriKisko* kisko = 0;
     qreal viivaetaisyys = 99.9; // Valinnan etäisyys raideviivasta
 
@@ -92,6 +98,7 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
 
 
         case Piirto:
+        {
 
             // Aloitetaan piirtäminen
 
@@ -101,6 +108,33 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
             // Laitetaan piirtoviiva paikalleen
             piirtoViiva_ = new QGraphicsLineItem( QLineF(kohdistettu,kohdistettu));
             skene_->addItem(piirtoViiva_);
+        }
+            break;
+
+        case Pyyhi:
+            if( kisko )
+            {
+                // Poistetaan kyseinen. Pitää ottaa ensin naapurit turvaan...
+                QList<QGraphicsItem*> naapurit = kisko->collidingItems();
+
+                if( kisko->kiskoId() )
+                {
+                    // Poistetaan myös tietokannasta
+                    QSqlQuery kysely;
+                    kysely.exec( QString("DELETE FROM kisko WHERE kisko=%1").arg(kisko->kiskoId()) );
+                }
+
+                // Poistetaan valittu kisko
+                scene()->removeItem(kisko);
+                delete kisko;
+
+                // Naapureille vähän mietittävää
+                foreach( QGraphicsItem* naapuri, naapurit)
+                {
+                    if( EditoriKisko* naapuriKisko = qgraphicsitem_cast<EditoriKisko*>(naapuri))
+                        naapuriKisko->tarkistaPaanTyypit();
+                }
+            }
             break;
         }
 
