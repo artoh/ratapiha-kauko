@@ -15,7 +15,8 @@ HEADERS += \
     editoriscene.h \
     editoriikkuna.h \
     editoriview.h \
-    ruudukko.h
+    ruudukko.h \
+    editoritekstikentta.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -29,7 +30,8 @@ SOURCES += \
     editoriscene.cpp \
     editoriikkuna.cpp \
     editoriview.cpp \
-    ruudukko.cpp
+    ruudukko.cpp \
+    editoritekstikentta.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

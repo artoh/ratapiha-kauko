@@ -85,6 +85,12 @@ void EditoriIkkuna::luoAktiot()
     pyyhiAktio_->setData( EditoriView::Pyyhi );
     connect( pyyhiAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTilaActionilta()));
 
+    tekstiAktio_ = new QAction( tr("Lisää tekstiä"), this);
+    tekstiAktio_->setIcon(QIcon(":/r/pic/teksti.png"));
+    tekstiAktio_->setCheckable(true);
+    tekstiAktio_->setData( EditoriView::Teksti);
+    connect( tekstiAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTilaActionilta()));
+
 }
 
 void EditoriIkkuna::laitaTilaNappiAlas(int valittuTila)
@@ -92,6 +98,7 @@ void EditoriIkkuna::laitaTilaNappiAlas(int valittuTila)
     osoitinAktio_->setChecked( valittuTila == EditoriView::Osoitin);
     piirraAktio_->setChecked( valittuTila == EditoriView::Piirto);
     pyyhiAktio_->setChecked( valittuTila == EditoriView::Pyyhi);
+    tekstiAktio_->setChecked( valittuTila == EditoriView::Teksti);
 
 }
 
@@ -183,6 +190,7 @@ void EditoriIkkuna::luoTyoPalkki()
     muokkausToolBar_->addAction(osoitinAktio_);
     muokkausToolBar_->addAction(piirraAktio_);
     muokkausToolBar_->addAction(pyyhiAktio_);
+    muokkausToolBar_->addAction(tekstiAktio_);
 
     tunnisteToolBar_ = addToolBar( tr("Raide"));
     liikennepaikkaCombo_ = new QComboBox;

@@ -7,6 +7,7 @@
 #include "editoriview.h"
 #include "editorikisko.h"
 #include "editoriikkuna.h"
+#include "editoritekstikentta.h"
 
 #include <QMouseEvent>
 #include <QPointF>
@@ -39,6 +40,9 @@ void EditoriView::valitseTila(int tila)
     case Pyyhi:
         setCursor( QCursor(QPixmap(":/r/pic/pyyhekumi.png"),3,28));
         poistaValinta();
+        break;
+    case Teksti:
+        setCursor( Qt::IBeamCursor);
         break;
 
     }
@@ -135,6 +139,12 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
                         naapuriKisko->tarkistaPaanTyypit();
                 }
             }
+            break;
+
+        case Teksti:
+            // Luo uuden tekstikentän
+            EditoriTekstiKentta* tkentta = new EditoriTekstiKentta(skene_, sijainti);
+            valitseTila(Osoitin);
             break;
         }
 

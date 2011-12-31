@@ -20,7 +20,7 @@ class EditoriView : public QGraphicsView
     Q_OBJECT
 public:
     explicit EditoriView(EditoriScene* skene, EditoriIkkuna* ikkuna);
-    enum EditoriTila { Osoitin, Piirto, Pyyhi } ;
+    enum EditoriTila { Osoitin, Piirto, Pyyhi, Teksti } ;
 
     EditoriKisko* valittuKisko() { return valittuKisko_; }
 
