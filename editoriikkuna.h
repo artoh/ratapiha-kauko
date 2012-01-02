@@ -16,6 +16,7 @@
 #include <QComboBox>
 #include <QToolBar>
 #include <QAction>
+#include <QActionGroup>
 #include <QMainWindow>
 #include <QLineEdit>
 
@@ -41,6 +42,10 @@ public slots:
     /** Kun kisko valittu, päivitetään valintoja sen mukaisiksi*/
     void kiskoValittu(EditoriKisko* kisko);
 
+    /** Kun klikataan jotain kiskon määritettä.. */
+    void paivitaKiskonMaareet();
+
+
 protected:
     void luoAktiot();
     void luoTyoPalkki();
@@ -53,9 +58,18 @@ protected:
     QAction* tekstiAktio_;
     QAction* viivainAktio_;
 
+    QAction* laituriVasenAktio_;
+    QAction* laituriOikeaAktio_;
+
+    QAction* naytaJunanumerotAktio_;
+    QAction* naytaaRaidenumerotAktio_;
+
     QToolBar* hallintaToolBar_;
     QToolBar* muokkausToolBar_;
     QToolBar* tunnisteToolBar_;
+    QToolBar* rataKiskonToolBar_;
+    QToolBar* nakymaKiskonToolBar_;
+
     QComboBox* nakymaValinta_;
     QComboBox* liikennepaikkaCombo_;
     QLineEdit* raideLineEdit_;

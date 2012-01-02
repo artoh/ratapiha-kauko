@@ -35,6 +35,9 @@ public:
     /** Asettaa raiteen ja liikenenpaikan myös vaihdekavereille*/
     void levitaRaiteenAsetus();
 
+    void asetaRaiteenValintoja(Kisko::Laituri laituri, bool naytaRaideNumero = false,
+                               bool naytaJunaNumero = false );
+
     void talletaKisko();
 
 protected:

@@ -9,6 +9,7 @@
 #include "editoriscene.h"
 #include <QPainter>
 #include <QPen>
+#include <QRectF>
 #include <QList>
 #include <QSqlQuery>
 
@@ -35,7 +36,6 @@ EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid
             }
         }
     }
-
 
 }
 
@@ -80,9 +80,50 @@ void EditoriKisko::asetaLiikennepaikka(const QString &lyhenne)
 
 void EditoriKisko::asetaRaide(int raide)
 {
+    if( raide_ == 0)  // Raidenumero oli 0 - Asetetaan raidenumero ensimmäistä kertaa
+    {
+        // Tehdään tässä vaiheessa raidenumeron ja jn-numeron näytön oletukset
+        if( pohjoisTyyppi() == 10 || etelaTyyppi() == 10 )
+            naytaRaideNumero_ = true;   // Vaihteessa näytetään etujatkoksessa
+        else if( pohjoisTyyppi() < 10 && etelaTyyppi() < 10 && pituus() > 15)
+        {
+            // Ellei ole vaihteena, niin näytetään, jos riittävän pitkä, ellei naapurina ole
+            // toista samanmoista kiskoa, joka olisi pidempi
+            qreal pisin = 0.0;
+
+            QList<QGraphicsItem*> tormaajat = collidingItems();
+            foreach( QGraphicsItem* item, tormaajat)
+            {
+                if( EditoriKisko* ekisko = qgraphicsitem_cast<EditoriKisko*>(item))
+                {
+                    if( ekisko->raide() == raide && ekisko->pituus() > pisin)
+                        pisin = ekisko->pituus();
+                }
+            }
+            if( pisin < pituus() )
+            {
+                // Näytetään tälle!
+                naytaRaideNumero_ = true;
+                if( pituus() > 35)
+                    naytaJunaNumero_ = true;
+            }
+        }
+    }
+
     raide_ = raide;
     update(boundingRect());
 }
+
+
+void EditoriKisko::asetaRaiteenValintoja(Kisko::Laituri laituri, bool naytaRaideNumero, bool naytaJunaNumero)
+{
+
+   laituri_=laituri;
+   naytaRaideNumero_ = naytaRaideNumero;
+   naytaJunaNumero_ = naytaJunaNumero;
+   update(boundingRect());
+}
+
 
 void EditoriKisko::levitaRaiteenAsetus()
 {
@@ -124,15 +165,20 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
         painter->drawRect( QRectF( -3.0, -6.0, pituus()+6, 12 ) );
     }
 
-    painter->setPen( QPen(QBrush(Qt::green),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    if( etelaTyyppi() < 9)
+        painter->setPen( QPen(QBrush(Qt::green),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    else
+        painter->setPen( QPen(QBrush(Qt::blue),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+
+
     painter->drawLine(0.0, 0.0, 2.5, 0.0);
 
-    painter->setFont( QFont("Helvetica",2,QFont::Bold));
-    painter->drawText(QRectF(0.0, 1.0, 3.0, 4.0), QString("%1").arg( etelaTyyppi() ), QTextOption(Qt::AlignLeft));
+    if( pohjoisTyyppi() < 9)
+        painter->setPen( QPen(QBrush(Qt::darkGreen),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    else
+        painter->setPen( QPen(QBrush(Qt::blue),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
 
-    painter->setPen( QPen(QBrush(Qt::darkGreen),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
     painter->drawLine(pituus()-2.5, 0.0, pituus(), 0.0);
-    painter->drawText(QRectF(pituus()-4.0, 1.0, 3.0, 4.0), QString("%1").arg( pohjoisTyyppi() ), QTextOption(Qt::AlignRight));
 
 
 
@@ -141,11 +187,14 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
         // Raidetunnus laitetaan kiskon ylle
         if( etelapaaTyyppi_ > 9 || pohjoispaaTyyppi_ > 9)
         {
-            painter->setFont( QFont("Helvetica",2,QFont::DemiBold));
+            if( naytaRaideNumero())
+                painter->setFont( QFont("Helvetica",4,QFont::Bold));
+            else
+                painter->setFont( QFont("Helvetica",2,QFont::Normal));
+
             painter->setPen( QPen(Qt::blue));   // Vaihde tai RR
             if( etelaTyyppi() == VaihdeJatkos || pohjoisTyyppi() == VaihdeJatkos)
             {
-                painter->setFont( QFont("Helvetica",4,QFont::Bold));
                 painter->drawText(QRectF(0.0, -9.0, pituus(), 5.0), QString("%1").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
             }
             else if( etelaTyyppi() == VaihdeVasen )
@@ -159,7 +208,10 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
         }
         else
         {
-            painter->setFont( QFont("Helvetica",4,QFont::Bold));
+            if( naytaRaideNumero())
+                painter->setFont( QFont("Helvetica",4,QFont::Bold));
+            else
+                painter->setFont( QFont("Helvetica",3,QFont::Normal));
             painter->setPen( QPen(Qt::black));
             painter->drawText(QRectF(0.0, -9.0, pituus(), 5.0), QString("%1").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
         }
@@ -178,26 +230,34 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
     // Raiteen piirtäminen
     painter->drawLine(2.5, 0.0, pituus()-2.5, 0.0);
 
+    if(naytaJunaNumero())
+    {
+        // Junanumerolätkän piirtäminen
+        painter->setBrush(QBrush(Qt::white));
+        painter->setPen( QPen(QBrush(Qt::black),0.4, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->drawRect(QRectF( pituus() / 2 - 14.0 , -4.0 , 28.0 , 8.0  ));
+    }
 
     // Laiturin piirtäminenn
     // Piirretään laituri.
-    if( laituri() == LaituriVasemmalla  || laituri() == LaituriOikealla )
+    if( laituri() )
     {
         painter->setPen( QPen(QBrush( Qt::black), 1.0, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin) );
-        QPolygonF laituriviiva;
-        if( laituri() == LaituriVasemmalla )
-            laituriviiva << QPointF(10.0, -14.0) << QPointF(10.0, -11.0) << QPointF( pituus()-10.0, -11.0) << QPointF(pituus()-10.0,-14.0);
-        else
-            laituriviiva << QPointF(10.0, 14.0) << QPointF(10.0, 11.0) << QPointF( pituus()-10.0, 11.0) << QPointF(pituus()-10.0,14.0);
-        painter->drawPolyline(laituriviiva);
+        if( laituri() == LaituriVasemmalla || laituri() == LaituriMolemmat)
+        {
+            QPolygonF laituriviiva;
+            laituriviiva << QPointF(10.0, -7.0) << QPointF(10.0, -4.0) << QPointF( pituus()-10.0, -4.0) << QPointF(pituus()-10.0,-7.0);
+            painter->drawPolyline(laituriviiva);
+        }
 
-        painter->setFont(QFont("Helvetica",3));
-        QString laituriteksti = QString("%1 %2").arg(liikennePaikka()).arg( raide() % 100 );
+        if( laituri() == LaituriOikealla || laituri() == LaituriMolemmat)
+        {
+            QPolygonF laituriviiva;
+            laituriviiva << QPointF(10.0, 7.0) << QPointF(10.0, 4.0) << QPointF( pituus()-10.0, 4.0) << QPointF(pituus()-10.0,7.0);
+            painter->drawPolyline(laituriviiva);
+        }
 
-        if( laituri() == LaituriVasemmalla )
-            painter->drawText(QRectF(0.0, -15.0, pituus(), 4.0), laituriteksti, QTextOption(Qt::AlignCenter));
-        else
-            painter->drawText(QRectF(0.0, 11.5, pituus(), 4.0), laituriteksti, QTextOption(Qt::AlignCenter));
+
        }
 
 }
@@ -294,8 +354,15 @@ QString EditoriKisko::kiskoTietoTalletettavaksi() const
         kiskotieto.append("Lv ");
     else if(laituri() == LaituriOikealla)
         kiskotieto.append("Lo ");
+    else if(laituri() == LaituriMolemmat)
+        kiskotieto.append("Lm ");
 
     // Vielä: Nr, Nj, Kj, Kt, Kv, EoE, EoP
+    if( naytaJunaNumero())
+        kiskotieto.append("Nj ");
+    if( naytaRaideNumero())
+        kiskotieto.append("Nr ");
+
 
     return kiskotieto;
 }

@@ -53,6 +53,9 @@ private:
     int tila_;  // int jotta tilaa voidaan muuttaa
     QGraphicsLineItem* piirtoViiva_;
     EditoriKisko* valittuKisko_;
+
+    /** Käytetäänkö hiiren rullaa skaalaamiseen vai vierittäimiseen */
+    bool rullaSkaalaa_;
 };
 
 #endif // EDITORIVIEW_H

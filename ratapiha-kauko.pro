@@ -43,6 +43,10 @@ OTHER_FILES += \
     pic/teksti.png \
     pic/pyyhekumi.png \
     pic/muokkaa.png \
-    pic/kyna.png
+    pic/kyna.png \
+    pic/laituri-oikea.png \
+    pic/laituri-vasen.png \
+    pic/nayta-junanumerot.png \
+    pic/nayta-raidenumerot.png
 
 

@@ -33,6 +33,7 @@ EditoriIkkuna::EditoriIkkuna(int nakyma, QWidget *parent) :
     nakymaValinta_->setCurrentIndex( nakymaValinta_->findData(nakyma) );
     skene_->haeNakyma(nakyma);
     view_->valitseTila(EditoriView::Osoitin);
+    kiskoValittu(0);
 }
 
 
@@ -51,7 +52,13 @@ void EditoriIkkuna::nakymanVaihto(int valintaind)
     }
 
     else
-        skene_->haeNakyma( nakymaValinta_->itemData( valintaind).toInt());
+    {
+        int nakymanId = nakymaValinta_->itemData( valintaind).toInt();
+        skene_->haeNakyma( nakymanId );
+
+        rataKiskonToolBar_->setVisible( nakymanId == 0);
+        nakymaKiskonToolBar_->setVisible( nakymanId != 0);
+    }
 
 
 }
@@ -98,6 +105,29 @@ void EditoriIkkuna::luoAktiot()
     viivainAktio_ ->setData( EditoriView::Viivain);
     connect( viivainAktio_ , SIGNAL(triggered()), this, SLOT(vaihdaTilaActionilta()));
 
+
+    // Laiturivalinnat
+    laituriVasenAktio_ = new QAction( tr("Laituri vasemmalla"), this);
+    laituriVasenAktio_ ->setIcon(QIcon(":/r/pic/laituri-vasen.png"));
+    laituriVasenAktio_ ->setCheckable(true);
+    connect( laituriVasenAktio_ , SIGNAL(triggered()), this, SLOT(paivitaKiskonMaareet()));
+
+    laituriOikeaAktio_ = new QAction( tr("Laituri oikealla"), this);
+    laituriOikeaAktio_ ->setIcon(QIcon(":/r/pic/laituri-oikea.png"));
+    laituriOikeaAktio_ ->setCheckable(true);
+    connect( laituriOikeaAktio_ , SIGNAL(triggered()), this, SLOT(paivitaKiskonMaareet()));
+
+    naytaJunanumerotAktio_ = new QAction( tr("Näytä junanumero"), this);
+    naytaJunanumerotAktio_->setIcon( QIcon(":/r/pic/nayta-junanumerot.png"));
+    naytaJunanumerotAktio_ ->setCheckable(true);
+    connect( naytaJunanumerotAktio_ , SIGNAL(triggered()), this, SLOT(paivitaKiskonMaareet()));
+
+    naytaaRaidenumerotAktio_ = new QAction( tr("Näytä raiteen numero"), this);
+    naytaaRaidenumerotAktio_->setIcon( QIcon(":/r/pic/nayta-raidenumerot.png"));
+    naytaaRaidenumerotAktio_ ->setCheckable(true);
+    connect( naytaaRaidenumerotAktio_ , SIGNAL(triggered()), this, SLOT(paivitaKiskonMaareet()));
+
+
 }
 
 void EditoriIkkuna::laitaTilaNappiAlas(int valittuTila)
@@ -106,6 +136,7 @@ void EditoriIkkuna::laitaTilaNappiAlas(int valittuTila)
     piirraAktio_->setChecked( valittuTila == EditoriView::Piirto);
     pyyhiAktio_->setChecked( valittuTila == EditoriView::Pyyhi);
     tekstiAktio_->setChecked( valittuTila == EditoriView::Teksti);
+    viivainAktio_->setChecked( valittuTila == EditoriView::Viivain);
 
 }
 
@@ -157,14 +188,60 @@ void EditoriIkkuna::kiskoValittu(EditoriKisko *kisko)
         else
             raideLineEdit_->setText(QString());
 
+        raideLineEdit_->setEnabled(true);
         raideLineEdit_->setFocus();     // Helpottaa raidenumeron syöttämisen
+
+        if( skene_->nakyma() )
+        {
+            // On kaukonäkymä
+            nakymaKiskonToolBar_->setVisible(true);
+            nakymaKiskonToolBar_->setEnabled(true);
+        }
+        else
+        {
+            rataKiskonToolBar_->setVisible(true);
+            rataKiskonToolBar_->setEnabled(true);
+        }
+
+        // Laiturin asetukset
+        laituriVasenAktio_->setChecked( kisko->laituri() == Kisko::LaituriVasemmalla || kisko->laituri() == Kisko::LaituriMolemmat);
+        laituriOikeaAktio_->setChecked( kisko->laituri() == Kisko::LaituriOikealla || kisko->laituri() == Kisko::LaituriMolemmat);
+
+        // Jn-valintoja...
+        naytaJunanumerotAktio_->setChecked( kisko->naytaJunaNumero());
+        naytaaRaidenumerotAktio_->setChecked(kisko->naytaRaideNumero());
+
     }
     else
     {
         // Kiskoa ei ole valittu, liikennepaikka säilyy edellisen mukaan,
         // mutta raidenumeroa ei toistella...
+        rataKiskonToolBar_->setEnabled(false);
+        nakymaKiskonToolBar_->setEnabled(false);
+
         raideLineEdit_->setText(QString());
+        raideLineEdit_->setEnabled(false);
     }
+}
+
+void EditoriIkkuna::paivitaKiskonMaareet()
+{
+    EditoriKisko* kisko = view_->valittuKisko();
+    if( !kisko )
+        return;     // Ellei valittua niin oi voi
+
+    Kisko::Laituri laiturityyppi = Kisko::LaituriEi;
+    // Laiturin asettaminen
+    if( laituriVasenAktio_->isChecked() && laituriOikeaAktio_->isChecked())
+        laiturityyppi = Kisko::LaituriMolemmat;
+    else if( laituriVasenAktio_->isChecked() )
+        laiturityyppi = Kisko::LaituriVasemmalla;
+    else if( laituriOikeaAktio_->isChecked())
+        laiturityyppi = Kisko::LaituriVasemmalla;
+
+    kisko->asetaRaiteenValintoja(laiturityyppi, naytaaRaidenumerotAktio_->isChecked(), naytaJunanumerotAktio_->isChecked());
+
+    kisko->talletaKisko();
 }
 
 
@@ -179,7 +256,8 @@ void EditoriIkkuna::raideNumeroaMuutettu()
     {
         view_->valittuKisko()->asetaRaide( raideLineEdit_->text().toInt());
         view_->valittuKisko()->levitaRaiteenAsetus();
-        raideLineEdit_->setText(QString("%1").arg(view_->valittuKisko()->raide(),3,10,QChar('0')) );
+        kiskoValittu( view_->valittuKisko());   // Tällä päivitetään valinnat
+            // - raiteen numero lineEditiin ja mahd. raide/jn-näyttämiset
     }
 }
 
@@ -207,10 +285,18 @@ void EditoriIkkuna::luoTyoPalkki()
     tunnisteToolBar_->addWidget(liikennepaikkaCombo_);
 
     raideLineEdit_ = new QLineEdit();
-  //  raideLineEdit_->setInputMask("0000");
     raideLineEdit_->setValidator(new QIntValidator(0,9999,raideLineEdit_));
     connect( raideLineEdit_, SIGNAL(editingFinished()), this, SLOT(raideNumeroaMuutettu()));
     tunnisteToolBar_->addWidget(raideLineEdit_);
 
+    rataKiskonToolBar_ = addToolBar( tr("Muokkaa rataa"));
+    rataKiskonToolBar_->setVisible(false);
+    rataKiskonToolBar_->addAction(laituriVasenAktio_);
+    rataKiskonToolBar_->addAction(laituriOikeaAktio_);
 
+    nakymaKiskonToolBar_ = addToolBar( tr("Muokkaa näkymän kiskoa"));
+    nakymaKiskonToolBar_->addAction(laituriVasenAktio_);
+    nakymaKiskonToolBar_->addAction(laituriOikeaAktio_);
+    nakymaKiskonToolBar_->addAction(naytaJunanumerotAktio_);
+    nakymaKiskonToolBar_->addAction(naytaaRaidenumerotAktio_);
 }

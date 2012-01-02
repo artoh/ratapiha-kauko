@@ -15,7 +15,9 @@ Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, in
     kiskoid_(kiskoid), liikennepaikka_(liikennepaikka), raide_(raide), sn_(sn),
     viiva_(viiva),
     etelapaaTyyppi_(Valille),
-    pohjoispaaTyyppi_(Valille)
+    pohjoispaaTyyppi_(Valille),
+    naytaRaideNumero_(false),
+    naytaJunaNumero_(false)
 {
     // Ensin sijoitetaan viivan fyysinen sijainti
     pituus_ = viiva.length();
@@ -27,6 +29,8 @@ Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, in
         laituri_ = LaituriVasemmalla;
     else if(kiskodata.contains("Lo"))
         laituri_ = LaituriOikealla;
+    else if(kiskodata.contains("Lm"))
+        laituri_ = LaituriMolemmat;
     else
         laituri_ = LaituriEi;
 
@@ -49,6 +53,10 @@ Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, in
         pohjoispaaTyyppi_ = VaihdeOikea;
     else if(kiskodata.contains("P*"))
         pohjoispaaTyyppi_ = Paa;
+
+    // Junanumeroiden ja raitetten näyttö
+    naytaJunaNumero_ = kiskodata.contains("Nj");
+    naytaRaideNumero_ = kiskodata.contains("Nj");
 
 }
 

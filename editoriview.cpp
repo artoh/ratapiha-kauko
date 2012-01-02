@@ -19,7 +19,7 @@
 
 EditoriView::EditoriView(EditoriScene *skene, EditoriIkkuna *ikkuna) :
     QGraphicsView(skene), skene_(skene), ikkuna_(ikkuna), tila_(0), piirtoViiva_(0),
-    valittuKisko_(0)
+    valittuKisko_(0), rullaSkaalaa_(true)
 {
     setMouseTracking(true);
 
@@ -204,6 +204,28 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
 
 
     }
+    else if( event->button() == Qt::MiddleButton)
+    {
+        // Keskimmäinen nappi vaihtaa hiiren rullan tilaa skaalauksen ja vierityksen väliltä.
+        rullaSkaalaa_ = !rullaSkaalaa_;
+    }
+    else if( event->button() == Qt::XButton1)
+    {
+        // Sivussa oleva erikoisnappi
+        // vaihtaa piirtotilan ja osoitintilan välillä
+        if( tila() == Osoitin)
+            valitseTila(Piirto);
+        else
+            valitseTila(Osoitin);
+    }
+    else if( event->button() == Qt::XButton2)
+    {
+        // Toisella nappulalla laitetaan poistotila
+        if( tila() == Pyyhi )
+            valitseTila(Pyyhi);
+        else
+            valitseTila(Teksti);
+    }
 }
 
 
@@ -216,14 +238,7 @@ void EditoriView::mouseMoveEvent(QMouseEvent *event)
     {
         // Piirto on käynnissä. Korjataan piirtoviivan loppupää
             piirtoViiva_->setLine( QLineF(piirtoViiva_->line().p1(), kohdista(sijainti)  )   );
-       // Skene kasvatetaan, niin että mahtuu
- /*
-        if( rata_->mahdutaRadalle( piirtoviiva_->line().p2() ) && ruudukko_)
-        {
-            ruudukko_->update(scene()->sceneRect());
-            ruudukko_->naytaPiirtoViivat(true);
-        }
-  */
+
         ensureVisible( QRectF( piirtoViiva_->line().x2(), piirtoViiva_->line().y2(), 10.0, 10.0) );
         emit naytettavaRaiteenPituus( piirtoViiva_->line().length() );
     }
@@ -263,11 +278,10 @@ void EditoriView::mouseReleaseEvent(QMouseEvent *event)
 
 void EditoriView::wheelEvent(QWheelEvent *event)
 {
-    bool skaalausTila = true;
 
     if( event->orientation() == Qt::Horizontal)
     {
-        if( skaalausTila )
+        if( rullaSkaalaa_ )
         {
             double asteet = event->delta() / 8.0;
             rotate(asteet);
@@ -279,7 +293,7 @@ void EditoriView::wheelEvent(QWheelEvent *event)
     }
     else
     {
-        if( skaalausTila)
+        if( rullaSkaalaa_ )
         {
             double numDegrees = -event->delta() / 8.0 ;
             double numSteps = numDegrees / 15.0;
