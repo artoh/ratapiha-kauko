@@ -45,8 +45,10 @@ void EditoriView::valitseTila(int tila)
         break;
     case Teksti:
         setCursor( Qt::IBeamCursor);
+        poistaValinta();
     case Viivain:
         setCursor( QCursor(QPixmap(":/r/pic/viivain.png"),8,21));
+        poistaValinta();
         break;
 
     }
@@ -57,6 +59,7 @@ void EditoriView::poistaValinta()
 {
     if( valittuKisko())
         valittuKisko()->valitse(false);
+    ikkuna_->kiskoValittu(0);
     valittuKisko_ = 0;
 }
 
@@ -222,9 +225,9 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
     {
         // Toisella nappulalla laitetaan poistotila
         if( tila() == Pyyhi )
-            valitseTila(Pyyhi);
+            valitseTila(Viivain);
         else
-            valitseTila(Teksti);
+            valitseTila(Pyyhi);
     }
 }
 
@@ -258,7 +261,12 @@ void EditoriView::mouseReleaseEvent(QMouseEvent *event)
         {
             if( tila_ == Piirto)
             {
-               new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka());
+                if( skene_->nakyma())
+                    // Näkymä
+                    new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka());
+                else
+                    // Ratakisko - tällä on sn
+                    new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka(),0,QString(),ikkuna_->nykyNopeusRajoitus());
             }
             else if(tila() == Viivain)
                 skene_->addItem( new MittaNauha(piirtoViiva_->line()));

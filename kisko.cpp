@@ -56,7 +56,7 @@ Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, in
 
     // Junanumeroiden ja raitetten näyttö
     naytaJunaNumero_ = kiskodata.contains("Nj");
-    naytaRaideNumero_ = kiskodata.contains("Nj");
+    naytaRaideNumero_ = kiskodata.contains("Nr");
 
 }
 
@@ -82,7 +82,7 @@ Kisko::PaanTyyppi Kisko::tarkistaTyyppiPaalle(QPointF piste)
     QList<Kisko*> naapurit = haeNaapurit(piste);
 
     if( naapurit.count() == 0 )
-        return Paa;
+        return RaidePuskuri;
     else if( naapurit.count() == 1)
     {
         if( raide() > 0 &&

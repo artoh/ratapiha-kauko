@@ -26,7 +26,7 @@ bool EditoriScene::haeNakyma(int nakyma)
     clear();
     nakyma_ = nakyma;
 
-    QSqlQuery nkys( QString("select kisko, liikennepaikka, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto from kisko where nakyma=%1").arg(nakyma) );
+    QSqlQuery nkys( QString("select kisko, liikennepaikka, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto, sn from kisko where nakyma=%1").arg(nakyma) );
 
 
     while(nkys.next())
@@ -38,8 +38,11 @@ bool EditoriScene::haeNakyma(int nakyma)
                              nkys.value(5).toInt(), 0-nkys.value(6).toInt())  );
 
         QString kiskodata = nkys.value(7).toString();
+        int sn = nkys.value(8).toInt();
+        if( !nakyma && !sn)
+            sn = 35;    // Ellei muuta nopeutta ole määritelty
 
-        new EditoriKisko(this, viiva, kkid, liikennepaikka, raide, kiskodata );
+        new EditoriKisko(this, viiva, kkid, liikennepaikka, raide, kiskodata, sn );
 
     }
 

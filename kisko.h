@@ -22,7 +22,8 @@ class Kisko : public QGraphicsItem
 {
 public:
     enum Laituri { LaituriEi = 0, LaituriVasemmalla = 1, LaituriOikealla = 2, LaituriMolemmat = 3};
-    enum PaanTyyppi { Virhe = 0, Valille = 1, Paa = 2, VaihdeJatkos = 10, VaihdeVasen = 11, VaihdeOikea = 12 };
+    enum PaanTyyppi { Virhe = 0, Valille = 1, Paa = 2, RaidePuskuri = 3 /** Päättyvä raide */ ,
+                      VaihdeJatkos = 10, VaihdeVasen = 11, VaihdeOikea = 12 };
 
     Kisko( const QLineF& viiva, int kiskoid=0, const QString& liikennepaikka=QString(), int raide = 0,
            const QString& kiskodata = QString(), int sn=0);

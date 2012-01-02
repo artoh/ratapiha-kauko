@@ -27,6 +27,7 @@ public:
     explicit EditoriIkkuna(int nakyma, QWidget *parent = 0);
     
     QString nykyLiikennePaikka() const;
+    int nykyNopeusRajoitus() const;
 
 signals:
 
@@ -51,12 +52,15 @@ protected:
     void luoTyoPalkki();
     void haeNakymaLista();
     void haeLiikennepaikkaLista();
+    void teeSnCombo();
 
     QAction* osoitinAktio_;
     QAction* piirraAktio_;
     QAction* pyyhiAktio_;
     QAction* tekstiAktio_;
     QAction* viivainAktio_;
+
+    QActionGroup* valittuihinLiittyvat_;
 
     QAction* laituriVasenAktio_;
     QAction* laituriOikeaAktio_;
@@ -73,6 +77,7 @@ protected:
     QComboBox* nakymaValinta_;
     QComboBox* liikennepaikkaCombo_;
     QLineEdit* raideLineEdit_;
+    QComboBox* snCombo_;
 
     EditoriScene *skene_;
     EditoriView* view_;

@@ -17,14 +17,14 @@ EditoriIkkuna::EditoriIkkuna(int nakyma, QWidget *parent) :
     QMainWindow(parent)
 {
     setWindowTitle("Editori");
+    luoAktiot();
+    luoTyoPalkki();
 
     skene_ = new EditoriScene;
     view_ = new EditoriView( skene_, this);
 
     view_->scale(2.0, 2.0);
 
-    luoAktiot();
-    luoTyoPalkki();
 
     setCentralWidget(view_);
     connect( view_, SIGNAL(editorinTilaVaihtunut(int)), this, SLOT(laitaTilaNappiAlas(int)));
@@ -59,6 +59,7 @@ void EditoriIkkuna::nakymanVaihto(int valintaind)
         rataKiskonToolBar_->setVisible( nakymanId == 0);
         nakymaKiskonToolBar_->setVisible( nakymanId != 0);
     }
+    kiskoValittu(0);
 
 
 }
@@ -107,22 +108,25 @@ void EditoriIkkuna::luoAktiot()
 
 
     // Laiturivalinnat
-    laituriVasenAktio_ = new QAction( tr("Laituri vasemmalla"), this);
+    valittuihinLiittyvat_ = new QActionGroup(this);
+    valittuihinLiittyvat_->setExclusive(false);
+
+    laituriVasenAktio_ = new QAction( tr("Laituri vasemmalla"), valittuihinLiittyvat_);
     laituriVasenAktio_ ->setIcon(QIcon(":/r/pic/laituri-vasen.png"));
     laituriVasenAktio_ ->setCheckable(true);
     connect( laituriVasenAktio_ , SIGNAL(triggered()), this, SLOT(paivitaKiskonMaareet()));
 
-    laituriOikeaAktio_ = new QAction( tr("Laituri oikealla"), this);
+    laituriOikeaAktio_ = new QAction( tr("Laituri oikealla"), valittuihinLiittyvat_);
     laituriOikeaAktio_ ->setIcon(QIcon(":/r/pic/laituri-oikea.png"));
     laituriOikeaAktio_ ->setCheckable(true);
     connect( laituriOikeaAktio_ , SIGNAL(triggered()), this, SLOT(paivitaKiskonMaareet()));
 
-    naytaJunanumerotAktio_ = new QAction( tr("Näytä junanumero"), this);
+    naytaJunanumerotAktio_ = new QAction( tr("Näytä junanumero"), valittuihinLiittyvat_);
     naytaJunanumerotAktio_->setIcon( QIcon(":/r/pic/nayta-junanumerot.png"));
     naytaJunanumerotAktio_ ->setCheckable(true);
     connect( naytaJunanumerotAktio_ , SIGNAL(triggered()), this, SLOT(paivitaKiskonMaareet()));
 
-    naytaaRaidenumerotAktio_ = new QAction( tr("Näytä raiteen numero"), this);
+    naytaaRaidenumerotAktio_ = new QAction( tr("Näytä raiteen numero"), valittuihinLiittyvat_);
     naytaaRaidenumerotAktio_->setIcon( QIcon(":/r/pic/nayta-raidenumerot.png"));
     naytaaRaidenumerotAktio_ ->setCheckable(true);
     connect( naytaaRaidenumerotAktio_ , SIGNAL(triggered()), this, SLOT(paivitaKiskonMaareet()));
@@ -188,6 +192,7 @@ void EditoriIkkuna::kiskoValittu(EditoriKisko *kisko)
         else
             raideLineEdit_->setText(QString());
 
+        valittuihinLiittyvat_->setEnabled(true);
         raideLineEdit_->setEnabled(true);
         raideLineEdit_->setFocus();     // Helpottaa raidenumeron syöttämisen
 
@@ -195,29 +200,31 @@ void EditoriIkkuna::kiskoValittu(EditoriKisko *kisko)
         {
             // On kaukonäkymä
             nakymaKiskonToolBar_->setVisible(true);
-            nakymaKiskonToolBar_->setEnabled(true);
+
+            // Jn-valintoja...
+            naytaJunanumerotAktio_->setChecked( kisko->naytaJunaNumero());
+            naytaaRaidenumerotAktio_->setChecked(kisko->naytaRaideNumero());
         }
         else
         {
             rataKiskonToolBar_->setVisible(true);
-            rataKiskonToolBar_->setEnabled(true);
+
+            // Sn
+            snCombo_->setCurrentIndex( snCombo_->findData( kisko->sn()) );
         }
 
         // Laiturin asetukset
         laituriVasenAktio_->setChecked( kisko->laituri() == Kisko::LaituriVasemmalla || kisko->laituri() == Kisko::LaituriMolemmat);
         laituriOikeaAktio_->setChecked( kisko->laituri() == Kisko::LaituriOikealla || kisko->laituri() == Kisko::LaituriMolemmat);
 
-        // Jn-valintoja...
-        naytaJunanumerotAktio_->setChecked( kisko->naytaJunaNumero());
-        naytaaRaidenumerotAktio_->setChecked(kisko->naytaRaideNumero());
+
 
     }
     else
     {
         // Kiskoa ei ole valittu, liikennepaikka säilyy edellisen mukaan,
         // mutta raidenumeroa ei toistella...
-        rataKiskonToolBar_->setEnabled(false);
-        nakymaKiskonToolBar_->setEnabled(false);
+        valittuihinLiittyvat_->setEnabled(false);
 
         raideLineEdit_->setText(QString());
         raideLineEdit_->setEnabled(false);
@@ -237,9 +244,9 @@ void EditoriIkkuna::paivitaKiskonMaareet()
     else if( laituriVasenAktio_->isChecked() )
         laiturityyppi = Kisko::LaituriVasemmalla;
     else if( laituriOikeaAktio_->isChecked())
-        laiturityyppi = Kisko::LaituriVasemmalla;
+        laiturityyppi = Kisko::LaituriOikealla;
 
-    kisko->asetaRaiteenValintoja(laiturityyppi, naytaaRaidenumerotAktio_->isChecked(), naytaJunanumerotAktio_->isChecked());
+    kisko->asetaRaiteenValintoja(laiturityyppi, naytaaRaidenumerotAktio_->isChecked(), naytaJunanumerotAktio_->isChecked(), nykyNopeusRajoitus());
 
     kisko->talletaKisko();
 }
@@ -248,6 +255,13 @@ void EditoriIkkuna::paivitaKiskonMaareet()
 QString EditoriIkkuna::nykyLiikennePaikka() const
 {
     return liikennepaikkaCombo_->itemData(liikennepaikkaCombo_->currentIndex() ).toString();
+}
+
+int EditoriIkkuna::nykyNopeusRajoitus() const
+{
+    if( skene_->nakyma())
+        return 0;   // sn ei tallenneta näkymälle
+    return snCombo_->itemData( snCombo_->currentIndex()  ).toInt();
 }
 
 void EditoriIkkuna::raideNumeroaMuutettu()
@@ -293,10 +307,30 @@ void EditoriIkkuna::luoTyoPalkki()
     rataKiskonToolBar_->setVisible(false);
     rataKiskonToolBar_->addAction(laituriVasenAktio_);
     rataKiskonToolBar_->addAction(laituriOikeaAktio_);
+    teeSnCombo();
+    rataKiskonToolBar_->addWidget(snCombo_);
 
     nakymaKiskonToolBar_ = addToolBar( tr("Muokkaa näkymän kiskoa"));
     nakymaKiskonToolBar_->addAction(laituriVasenAktio_);
     nakymaKiskonToolBar_->addAction(laituriOikeaAktio_);
     nakymaKiskonToolBar_->addAction(naytaJunanumerotAktio_);
     nakymaKiskonToolBar_->addAction(naytaaRaidenumerotAktio_);
+}
+
+void EditoriIkkuna::teeSnCombo()
+{
+    // Nopeusrajoituksen valinta
+    snCombo_ = new QComboBox;
+    snCombo_->addItem("220 km/h", 220);
+    snCombo_->addItem("200 km/h", 200);
+    snCombo_->addItem("160 km/h", 160);
+    snCombo_->addItem("120 km/h", 120);
+    snCombo_->addItem("100 km/h", 100);
+    snCombo_->addItem("80 km/h", 80);
+    snCombo_->addItem("50 km/h", 50);
+    snCombo_->addItem("35 km/h", 35);
+    snCombo_->addItem("20 km/h", 20);
+    snCombo_->addItem("10 km/h", 10);
+
+    snCombo_->setCurrentIndex(5);
 }

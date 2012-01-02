@@ -17,7 +17,7 @@ KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int kiskoid, cons
     naytaraidenumero_ = kiskodata.contains("Nr");
 
     // Sijoitetaan tunnus, jos numero sopii
-    if( 1 )
+    if( naytaRaideNumero() )
     {
             raidetunnus_ = QString("%1").arg(raide,3,10,QChar('0'));
     }
@@ -45,17 +45,22 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     qreal alku = 0.0;
     qreal loppu = pituus();
 
-    if( etelaTyyppi() == Paa)
+    if( etelaTyyppi() == Paa )
         alku = 0.5;
-    if( pohjoisTyyppi() == Paa)
+    if( pohjoisTyyppi() == Paa )
         loppu = pituus() - 0.5;
 
     painter->drawLine(alku, 0.0, loppu, 0.0);
 
-    if( 1 == 1 ) // Nyt näytetään aina raidenumero!
+
+    if( naytaRaideNumero() ) // Näytellään raiteen numeroa
     {
         painter->setFont( QFont("Helvetica",4,QFont::Bold));
-        painter->setPen( QPen(Qt::black));
+        if( etelaTyyppi() < 10 && pohjoisTyyppi() < 10)
+            painter->setPen( QPen(Qt::black));
+        else
+            painter->setPen( QPen(Qt::blue)); // Vaihde tai raideristeys: numero sinisellä
+        // -- tai sitten yhtä sun toista riippuen sivulukituksista sun muista ;)
         painter->drawText(QRectF(0.0, -9.0, pituus(), 5.0), raidetunnus_, QTextOption(Qt::AlignCenter));
     }
 

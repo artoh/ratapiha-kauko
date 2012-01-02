@@ -75,12 +75,12 @@ void EditoriKisko::asetaLiikennepaikka(const QString &lyhenne)
 {
     liikennepaikka_ = lyhenne;
     update(boundingRect());
-
 }
+
 
 void EditoriKisko::asetaRaide(int raide)
 {
-    if( raide_ == 0)  // Raidenumero oli 0 - Asetetaan raidenumero ensimmäistä kertaa
+    if( raide_ == 0 && skene_->nakyma() )  // Raidenumero oli 0 - Asetetaan raidenumero ensimmäistä kertaa
     {
         // Tehdään tässä vaiheessa raidenumeron ja jn-numeron näytön oletukset
         if( pohjoisTyyppi() == 10 || etelaTyyppi() == 10 )
@@ -115,12 +115,13 @@ void EditoriKisko::asetaRaide(int raide)
 }
 
 
-void EditoriKisko::asetaRaiteenValintoja(Kisko::Laituri laituri, bool naytaRaideNumero, bool naytaJunaNumero)
+void EditoriKisko::asetaRaiteenValintoja(Kisko::Laituri laituri, bool naytaRaideNumero, bool naytaJunaNumero, int sn)
 {
 
    laituri_=laituri;
    naytaRaideNumero_ = naytaRaideNumero;
    naytaJunaNumero_ = naytaJunaNumero;
+   sn_ = sn;
    update(boundingRect());
 }
 
@@ -164,22 +165,6 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
         painter->setPen( Qt::NoPen);
         painter->drawRect( QRectF( -3.0, -6.0, pituus()+6, 12 ) );
     }
-
-    if( etelaTyyppi() < 9)
-        painter->setPen( QPen(QBrush(Qt::green),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
-    else
-        painter->setPen( QPen(QBrush(Qt::blue),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
-
-
-    painter->drawLine(0.0, 0.0, 2.5, 0.0);
-
-    if( pohjoisTyyppi() < 9)
-        painter->setPen( QPen(QBrush(Qt::darkGreen),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
-    else
-        painter->setPen( QPen(QBrush(Qt::blue),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
-
-    painter->drawLine(pituus()-2.5, 0.0, pituus(), 0.0);
-
 
 
     if( raide() > 0 && !liikennePaikka().isEmpty())
@@ -230,11 +215,33 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
     // Raiteen piirtäminen
     painter->drawLine(2.5, 0.0, pituus()-2.5, 0.0);
 
+    // Puskurit radalla
+    if( etelaTyyppi() == RaidePuskuri && !skene_->nakyma())
+        painter->drawLine(QLineF(0.0, -4.0, 0.0, 4.0));
+    if( pohjoisTyyppi() == RaidePuskuri && !skene_->nakyma())
+        painter->drawLine(QLineF(pituus(), -4.0, pituus(), 4.0));
+
+    // Täpät osoittamaan etelä- ja pohjoissuuntaa
+    if( etelaTyyppi() < 9)
+        painter->setPen( QPen(QBrush(Qt::green),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    else
+        painter->setPen( QPen(QBrush(Qt::blue),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+
+
+    painter->drawLine(0.0, 0.0, 2.5, 0.0);
+
+    if( pohjoisTyyppi() < 9)
+        painter->setPen( QPen(QBrush(Qt::darkGreen),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    else
+        painter->setPen( QPen(QBrush(Qt::blue),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+
+    painter->drawLine(pituus()-2.5, 0.0, pituus(), 0.0);
+
     if(naytaJunaNumero())
     {
         // Junanumerolätkän piirtäminen
         painter->setBrush(QBrush(Qt::white));
-        painter->setPen( QPen(QBrush(Qt::black),0.4, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->setPen( Qt::black);
         painter->drawRect(QRectF( pituus() / 2 - 14.0 , -4.0 , 28.0 , 8.0  ));
     }
 
@@ -314,6 +321,7 @@ QString EditoriKisko::kiskoTietoTalletettavaksi() const
     switch(etelaTyyppi())
     {
     case Paa :
+    case RaidePuskuri:
         kiskotieto.append("E* ");
         break;
     case VaihdeJatkos:
@@ -333,6 +341,7 @@ QString EditoriKisko::kiskoTietoTalletettavaksi() const
     switch(pohjoisTyyppi())
     {
     case Paa :
+    case RaidePuskuri:
         kiskotieto.append("P* ");
         break;
     case VaihdeJatkos:

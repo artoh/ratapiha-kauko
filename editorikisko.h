@@ -32,11 +32,12 @@ public:
 
     void asetaLiikennepaikka(const QString& lyhenne);
     void asetaRaide(int raide);
+    void asetaSn(int sn);
     /** Asettaa raiteen ja liikenenpaikan myös vaihdekavereille*/
     void levitaRaiteenAsetus();
 
     void asetaRaiteenValintoja(Kisko::Laituri laituri, bool naytaRaideNumero = false,
-                               bool naytaJunaNumero = false );
+                               bool naytaJunaNumero = false, int sn = 0 );
 
     void talletaKisko();
 
