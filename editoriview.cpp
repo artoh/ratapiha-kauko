@@ -37,7 +37,6 @@ void EditoriView::valitseTila(int tila)
         break;
     case Piirto:
         setCursor( QCursor(QPixmap(":/r/pic/kyna.png"),1,30));
-        poistaValinta();
         break;
     case Pyyhi:
         setCursor( QCursor(QPixmap(":/r/pic/pyyhekumi.png"),3,28));
@@ -261,12 +260,20 @@ void EditoriView::mouseReleaseEvent(QMouseEvent *event)
         {
             if( tila_ == Piirto)
             {
+                EditoriKisko* uusi;
                 if( skene_->nakyma())
                     // Näkymä
-                    new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka());
+                    uusi = new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka());
                 else
                     // Ratakisko - tällä on sn
-                    new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka(),0,QString(),ikkuna_->nykyNopeusRajoitus());
+                    uusi = new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka(),0,QString(),ikkuna_->nykyNopeusRajoitus());
+
+                // Valitaan uusi kisko, jotta voidaan heti muokata
+                if( valittuKisko())
+                    valittuKisko()->valitse(false);
+                valittuKisko_ = uusi;
+                valittuKisko()->valitse(true);
+                emit kiskoValittu( valittuKisko()); // Päivitetään muokattavat esille
             }
             else if(tila() == Viivain)
                 skene_->addItem( new MittaNauha(piirtoViiva_->line()));
