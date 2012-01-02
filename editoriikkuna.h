@@ -51,6 +51,7 @@ protected:
     QAction* piirraAktio_;
     QAction* pyyhiAktio_;
     QAction* tekstiAktio_;
+    QAction* viivainAktio_;
 
     QToolBar* hallintaToolBar_;
     QToolBar* muokkausToolBar_;

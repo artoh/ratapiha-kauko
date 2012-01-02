@@ -7,6 +7,7 @@
 #include "editoriview.h"
 #include "editorikisko.h"
 #include "editoriikkuna.h"
+#include "mittanauha.h"
 
 #include <QMouseEvent>
 #include <QPointF>
@@ -44,6 +45,8 @@ void EditoriView::valitseTila(int tila)
         break;
     case Teksti:
         setCursor( Qt::IBeamCursor);
+    case Viivain:
+        setCursor( QCursor(QPixmap(":/r/pic/viivain.png"),8,21));
         break;
 
     }
@@ -103,6 +106,7 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
 
 
         case Piirto:
+        case Viivain:
         {
 
             // Aloitetaan piirtäminen
@@ -208,7 +212,7 @@ void EditoriView::mouseMoveEvent(QMouseEvent *event)
     QPointF sijainti = mapToScene( event->pos());
 
 
-    if( tila() == Piirto && piirtoViiva_)
+    if( (tila() == Piirto  || tila()==Viivain) && piirtoViiva_)
     {
         // Piirto on käynnissä. Korjataan piirtoviivan loppupää
             piirtoViiva_->setLine( QLineF(piirtoViiva_->line().p1(), kohdista(sijainti)  )   );
@@ -241,9 +245,9 @@ void EditoriView::mouseReleaseEvent(QMouseEvent *event)
             {
                new EditoriKisko(skene_, piirtoViiva_->line(),0,ikkuna_->nykyLiikennePaikka());
             }
-            else
-                //rata_->addItem( new MittaNauha(piirtoviiva_->line()) );
-            {;}
+            else if(tila() == Viivain)
+                skene_->addItem( new MittaNauha(piirtoViiva_->line()));
+
         }
 
         // Poistetaan tilapäinen piirtoviiva

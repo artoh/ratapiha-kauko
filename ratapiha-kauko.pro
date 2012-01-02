@@ -15,7 +15,8 @@ HEADERS += \
     editoriscene.h \
     editoriikkuna.h \
     editoriview.h \
-    ruudukko.h
+    ruudukko.h \
+    mittanauha.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -29,9 +30,19 @@ SOURCES += \
     editoriscene.cpp \
     editoriikkuna.cpp \
     editoriview.cpp \
-    ruudukko.cpp
+    ruudukko.cpp \
+    mittanauha.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
+
+OTHER_FILES += \
+    pic/viivain.png \
+    pic/ikkuna-uusi.png \
+    pic/valintanuoli.png \
+    pic/teksti.png \
+    pic/pyyhekumi.png \
+    pic/muokkaa.png \
+    pic/kyna.png
 
 

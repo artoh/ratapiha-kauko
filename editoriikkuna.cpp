@@ -7,6 +7,7 @@
 
 #include "editoriikkuna.h"
 #include "editorikisko.h"
+
 #include <QSqlQuery>
 #include <QInputDialog>
 #include <QIntValidator>
@@ -90,6 +91,12 @@ void EditoriIkkuna::luoAktiot()
     tekstiAktio_->setCheckable(true);
     tekstiAktio_->setData( EditoriView::Teksti);
     connect( tekstiAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTilaActionilta()));
+
+    viivainAktio_ = new QAction( tr("Mittaa viivaimella"), this);
+    viivainAktio_ ->setIcon(QIcon(":/r/pic/viivain.png"));
+    viivainAktio_ ->setCheckable(true);
+    viivainAktio_ ->setData( EditoriView::Viivain);
+    connect( viivainAktio_ , SIGNAL(triggered()), this, SLOT(vaihdaTilaActionilta()));
 
 }
 
@@ -191,6 +198,7 @@ void EditoriIkkuna::luoTyoPalkki()
     muokkausToolBar_->addAction(piirraAktio_);
     muokkausToolBar_->addAction(pyyhiAktio_);
     muokkausToolBar_->addAction(tekstiAktio_);
+    muokkausToolBar_->addAction(viivainAktio_);
 
     tunnisteToolBar_ = addToolBar( tr("Raide"));
     liikennepaikkaCombo_ = new QComboBox;
