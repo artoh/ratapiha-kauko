@@ -8,6 +8,9 @@
 #include "editoriikkuna.h"
 #include "editorikisko.h"
 
+#include "editoriraide.h"
+#include "editoriraiteenpaa.h"
+
 #include <QSqlQuery>
 #include <QInputDialog>
 #include <QIntValidator>
@@ -29,6 +32,9 @@ EditoriIkkuna::EditoriIkkuna(int nakyma, QWidget *parent) :
     setCentralWidget(view_);
     connect( view_, SIGNAL(editorinTilaVaihtunut(int)), this, SLOT(laitaTilaNappiAlas(int)));
     connect( view_, SIGNAL(kiskoValittu(EditoriKisko*)), this, SLOT(kiskoValittu(EditoriKisko*)));
+    connect( view_, SIGNAL(metriTeksti(QString)), metriLabel_, SLOT(setText(QString)));
+
+    connect( naytaNopeusRajoitusAktio_, SIGNAL(toggled(bool)), skene_, SLOT(naytaNopeusRajoitus(bool)));
 
     nakymaValinta_->setCurrentIndex( nakymaValinta_->findData(nakyma) );
     skene_->haeNakyma(nakyma);
@@ -82,6 +88,12 @@ void EditoriIkkuna::luoAktiot()
     osoitinAktio_->setData( EditoriView::Osoitin );
     connect( osoitinAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTilaActionilta()));
 
+    vieritysAktio_ = new QAction( tr("Vieritä hiirellä vetämällä"), this);
+    vieritysAktio_->setIcon(QIcon(":/r/pic/scroll.png"));
+    vieritysAktio_->setCheckable(true);
+    vieritysAktio_->setData( EditoriView::Vierita );
+    connect( vieritysAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTilaActionilta()));
+
     piirraAktio_ = new QAction( tr("Piirra"), this);
     piirraAktio_->setIcon(QIcon(":/r/pic/kyna.png"));
     piirraAktio_->setCheckable(true);
@@ -132,11 +144,80 @@ void EditoriIkkuna::luoAktiot()
     connect( naytaaRaidenumerotAktio_ , SIGNAL(triggered()), this, SLOT(paivitaKiskonMaareet()));
 
 
+    // Radan muokkausta
+    naytaNopeusRajoitusAktio_ = new  QAction( tr("Raiteiden värit nopeusrajoituksen mukaan"), this);
+    naytaNopeusRajoitusAktio_->setIcon( QIcon(":r/pic/nopeusrajoitus.png"));
+    naytaNopeusRajoitusAktio_->setCheckable(true);
+
+    kulkutietyypitAktiot_ = new QActionGroup(this);
+    ensisijainenKulkutieAktio_ = new QAction( tr("Ensisijaisella junakulkutiellä"), kulkutietyypitAktiot_);
+    ensisijainenKulkutieAktio_->setIcon( QIcon(":r/pic/po-aja.png"));
+    ensisijainenKulkutieAktio_->setCheckable(true);
+
+    toissijainenKulkutieAktio_ = new QAction( tr("Toissijaisella junakulkutiellä"), kulkutietyypitAktiot_ );
+    toissijainenKulkutieAktio_->setIcon(QIcon(":r/pic/po-ajasn.png"));
+    toissijainenKulkutieAktio_->setCheckable(true);
+
+    vainVaihtotieAktio_ = new QAction( tr("Vain vaihtokulkutien käytössä"), kulkutietyypitAktiot_);
+    vainVaihtotieAktio_->setIcon(QIcon(":/r/pic/ro-aja.png"));
+    vainVaihtotieAktio_->setCheckable(true);
+
+    connect( kulkutietyypitAktiot_, SIGNAL(triggered(QAction*)), this, SLOT(paivitaKiskonMaareet()));
+
+    // Opastimet
+
+    eoEtelaanAktio_ = new QAction( tr("Esiopastin etelään"), valittuihinLiittyvat_);
+    eoEtelaanAktio_->setIcon( QIcon(":/r/pic/eo-seis.png"));
+    eoEtelaanAktio_ ->setCheckable(true);
+    connect( eoEtelaanAktio_ , SIGNAL(triggered()), this, SLOT(paivitaKiskonMaareet()));
+
+    eoPohjoiseenAktio_ = new QAction( tr("Esiopastin pohjoiseen"), valittuihinLiittyvat_);
+    eoPohjoiseenAktio_->setIcon( QIcon(":/r/pic/eo-seis.png"));
+    eoPohjoiseenAktio_ ->setCheckable(true);
+    connect( eoPohjoiseenAktio_ , SIGNAL(triggered()), this, SLOT(paivitaKiskonMaareet()));
+
+    opastinAktiot_ = new QActionGroup(this);
+    opastinAktiot_->setExclusive(false);
+
+    poEtelaanAktio_ = new QAction( tr("Pääopastin etelään"), opastinAktiot_);
+    poEtelaanAktio_->setIcon(QIcon(":/r/pic/po-seis.png"));
+    poEtelaanAktio_->setCheckable(true);
+
+    poPohjoiseenAktio_ = new QAction( tr("Pääopastin pohjoiseen"), opastinAktiot_);
+    poPohjoiseenAktio_->setIcon(QIcon(":/r/pic/po-seis.png"));
+    poPohjoiseenAktio_->setCheckable(true);
+
+    roEtelaanAktio_ = new QAction( tr("Raideopastin etelään"), opastinAktiot_);
+    roEtelaanAktio_->setIcon(QIcon(":/r/pic/ro-seis.png"));
+    roEtelaanAktio_->setCheckable(true);
+
+    roPohjoiseenAktio_ = new QAction( tr("Raideopastin pohjoiseen"), opastinAktiot_);
+    roPohjoiseenAktio_->setIcon(QIcon(":/r/pic/ro-seis.png"));
+    roPohjoiseenAktio_->setCheckable(true);
+
+    soEtelaanAktio_ = new QAction( tr("Suojastusopastin etelään"), opastinAktiot_);
+    soEtelaanAktio_->setIcon(QIcon(":/r/pic/so-seis.png"));
+    soEtelaanAktio_->setCheckable(true);
+
+    soPohjoiseenAktio_ = new QAction( tr("Suojastusopastin pohjoiseen"), opastinAktiot_);
+    soPohjoiseenAktio_->setIcon(QIcon(":/r/pic/so-seis.png"));
+    soPohjoiseenAktio_->setCheckable(true);
+
+    connect( opastinAktiot_, SIGNAL(triggered(QAction*)), this, SLOT(paivitaOpastimet()));
+
+    // RaideRisteys slottaa opastinaktioihin, koska vaikutta raiteeseen
+    raideRisteysAktio_ = new QAction( tr("Raideristeys"), opastinAktiot_);
+    raideRisteysAktio_->setIcon( QIcon(":/r/pic/raideristeys.png"));
+    raideRisteysAktio_->setCheckable(true);
+
+    connect( raideRisteysAktio_, SIGNAL(triggered()), this, SLOT(paivitaOpastimet()));
+
 }
 
 void EditoriIkkuna::laitaTilaNappiAlas(int valittuTila)
 {
     osoitinAktio_->setChecked( valittuTila == EditoriView::Osoitin);
+    vieritysAktio_->setChecked( valittuTila==EditoriView::Vierita);
     piirraAktio_->setChecked( valittuTila == EditoriView::Piirto);
     pyyhiAktio_->setChecked( valittuTila == EditoriView::Pyyhi);
     tekstiAktio_->setChecked( valittuTila == EditoriView::Teksti);
@@ -211,13 +292,50 @@ void EditoriIkkuna::kiskoValittu(EditoriKisko *kisko)
 
             // Sn
             snCombo_->setCurrentIndex( snCombo_->findData( kisko->sn()) );
+
+            ensisijainenKulkutieAktio_->setChecked( kisko->kulkutietyypit() == EditoriKisko::Ensisijainen );
+            toissijainenKulkutieAktio_->setChecked(kisko->kulkutietyypit() == EditoriKisko::Toissijainen);
+            vainVaihtotieAktio_->setChecked(kisko->kulkutietyypit() == EditoriKisko::VainVaihto);
+
+            eoEtelaanAktio_->setChecked( kisko->esiopastinEtela());
+            eoPohjoiseenAktio_->setChecked( kisko->esiopastinPohjoinen());
+
+            EditoriRaide* rp = kisko->raidePointteri();
+            if( rp )
+            {
+                opastinAktiot_->setEnabled(true);
+                poEtelaanAktio_->setChecked( rp->etelainen()->paaOpastin() );
+                poPohjoiseenAktio_->setChecked( rp->pohjoinen()->paaOpastin());
+                roEtelaanAktio_->setChecked( rp->etelainen()->raideOpastin());
+                roPohjoiseenAktio_->setChecked( rp->pohjoinen()->raideOpastin());
+                soEtelaanAktio_->setChecked( rp->etelainen()->suojastusOpastin());
+                soPohjoiseenAktio_->setChecked( rp->pohjoinen()->suojastusOpastin());
+                raideRisteysAktio_->setChecked( rp->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys);
+
+                opastintenHimmennys(rp);
+
+                // Jos molemmilla puolilla vaihde tai RR, niin mahdollista tehdä RR
+                if( (rp->etelainen()->paanTyyppi() == EditoriRaiteenPaa::Vaihde  ||
+                     rp->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys) &&
+                        (rp->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::Vaihde ||
+                         rp->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys) )
+                    raideRisteysAktio_->setEnabled(true);
+                else
+                    raideRisteysAktio_->setEnabled(false);
+
+
+            }
+            else
+            {
+                opastinAktiot_->setEnabled(false);
+            }
         }
 
         // Laiturin asetukset
         laituriVasenAktio_->setChecked( kisko->laituri() == Kisko::LaituriVasemmalla || kisko->laituri() == Kisko::LaituriMolemmat);
         laituriOikeaAktio_->setChecked( kisko->laituri() == Kisko::LaituriOikealla || kisko->laituri() == Kisko::LaituriMolemmat);
 
-
+        metriLabel_->setText( QString("%1 m").arg( qRound(kisko->pituus())));
 
     }
     else
@@ -228,6 +346,8 @@ void EditoriIkkuna::kiskoValittu(EditoriKisko *kisko)
 
         raideLineEdit_->setText(QString());
         raideLineEdit_->setEnabled(false);
+        metriLabel_->setText(QString());
+        opastinAktiot_->setEnabled(false);
     }
 }
 
@@ -246,9 +366,69 @@ void EditoriIkkuna::paivitaKiskonMaareet()
     else if( laituriOikeaAktio_->isChecked())
         laiturityyppi = Kisko::LaituriOikealla;
 
-    kisko->asetaRaiteenValintoja(laiturityyppi, naytaaRaidenumerotAktio_->isChecked(), naytaJunanumerotAktio_->isChecked(), nykyNopeusRajoitus());
+    EditoriKisko::Kulkutietyypit kulkutietyypit = EditoriKisko::Ensisijainen;
+    if(  toissijainenKulkutieAktio_->isChecked())
+        kulkutietyypit = EditoriKisko::Toissijainen;
+    else if( vainVaihtotieAktio_->isChecked())
+        kulkutietyypit = EditoriKisko::VainVaihto;
+
+    kisko->asetaRaiteenValintoja(laiturityyppi, naytaaRaidenumerotAktio_->isChecked(), naytaJunanumerotAktio_->isChecked(), nykyNopeusRajoitus(), kulkutietyypit,
+                                 eoEtelaanAktio_->isChecked(), eoPohjoiseenAktio_->isChecked());
 
     kisko->talletaKisko();
+}
+
+void EditoriIkkuna::paivitaOpastimet()
+{
+    EditoriKisko* kisko = view_->valittuKisko();
+    if( !kisko || !kisko->raidePointteri())
+        return;
+
+    kisko->raidePointteri()->etelainen()->asetaPaaOpastin( poEtelaanAktio_->isChecked() );
+    kisko->raidePointteri()->pohjoinen()->asetaPaaOpastin(poPohjoiseenAktio_->isChecked());
+
+    kisko->raidePointteri()->etelainen()->asetaRaideOpastin( roEtelaanAktio_->isChecked());
+    kisko->raidePointteri()->pohjoinen()->asetaRaideOpastin( roPohjoiseenAktio_->isChecked());
+
+    kisko->raidePointteri()->etelainen()->asetaSuojastusOpastin( soEtelaanAktio_->isChecked());
+    kisko->raidePointteri()->pohjoinen()->asetaSuojastusOpastin(soPohjoiseenAktio_->isChecked());
+
+    if( (kisko->raidePointteri()->etelainen()->paanTyyppi() == EditoriRaiteenPaa::Vaihde  ||
+         kisko->raidePointteri()->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys) &&
+            (kisko->raidePointteri()->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::Vaihde ||
+             kisko->raidePointteri()->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys) )
+    {
+            // Voidaan vaihtaa raideristeyksen ja vaihteen väliltä
+        if( raideRisteysAktio_->isChecked())
+        {
+            kisko->raidePointteri()->etelainen()->asetaPaanTyyppi(EditoriRaiteenPaa::RaideRisteys);
+            kisko->raidePointteri()->pohjoinen()->asetaPaanTyyppi(EditoriRaiteenPaa::RaideRisteys);
+        }
+        else
+        {
+            kisko->raidePointteri()->etelainen()->asetaPaanTyyppi(EditoriRaiteenPaa::Vaihde);
+            kisko->raidePointteri()->pohjoinen()->asetaPaanTyyppi(EditoriRaiteenPaa::Vaihde);
+        }
+
+    }
+
+    kisko->raidePointteri()->talleta();
+    skene_->invalidate( skene_->sceneRect());
+
+    // Sittenpä vielä tarkastetaan nappien vaihtoehtoisuudet..
+    opastintenHimmennys( kisko->raidePointteri());
+}
+
+void EditoriIkkuna::opastintenHimmennys(EditoriRaide *raidePointteri)
+{
+    poEtelaanAktio_->setEnabled( !raidePointteri->etelainen()->suojastusOpastin());
+    poPohjoiseenAktio_->setEnabled( !raidePointteri->pohjoinen()->suojastusOpastin() );
+
+    roEtelaanAktio_->setEnabled( !raidePointteri->etelainen()->suojastusOpastin());
+    roPohjoiseenAktio_->setEnabled( !raidePointteri->pohjoinen()->suojastusOpastin() );
+
+    soEtelaanAktio_->setEnabled( !( raidePointteri->etelainen()->paaOpastin() || raidePointteri->etelainen()->raideOpastin() ));
+    soPohjoiseenAktio_->setEnabled( !( raidePointteri->pohjoinen()->paaOpastin() || raidePointteri->pohjoinen()->raideOpastin() ));
 }
 
 
@@ -277,6 +457,8 @@ void EditoriIkkuna::raideNumeroaMuutettu()
 
 
 
+
+
 void EditoriIkkuna::luoTyoPalkki()
 {
     hallintaToolBar_ = addToolBar( tr("Hallinta"));
@@ -287,10 +469,13 @@ void EditoriIkkuna::luoTyoPalkki()
 
     muokkausToolBar_ = addToolBar( tr("Muokkaus"));
     muokkausToolBar_->addAction(osoitinAktio_);
+    muokkausToolBar_->addAction(vieritysAktio_);
     muokkausToolBar_->addAction(piirraAktio_);
     muokkausToolBar_->addAction(pyyhiAktio_);
     muokkausToolBar_->addAction(tekstiAktio_);
     muokkausToolBar_->addAction(viivainAktio_);
+    metriLabel_ = new QLabel("        ");
+    muokkausToolBar_->addWidget(metriLabel_);
 
     tunnisteToolBar_ = addToolBar( tr("Raide"));
     liikennepaikkaCombo_ = new QComboBox;
@@ -305,32 +490,52 @@ void EditoriIkkuna::luoTyoPalkki()
 
     rataKiskonToolBar_ = addToolBar( tr("Muokkaa rataa"));
     rataKiskonToolBar_->setVisible(false);
+    rataKiskonToolBar_->addAction(poEtelaanAktio_);
+    rataKiskonToolBar_->addAction(roEtelaanAktio_);
+    rataKiskonToolBar_->addAction(soEtelaanAktio_);
+    rataKiskonToolBar_->addSeparator();
+
+    rataKiskonToolBar_->addAction(eoEtelaanAktio_);
     rataKiskonToolBar_->addAction(laituriVasenAktio_);
     rataKiskonToolBar_->addAction(laituriOikeaAktio_);
+    rataKiskonToolBar_->addAction(naytaNopeusRajoitusAktio_);
     teeSnCombo();
     rataKiskonToolBar_->addWidget(snCombo_);
+    rataKiskonToolBar_->addAction(raideRisteysAktio_);
+    rataKiskonToolBar_->addAction(ensisijainenKulkutieAktio_);
+    rataKiskonToolBar_->addAction(toissijainenKulkutieAktio_);
+    rataKiskonToolBar_->addAction(vainVaihtotieAktio_);
+    rataKiskonToolBar_->addAction(eoPohjoiseenAktio_);
+    rataKiskonToolBar_->addSeparator();
+    rataKiskonToolBar_->addAction(soPohjoiseenAktio_);
+    rataKiskonToolBar_->addAction(roPohjoiseenAktio_);
+    rataKiskonToolBar_->addAction(poPohjoiseenAktio_);
+
 
     nakymaKiskonToolBar_ = addToolBar( tr("Muokkaa näkymän kiskoa"));
     nakymaKiskonToolBar_->addAction(laituriVasenAktio_);
     nakymaKiskonToolBar_->addAction(laituriOikeaAktio_);
     nakymaKiskonToolBar_->addAction(naytaJunanumerotAktio_);
     nakymaKiskonToolBar_->addAction(naytaaRaidenumerotAktio_);
+
+
 }
 
 void EditoriIkkuna::teeSnCombo()
 {
-    // Nopeusrajoituksen valinta
-    snCombo_ = new QComboBox;
-    snCombo_->addItem("220 km/h", 220);
-    snCombo_->addItem("200 km/h", 200);
-    snCombo_->addItem("160 km/h", 160);
-    snCombo_->addItem("120 km/h", 120);
-    snCombo_->addItem("100 km/h", 100);
-    snCombo_->addItem("80 km/h", 80);
-    snCombo_->addItem("50 km/h", 50);
-    snCombo_->addItem("35 km/h", 35);
-    snCombo_->addItem("20 km/h", 20);
-    snCombo_->addItem("10 km/h", 10);
 
-    snCombo_->setCurrentIndex(5);
+    QList<int> nopeudet;
+    nopeudet << 220 << 200 << 160 << 120 << 100 << 80
+                << 50 << 35 << 20 << 10;
+
+    snCombo_ = new QComboBox;
+    foreach(int nopeus, nopeudet)
+    {
+        QPixmap pmap(16,16);
+        pmap.fill(EditoriKisko::nopeusVari(nopeus));
+
+        snCombo_->addItem(QIcon(pmap), QString("%1 km/h").arg(nopeus), nopeus);
+    }
+    snCombo_->setCurrentIndex(5); // Oletus 80 km/h
+    connect( snCombo_, SIGNAL(activated(int)), this, SLOT(paivitaKiskonMaareet()));
 }

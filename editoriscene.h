@@ -10,6 +10,10 @@
 
 #include "kiskoscene.h"
 
+#include <QMap>
+
+class EditoriRaide;
+
 
 class EditoriScene : public KiskoScene
 {
@@ -24,17 +28,24 @@ public:
     void uusiNakyma(const QString& nimi);
 
     int nakyma() { return nakyma_; }
+    bool naytetaankoNopeusRajoitus() const { return naytaNopeusRajoitus_; }
+
+    EditoriRaide* haeRaide(const QString& liikennepaikka, int raide);
+
 
 signals:
     
 public slots:
+    void naytaNopeusRajoitus(bool nayta);
 
 private:
     // Hakee radalle liikennepaikkojen sijainnit
     void haeLiikennePaikat();
 
     int nakyma_;
+    bool naytaNopeusRajoitus_;
     
+    QMap<QString,EditoriRaide*> raiteet_;
 };
 
 #endif // EDITORISCENE_H

@@ -19,6 +19,9 @@
 #include <QActionGroup>
 #include <QMainWindow>
 #include <QLineEdit>
+#include <QLabel>
+
+class EditoriRaide;
 
 class EditoriIkkuna : public QMainWindow
 {
@@ -46,6 +49,7 @@ public slots:
     /** Kun klikataan jotain kiskon määritettä.. */
     void paivitaKiskonMaareet();
 
+    void paivitaOpastimet();
 
 protected:
     void luoAktiot();
@@ -54,7 +58,11 @@ protected:
     void haeLiikennepaikkaLista();
     void teeSnCombo();
 
+    /** Määrittää, mitä opastimia voidaan valita*/
+    void opastintenHimmennys(EditoriRaide* raidePointteri);
+
     QAction* osoitinAktio_;
+    QAction* vieritysAktio_;
     QAction* piirraAktio_;
     QAction* pyyhiAktio_;
     QAction* tekstiAktio_;
@@ -68,14 +76,34 @@ protected:
     QAction* naytaJunanumerotAktio_;
     QAction* naytaaRaidenumerotAktio_;
 
+    QAction* naytaNopeusRajoitusAktio_;
+
+    QActionGroup* kulkutietyypitAktiot_;
+    QAction* ensisijainenKulkutieAktio_;
+    QAction* toissijainenKulkutieAktio_;
+    QAction* vainVaihtotieAktio_;
+
+    QActionGroup* opastinAktiot_;
+    QAction* poEtelaanAktio_;
+    QAction* poPohjoiseenAktio_;
+    QAction* roEtelaanAktio_;
+    QAction* roPohjoiseenAktio_;
+    QAction* soEtelaanAktio_;
+    QAction* soPohjoiseenAktio_;
+    QAction* eoEtelaanAktio_;
+    QAction* eoPohjoiseenAktio_;
+    QAction* raideRisteysAktio_;
+
     QToolBar* hallintaToolBar_;
     QToolBar* muokkausToolBar_;
     QToolBar* tunnisteToolBar_;
     QToolBar* rataKiskonToolBar_;
     QToolBar* nakymaKiskonToolBar_;
 
+
     QComboBox* nakymaValinta_;
     QComboBox* liikennepaikkaCombo_;
+    QLabel* metriLabel_;
     QLineEdit* raideLineEdit_;
     QComboBox* snCombo_;
 

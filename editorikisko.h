@@ -10,8 +10,10 @@
 
 #include "kisko.h"
 #include <QLineF>
+#include <QColor>
 
 class EditoriScene;
+class EditoriRaide;
 
 class EditoriKisko : public Kisko
 {
@@ -22,6 +24,8 @@ public:
 
     enum { Type = UserType + 2 } ;
 
+    enum Kulkutietyypit { Ensisijainen, Toissijainen, VainVaihto } ;
+
     QRectF boundingRect() const;
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -29,6 +33,8 @@ public:
     int type() const { return Type; }
 
     void valitse(bool onko=true);
+    int sn() const { return sn_; }
+    Kulkutietyypit kulkutietyypit() const { return kulkutietyypit_; }
 
     void asetaLiikennepaikka(const QString& lyhenne);
     void asetaRaide(int raide);
@@ -37,18 +43,36 @@ public:
     void levitaRaiteenAsetus();
 
     void asetaRaiteenValintoja(Kisko::Laituri laituri, bool naytaRaideNumero = false,
-                               bool naytaJunaNumero = false, int sn = 0 );
+                               bool naytaJunaNumero = false, int sn = 0,
+                               Kulkutietyypit kulkutietyypit = Ensisijainen,
+                               bool esiopastinEtela = false,
+                               bool esiopastinPohjoinen = false);
 
     void talletaKisko();
+
+    void tarkistaPaanTyypit();
+
+    static QColor nopeusVari(int nopeus);
+
+    EditoriRaide* raidePointteri() { return raidePtr_; }
+
+    bool esiopastinEtela() const { return esiopastinEtela_; }
+    bool esiopastinPohjoinen() const { return esiopastinPohjoinen_; }
+
 
 protected:
     // Tarkastetaan päiden tyypit ja kaverit tekee myös saman
     void paidenTarkistusToimet(bool tallenna=false);
     QString kiskoTietoTalletettavaksi() const;
 
+    int sn_;
+    Kulkutietyypit kulkutietyypit_;
     EditoriScene* skene_;
+    bool esiopastinEtela_;
+    bool esiopastinPohjoinen_;
     bool valittu_;
 
+    EditoriRaide* raidePtr_;
 };
 
 #endif // EDITORIKISKO_H

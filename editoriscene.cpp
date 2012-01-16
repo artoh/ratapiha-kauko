@@ -8,6 +8,7 @@
 #include "editoriscene.h"
 #include "editorikisko.h"
 #include "ruudukko.h"
+#include "editoriraide.h"
 
 #include <QSqlQuery>
 #include <QFont>
@@ -15,7 +16,7 @@
 #include <cmath>
 
 EditoriScene::EditoriScene(QObject *parent) :
-    KiskoScene(parent), nakyma_(-1)
+    KiskoScene(parent), nakyma_(-1), naytaNopeusRajoitus_(false)
 {
 
 }
@@ -57,6 +58,12 @@ bool EditoriScene::haeNakyma(int nakyma)
     return true;
 
 
+}
+
+void EditoriScene::naytaNopeusRajoitus(bool nayta)
+{
+    naytaNopeusRajoitus_ = nayta;
+    invalidate( sceneRect() );  // Piirretään uudelleen!
 }
 
 void EditoriScene::uusiNakyma(const QString &nimi)
@@ -107,3 +114,41 @@ void EditoriScene::haeLiikennePaikat()
     }
 }
 
+EditoriRaide* EditoriScene::haeRaide(const QString &liikennepaikka, int raide)
+{
+    if( !raide || liikennepaikka.isEmpty())
+        return 0;   // Ei voi olla raidetta!!!
+
+    QString avain = QString("%1 %2").arg(liikennepaikka).arg(raide,3,10,QChar('0'));
+
+    EditoriRaide* haettu = raiteet_.value(avain);
+    // Jos ei ole vielä haettuna, niin pyritään hakemaant tietokannasta
+    if( !haettu)
+    {
+        QSqlQuery kysely;
+        kysely.exec( QString("select raideid, tila_raide, tila_etela, tila_pohjoinen from raide where liikennepaikka=\"%1\" and raide=%2").arg(liikennepaikka).arg(raide));
+        if( kysely.next() )
+        {
+            haettu = new EditoriRaide(liikennepaikka, raide,
+                                      kysely.value(0).toInt(),
+                                      kysely.value(1).toString(),
+                                      kysely.value(2).toString(),
+                                      kysely.value(3).toString());
+            raiteet_.insert(avain, haettu);
+        }
+    }
+    if( !haettu && !nakyma())
+    {
+        // Tätä käytetään rataa editoitaessa: tehdään uudet raiteet!
+        QSqlQuery kysely;
+        kysely.exec(QString("insert into raide(liikennepaikka,raide) values(\"%1\",%2)").arg(liikennepaikka).arg(raide));
+        kysely.exec();
+        if( kysely.lastInsertId().toInt())
+        {
+            haettu = new EditoriRaide( liikennepaikka, raide, kysely.lastInsertId().toInt());
+            raiteet_.insert(avain, haettu);
+        }
+    }
+
+    return haettu;
+}

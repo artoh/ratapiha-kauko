@@ -18,7 +18,7 @@ KaukoIkkuna::KaukoIkkuna(QWidget *parent) :
     setWindowTitle("Kaukokäyttö");
 
     skene_ = new KaukoScene;
-    view_ = new QGraphicsView(skene_);
+    view_ = new KaukoView(skene_);
     view_->scale(2.5, 2.5);
 
     luoAktiot();

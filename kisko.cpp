@@ -10,9 +10,9 @@
 
 #include <QDebug>
 
-Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata, int sn) :
+Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata) :
     QGraphicsItem(),
-    kiskoid_(kiskoid), liikennepaikka_(liikennepaikka), raide_(raide), sn_(sn),
+    kiskoid_(kiskoid), liikennepaikka_(liikennepaikka), raide_(raide),
     viiva_(viiva),
     etelapaaTyyppi_(Valille),
     pohjoispaaTyyppi_(Valille),
@@ -41,6 +41,8 @@ Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, in
         etelapaaTyyppi_ = VaihdeVasen;
     else if(kiskodata.contains("E+"))
         etelapaaTyyppi_ = VaihdeOikea;
+    else if( kiskodata.contains("E*r"))
+        etelapaaTyyppi_ = LiikennePaikanPaa;    // Liikennepaikan viimeinen kisko
     else if( kiskodata.contains("E*"))
         etelapaaTyyppi_ = Paa;
 
@@ -51,6 +53,8 @@ Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, in
         pohjoispaaTyyppi_ = VaihdeVasen;
     else if(kiskodata.contains("P+"))
         pohjoispaaTyyppi_ = VaihdeOikea;
+    else if( kiskodata.contains("P*r"))
+        pohjoispaaTyyppi_ = LiikennePaikanPaa;    // Liikennepaikan viimeinen kisko
     else if(kiskodata.contains("P*"))
         pohjoispaaTyyppi_ = Paa;
 
@@ -89,8 +93,10 @@ Kisko::PaanTyyppi Kisko::tarkistaTyyppiPaalle(QPointF piste)
                 naapurit.first()->raide() == raide() &&
                 naapurit.first()->liikennePaikka() == liikennePaikka())
             return Valille;     // Sama kisko jatkuu
-        else
+        else if( naapurit.first()->liikennePaikka() == liikennePaikka() )
             return Paa;
+        else
+            return LiikennePaikanPaa;
     }
     else if( naapurit.count() > 3)
         return Virhe;       // Liikaa naapureita!
@@ -115,10 +121,7 @@ Kisko::PaanTyyppi Kisko::tarkistaTyyppiPaalle(QPointF piste)
         }
         else
         {
-            // Ei ole vieruskaveri, katsotaan ettei liian läheinen
-            if( viiva().angleTo(naapuri->viiva()) < 290.0  &&
-                    viiva().angleTo(naapuri->viiva()) > 70.0 )
-                return Virhe;
+            // Ei ole vieruskaveri, tähän ei tarkastuksia jotta voidaan tehdä RR
 
         }
     }

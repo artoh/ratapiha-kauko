@@ -33,6 +33,22 @@ QRectF KaukoKisko::boundingRect() const
 
 void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
+
+    // Piirretään liikennepaikan rajaviivat
+     painter->setPen( Qt::red);
+     painter->setFont( QFont("Helvetica",2));
+     if( etelaTyyppi() == LiikennePaikanPaa)
+     {
+         painter->drawLine(0.0, -10.0, 0.0 , 10.0);
+        painter->drawText(QRectF(0.5, -9.0, pituus()-1.0, 5.0), liikennePaikka() , QTextOption(Qt::AlignLeft));
+     }
+     if( pohjoisTyyppi() == LiikennePaikanPaa)
+     {
+         painter->drawLine( pituus(), -10.0, pituus(), 10.0);
+         painter->drawText(QRectF(0.5, -9.0, pituus()-1.0, 5.0), liikennePaikka() , QTextOption(Qt::AlignRight));
+     }
+
+
     // Tässä vaiheessa piirretään vain viiva ja teksti
 
     if( skene_->onkoVikatilassa())
@@ -45,10 +61,10 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     qreal alku = 0.0;
     qreal loppu = pituus();
 
-    if( etelaTyyppi() == Paa )
-        alku = 0.5;
-    if( pohjoisTyyppi() == Paa )
-        loppu = pituus() - 0.5;
+    if( etelaTyyppi() == Paa  || etelaTyyppi()==LiikennePaikanPaa)
+        alku = 1.0;
+    if( pohjoisTyyppi() == Paa || pohjoisTyyppi() == LiikennePaikanPaa)
+        loppu = pituus() - 1.0;
 
     painter->drawLine(alku, 0.0, loppu, 0.0);
 
@@ -83,8 +99,6 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
             laituriviiva << QPointF(10.0, 7.0) << QPointF(10.0, 4.0) << QPointF( pituus()-10.0, 4.0) << QPointF(pituus()-10.0,7.0);
             painter->drawPolyline(laituriviiva);
         }
-
-
    }
 
 

@@ -11,5 +11,16 @@
         <file>pic/laituri-vasen.png</file>
         <file>pic/nayta-raidenumerot.png</file>
         <file>pic/nayta-junanumerot.png</file>
+        <file>pic/zoom-rajaus.png</file>
+        <file>pic/scroll.png</file>
+        <file>pic/nopeusrajoitus.png</file>
+        <file>pic/po-aja.png</file>
+        <file>pic/po-ajasn.png</file>
+        <file>pic/ro-aja.png</file>
+        <file>pic/po-seis.png</file>
+        <file>pic/so-seis.png</file>
+        <file>pic/ro-seis.png</file>
+        <file>pic/eo-seis.png</file>
+        <file>pic/raideristeys.png</file>
     </qresource>
 </RCC>

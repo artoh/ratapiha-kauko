@@ -16,7 +16,7 @@ KaukoYhteys::KaukoYhteys(QObject *parent) :
     // Yhteydet muodostetaan rakentajassa!
 
     tietokanta_ = QSqlDatabase::addDatabase("QMYSQL");
-    tietokanta_.setHostName("localhost");
+    tietokanta_.setHostName("192.168.1.100");
     tietokanta_.setDatabaseName("ratapiha");
     tietokanta_.setUserName("ratapiha");
     tietokanta_.setPassword("ratapiha");

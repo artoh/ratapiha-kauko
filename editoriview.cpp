@@ -30,6 +30,7 @@ EditoriView::EditoriView(EditoriScene *skene, EditoriIkkuna *ikkuna) :
 void EditoriView::valitseTila(int tila)
 {
     tila_ = tila;
+    setDragMode( NoDrag );
     switch(tila)
     {
     case Osoitin :
@@ -45,9 +46,13 @@ void EditoriView::valitseTila(int tila)
     case Teksti:
         setCursor( Qt::IBeamCursor);
         poistaValinta();
+        break;
     case Viivain:
         setCursor( QCursor(QPixmap(":/r/pic/viivain.png"),8,21));
         poistaValinta();
+        break;
+    case Vierita:
+        setDragMode(ScrollHandDrag);
         break;
 
     }
@@ -60,6 +65,7 @@ void EditoriView::poistaValinta()
         valittuKisko()->valitse(false);
     ikkuna_->kiskoValittu(0);
     valittuKisko_ = 0;
+    emit metriTeksti(QString());
 }
 
 void EditoriView::mousePressEvent(QMouseEvent *event)
@@ -214,20 +220,24 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
     else if( event->button() == Qt::XButton1)
     {
         // Sivussa oleva erikoisnappi
-        // vaihtaa piirtotilan ja osoitintilan välillä
-        if( tila() == Osoitin)
-            valitseTila(Piirto);
+        // vaihtaa piirtotilan ja pyyhkimistilan välillä
+        if( tila() == Piirto)
+            valitseTila(Pyyhi);
         else
-            valitseTila(Osoitin);
+            valitseTila(Piirto);
     }
     else if( event->button() == Qt::XButton2)
     {
-        // Toisella nappulalla laitetaan poistotila
-        if( tila() == Pyyhi )
-            valitseTila(Viivain);
+        // Toisella nappulalla laitetaan valinta tai vieritystila
+        if( tila() == Osoitin )
+            valitseTila(Vierita);
         else
-            valitseTila(Pyyhi);
+            valitseTila(Osoitin);
     }
+
+    // Ellei hiiren painallus ole johtanut toimiin, vuodetaan se
+    // oletuskäsittelijälle
+    QGraphicsView::mousePressEvent(event);
 }
 
 
@@ -242,7 +252,7 @@ void EditoriView::mouseMoveEvent(QMouseEvent *event)
             piirtoViiva_->setLine( QLineF(piirtoViiva_->line().p1(), kohdista(sijainti)  )   );
 
         ensureVisible( QRectF( piirtoViiva_->line().x2(), piirtoViiva_->line().y2(), 10.0, 10.0) );
-        emit naytettavaRaiteenPituus( piirtoViiva_->line().length() );
+        emit metriTeksti( QString("%1 m").arg( qRound( piirtoViiva_->line().length() )) );
     }
     else
         // Vuodetaan käsittelemätön ulos
@@ -284,7 +294,6 @@ void EditoriView::mouseReleaseEvent(QMouseEvent *event)
         scene()->removeItem(piirtoViiva_);
         delete piirtoViiva_;
         piirtoViiva_ = 0L;
-        emit naytettavaRaiteenPituus(0.0);
     }
     else
         // Vuodetaan hiiritoiminto ulos

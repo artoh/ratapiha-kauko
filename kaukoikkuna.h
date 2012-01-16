@@ -9,7 +9,7 @@
 #define KAUKOIKKUNA_H
 
 #include "kaukoscene.h"
-#include <QGraphicsView>
+#include "kaukoview.h"
 
 #include <QMainWindow>
 #include <QComboBox>
@@ -44,7 +44,7 @@ protected:
 
 
     KaukoScene* skene_;
-    QGraphicsView* view_;
+    KaukoView* view_;
 
 };
 

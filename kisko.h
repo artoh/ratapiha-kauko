@@ -22,11 +22,11 @@ class Kisko : public QGraphicsItem
 {
 public:
     enum Laituri { LaituriEi = 0, LaituriVasemmalla = 1, LaituriOikealla = 2, LaituriMolemmat = 3};
-    enum PaanTyyppi { Virhe = 0, Valille = 1, Paa = 2, RaidePuskuri = 3 /** Päättyvä raide */ ,
+    enum PaanTyyppi { Virhe = 0, Valille = 1, Paa = 2, LiikennePaikanPaa = 3, RaidePuskuri = 4 /** Päättyvä raide */ ,
                       VaihdeJatkos = 10, VaihdeVasen = 11, VaihdeOikea = 12 };
 
     Kisko( const QLineF& viiva, int kiskoid=0, const QString& liikennepaikka=QString(), int raide = 0,
-           const QString& kiskodata = QString(), int sn=0);
+           const QString& kiskodata = QString());
 
 
     qreal pituus() const { return pituus_; }
@@ -34,7 +34,7 @@ public:
     QString liikennePaikka() const {return liikennepaikka_; }
     int kiskoId() const { return kiskoid_; }
     int raide() const { return raide_; }
-    int sn() const { return sn_; }
+
 
     bool naytaRaideNumero() const { return naytaRaideNumero_; }
     bool naytaJunaNumero() const { return naytaJunaNumero_; }
@@ -64,7 +64,6 @@ protected:
     int kiskoid_;
     QString liikennepaikka_;
     int raide_;
-    int sn_;
     Laituri laituri_;
     QLineF viiva_;
     PaanTyyppi etelapaaTyyppi_;

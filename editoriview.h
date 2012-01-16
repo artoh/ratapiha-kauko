@@ -20,13 +20,13 @@ class EditoriView : public QGraphicsView
     Q_OBJECT
 public:
     explicit EditoriView(EditoriScene* skene, EditoriIkkuna* ikkuna);
-    enum EditoriTila { Osoitin, Piirto, Pyyhi, Teksti, Viivain } ;
+    enum EditoriTila { Osoitin, Piirto, Pyyhi, Teksti, Viivain, Vierita } ;
 
     EditoriKisko* valittuKisko() { return valittuKisko_; }
 
 signals:
     void editorinTilaVaihtunut(int tila);
-    void naytettavaRaiteenPituus(qreal pituus);
+    void metriTeksti(const QString& teksti);
     void kiskoValittu(EditoriKisko* kisko);
     
 public slots:

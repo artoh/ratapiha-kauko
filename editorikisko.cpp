@@ -7,6 +7,9 @@
 
 #include "editorikisko.h"
 #include "editoriscene.h"
+#include "editoriraide.h"
+#include "editoriraiteenpaa.h"
+
 #include <QPainter>
 #include <QPen>
 #include <QRectF>
@@ -17,9 +20,19 @@
 #include <QSqlError>
 
 EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata, int sn) :
-    Kisko(viiva, kiskoid, liikennepaikka, raide, kiskodata, sn), skene_(skene),
-    valittu_(false)
+    Kisko(viiva, kiskoid, liikennepaikka, raide, kiskodata), sn_(sn), kulkutietyypit_(Ensisijainen), skene_(skene),
+    esiopastinEtela_(false), esiopastinPohjoinen_(false),
+    valittu_(false), raidePtr_(0)
 {
+
+    if( kiskodata.contains("Kt"))
+        kulkutietyypit_ = Toissijainen;
+    else if(kiskodata.contains("Kv "))
+        kulkutietyypit_ = VainVaihto;
+    if( kiskodata.contains("EoE"))
+        esiopastinEtela_ = true;
+    if( kiskodata.contains("EoP"))
+        esiopastinPohjoinen_ = true;
 
     skene->addItem(this);
     paidenTarkistusToimet();
@@ -36,6 +49,8 @@ EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid
             }
         }
     }
+    if( raide_)
+        raidePtr_ = skene->haeRaide(liikennepaikka,raide);
 
 }
 
@@ -55,8 +70,48 @@ void EditoriKisko::paidenTarkistusToimet(bool tallenna)
                 ekisko->talletaKisko();
         }
     }
+
+
     if( tallenna )
         talletaKisko();
+}
+
+
+void EditoriKisko::tarkistaPaanTyypit()
+{
+    Kisko::tarkistaPaanTyypit();
+
+    // Raiteen pään tyypin asettamista... siis vain radalla tietysti
+    if( !skene_->nakyma() && raidePointteri() )
+    {
+        if( etelaTyyppi() > 10 ) // Raiteen pohjoispäässä on vaihde... tai RR
+        {
+            if( raidePointteri()->pohjoinen()->paanTyyppi() !=EditoriRaiteenPaa::RaideRisteys &&
+                    raidePointteri()->pohjoinen()->paanTyyppi() != EditoriRaiteenPaa::Vaihde )
+                raidePointteri()->pohjoinen()->asetaPaanTyyppi(EditoriRaiteenPaa::Vaihde);
+        }
+        else if( pohjoisTyyppi() == Kisko::RaidePuskuri)
+            raidePointteri()->pohjoinen()->asetaPaanTyyppi(EditoriRaiteenPaa::RaidePuskuri);
+        else if( pohjoisTyyppi() == Kisko::Paa || pohjoisTyyppi() == Kisko::LiikennePaikanPaa)
+            raidePointteri()->pohjoinen()->asetaPaanTyyppi(EditoriRaiteenPaa::Suora);
+
+
+
+        if( pohjoisTyyppi() > 10)  // Raiteen eteläpäässä vaihde tai RR
+        {
+            if( raidePointteri()->etelainen()->paanTyyppi() !=EditoriRaiteenPaa::RaideRisteys &&
+                    raidePointteri()->etelainen()->paanTyyppi() != EditoriRaiteenPaa::Vaihde )
+                raidePointteri()->etelainen()->asetaPaanTyyppi(EditoriRaiteenPaa::Vaihde);
+
+        }
+        else if( etelaTyyppi() == Kisko::RaidePuskuri ) // Ei kun raidepuskuri ...
+            raidePointteri()->etelainen()->asetaPaanTyyppi(EditoriRaiteenPaa::RaidePuskuri);
+        else if( etelaTyyppi() == Kisko::Paa || etelaTyyppi() == Kisko::LiikennePaikanPaa)
+            raidePointteri()->etelainen()->asetaPaanTyyppi(EditoriRaiteenPaa::Suora);
+
+        raidePointteri()->talleta();
+    }
+
 }
 
 
@@ -74,6 +129,7 @@ void EditoriKisko::valitse(bool onko)
 void EditoriKisko::asetaLiikennepaikka(const QString &lyhenne)
 {
     liikennepaikka_ = lyhenne;
+    raidePtr_ = skene_->haeRaide(liikennePaikka(), raide());
     update(boundingRect());
 }
 
@@ -111,17 +167,21 @@ void EditoriKisko::asetaRaide(int raide)
     }
 
     raide_ = raide;
+    raidePtr_ = skene_->haeRaide(liikennePaikka(), raide);
     update(boundingRect());
 }
 
 
-void EditoriKisko::asetaRaiteenValintoja(Kisko::Laituri laituri, bool naytaRaideNumero, bool naytaJunaNumero, int sn)
+void EditoriKisko::asetaRaiteenValintoja(Kisko::Laituri laituri, bool naytaRaideNumero, bool naytaJunaNumero, int sn, Kulkutietyypit kulkutietyypit, bool esiopastinEtela, bool esiopastinPohjoinen)
 {
 
    laituri_=laituri;
    naytaRaideNumero_ = naytaRaideNumero;
    naytaJunaNumero_ = naytaJunaNumero;
    sn_ = sn;
+   kulkutietyypit_ = kulkutietyypit;
+   esiopastinEtela_ = esiopastinEtela;
+   esiopastinPohjoinen_ = esiopastinPohjoinen;
    update(boundingRect());
 }
 
@@ -156,6 +216,25 @@ void EditoriKisko::levitaRaiteenAsetus()
     paidenTarkistusToimet(true);
 }
 
+QColor EditoriKisko::nopeusVari(int nopeus)
+{
+
+    switch(nopeus)
+    {
+    case 10: return QColor(64,64,0);
+    case 20: return QColor(128,128,0);
+    case 35: return QColor(192,192,0);
+    case 50: return QColor(0,64,64);
+    case 80: return QColor(0,128,128);
+    case 100: return QColor(0,192,192);
+    case 120: return QColor(0,255,255);
+    case 160: return QColor(0,128,0);
+    case 200: return QColor(0,192,0);
+    case 220: return QColor(0,255,0);
+    }
+    return Qt::red;
+}
+
 void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
     // Valitun kiskon taakse laatikko
@@ -166,6 +245,23 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
         painter->drawRect( QRectF( -3.0, -6.0, pituus()+6, 12 ) );
     }
 
+
+    // Piirretään liikennepaikan rajaviivat
+     painter->setPen( Qt::red);
+     painter->setFont( QFont("Helvetica",2));
+     if( etelaTyyppi() == LiikennePaikanPaa)
+     {
+         painter->drawLine(0.0, -10.0, 0.0 , 10.0);
+        painter->drawText(QRectF(0.5, -9.0, pituus()-1.0, 5.0), liikennePaikka() , QTextOption(Qt::AlignLeft));
+     }
+     if( pohjoisTyyppi() == LiikennePaikanPaa)
+     {
+         painter->drawLine( pituus(), -10.0, pituus(), 10.0);
+         painter->drawText(QRectF(0.5, -9.0, pituus()-1.0, 5.0), liikennePaikka() , QTextOption(Qt::AlignRight));
+     }
+
+
+     QColor raideVari = Qt::black;
 
     if( raide() > 0 && !liikennePaikka().isEmpty())
     {
@@ -200,41 +296,163 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
             painter->setPen( QPen(Qt::black));
             painter->drawText(QRectF(0.0, -9.0, pituus(), 5.0), QString("%1").arg(raide(),3,10,QChar('0')), QTextOption(Qt::AlignCenter));
         }
-        painter->setPen( QPen(QBrush(Qt::black),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+
+        // Ellei raidetta ole luonnossa, magentalla värillä!
+        if( !raidePointteri())
+            raideVari = Qt::magenta;
     }
     else
     {
         // Ei raidetunnusta
-        painter->setPen( QPen(Qt::darkGray,2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        raideVari = Qt::darkGray;
     }
 
-    // Virheelliset punaisella !
+    // Virheelliset punaisella ! joka tapauksessa !
     if( etelaTyyppi() == Virhe || pohjoisTyyppi() == Virhe )
-        painter->setPen( QPen(QBrush(Qt::red),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        raideVari = Qt::red;
+    else if( !skene_->nakyma() && skene_->naytetaankoNopeusRajoitus())
+    {
+       // Raiteen väri nopeusrajoituksen mukaisesti
+       // Tämä myös raiteille, joilla ei vielä edes numeroa!
+        raideVari = nopeusVari( sn() );
+    }
 
-    // Raiteen piirtäminen
-    painter->drawLine(2.5, 0.0, pituus()-2.5, 0.0);
+    if( kulkutietyypit() == Ensisijainen || skene_->nakyma() )
+    {
+        painter->setPen( QPen(QBrush( raideVari ),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->drawLine(2.5, 0.0, pituus()-2.5, 0.0);
+    }
+    else if( kulkutietyypit() == VainVaihto )
+    {
+        // Vain vaihtokulkutie - keltaisella reunuksella
+        painter->setPen( QPen(QBrush( Qt::yellow ),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->drawLine(2.5, 0.0, pituus()-2.5, 0.0);
+        painter->setPen( QPen(QBrush( raideVari ),1.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->drawLine(2.5, 0.0, pituus()-2.5, 0.0);
+    }
+    else
+    {
+        // Toissijainen kulkutei piirretään ohuella viivalla
+        painter->setPen( QPen(QBrush( raideVari ),1.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->drawLine(2.5, 0.0, pituus()-2.5, 0.0);
+    }
+
+    // Raideristeykseen lisäviivat
+    if( raidePointteri() && raidePointteri()->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys)
+    {
+        painter->setPen(Qt::black);
+        painter->drawLine(2.0, 2.5, pituus()-2.0, 2.5);
+        painter->drawLine(2.0, -2.5, pituus()-2.0, -2.5);
+    }
 
     // Puskurit radalla
-    if( etelaTyyppi() == RaidePuskuri && !skene_->nakyma())
+    if( (etelaTyyppi() == RaidePuskuri && !skene_->nakyma()) ||
+            (raidePointteri() && raidePointteri()->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaidePuskuri))
         painter->drawLine(QLineF(0.0, -4.0, 0.0, 4.0));
-    if( pohjoisTyyppi() == RaidePuskuri && !skene_->nakyma())
+    if( (pohjoisTyyppi() == RaidePuskuri && !skene_->nakyma()) ||
+        ( raidePointteri() && raidePointteri()->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::RaidePuskuri ))
         painter->drawLine(QLineF(pituus(), -4.0, pituus(), 4.0));
+
+
+
+    // Opastimia...
+    // Esiopastinväkänen
+    painter->setPen( raideVari );
+    if( esiopastinEtela())
+    {
+        painter->drawLine( QLineF( 0.5, -4.0, 0.5, 4.0));
+        painter->drawLine( QLineF( 0.5, -4.0, 1.5, -4.0));
+    }
+    if( esiopastinPohjoinen())
+    {
+        painter->drawLine( QLineF( pituus()-0.5, -4.0, pituus()-0.5, 4.0));
+        painter->drawLine( QLineF( pituus()-0.5, 4.0, pituus()-1.5, 4.0));
+    }
+
+    // Pää, raide ja suojastusopastimet
+    if( raidePointteri() && ( etelaTyyppi()==Paa || etelaTyyppi()==LiikennePaikanPaa))
+    {
+        QPolygonF etelaOpastinKuvio;
+        etelaOpastinKuvio << QPointF(0.0, 0.0 ) << QPointF( 8.0, -4.0)
+                          << QPointF( 8.0, 4.0) << QPointF( 0.0, 0.0);
+
+        if( raidePointteri()->etelainen()->paaOpastin())
+        {
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(QBrush(raideVari));
+            painter->drawPolygon( etelaOpastinKuvio);
+
+            if( raidePointteri()->etelainen()->raideOpastin())
+            {
+                painter->setPen( QPen( QBrush(raideVari),2.0,Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin ));
+                painter->drawLine(QLineF(8.0, 0.0, 16.0, -4.0));
+                painter->drawLine(QLineF(8.0, 0.0, 16.0, 4.0));
+            }
+        }
+        else
+        {
+            if( raidePointteri()->etelainen()->raideOpastin())
+            {
+                painter->setPen( QPen( QBrush(raideVari),2.0,Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin ));
+                painter->drawLine(QLineF(0.0, 0.0, 8.0, -4.0));
+                painter->drawLine(QLineF(0.0, 0.0, 8.0, 4.0));
+            }
+            else if( raidePointteri()->etelainen()->suojastusOpastin())
+            {
+                painter->setPen( QPen( QBrush(raideVari),2.0,Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin ));
+                painter->setBrush( QBrush(Qt::white));
+                painter->drawPolygon( etelaOpastinKuvio);
+            }
+        }
+
+    }
+    if( raidePointteri() && ( pohjoisTyyppi()==Paa || pohjoisTyyppi()==LiikennePaikanPaa))
+    {
+
+        QPolygonF pohjoisOpastinKuvio;
+        pohjoisOpastinKuvio << QPointF(pituus(), 0.0 ) << QPointF( pituus()-8.0, -4.0)
+                          << QPointF( pituus()-8.0, 4.0) << QPointF( pituus()-0.0, 0.0);
+        if( raidePointteri()->pohjoinen()->paaOpastin())
+        {
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(QBrush(raideVari));
+            painter->drawPolygon( pohjoisOpastinKuvio);
+            if( raidePointteri()->pohjoinen()->raideOpastin())
+            {
+                painter->setPen( QPen( QBrush(raideVari),2.0,Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin ));
+                painter->drawLine(QLineF(pituus()-8.0, 0.0, pituus()-16.0, -4.0));
+                painter->drawLine(QLineF(pituus()-8.0, 0.0, pituus()-16.0, 4.0));
+            }
+
+        }
+        else
+        {
+            if( raidePointteri()->pohjoinen()->raideOpastin())
+            {
+                painter->setPen( QPen( QBrush(raideVari),2.0,Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin ));
+                painter->drawLine(QLineF(pituus(), 0.0, pituus()-8.0, -4.0));
+                painter->drawLine(QLineF(pituus(), 0.0, pituus()-8.0, 4.0));
+            }
+            else if( raidePointteri()->pohjoinen()->suojastusOpastin())
+            {
+                painter->setPen( QPen( QBrush(raideVari),2.0,Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin ));
+                painter->setBrush( QBrush(Qt::white));
+                painter->drawPolygon( pohjoisOpastinKuvio);
+            }
+        }
+
+    }
 
     // Täpät osoittamaan etelä- ja pohjoissuuntaa
     if( etelaTyyppi() < 9)
         painter->setPen( QPen(QBrush(Qt::green),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
     else
         painter->setPen( QPen(QBrush(Qt::blue),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
-
-
     painter->drawLine(0.0, 0.0, 2.5, 0.0);
-
     if( pohjoisTyyppi() < 9)
         painter->setPen( QPen(QBrush(Qt::darkGreen),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
     else
         painter->setPen( QPen(QBrush(Qt::blue),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
-
     painter->drawLine(pituus()-2.5, 0.0, pituus(), 0.0);
 
     if(naytaJunaNumero())
@@ -306,9 +524,6 @@ void EditoriKisko::talletaKisko()
         kysely.exec(kysymys);
     }
 
-    qDebug() << kysely.lastQuery();
-    qDebug() << kysely.lastError().text();
-
 }
 
 
@@ -323,6 +538,9 @@ QString EditoriKisko::kiskoTietoTalletettavaksi() const
     case Paa :
     case RaidePuskuri:
         kiskotieto.append("E* ");
+        break;
+    case LiikennePaikanPaa:
+        kiskotieto.append("E*r ");
         break;
     case VaihdeJatkos:
         kiskotieto.append("E= ");
@@ -343,6 +561,9 @@ QString EditoriKisko::kiskoTietoTalletettavaksi() const
     case Paa :
     case RaidePuskuri:
         kiskotieto.append("P* ");
+        break;
+    case LiikennePaikanPaa:
+        kiskotieto.append("P*r ");
         break;
     case VaihdeJatkos:
         kiskotieto.append("P= ");
@@ -366,11 +587,28 @@ QString EditoriKisko::kiskoTietoTalletettavaksi() const
     else if(laituri() == LaituriMolemmat)
         kiskotieto.append("Lm ");
 
-    // Vielä: Nr, Nj, Kj, Kt, Kv, EoE, EoP
+    // Vielä: EoE, EoP
+    if( esiopastinEtela())
+        kiskotieto.append("EoE ");
+    if( esiopastinPohjoinen())
+        kiskotieto.append("EoP ");
+
+    if( skene_->nakyma())
+    {
+        // Junanumerovalinnat liittyvät vain näkymiin
     if( naytaJunaNumero())
         kiskotieto.append("Nj ");
     if( naytaRaideNumero())
         kiskotieto.append("Nr ");
+    }
+    else
+    {
+        // Kulkutiet liittyvät vain rataan
+    if( kulkutietyypit() == Toissijainen)
+        kiskotieto.append("Kt ");
+    else if(kulkutietyypit() == VainVaihto)
+        kiskotieto.append("Kv ");
+    }
 
 
     return kiskotieto;
