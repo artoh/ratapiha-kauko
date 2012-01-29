@@ -27,7 +27,7 @@ KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int kiskoid, cons
 
 QRectF KaukoKisko::boundingRect() const
 {
-    return QRectF(-3.0, -15.0, pituus()+6.0, 30.0);
+    return QRectF(-15.0, -15.0, pituus()+30.0, 30.0);
 }
 
 
@@ -77,7 +77,7 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         else
             painter->setPen( QPen(Qt::blue)); // Vaihde tai raideristeys: numero sinisellä
         // -- tai sitten yhtä sun toista riippuen sivulukituksista sun muista ;)
-        painter->drawText(QRectF(0.0, -9.0, pituus(), 5.0), raidetunnus_, QTextOption(Qt::AlignCenter));
+        painter->drawText(QRectF(-10.0, -9.0, pituus()+20, 5.0), raidetunnus_, QTextOption(Qt::AlignCenter));
     }
 
     // Laiturin piirtäminenn

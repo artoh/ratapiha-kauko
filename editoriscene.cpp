@@ -15,6 +15,8 @@
 #include <QBrush>
 #include <cmath>
 
+#include <QDebug>
+
 EditoriScene::EditoriScene(QObject *parent) :
     KiskoScene(parent), nakyma_(-1), naytaNopeusRajoitus_(false)
 {
@@ -142,12 +144,13 @@ EditoriRaide* EditoriScene::haeRaide(const QString &liikennepaikka, int raide)
         // Tätä käytetään rataa editoitaessa: tehdään uudet raiteet!
         QSqlQuery kysely;
         kysely.exec(QString("insert into raide(liikennepaikka,raide) values(\"%1\",%2)").arg(liikennepaikka).arg(raide));
-        kysely.exec();
-        if( kysely.lastInsertId().toInt())
+        if( kysely.lastInsertId().toInt() )
         {
-            haettu = new EditoriRaide( liikennepaikka, raide, kysely.lastInsertId().toInt());
+            haettu = new EditoriRaide( liikennepaikka, raide, kysely.lastInsertId().toInt() );
             raiteet_.insert(avain, haettu);
         }
+
+        qDebug() << "Lisätty raide " << avain << " " << kysely.lastInsertId().toInt() << " " << haettu;
     }
 
     return haettu;

@@ -117,7 +117,7 @@ void EditoriKisko::tarkistaPaanTyypit()
 
 QRectF EditoriKisko::boundingRect() const
 {
-    return QRectF(-5.0, -10.0, pituus()+10.0, 20.0);
+    return QRectF(-10.0, -10.0, pituus()+20.0, 20.0);
 }
 
 void EditoriKisko::valitse(bool onko)
