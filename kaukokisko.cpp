@@ -34,6 +34,17 @@ QRectF KaukoKisko::boundingRect() const
 void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 
+    // Sillalle taustalaatikko
+    if( silta())
+    {
+        painter->setBrush( Qt::gray);
+        painter->setPen(Qt::NoPen);
+        painter->drawRect(QRectF(0.0, -3.0, pituus(),  6.0));
+        painter->setPen( QPen(QBrush(Qt::black),0.7, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->drawLine( QLineF(4.0, -3.0, pituus()-4.0, -3.0));
+        painter->drawLine( QLineF(4.0, 3.0, pituus()-4.0, 3.0));
+    }
+
     // Piirretään liikennepaikan rajaviivat
      painter->setPen( Qt::red);
      painter->setFont( QFont("Helvetica",2));

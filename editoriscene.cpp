@@ -150,7 +150,6 @@ EditoriRaide* EditoriScene::haeRaide(const QString &liikennepaikka, int raide)
             raiteet_.insert(avain, haettu);
         }
 
-        qDebug() << "Lisätty raide " << avain << " " << kysely.lastInsertId().toInt() << " " << haettu;
     }
 
     return haettu;

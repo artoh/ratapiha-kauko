@@ -22,5 +22,10 @@
         <file>pic/ro-seis.png</file>
         <file>pic/eo-seis.png</file>
         <file>pic/raideristeys.png</file>
+        <file>pic/eivalvottu.png</file>
+        <file>pic/sahko.png</file>
+        <file>pic/raiteensulku.png</file>
+        <file>pic/silta.png</file>
+        <file>pic/raiteensulku-pohjoiseen.png</file>
     </qresource>
 </RCC>

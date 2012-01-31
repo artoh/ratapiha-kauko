@@ -46,7 +46,8 @@ public:
                                bool naytaJunaNumero = false, int sn = 0,
                                Kulkutietyypit kulkutietyypit = Ensisijainen,
                                bool esiopastinEtela = false,
-                               bool esiopastinPohjoinen = false);
+                               bool esiopastinPohjoinen = false,
+                               bool silta = false);
 
     void talletaKisko();
 

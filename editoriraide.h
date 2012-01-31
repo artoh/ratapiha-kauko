@@ -26,6 +26,10 @@ public:
    EditoriRaiteenPaa* pohjoinen() { return pohjoinen_; }
    EditoriRaiteenPaa* etelainen() { return etelainen_; }
 
+   bool sahkoistetty() const { return sahkoistetty_; }
+   bool valvottu() const { return valvottu_; }
+
+   void asetaMaareet(bool sahkoistetty=true, bool valvottu=true);
    void talleta();
 
 protected:
@@ -35,6 +39,9 @@ protected:
 
     EditoriRaiteenPaa* pohjoinen_;
     EditoriRaiteenPaa* etelainen_;
+
+    bool sahkoistetty_;
+    bool valvottu_;
 
 };
 

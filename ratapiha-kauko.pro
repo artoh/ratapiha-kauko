@@ -64,6 +64,11 @@ OTHER_FILES += \
     pic/po-seis.png \
     pic/ro-seis.png \
     pic/eo-seis.png \
-    pic/raideristeys.png
+    pic/raideristeys.png \
+    pic/raiteensulku.png \
+    pic/silta.png \
+    pic/eivalvottu.png \
+    pic/sahko.png \
+    pic/raiteensulku-pohjoiseen.png
 
 

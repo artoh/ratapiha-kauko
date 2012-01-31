@@ -49,6 +49,8 @@ public slots:
     /** Kun klikataan jotain kiskon määritettä.. */
     void paivitaKiskonMaareet();
 
+    void paivitaRaiteenMaareet();
+
     void paivitaOpastimet();
 
 protected:
@@ -72,6 +74,7 @@ protected:
 
     QAction* laituriVasenAktio_;
     QAction* laituriOikeaAktio_;
+    QAction* siltaAktio_;
 
     QAction* naytaJunanumerotAktio_;
     QAction* naytaaRaidenumerotAktio_;
@@ -93,6 +96,13 @@ protected:
     QAction* eoEtelaanAktio_;
     QAction* eoPohjoiseenAktio_;
     QAction* raideRisteysAktio_;
+
+    QActionGroup* raiteenMaareAktiot_;
+    QAction* sahkoistettyAktio_;
+    QAction* valvomatonAktio_;
+
+    QAction* spEtelaanAktio_;
+    QAction* spPohjoiseenAktio_;
 
     QToolBar* hallintaToolBar_;
     QToolBar* muokkausToolBar_;

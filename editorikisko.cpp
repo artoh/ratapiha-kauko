@@ -172,7 +172,7 @@ void EditoriKisko::asetaRaide(int raide)
 }
 
 
-void EditoriKisko::asetaRaiteenValintoja(Kisko::Laituri laituri, bool naytaRaideNumero, bool naytaJunaNumero, int sn, Kulkutietyypit kulkutietyypit, bool esiopastinEtela, bool esiopastinPohjoinen)
+void EditoriKisko::asetaRaiteenValintoja(Kisko::Laituri laituri, bool naytaRaideNumero, bool naytaJunaNumero, int sn, Kulkutietyypit kulkutietyypit, bool esiopastinEtela, bool esiopastinPohjoinen, bool silta)
 {
 
    laituri_=laituri;
@@ -182,6 +182,7 @@ void EditoriKisko::asetaRaiteenValintoja(Kisko::Laituri laituri, bool naytaRaide
    kulkutietyypit_ = kulkutietyypit;
    esiopastinEtela_ = esiopastinEtela;
    esiopastinPohjoinen_ = esiopastinPohjoinen;
+   silta_ = silta;
    update(boundingRect());
 }
 
@@ -300,6 +301,11 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
         // Ellei raidetta ole luonnossa, magentalla värillä!
         if( !raidePointteri())
             raideVari = Qt::magenta;
+        else
+        {
+            if( !raidePointteri()->sahkoistetty())
+                raideVari = Qt::darkBlue;
+        }
     }
     else
     {
@@ -317,7 +323,13 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
         raideVari = nopeusVari( sn() );
     }
 
-    if( kulkutietyypit() == Ensisijainen || skene_->nakyma() )
+    if( raidePointteri() && !raidePointteri()->valvottu())
+    {
+        // Valvomaton raide katkoviivalla. Sille ei voi muodostaa kulkutietä
+        painter->setPen( QPen(QBrush( raideVari ),2.0, Qt::DashLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->drawLine(2.5, 0.0, pituus()-2.5, 0.0);
+    }
+    else if( kulkutietyypit() == Ensisijainen || skene_->nakyma() )
     {
         painter->setPen( QPen(QBrush( raideVari ),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
         painter->drawLine(2.5, 0.0, pituus()-2.5, 0.0);
@@ -347,10 +359,10 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
 
     // Puskurit radalla
     if( (etelaTyyppi() == RaidePuskuri && !skene_->nakyma()) ||
-            (raidePointteri() && raidePointteri()->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaidePuskuri))
+            (raidePointteri() && ( etelaTyyppi()==Paa || etelaTyyppi()==LiikennePaikanPaa) && raidePointteri()->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaidePuskuri))
         painter->drawLine(QLineF(0.0, -4.0, 0.0, 4.0));
     if( (pohjoisTyyppi() == RaidePuskuri && !skene_->nakyma()) ||
-        ( raidePointteri() && raidePointteri()->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::RaidePuskuri ))
+        ( raidePointteri() && ( pohjoisTyyppi()==Paa || pohjoisTyyppi()==LiikennePaikanPaa) && raidePointteri()->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::RaidePuskuri ))
         painter->drawLine(QLineF(pituus(), -4.0, pituus(), 4.0));
 
 
@@ -375,6 +387,15 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
         QPolygonF etelaOpastinKuvio;
         etelaOpastinKuvio << QPointF(0.0, 0.0 ) << QPointF( 8.0, -4.0)
                           << QPointF( 8.0, 4.0) << QPointF( 0.0, 0.0);
+
+        if( raidePointteri()->etelainen()->raiteenSulku())
+        {
+            QPolygonF rsKuvio;
+            rsKuvio << QPointF(1.0, 5.0) << QPointF(1.0, 2.0) << QPointF(5.0, 5.0 ) << QPointF(1.0, 5.0) ;
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(QBrush(Qt::blue));
+            painter->drawPolygon( rsKuvio);
+        }
 
         if( raidePointteri()->etelainen()->paaOpastin())
         {
@@ -412,6 +433,18 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
         QPolygonF pohjoisOpastinKuvio;
         pohjoisOpastinKuvio << QPointF(pituus(), 0.0 ) << QPointF( pituus()-8.0, -4.0)
                           << QPointF( pituus()-8.0, 4.0) << QPointF( pituus()-0.0, 0.0);
+
+
+        if( raidePointteri()->pohjoinen()->raiteenSulku())
+        {
+            QPolygonF rsKuvio;
+            rsKuvio << QPointF(pituus() - 1.0 , 5.0) << QPointF(pituus() - 1.0, 2.0) << QPointF(pituus() - 5.0, 5.0)  << QPointF(pituus() - 1.0, 5.0);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(QBrush(Qt::blue));
+            painter->drawPolygon( rsKuvio);
+        }
+
+
         if( raidePointteri()->pohjoinen()->paaOpastin())
         {
             painter->setPen(Qt::NoPen);
@@ -483,7 +516,15 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
         }
 
 
-       }
+    }
+    // Sillan piirtäminen
+    if( silta() )
+    {
+        painter->setPen( QPen(QBrush( Qt::black), 0.7, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin) );
+        painter->drawLine(QLineF(0.0, -3.0, pituus(), -3.0 ));
+        painter->drawLine(QLineF(0.0, 3.0, pituus(), 3.0 ));
+    }
+
 
 }
 
@@ -592,6 +633,9 @@ QString EditoriKisko::kiskoTietoTalletettavaksi() const
         kiskotieto.append("EoE ");
     if( esiopastinPohjoinen())
         kiskotieto.append("EoP ");
+
+    if( silta())
+        kiskotieto.append("Silta ");
 
     if( skene_->nakyma())
     {

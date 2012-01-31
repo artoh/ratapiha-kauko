@@ -25,17 +25,20 @@ public:
     bool paaOpastin() const { return paaOpastin_; }
     bool raideOpastin() const { return raideOpastin_; }
     bool suojastusOpastin() const { return suojastusOpastin_; }
+    bool raiteenSulku() const { return raiteenSulku_; }
 
     void asetaPaanTyyppi(PaanTyyppi tyyppi);
     void asetaPaaOpastin(bool onko);
     void asetaRaideOpastin(bool onko);
     void asetaSuojastusOpastin(bool onko);
+    void asetaRaiteenSulku(bool onko);
 
 protected:
     PaanTyyppi paanTyyppi_;
     bool paaOpastin_;
     bool raideOpastin_;
     bool suojastusOpastin_;
+    bool raiteenSulku_;
 
 
 };

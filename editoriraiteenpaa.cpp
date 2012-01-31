@@ -18,6 +18,8 @@ EditoriRaiteenPaa::EditoriRaiteenPaa(const QString &tilatieto)
     if( tilatieto.contains("So"))
         suojastusOpastin_ = true;
 
+    raiteenSulku_ = tilatieto.contains("Sp");
+
 }
 
 
@@ -37,6 +39,9 @@ QString EditoriRaiteenPaa::tilaTieto() const
         tila.append("Ro ");
     if( suojastusOpastin())
         tila.append("So ");
+
+    if( raiteenSulku())
+        tila.append("Sp ");
 
     return tila;
 
@@ -60,4 +65,9 @@ void EditoriRaiteenPaa::asetaRaideOpastin(bool onko)
 void EditoriRaiteenPaa::asetaSuojastusOpastin(bool onko)
 {
     suojastusOpastin_ = onko;
+}
+
+void EditoriRaiteenPaa::asetaRaiteenSulku(bool onko)
+{
+    raiteenSulku_ = onko;
 }
