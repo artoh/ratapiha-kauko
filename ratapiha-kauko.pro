@@ -19,7 +19,9 @@ HEADERS += \
     mittanauha.h \
     kaukoview.h \
     editoriraide.h \
-    editoriraiteenpaa.h
+    editoriraiteenpaa.h \
+    raiteenpaa.h \
+    raidetieto.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -37,7 +39,9 @@ SOURCES += \
     mittanauha.cpp \
     kaukoview.cpp \
     editoriraide.cpp \
-    editoriraiteenpaa.cpp
+    editoriraiteenpaa.cpp \
+    raiteenpaa.cpp \
+    raidetieto.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

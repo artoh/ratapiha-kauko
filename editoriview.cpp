@@ -186,7 +186,7 @@ void EditoriView::mousePressEvent(QMouseEvent *event)
                 {
                     tItem->setText(teksti);
                     QSqlQuery kysely;
-                    kysely.exec( QString("UPDATE kisko SET teksti=\"%1\" WHERE tekstiid=%2")
+                    kysely.exec( QString("UPDATE teksti SET teksti=\"%1\" WHERE tekstiid=%2")
                                  .arg(teksti).arg(tItem->data(1).toInt() ));
 
                 }

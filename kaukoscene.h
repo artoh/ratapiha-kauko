@@ -10,8 +10,10 @@
 
 #include "kiskoscene.h"
 #include <QMap>
+#include <QTimer>
 
 class KaukoKisko;
+class RaideTieto;
 
 class KaukoScene : public KiskoScene
 {
@@ -23,17 +25,25 @@ public:
     bool haeNakyma(int nakyma);
 
     /** Onko tiedonsiirtovirhettä, jolloin tila piirretään magentalla */
-    bool onkoVikatilassa() { return true; }
+    bool onkoVikatilassa() { return false; }
+
+    /** Välkkyykö tällä kerralla */
+    bool valkytys() const { return valkytys_; }
 
     int nakyma() { return nakyma_; }
 
 signals:
     
 public slots:
+    void paivitys();
 
 private:
     int nakyma_;
     QMap<int,KaukoKisko*> kiskot_;
+    QMap<int,RaideTieto*> raiteet_;
+
+    bool valkytys_;
+    QTimer* paivitysTimer_;
     
 };
 

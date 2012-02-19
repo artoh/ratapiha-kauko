@@ -229,9 +229,10 @@ QColor EditoriKisko::nopeusVari(int nopeus)
     case 80: return QColor(0,128,128);
     case 100: return QColor(0,192,192);
     case 120: return QColor(0,255,255);
+    case 140: return QColor(0,64,0);
     case 160: return QColor(0,128,0);
     case 200: return QColor(0,192,0);
-    case 220: return QColor(0,255,0);
+    case 240: return QColor(0,255,0);
     }
     return Qt::red;
 }

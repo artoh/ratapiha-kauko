@@ -223,7 +223,7 @@ void EditoriIkkuna::luoAktiot()
 
     spPohjoiseenAktio_ = new QAction( tr("Raiteensulku pohjoiseen"), opastinAktiot_);
     spPohjoiseenAktio_->setIcon(QIcon(":/r/pic/raiteensulku-pohjoiseen.png"));
-    spEtelaanAktio_->setCheckable(true);
+    spPohjoiseenAktio_->setCheckable(true);
 
     connect( opastinAktiot_, SIGNAL(triggered(QAction*)), this, SLOT(paivitaOpastimet()));
 
@@ -575,7 +575,7 @@ void EditoriIkkuna::teeSnCombo()
 {
 
     QList<int> nopeudet;
-    nopeudet << 220 << 200 << 160 << 120 << 100 << 80
+    nopeudet << 240 << 200 << 160 << 140 << 120 << 100 << 80
                 << 50 << 35 << 20 << 10;
 
     snCombo_ = new QComboBox;

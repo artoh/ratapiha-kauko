@@ -14,6 +14,7 @@
 #include <QLineF>
 
 class KaukoScene;
+class RaideTieto;
 
 class KaukoKisko : public Kisko
 {
@@ -35,8 +36,12 @@ public:
 
     int type() const { return Type; }
 
+    void asetaRaide( RaideTieto* praidetieto);
 
 protected:
+    RaideTieto* raidetieto() { return raidetieto_; }
+
+
     KaukoScene* skene_;
     QString raidetunnus_;
     Laituri laituri_;
@@ -44,6 +49,8 @@ protected:
 
     bool naytajunanumero_;
     bool naytaraidenumero_;
+
+    RaideTieto* raidetieto_;
 
 
 };
