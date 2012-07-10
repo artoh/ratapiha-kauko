@@ -36,8 +36,6 @@ public:
     int raide() const { return raide_; }
 
 
-    bool naytaRaideNumero() const { return naytaRaideNumero_; }
-    bool naytaJunaNumero() const { return naytaJunaNumero_; }
     bool silta() const { return silta_; }
 
     QPointF etelainen() const { return viiva_.p1(); }
@@ -70,8 +68,6 @@ protected:
     PaanTyyppi etelapaaTyyppi_;
     PaanTyyppi pohjoispaaTyyppi_;
 
-    bool naytaRaideNumero_;
-    bool naytaJunaNumero_;
     bool silta_;
 
     qreal pituus_; /** Kiskon pituus */

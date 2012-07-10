@@ -38,6 +38,9 @@ public:
 
     void asetaRaide( RaideTieto* praidetieto);
 
+    bool naytaRaideNumero() const { return naytaRaideNumero_; }
+    bool naytaJunaNumero() const { return naytaJunaNumero_; }
+
 protected:
     RaideTieto* raidetieto() { return raidetieto_; }
 
@@ -47,8 +50,8 @@ protected:
     Laituri laituri_;
 
 
-    bool naytajunanumero_;
-    bool naytaraidenumero_;
+    bool naytaJunaNumero_;
+    bool naytaRaideNumero_;
 
     RaideTieto* raidetieto_;
 

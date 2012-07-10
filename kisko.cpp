@@ -16,8 +16,6 @@ Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, in
     viiva_(viiva),
     etelapaaTyyppi_(Valille),
     pohjoispaaTyyppi_(Valille),
-    naytaRaideNumero_(false),
-    naytaJunaNumero_(false),
     silta_(false)
 {
     // Ensin sijoitetaan viivan fyysinen sijainti
@@ -59,9 +57,6 @@ Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, in
     else if(kiskodata.contains("P*"))
         pohjoispaaTyyppi_ = Paa;
 
-    // Junanumeroiden ja raitetten näyttö
-    naytaJunaNumero_ = kiskodata.contains("Nj");
-    naytaRaideNumero_ = kiskodata.contains("Nr");
     silta_ = kiskodata.contains("Silta");
 
 }

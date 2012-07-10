@@ -16,7 +16,8 @@ KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int kiskoid, cons
     : Kisko(viiva, kiskoid, liikennepaikka, raide, kiskodata), raidetieto_(0)
 {
 
-    naytaraidenumero_ = kiskodata.contains("Nr");
+    naytaRaideNumero_ = kiskodata.contains("Nr");
+    naytaJunaNumero_ = kiskodata.contains("Nj");
 
     // Sijoitetaan tunnus, jos numero sopii
     if( naytaRaideNumero() )
@@ -130,7 +131,7 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
                 painter->drawPolygon( kuvio);
                 loppu -= 9.0;
             }
-            if( raidetieto()->etelainen()->raideOpastin() == RaiteenPaa::Seis)
+            if( raidetieto()->pohjoinen()->raideOpastin() == RaiteenPaa::Seis)
             {
                 if( loppu > pituus()-1.0 )
                     loppu = pituus(); // Jos ei pääopastinta

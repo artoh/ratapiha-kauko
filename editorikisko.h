@@ -49,6 +49,9 @@ public:
                                bool esiopastinPohjoinen = false,
                                bool silta = false);
 
+    bool naytaRaideNumero() const { return naytaRaideNumero_; }
+    bool naytaJunaNumero() const { return naytaJunaNumero_; }
+
     void talletaKisko();
 
     void tarkistaPaanTyypit();
@@ -67,6 +70,9 @@ protected:
     QString kiskoTietoTalletettavaksi() const;
 
     int sn_;
+    bool naytaRaideNumero_;
+    bool naytaJunaNumero_;
+
     Kulkutietyypit kulkutietyypit_;
     EditoriScene* skene_;
     bool esiopastinEtela_;

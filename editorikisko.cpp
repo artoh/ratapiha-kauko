@@ -20,7 +20,9 @@
 #include <QSqlError>
 
 EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata, int sn) :
-    Kisko(viiva, kiskoid, liikennepaikka, raide, kiskodata), sn_(sn), kulkutietyypit_(Ensisijainen), skene_(skene),
+    Kisko(viiva, kiskoid, liikennepaikka, raide, kiskodata), sn_(sn),
+    naytaRaideNumero_(false), naytaJunaNumero_(false),
+    kulkutietyypit_(Ensisijainen), skene_(skene),
     esiopastinEtela_(false), esiopastinPohjoinen_(false),
     valittu_(false), raidePtr_(0)
 {
@@ -33,6 +35,10 @@ EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid
         esiopastinEtela_ = true;
     if( kiskodata.contains("EoP"))
         esiopastinPohjoinen_ = true;
+
+    // Junanumeroiden ja raitetten näyttö
+    naytaJunaNumero_ = kiskodata.contains("Nj");
+    naytaRaideNumero_ = kiskodata.contains("Nr");
 
     skene->addItem(this);
     paidenTarkistusToimet();
