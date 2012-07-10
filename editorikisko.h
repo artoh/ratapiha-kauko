@@ -8,14 +8,14 @@
 #ifndef EDITORIKISKO_H
 #define EDITORIKISKO_H
 
-#include "kisko.h"
+#include "laajennettukisko.h"
 #include <QLineF>
 #include <QColor>
 
 class EditoriScene;
 class EditoriRaide;
 
-class EditoriKisko : public Kisko
+class EditoriKisko : public LaajennettuKisko
 {
 public:
     EditoriKisko(EditoriScene* skene, const QLineF& viiva, int kiskoid=0, const QString& liikennepaikka=QString(), int raide = 0,
@@ -49,8 +49,6 @@ public:
                                bool esiopastinPohjoinen = false,
                                bool silta = false);
 
-    bool naytaRaideNumero() const { return naytaRaideNumero_; }
-    bool naytaJunaNumero() const { return naytaJunaNumero_; }
 
     void talletaKisko();
 
@@ -70,8 +68,6 @@ protected:
     QString kiskoTietoTalletettavaksi() const;
 
     int sn_;
-    bool naytaRaideNumero_;
-    bool naytaJunaNumero_;
 
     Kulkutietyypit kulkutietyypit_;
     EditoriScene* skene_;

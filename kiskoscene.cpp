@@ -10,6 +10,8 @@
 #include <QSqlQuery>
 #include <QGraphicsSimpleTextItem>
 
+#include <cmath>
+
 KiskoScene::KiskoScene(QObject *parent) :
     QGraphicsScene(parent)
 {

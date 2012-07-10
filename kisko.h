@@ -25,15 +25,11 @@ public:
     enum PaanTyyppi { Virhe = 0, Valille = 1, Paa = 2, LiikennePaikanPaa = 3, RaidePuskuri = 4 /** Päättyvä raide */ ,
                       VaihdeJatkos = 10, VaihdeVasen = 11, VaihdeOikea = 12 };
 
-    Kisko( const QLineF& viiva, int kiskoid=0, const QString& liikennepaikka=QString(), int raide = 0,
-           const QString& kiskodata = QString());
+    Kisko( const QLineF& viiva, const QString& kiskodata = QString());
 
 
     qreal pituus() const { return pituus_; }
     Laituri laituri() const { return laituri_; }
-    QString liikennePaikka() const {return liikennepaikka_; }
-    int kiskoId() const { return kiskoid_; }
-    int raide() const { return raide_; }
 
 
     bool silta() const { return silta_; }
@@ -48,7 +44,6 @@ public:
     QList<Kisko*> haeNaapurit(QPointF sijainnista);
 
     QLineF viiva() const { return viiva_; }
-    void tarkistaPaanTyypit();
 
     /** Vaihtaa etelan pohjoiseksi ja pohjoisen eteläksi*/
     void kaannaSuunta();
@@ -60,9 +55,6 @@ public slots:
 
 
 protected:
-    int kiskoid_;
-    QString liikennepaikka_;
-    int raide_;
     Laituri laituri_;
     QLineF viiva_;
     PaanTyyppi etelapaaTyyppi_;
@@ -72,8 +64,7 @@ protected:
 
     qreal pituus_; /** Kiskon pituus */
 
-private:
-    PaanTyyppi tarkistaTyyppiPaalle( QPointF piste );
+
 
     
 };

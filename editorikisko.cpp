@@ -20,8 +20,7 @@
 #include <QSqlError>
 
 EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata, int sn) :
-    Kisko(viiva, kiskoid, liikennepaikka, raide, kiskodata), sn_(sn),
-    naytaRaideNumero_(false), naytaJunaNumero_(false),
+    LaajennettuKisko(viiva, kiskoid, liikennepaikka, raide, kiskodata), sn_(sn),
     kulkutietyypit_(Ensisijainen), skene_(skene),
     esiopastinEtela_(false), esiopastinPohjoinen_(false),
     valittu_(false), raidePtr_(0)
@@ -35,10 +34,6 @@ EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid
         esiopastinEtela_ = true;
     if( kiskodata.contains("EoP"))
         esiopastinPohjoinen_ = true;
-
-    // Junanumeroiden ja raitetten näyttö
-    naytaJunaNumero_ = kiskodata.contains("Nj");
-    naytaRaideNumero_ = kiskodata.contains("Nr");
 
     skene->addItem(this);
     paidenTarkistusToimet();
@@ -85,7 +80,7 @@ void EditoriKisko::paidenTarkistusToimet(bool tallenna)
 
 void EditoriKisko::tarkistaPaanTyypit()
 {
-    Kisko::tarkistaPaanTyypit();
+    LaajennettuKisko::tarkistaPaanTyypit();
 
     // Raiteen pään tyypin asettamista... siis vain radalla tietysti
     if( !skene_->nakyma() && raidePointteri() )

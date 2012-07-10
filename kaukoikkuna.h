@@ -26,6 +26,7 @@ public:
 signals:
     
 public slots:
+    void rataIkkuna();
     void uusiIkkuna();
     void nakymanVaihto(int valintaind);
     void editori();
@@ -39,6 +40,7 @@ protected:
     QToolBar* hallintaToolBar_;
     QComboBox* nakymaValinta_;
 
+    QAction* rataIkkunaAktio_;
     QAction* uusiIkkunaAktio_;
     QAction* editoriAktio_;
 

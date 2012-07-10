@@ -8,7 +8,7 @@
 #ifndef KAUKOKISKO_H
 #define KAUKOKISKO_H
 
-#include "kisko.h"
+#include "laajennettukisko.h"
 
 #include <QString>
 #include <QLineF>
@@ -16,7 +16,7 @@
 class KaukoScene;
 class RaideTieto;
 
-class KaukoKisko : public Kisko
+class KaukoKisko : public LaajennettuKisko
 {
 public:
 
@@ -38,9 +38,6 @@ public:
 
     void asetaRaide( RaideTieto* praidetieto);
 
-    bool naytaRaideNumero() const { return naytaRaideNumero_; }
-    bool naytaJunaNumero() const { return naytaJunaNumero_; }
-
 protected:
     RaideTieto* raidetieto() { return raidetieto_; }
 
@@ -50,8 +47,6 @@ protected:
     Laituri laituri_;
 
 
-    bool naytaJunaNumero_;
-    bool naytaRaideNumero_;
 
     RaideTieto* raidetieto_;
 

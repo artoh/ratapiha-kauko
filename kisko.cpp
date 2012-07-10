@@ -10,9 +10,8 @@
 
 #include <QDebug>
 
-Kisko::Kisko(const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata) :
+Kisko::Kisko(const QLineF &viiva, const QString &kiskodata) :
     QGraphicsItem(),
-    kiskoid_(kiskoid), liikennepaikka_(liikennepaikka), raide_(raide),
     viiva_(viiva),
     etelapaaTyyppi_(Valille),
     pohjoispaaTyyppi_(Valille),
@@ -78,78 +77,6 @@ QList<Kisko*> Kisko::haeNaapurit(QPointF sijainnista)
 }
 
 
-Kisko::PaanTyyppi Kisko::tarkistaTyyppiPaalle(QPointF piste)
-{
-    QList<Kisko*> naapurit = haeNaapurit(piste);
-
-    if( naapurit.count() == 0 )
-        return RaidePuskuri;
-    else if( naapurit.count() == 1)
-    {
-        if( raide() > 0 &&
-                naapurit.first()->raide() == raide() &&
-                naapurit.first()->liikennePaikka() == liikennePaikka())
-            return Valille;     // Sama kisko jatkuu
-        else if( naapurit.first()->liikennePaikka() == liikennePaikka() )
-            return Paa;
-        else
-            return LiikennePaikanPaa;
-    }
-    else if( naapurit.count() > 3)
-        return Virhe;       // Liikaa naapureita!
-
-    // Nyt ollaankin vaihteessa tai raideristeyksessä
-    // Selvitettäväksi jää, onko tällä puolella naapuria
-    // ja sehän selviää ihan helposti suuntien avulla!
-
-    Kisko* vierusKaveri = 0;
-
-    foreach( Kisko* naapuri, naapurit)
-    {
-
-        if( naapuri->etelainen() == etelainen() ||
-                naapuri->pohjoinen() == pohjoinen())
-        {
-            // On vieruskaveri
-            if( !vierusKaveri)
-                vierusKaveri = naapuri;
-            else
-                return Virhe;   // Liian monta saman suuntaista tulossa
-        }
-        else
-        {
-            // Ei ole vieruskaveri, tähän ei tarkastuksia jotta voidaan tehdä RR
-
-        }
-    }
-
-    if( !vierusKaveri)
-        return VaihdeJatkos;  // Ollaan vaihteen jatkoksena, eli ei naapurina
-    // Tarkistetaan virheen varalta...
-    if( viiva().angleTo(vierusKaveri->viiva()) < 265.0  &&
-            viiva().angleTo(vierusKaveri->viiva()) > 95.0 )
-        return Virhe;   // Vieruskaveri toiselta puolelta, taitaa olla virhe suunnissa.
-
-
-    // Nyt selvitellään, kumpi on oikea ja kumpi vasen.
-    if( viiva().angleTo(vierusKaveri->viiva()) > 180.0 )
-        return VaihdeVasen;
-
-    return VaihdeOikea;
-
-}
-
-void Kisko::tarkistaPaanTyypit()
-{
-    etelapaaTyyppi_ = tarkistaTyyppiPaalle( etelainen());
-    pohjoispaaTyyppi_ = tarkistaTyyppiPaalle( pohjoinen());
-
-    // Jos molemmissa päissä on vaihteet, on tämä virhe!
-    if( etelapaaTyyppi_ > 9 && pohjoispaaTyyppi_ > 9)
-        etelapaaTyyppi_ = pohjoispaaTyyppi_ = Virhe;
-
-    update(boundingRect());
-}
 
 void Kisko::kaannaSuunta()
 {

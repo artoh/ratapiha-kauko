@@ -21,7 +21,12 @@ HEADERS += \
     editoriraide.h \
     editoriraiteenpaa.h \
     raiteenpaa.h \
-    raidetieto.h
+    raidetieto.h \
+    ratakisko.h \
+    rataraide.h \
+    ratascene.h \
+    laajennettukisko.h \
+    rataikkuna.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -41,7 +46,12 @@ SOURCES += \
     editoriraide.cpp \
     editoriraiteenpaa.cpp \
     raiteenpaa.cpp \
-    raidetieto.cpp
+    raidetieto.cpp \
+    ratakisko.cpp \
+    rataraide.cpp \
+    ratascene.cpp \
+    laajennettukisko.cpp \
+    rataikkuna.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

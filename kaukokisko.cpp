@@ -13,11 +13,8 @@
 
 
 KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata)
-    : Kisko(viiva, kiskoid, liikennepaikka, raide, kiskodata), raidetieto_(0)
+    : LaajennettuKisko(viiva, kiskoid, liikennepaikka, raide, kiskodata), raidetieto_(0)
 {
-
-    naytaRaideNumero_ = kiskodata.contains("Nr");
-    naytaJunaNumero_ = kiskodata.contains("Nj");
 
     // Sijoitetaan tunnus, jos numero sopii
     if( naytaRaideNumero() )

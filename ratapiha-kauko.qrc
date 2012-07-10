@@ -27,5 +27,6 @@
         <file>pic/raiteensulku.png</file>
         <file>pic/silta.png</file>
         <file>pic/raiteensulku-pohjoiseen.png</file>
+        <file>pic/varojunaa.png</file>
     </qresource>
 </RCC>

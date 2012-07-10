@@ -8,6 +8,7 @@
 #include "kaukoikkuna.h"
 
 #include "editoriikkuna.h"
+#include "rataikkuna.h"
 
 #include <QSqlQuery>
 #include <QIcon>
@@ -30,6 +31,12 @@ KaukoIkkuna::KaukoIkkuna(QWidget *parent) :
 }
 
 
+void KaukoIkkuna::rataIkkuna()
+{
+    RataIkkuna* rataikkuna = new RataIkkuna;
+    rataikkuna->show();
+}
+
 void KaukoIkkuna::uusiIkkuna()
 {
     KaukoIkkuna* uusiikkuna = new KaukoIkkuna;
@@ -50,6 +57,10 @@ void KaukoIkkuna::editori()
 
 void KaukoIkkuna::luoAktiot()
 {
+    rataIkkunaAktio_ = new QAction( QIcon(":/r/pic/varojunaa.png"),tr("Rata"), this);
+    rataIkkunaAktio_->setToolTip("Avaa rataikkunan");
+    connect( rataIkkunaAktio_, SIGNAL(triggered()), this, SLOT(rataIkkuna()));
+
     uusiIkkunaAktio_ = new QAction( QIcon(":/r/pic/ikkuna-uusi.png"), tr("Uusi ikkuna"), this );
     uusiIkkunaAktio_->setToolTip(tr("Avaa uuden ikkunan"));
     connect( uusiIkkunaAktio_, SIGNAL(triggered()), this, SLOT(uusiIkkuna()));
@@ -63,6 +74,8 @@ void KaukoIkkuna::luoAktiot()
 void KaukoIkkuna::luoTyoPalkki()
 {
     hallintaToolBar_ = addToolBar( tr("Hallinta"));
+
+    hallintaToolBar_->addAction( rataIkkunaAktio_);
     hallintaToolBar_->addAction(uusiIkkunaAktio_);
 
     // Luodaan näkymän valinta
