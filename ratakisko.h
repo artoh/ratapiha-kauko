@@ -22,6 +22,7 @@
 
 #include "kisko.h"
 #include "rataraide.h"
+#include "opastin.h"
 
 #include <QString>
 #include <QLineF>
@@ -44,9 +45,14 @@ public:
 
     int type() const { return Type; }
 
+    RataRaide* raide() { return raide_; }
+
 private:
     RataRaide* raide_;
     int sn_;
+
+    Opastin* opastinEtelaan_;
+    Opastin* opastinPohjoiseen_;
 };
 
 #endif // RATAKISKO_H

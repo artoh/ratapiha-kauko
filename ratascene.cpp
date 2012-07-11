@@ -20,9 +20,11 @@
 #include "ratascene.h"
 #include "ratakisko.h"
 #include "rataraide.h"
+#include "opastin.h"
 
 #include <QSqlQuery>
 #include <QVariant>
+#include <QTimer>
 
 #include <cmath>
 
@@ -30,6 +32,13 @@ RataScene::RataScene(QObject *parent) :
     QGraphicsScene(parent)
 {
     lataaRata();
+
+    setBackgroundBrush( QBrush(Qt::lightGray));
+
+    // Opastinten välkytys
+    QTimer* valkkytimer = new QTimer(this);
+    connect( valkkytimer, SIGNAL(timeout()), this, SLOT(valkytys()));
+    valkkytimer->start(500);
 }
 
 
@@ -70,7 +79,7 @@ void RataScene::lataaRata()
             int raideid = nkys.value(13).toInt();
 
             // Luodaan raide
-            praide = new RataRaide(raideid, akseleita, junanro, raidetila, etelatila, pohjoistila);
+            praide = new RataRaide(raide, raideid, akseleita, junanro, raidetila, etelatila, pohjoistila);
 
             // Lisätään se skenen listoihin
             raiteet_.insert(raideid, praide);
@@ -116,4 +125,57 @@ void RataScene::lataaRata()
     }
     // PURKKAKOODI PÄÄTTYY TÄHÄN
 
+
+}
+
+void RataScene::valkytys()
+{
+    Opastin::valkky();
+    invalidate( sceneRect());
+}
+
+
+QString RataScene::ASLKasky(const QString &parametrit)
+{
+    QStringList paramLista = parametrit.split(' ');
+    if( paramLista.count() < 1)     // TYHJÄ KÄSKY
+    {
+        return QString("VALMIS");
+    }
+
+    // V [Vaihde] [A|C]  Vaihteen kääntökäsky
+    if( paramLista.first() == "V" && paramLista.count() > 1)
+    {
+        RataRaide* vaihde = raideTunnukset_.value(paramLista[1],0);
+        if( !vaihde)
+            return QString("VIRHE Ei raidetta %1").arg(paramLista[1]);
+
+        if( vaihde->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
+        {
+             // Käännettävä molemmat päät!
+            vaihde->etelainen()->kaannaVaihde();
+            vaihde->pohjoinen()->kaannaVaihde();
+        }
+        else if(paramLista.count() > 2 && paramLista[2]=="C")
+        {
+            if( vaihde->pohjoinen()->paanTyyppi() == RaiteenPaa::Vaihde)
+                vaihde->pohjoinen()->kaannaVaihde();
+            else
+                return QString("VIRHE Ei ole vaihde");
+        }
+        else
+        {
+            // Yksinkertainen vaihde tai raideristeys - käännetään etelä
+            if( vaihde->etelainen()->paanTyyppi() == RaiteenPaa::Vaihde )
+                vaihde->etelainen()->kaannaVaihde();
+            else if( vaihde->pohjoinen()->paanTyyppi() == RaiteenPaa::Vaihde)
+                vaihde->pohjoinen()->kaannaVaihde();
+            else
+                return QString("VIRHE Ei ole vaihde");
+
+        }
+        vaihde->paivita();
+        return QString("OK");
+    }
+    return QString("?");
 }

@@ -18,11 +18,13 @@
 **************************************************************************/
 
 #include "rataraide.h"
+#include "ratakisko.h"
+#include <QSqlQuery>
 
-RataRaide::RataRaide(int raideid, int akseleita, int junanumero, const QString& tila, const QString& etelatila, const QString& pohjoistila)
-    : raideid_(raideid)
+RataRaide::RataRaide(int raidetunnus, int raideid, int akseleita, int junanumero, const QString& tila, const QString& etelatila, const QString& pohjoistila)
+    : raidetunnus_(raidetunnus), raideid_(raideid)
 {
-    paivita(akseleita, junanumero, tila, etelatila, pohjoistila);
+    RaideTieto::paivita(akseleita, junanumero, tila, etelatila, pohjoistila);
 }
 
 
@@ -30,3 +32,34 @@ void RataRaide::lisaaKisko(RataKisko *kisko)
 {
     kiskot_.append(kisko);
 }
+
+
+QString RataRaide::tilatieto() const
+{
+
+    QString raidetila;
+    if( !sahkoistetty_)
+        raidetila.append("SäEi ");
+    if( !valvottu_)
+        raidetila.append("ValvEi ");
+
+    return raidetila;
+}
+
+void RataRaide::paivitaTietokantaan()
+{
+    QSqlQuery kysely;
+
+    kysely.exec( QString("update raide set tila_raide=\"%4\",tila_etela=\"%1\",tila_pohjoinen=\"%2\" where raideid=%3").arg(etelainen()->tilaTieto())
+                 .arg(pohjoinen()->tilaTieto()).arg(raideid_).arg(tilatieto()));
+}
+
+
+void RataRaide::paivita()
+{
+    foreach( RataKisko* kisko, kiskot_)
+        kisko->update(kisko->boundingRect());
+    paivitaTietokantaan();
+}
+
+

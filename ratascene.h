@@ -30,13 +30,17 @@ class RataScene : public QGraphicsScene
     Q_OBJECT
 public:
     explicit RataScene(QObject *parent = 0);
-    
+
+    QString ASLKasky(const QString& parametrit); // Asetinlaitteen käskyn suorittaminen
+
 signals:
     
 public slots:
+    void valkytys();
 
 private:
     void lataaRata();
+
 
     QHash<int,RataRaide*> raiteet_;  /** Raiteen avaimena raideid */
     QHash<QString, RataRaide*> raideTunnukset_; /** Raiteen avaimena raidetunnus: Hki001 */

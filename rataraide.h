@@ -28,12 +28,21 @@ class RataKisko;
 class RataRaide : public RaideTieto
 {
 public:
-    RataRaide(int raideid, int akseleita, int junanumero, const QString& tila, const QString& etelatila, const QString& pohjoistila);
+    RataRaide(int raidetunnus, int raideid, int akseleita, int junanumero, const QString& tila, const QString& etelatila, const QString& pohjoistila);
 
     void lisaaKisko(RataKisko* kisko);
 
+    int raidetunnus() const { return raidetunnus_; }
+
+    QString tilatieto() const;
+
+    void paivitaTietokantaan();
+    void paivita(); // Piirtää kiskot ja vie tietokantaan
+
 protected:
+    int raidetunnus_;   // Raiteen tunnusnumero
     int raideid_;   // Raiteen id tietokannassa
+
 
     QList<RataKisko*> kiskot_;  // Raiteeseen kuuluvat kiskot
 };

@@ -12,6 +12,7 @@
 
 #include <QSqlQuery>
 #include <QIcon>
+#include <QDebug>
 
 KaukoIkkuna::KaukoIkkuna(QWidget *parent) :
     QMainWindow(parent)
@@ -55,6 +56,12 @@ void KaukoIkkuna::editori()
 }
 
 
+void KaukoIkkuna::kasky()
+{
+    qDebug() << RataIkkuna::rataSkene()->ASLKasky( kaskyLine_->text());
+    kaskyLine_->clear();
+}
+
 void KaukoIkkuna::luoAktiot()
 {
     rataIkkunaAktio_ = new QAction( QIcon(":/r/pic/varojunaa.png"),tr("Rata"), this);
@@ -92,6 +99,10 @@ void KaukoIkkuna::luoTyoPalkki()
     hallintaToolBar_->addWidget(nakymaValinta_);
 
     hallintaToolBar_->addAction(editoriAktio_);
+
+    kaskyLine_ = new QLineEdit;
+    connect( kaskyLine_, SIGNAL(returnPressed()), this, SLOT(kasky()));
+    hallintaToolBar_->addWidget(kaskyLine_);
 
 
 }

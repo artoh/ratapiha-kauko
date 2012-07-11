@@ -15,6 +15,7 @@
 #include <QComboBox>
 #include <QToolBar>
 #include <QAction>
+#include <QLineEdit>
 
 
 class KaukoIkkuna : public QMainWindow
@@ -31,6 +32,7 @@ public slots:
     void nakymanVaihto(int valintaind);
     void editori();
 
+    void kasky();
 
 protected:
     void luoTyoPalkki();
@@ -44,6 +46,7 @@ protected:
     QAction* uusiIkkunaAktio_;
     QAction* editoriAktio_;
 
+    QLineEdit* kaskyLine_;
 
     KaukoScene* skene_;
     KaukoView* view_;

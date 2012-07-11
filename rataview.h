@@ -1,5 +1,5 @@
 /**************************************************************************
-**  rataikkuna.cpp
+**  rataview.h
 **  Copyright (c) 2012 Arto Hyvättinen 
 **
 **  This program is free software: you can redistribute it and/or modify
@@ -14,34 +14,33 @@
 **
 **  See <http://www.gnu.org/licenses/>
 **
-**  RataIkkuna  10.7.2012
+**  RataView  11.7.2012
 **************************************************************************/
 
-#include "rataikkuna.h"
+#ifndef RATAVIEW_H
+#define RATAVIEW_H
 
-RataIkkuna::RataIkkuna(QWidget *parent) :
-    QMainWindow(parent)
+#include "ratascene.h"
+
+#include <QGraphicsView>
+
+class RataView : public QGraphicsView
 {
-    // Luodaan ensin skene, ellei sellaista ole
-    rataSkene();
+    Q_OBJECT
+public:
+    RataView(RataScene* skene);
+    
+signals:
+    
+public slots:
 
-    view_ = new RataView(scene__);
-    view_->scale(0.5, 0.5);
-    setCentralWidget(view_);
-
-}
+protected:
+    void wheelEvent(QWheelEvent *event);
 
 
-RataScene* RataIkkuna::rataSkene()
-{
-    if( !scene__)
-        scene__ = new RataScene;
-    return scene__;
-}
+    /** Käytetäänkö hiiren rullaa skaalaamiseen vai vierittäimiseen */
+    bool rullaSkaalaa_;
+    
+};
 
-bool RataIkkuna::onkoSkenea()
-{
-    return( scene__ != 0);
-}
-
-RataScene* RataIkkuna::scene__ = 0;
+#endif // RATAVIEW_H

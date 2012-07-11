@@ -17,6 +17,67 @@ RaiteenPaa::RaiteenPaa() :
 
 }
 
+QString RaiteenPaa::tilaTieto() const
+{
+    QString tila;
+
+    if( paanTyyppi() == Vaihde && vaihde()==Vasen)
+        tila.append("V- ");
+    else if(paanTyyppi() == Vaihde && vaihde()==Oikea)
+        tila.append("V+");
+
+    if( paanTyyppi() == RaideRisteys && vaihde() == Vasen )
+        tila.append("RR- ");
+    else if(paanTyyppi()==RaideRisteys && vaihde() == Oikea)
+        tila.append("RR+ ");
+
+    if( paaOpastin()==Seis)
+        tila.append("PoSeis ");
+    else if(paaOpastin()==Aja)
+        tila.append("PoAja ");
+    else if(paaOpastin()==AjaVarovasti)
+        tila.append("PoSn");
+
+    if( raideOpastin()==Seis)
+        tila.append("RoSeis ");
+    else if(raideOpastin()==Aja)
+        tila.append("RoAja ");
+    else if(raideOpastin()==AjaVarovasti)
+        tila.append("RoEiOpastetta ");
+
+    if( suojastusOpastin()==Seis)
+        tila.append("SoSeis ");
+    else if(suojastusOpastin() == Aja)
+        tila.append("SoAja ");
+    else if( suojastusOpastin() == AjaVarovasti)
+        tila.append("SoVarovasti ");
+
+    if( raiteenSulku() == SpSallii)
+        tila.append("Sp- ");
+    else if(raiteenSulku() == SpSulkee)
+        tila.append("Sp+ ");
+
+    if( paanTyyppi() == RaidePuskuri)
+        tila.append("RP ");
+
+
+    return tila;
+}
+
+bool RaiteenPaa::kaannaVaihde()
+{
+    if( paanTyyppi()==Vaihde || paanTyyppi()==RaideRisteys)
+    {
+        // Tässä pitäisi tarkistaa lukitus...
+        if( vaihde()==Vasen)
+            vaihdeTila_=Oikea;
+        else if(vaihde()==Oikea)
+            vaihdeTila_=Vasen;
+        return true;
+    }
+    return false;   // Eipä onnistunut kiäntää tai viäntää
+}
+
 
 void RaiteenPaa::paivitysTehtava(const QString &lause)
 {

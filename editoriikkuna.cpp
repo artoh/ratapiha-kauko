@@ -11,9 +11,13 @@
 #include "editoriraide.h"
 #include "editoriraiteenpaa.h"
 
+#include "rataikkuna.h"
+
 #include <QSqlQuery>
 #include <QInputDialog>
 #include <QIntValidator>
+
+#include <QMessageBox>
 
 
 EditoriIkkuna::EditoriIkkuna(int nakyma, QWidget *parent) :
@@ -45,6 +49,14 @@ EditoriIkkuna::EditoriIkkuna(int nakyma, QWidget *parent) :
 
 void EditoriIkkuna::nakymanVaihto(int valintaind)
 {
+    if( nakymaValinta_->itemData( valintaind).toInt() == 0 && RataIkkuna::onkoSkenea())
+    {
+        // Skene pyörimässä!! ei voi muokata rataa!
+        QMessageBox::critical(this, tr("Ratapiha"),tr("Rataa ei voi muokata, koska junarata on käytössä. Sulje ohjelma ja yritä uudelleen."));
+        return;
+    }
+
+
     view_->poistaValinta();
     if( nakymaValinta_->itemData(valintaind) == -1)
     {

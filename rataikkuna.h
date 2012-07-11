@@ -22,16 +22,19 @@
 
 
 #include "ratascene.h"
-
+#include "rataview.h"
 
 #include <QMainWindow>
-#include <QGraphicsView>
+
 
 class RataIkkuna : public QMainWindow
 {
     Q_OBJECT
 public:
     explicit RataIkkuna(QWidget *parent = 0);
+
+    static RataScene* rataSkene();
+    static bool onkoSkenea();
     
 signals:
     
@@ -39,8 +42,8 @@ public slots:
 
 
 private:
-    QGraphicsView* view_;
-    static RataScene* scene_;   // Vain yksi scene!!!
+    RataView* view_;
+    static RataScene* scene__;   // Vain yksi scene!!!
     
 };
 

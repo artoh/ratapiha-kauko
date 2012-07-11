@@ -26,7 +26,9 @@ HEADERS += \
     rataraide.h \
     ratascene.h \
     laajennettukisko.h \
-    rataikkuna.h
+    rataikkuna.h \
+    rataview.h \
+    opastin.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -51,7 +53,9 @@ SOURCES += \
     rataraide.cpp \
     ratascene.cpp \
     laajennettukisko.cpp \
-    rataikkuna.cpp
+    rataikkuna.cpp \
+    rataview.cpp \
+    opastin.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

@@ -30,6 +30,10 @@ public:
     VaihdeKasite vaihde() const { return vaihdeTila_; }
     SpKasite raiteenSulku() const { return raiteenSulku_; }
 
+    QString tilaTieto() const;  // Tilatieto tietokantaan
+
+    bool kaannaVaihde();    // Kääntää vaihteen
+
 
 protected:
     /** Päivittää yhden kohteen*/
