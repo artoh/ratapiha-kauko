@@ -11,8 +11,8 @@
 #include <QStringList>
 
 RaiteenPaa::RaiteenPaa() :
-    paanTyyppi_(Suora), vaihdeTila_(EiVaihdetta), paaOpastin_(Puuttuu),
-    raideOpastin_(Puuttuu), suojastusOpastin_(Puuttuu), raiteenSulku_(SpPuuttuu)
+    paanTyyppi_(Suora), vaihdeTila_(EiVaihdetta),
+    opastinTyyppi_(EiOpastinta), opaste_(Seis), raiteenSulku_(SpPuuttuu)
 {
 
 }
@@ -31,26 +31,31 @@ QString RaiteenPaa::tilaTieto() const
     else if(paanTyyppi()==RaideRisteys && vaihde() == Oikea)
         tila.append("RR+ ");
 
-    if( paaOpastin()==Seis)
-        tila.append("PoSeis ");
-    else if(paaOpastin()==Aja)
-        tila.append("PoAja ");
-    else if(paaOpastin()==AjaVarovasti)
-        tila.append("PoSn");
+    if( opastin() == PaaOpastin)
+        tila.append("Po ");
+    else if(opastin() == SuojastusOpastin )
+        tila.append("So ");
+    else if(opastin() == RaideOpastin)
+        tila.append("Ro ");
 
-    if( raideOpastin()==Seis)
-        tila.append("RoSeis ");
-    else if(raideOpastin()==Aja)
-        tila.append("RoAja ");
-    else if(raideOpastin()==AjaVarovasti)
-        tila.append("RoEiOpastetta ");
 
-    if( suojastusOpastin()==Seis)
-        tila.append("SoSeis ");
-    else if(suojastusOpastin() == Aja)
-        tila.append("SoAja ");
-    else if( suojastusOpastin() == AjaVarovasti)
-        tila.append("SoVarovasti ");
+    switch( opaste() )
+    {
+    case Seis:
+        tila.append("Seis "); break;
+    case Aja:
+        tila.append("Aja "); break;
+    case AjaSn:
+        tila.append("AjaSn "); break;
+    case AjaVarovasti:
+        tila.append("AjaVarovasti "); break;
+    case EiOpastetta:
+        tila.append("EiOpastetta "); break;
+    default:
+        break;
+    }
+
+
 
     if( raiteenSulku() == SpSallii)
         tila.append("Sp- ");
@@ -81,31 +86,37 @@ bool RaiteenPaa::kaannaVaihde()
 
 void RaiteenPaa::paivitysTehtava(const QString &lause)
 {
-    if( lause.startsWith("Po"))
+    if( lause == "Po")
     {
-        // Pääopastin
-        if( lause.startsWith("PoSn"))
-            paaOpastin_ = AjaVarovasti;
-        else if( lause.startsWith("PoAja"))
-            paaOpastin_ = Aja;
-        else
-            paaOpastin_ = Seis;
+        opastinTyyppi_ = PaaOpastin;
     }
-    else if( lause.startsWith("Ro"))
+    else if( lause == "Ro" && opastin() != PaaOpastin)
     {
-        if( lause.startsWith("RoAja"))
-            raideOpastin_ = AjaVarovasti;
-        else
-            raideOpastin_ = Seis;
+        opastinTyyppi_ = RaideOpastin;
     }
-    else if( lause.startsWith("So"))
+    else if( lause == "So")
     {
-        if(lause.startsWith("SoVarovasti"))
-            suojastusOpastin_ = AjaVarovasti;
-        else if(lause.startsWith("SoAja"))
-            suojastusOpastin_ = Aja;
-        else
-            suojastusOpastin_ = Seis;
+        opastinTyyppi_ = SuojastusOpastin;
+    }
+    else if( lause == "Seis")
+    {
+        opaste_ = Seis;
+    }
+    else if( lause == "AjaVarovasti")
+    {
+        opaste_ = AjaVarovasti;
+    }
+    else if( lause == "AjaSn")
+    {
+        opaste_ = AjaSn;
+    }
+    else if( lause == "Aja")
+    {
+        opaste_ = Aja;
+    }
+    else if( lause == "EiOpastetta")
+    {
+        opaste_ = EiOpastetta;
     }
     else if( lause.startsWith("Sp"))
     {

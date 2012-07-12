@@ -31,50 +31,47 @@ RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, const QString &kisko
 
 
     // Opastimien laittamiset
-    RaiteenPaa::OpastinKasite esiopastinkasiteEtela = RaiteenPaa::Puuttuu;
-    if( kiskodata.contains("EoE"))
-        esiopastinkasiteEtela = RaiteenPaa::Seis;
+        RaiteenPaa::Opaste esiopastinkasiteEtela = RaiteenPaa::Tyhja;
+        if( kiskodata.contains("EoE"))
+            esiopastinkasiteEtela = RaiteenPaa::Seis;
 
-    if( etelaTyyppi() == Paa || etelaTyyppi() == LiikennePaikanPaa )
-    {
-        if( raide->etelainen()->paaOpastin() != RaiteenPaa::Puuttuu ||
-                raide->etelainen()->suojastusOpastin() != RaiteenPaa::Puuttuu ||
-                raide->etelainen()->raideOpastin() != RaiteenPaa::Puuttuu )
-            opastinEtelaan_ = new Opastin(raide->etelainen(), esiopastinkasiteEtela,
-                                          QString("E%1").arg(raide->raidetunnus(),3,10,QChar('0')));
-    }
-    else if( esiopastinkasiteEtela != RaiteenPaa::Puuttuu)
-        opastinEtelaan_ = new Opastin(0, esiopastinkasiteEtela);
+        if( etelaTyyppi() == Paa || etelaTyyppi() == LiikennePaikanPaa )
+        {
+            if( raide->etelainen()->opastin() != RaiteenPaa::EiOpastinta )
+                opastinEtelaan_ = new Opastin(raide->etelainen(), esiopastinkasiteEtela,
+                                              QString("E%1").arg(raide->raidetunnus(),3,10,QChar('0')));
+        }
+        else if( esiopastinkasiteEtela != RaiteenPaa::Tyhja)
+            opastinEtelaan_ = new Opastin(0, esiopastinkasiteEtela);
 
-    if( opastinEtelaan_)
-    {
-        opastinEtelaan_->setParentItem(this);
-        opastinEtelaan_->setPos(0.0, -5.0);
-        opastinEtelaan_->rotate(-90.0);
-    }
+        if( opastinEtelaan_)
+        {
+            opastinEtelaan_->setParentItem(this);
+            opastinEtelaan_->setPos(0.0, -5.0);
+            opastinEtelaan_->rotate(-90.0);
+        }
 
-    // Sama pohjoiseen
-    RaiteenPaa::OpastinKasite esiopastinkasitePohjoinen = RaiteenPaa::Puuttuu;
-    if( kiskodata.contains("EoP"))
-        esiopastinkasitePohjoinen= RaiteenPaa::Seis;
+        // Sama pohjoiseen
+        RaiteenPaa::Opaste esiopastinkasitePohjoinen = RaiteenPaa::Tyhja;
+        if( kiskodata.contains("EoP"))
+            esiopastinkasitePohjoinen= RaiteenPaa::Tyhja;
 
-    if( pohjoisTyyppi() == Paa || pohjoisTyyppi() == LiikennePaikanPaa )
-    {
-        if( raide->pohjoinen()->paaOpastin() != RaiteenPaa::Puuttuu ||
-                raide->pohjoinen()->suojastusOpastin() != RaiteenPaa::Puuttuu ||
-                raide->pohjoinen()->raideOpastin() != RaiteenPaa::Puuttuu )
-            opastinPohjoiseen_ = new Opastin(raide->pohjoinen(), esiopastinkasitePohjoinen,
-                                             QString("P%1").arg(raide->raidetunnus(),3,10,QChar('0')));
-    }
-    else if( esiopastinkasitePohjoinen != RaiteenPaa::Puuttuu)
-        opastinPohjoiseen_ = new Opastin(0, esiopastinkasiteEtela);
+        if( pohjoisTyyppi() == Paa || pohjoisTyyppi() == LiikennePaikanPaa )
+        {
+            if( raide->pohjoinen()->opastin() != RaiteenPaa::EiOpastinta )
+                opastinPohjoiseen_ = new Opastin(raide->pohjoinen(), esiopastinkasitePohjoinen,
+                                                 QString("P%1").arg(raide->raidetunnus(),3,10,QChar('0')));
+        }
+        else if( esiopastinkasitePohjoinen != RaiteenPaa::Tyhja)
+            opastinPohjoiseen_ = new Opastin(0, esiopastinkasiteEtela);
 
-    if( opastinPohjoiseen_)
-    {
-        opastinPohjoiseen_->setParentItem(this);
-        opastinPohjoiseen_->setPos( pituus(), 5.0);
-        opastinPohjoiseen_->rotate(90.0);
-    }
+        if( opastinPohjoiseen_)
+        {
+            opastinPohjoiseen_->setParentItem(this);
+            opastinPohjoiseen_->setPos( pituus(), 5.0);
+            opastinPohjoiseen_->rotate(90.0);
+        }
+
 
     // Jos silta, niin ylennetään
     if(silta())

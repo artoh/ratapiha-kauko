@@ -32,20 +32,22 @@ public:
 
     enum OpastinTyyppi { Korkea, Esiopastin, Matala } ;
 
-    Opastin(RaiteenPaa* raiteenpaa = 0, RaiteenPaa::OpastinKasite esiopastin = RaiteenPaa::Puuttuu, const QString& tunnus=QString());
+    Opastin(RaiteenPaa* raiteenpaa = 0, RaiteenPaa::Opaste esiopastin = RaiteenPaa::Tyhja, const QString& tunnus=QString());
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     int type() const { return Type; }
 
-    RaiteenPaa::OpastinKasite esiOpastin() const  { return esiopastinkasite_; }
+    RaiteenPaa::Opaste esiOpastin() const  { return esiopastinkasite_; }
     OpastinTyyppi opastintyyppi() const { return opastintyyppi_; }
 
     static void valkky();
 
 protected:
     RaiteenPaa* raiteenpaa_;
-    RaiteenPaa::OpastinKasite esiopastinkasite_;
+    RaiteenPaa* raiteenpaa() { return raiteenpaa_; }
+
+    RaiteenPaa::Opaste esiopastinkasite_;
 
     QString tunnus_;    // Opastimen tunnus joka näytetään
     OpastinTyyppi opastintyyppi_;

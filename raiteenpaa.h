@@ -17,14 +17,15 @@ public:
     RaiteenPaa();
     void paivitaTila(const QString& tila);
 
-    enum OpastinKasite { Puuttuu, Seis, Aja, AjaVarovasti } ;
+    enum Opaste { Pimea, Seis, Aja, AjaSn, AjaVarovasti, EiOpastetta, Tyhja };
+    enum OpastinTyyppi { EiOpastinta, PaaOpastin, SuojastusOpastin, RaideOpastin };
     enum PaanTyyppi { Suora, Vaihde, RaideRisteys, RaidePuskuri } ;
+
     enum VaihdeKasite { EiVaihdetta, Vasen, Oikea } ;
     enum SpKasite { SpPuuttuu, SpSallii, SpSulkee } ;
 
-    OpastinKasite paaOpastin() const { return paaOpastin_; }
-    OpastinKasite raideOpastin() const { return raideOpastin_; }
-    OpastinKasite suojastusOpastin() const { return suojastusOpastin_; }
+    Opaste opaste() const { return opaste_; }
+    OpastinTyyppi opastin() const { return opastinTyyppi_; }
 
     PaanTyyppi paanTyyppi() const { return paanTyyppi_; }
     VaihdeKasite vaihde() const { return vaihdeTila_; }
@@ -43,9 +44,8 @@ protected:
 
     VaihdeKasite vaihdeTila_;
 
-    OpastinKasite paaOpastin_;
-    OpastinKasite raideOpastin_;
-    OpastinKasite suojastusOpastin_;
+    OpastinTyyppi opastinTyyppi_;
+    Opaste opaste_;
 
     SpKasite raiteenSulku_;
 };

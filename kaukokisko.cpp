@@ -75,29 +75,37 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
             QPolygonF kuvio;
             kuvio << QPointF(0.0, 0.0) << QPointF(8.0, -4.0) << QPointF(8.0, 4.0);
 
-            if( raidetieto()->etelainen()->paaOpastin() == RaiteenPaa::Seis)
+            QColor vari;
+            switch( raidetieto()->etelainen()->opaste())
+            {
+                case RaiteenPaa::Seis: vari = Qt::red; break;
+                case RaiteenPaa::Aja: case RaiteenPaa::AjaSn: vari = Qt::green; break;
+                case RaiteenPaa::AjaVarovasti : vari = Qt::yellow; break;
+                case RaiteenPaa::EiOpastetta: vari = Qt::magenta; break;
+            default:
+                vari = Qt::black;
+            }
+
+            if( raidetieto()->etelainen()->opastin() == RaiteenPaa::PaaOpastin)
             {
                 painter->setPen(Qt::NoPen);
-                painter->setBrush( Qt::red);
+                painter->setBrush( vari );
                 painter->drawPolygon( kuvio);
                 alku = 8.0;
             }
-            else if( raidetieto()->etelainen()->suojastusOpastin() == RaiteenPaa::Seis)
+            else if( raidetieto()->etelainen()->opastin() == RaiteenPaa::SuojastusOpastin)
             {
-                painter->setPen( QPen(QBrush(Qt::red),1.8, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+                painter->setPen( QPen(QBrush(vari),1.8, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
                 painter->setBrush( Qt::NoBrush);
                 painter->drawPolygon( kuvio);
                 alku = 9.0;
             }
-            if( raidetieto()->etelainen()->raideOpastin() == RaiteenPaa::Seis)
+            else if( raidetieto()->etelainen()->opastin() == RaiteenPaa::RaideOpastin)
             {
-                if( alku < 1.0 )
-                    alku = 0.0; // Jos ei pääopastinta
-
-                painter->setPen( QPen(QBrush(Qt::red),1.8, Qt::SolidLine, Qt::FlatCap, Qt::RoundJoin));
+                painter->setPen( QPen(QBrush(vari),1.8, Qt::SolidLine, Qt::FlatCap, Qt::RoundJoin));
                 painter->setBrush( Qt::NoBrush);
-                painter->drawLine( QPointF(alku,0), QPointF(alku+8.0, 4.0));
-                painter->drawLine( QPointF(alku,0), QPointF(alku+8.0, -4.0));
+                painter->drawLine( QPointF(0,0), QPointF(8.0, 4.0));
+                painter->drawLine( QPointF(0,0), QPointF(8.0, -4.0));
 
                 alku += 8.0;
             }
@@ -111,29 +119,37 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         if( raidetieto())
         {
 
+            QColor vari;
+            switch( raidetieto()->pohjoinen()->opaste())
+            {
+                case RaiteenPaa::Seis: vari = Qt::red; break;
+                case RaiteenPaa::Aja: case RaiteenPaa::AjaSn: vari = Qt::green; break;
+                case RaiteenPaa::AjaVarovasti : vari = Qt::yellow; break;
+                case RaiteenPaa::EiOpastetta: vari = Qt::magenta; break;
+            default:
+                vari = Qt::black;
+            }
+
             QPolygonF kuvio;
             kuvio << QPointF(loppu-0.0, 0.0) << QPointF(loppu-8.0, -4.0) << QPointF(loppu-8.0, 4.0);
 
-            if( raidetieto()->pohjoinen()->paaOpastin() == RaiteenPaa::Seis)
+            if( raidetieto()->pohjoinen()->opastin() == RaiteenPaa::PaaOpastin)
             {
                 painter->setPen(Qt::NoPen);
-                painter->setBrush( Qt::red);
+                painter->setBrush( vari );
                 painter->drawPolygon( kuvio);
                 loppu -= 8.0;
             }
-            else if( raidetieto()->pohjoinen()->suojastusOpastin() == RaiteenPaa::Seis)
+            else if( raidetieto()->pohjoinen()->opastin() == RaiteenPaa::SuojastusOpastin)
             {
-                painter->setPen( QPen(QBrush(Qt::red),1.8, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+                painter->setPen( QPen(QBrush(vari),1.8, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
                 painter->setBrush( Qt::NoBrush);
                 painter->drawPolygon( kuvio);
                 loppu -= 9.0;
             }
-            if( raidetieto()->pohjoinen()->raideOpastin() == RaiteenPaa::Seis)
+            else if( raidetieto()->pohjoinen()->opastin() == RaiteenPaa::RaideOpastin)
             {
-                if( loppu > pituus()-1.0 )
-                    loppu = pituus(); // Jos ei pääopastinta
-
-                painter->setPen( QPen(QBrush(Qt::red),1.8, Qt::SolidLine, Qt::FlatCap, Qt::RoundJoin));
+                painter->setPen( QPen(QBrush(vari ),1.8, Qt::SolidLine, Qt::FlatCap, Qt::RoundJoin));
                 painter->setBrush( Qt::NoBrush);
                 painter->drawLine( QPointF(loppu,0), QPointF(loppu-8.0, 4.0));
                 painter->drawLine( QPointF(loppu,0), QPointF(loppu-8.0, -4.0));
