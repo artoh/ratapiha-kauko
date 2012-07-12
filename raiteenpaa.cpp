@@ -7,6 +7,7 @@
 **************************************************************************/
 
 #include "raiteenpaa.h"
+#include "rataraide.h"
 
 #include <QStringList>
 
@@ -71,16 +72,23 @@ QString RaiteenPaa::tilaTieto() const
 
 bool RaiteenPaa::kaannaVaihde()
 {
-    if( paanTyyppi()==Vaihde || paanTyyppi()==RaideRisteys)
+    if( vaihde()==Vasen)
+        return kaannaVaihde(Oikea);
+    else if(vaihde()==Oikea)
+        return kaannaVaihde(Vasen);
+    return false;
+}
+
+bool RaiteenPaa::kaannaVaihde(RaiteenPaa::VaihdeKasite tilaan)
+{
+    if( paanTyyppi() == Vaihde || paanTyyppi() == RaideRisteys )
     {
-        // Tässä pitäisi tarkistaa lukitus...
-        if( vaihde()==Vasen)
-            vaihdeTila_=Oikea;
-        else if(vaihde()==Oikea)
-            vaihdeTila_=Vasen;
+        // Tässä pitäisi tarkistaa lukitukset sun muut!
+        vaihdeTila_ = tilaan;
         return true;
     }
-    return false;   // Eipä onnistunut kiäntää tai viäntää
+    return false;
+
 }
 
 
@@ -100,6 +108,12 @@ void RaiteenPaa::asetaRaiteenSulku(bool onko)
 void RaiteenPaa::asetaOpastin(RaiteenPaa::OpastinTyyppi opastintyyppi)
 {
     opastinTyyppi_ = opastintyyppi;
+}
+
+void RaiteenPaa::asetaOpaste(RaiteenPaa::Opaste opaste)
+{
+    opaste_ = opaste;
+
 }
 
 void RaiteenPaa::paivitysTehtava(const QString &lause)

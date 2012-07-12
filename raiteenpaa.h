@@ -34,6 +34,7 @@ public:
     QString tilaTieto() const;  // Tilatieto tietokantaan
 
     bool kaannaVaihde();    // Kääntää vaihteen
+    bool kaannaVaihde(VaihdeKasite tilaan);
 
     bool paaOpastin() const { return opastin() == PaaOpastin; }
     bool raideOpastin() const { return opastin() == RaideOpastin; }
@@ -42,6 +43,7 @@ public:
     void asetaPaanTyyppi(PaanTyyppi tyyppi);
     void asetaRaiteenSulku(bool onko);
     void asetaOpastin(OpastinTyyppi opastintyyppi);
+    void asetaOpaste(Opaste opaste);
 
 
 protected:

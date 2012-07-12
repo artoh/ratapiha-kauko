@@ -21,11 +21,12 @@
 #define RATAKISKO_H
 
 #include "kisko.h"
-#include "rataraide.h"
 #include "opastin.h"
 
 #include <QString>
 #include <QLineF>
+
+class RataRaide;
 
 /** Radan yksi pätkä
 
@@ -46,6 +47,8 @@ public:
     int type() const { return Type; }
 
     RataRaide* raide() { return raide_; }
+
+
 
 private:
     RataRaide* raide_;

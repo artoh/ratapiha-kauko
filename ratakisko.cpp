@@ -19,6 +19,7 @@
 
 #include "ratakisko.h"
 #include "raiteenpaa.h"
+#include "rataraide.h"
 
 #include <QPainter>
 #include <QBrush>

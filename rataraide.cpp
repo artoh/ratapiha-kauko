@@ -19,10 +19,11 @@
 
 #include "rataraide.h"
 #include "ratakisko.h"
+#include "naapuruus.h"
 #include <QSqlQuery>
 
 RataRaide::RataRaide(int raidetunnus, int raideid, int akseleita, int junanumero, const QString& tila, const QString& etelatila, const QString& pohjoistila)
-    : raidetunnus_(raidetunnus), raideid_(raideid)
+    : raidetunnus_(raidetunnus), raideid_(raideid), pituus_(0.0), kulkutieOpastin_(0)
 {
     RaideTieto::paivita(akseleita, junanumero, tila, etelatila, pohjoistila);
 }
@@ -31,6 +32,7 @@ RataRaide::RataRaide(int raidetunnus, int raideid, int akseleita, int junanumero
 void RataRaide::lisaaKisko(RataKisko *kisko)
 {
     kiskot_.append(kisko);
+    pituus_ += kisko->pituus();
 }
 
 
@@ -42,8 +44,16 @@ QString RataRaide::tilatieto() const
         raidetila.append("SäEi ");
     if( !valvottu_)
         raidetila.append("ValvEi ");
+    if( kulkutie_ == RaideTieto::Vaihtokulkutie)
+        raidetila.append("UK ");
 
     return raidetila;
+}
+
+void RataRaide::lukitseKulkutielle(RaiteenPaa *kulkutieOpastin, RaideTieto::Kulkutietyyppi tyyppi)
+{
+    kulkutieOpastin_ = kulkutieOpastin;
+    kulkutie_ = tyyppi;
 }
 
 void RataRaide::paivitaTietokantaan()
@@ -60,6 +70,25 @@ void RataRaide::paivita()
     foreach( RataKisko* kisko, kiskot_)
         kisko->update(kisko->boundingRect());
     paivitaTietokantaan();
+}
+
+QList<Naapuruus *> RataRaide::naapurit()
+{
+    if( naapurit_.isEmpty())
+        haeNaapurit();
+    return naapurit_;
+}
+
+void RataRaide::haeNaapurit()
+{
+    foreach( RataKisko* kisko, kiskot_)
+    {
+        if( kisko->etelaTyyppi()==Kisko::Paa || kisko->etelaTyyppi()==Kisko::LiikennePaikanPaa)
+            naapurit_.append(new Naapuruus(kisko, Naapuruus::Etela));
+        if( kisko->pohjoisTyyppi()==Kisko::Paa || kisko->pohjoisTyyppi()==Kisko::LiikennePaikanPaa)
+            naapurit_.append(new Naapuruus(kisko, Naapuruus::Pohjoinen));
+    }
+
 }
 
 

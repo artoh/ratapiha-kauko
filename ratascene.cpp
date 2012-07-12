@@ -21,6 +21,7 @@
 #include "ratakisko.h"
 #include "rataraide.h"
 #include "opastin.h"
+#include "kulkutienmuodostaja.h"
 
 #include <QSqlQuery>
 #include <QVariant>
@@ -141,6 +142,33 @@ QString RataScene::ASLKasky(const QString &parametrit)
     if( paramLista.count() < 1)     // TYHJÄ KÄSKY
     {
         return QString("VALMIS");
+    }
+
+    // UK raide raide -- vaihtokulkutie
+    if( (paramLista.first() == "UK" || paramLista.first() == "JK" ) && paramLista.count() > 2)
+    {
+        RataRaide* mista = raideTunnukset_.value(paramLista[1],0);
+        RataRaide* minne = raideTunnukset_.value(paramLista[2],0);
+
+        if( !mista || !minne)
+        {
+            return QString("VIRHE Väärä raide");
+        }
+
+        if( paramLista.first() == "UK")
+        {
+            KulkutienMuodostaja ktie(KulkutienMuodostaja::Vaihtokulkutie, mista, minne);
+            if(ktie.muodostaKulkutie())
+                return QString("OK");
+        }
+        else if( paramLista.first() == "JK")
+        {
+            KulkutienMuodostaja ktie(KulkutienMuodostaja::Junakulkutie, mista, minne);
+            if(ktie.muodostaKulkutie())
+                return QString("OK");
+        }
+        return QString("Kulkutie ei onnistu");
+
     }
 
     // V [Vaihde] [A|C]  Vaihteen kääntökäsky

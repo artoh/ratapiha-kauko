@@ -182,6 +182,8 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         painter->setPen( QPen(QBrush(Qt::magenta),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
     else if( raidetieto()->akseleita())
         painter->setPen( QPen(QBrush(Qt::red),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    else if( raidetieto()->kulkutie() == RaideTieto::Vaihtokulkutie)
+        painter->setPen( QPen(QBrush(Qt::yellow),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
     else
         painter->setPen( QPen(QBrush(Qt::white),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
 

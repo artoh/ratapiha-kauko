@@ -23,6 +23,9 @@
 #include "raidetieto.h"
 #include <QList>
 
+
+class Naapuruus;
+
 class RataKisko;
 
 class RataRaide : public RaideTieto
@@ -36,15 +39,28 @@ public:
 
     QString tilatieto() const;
 
+    void lukitseKulkutielle(RaiteenPaa* kulkutieOpastin, Kulkutietyyppi tyyppi);
+
     void paivitaTietokantaan();
     void paivita(); // Piirtää kiskot ja vie tietokantaan
+
+    qreal pituus() const { return pituus_; }
+
+    QList<Naapuruus*> naapurit();   // Palauttaa tiedon naapureista
+
 
 protected:
     int raidetunnus_;   // Raiteen tunnusnumero
     int raideid_;   // Raiteen id tietokannassa
+    qreal pituus_;  // Raiteen kiskojen yhteenlaskettu pituus
+
+    void haeNaapurit();     // Hakee naapurit listaan
 
 
     QList<RataKisko*> kiskot_;  // Raiteeseen kuuluvat kiskot
+    QList<Naapuruus*> naapurit_;
+
+    RaiteenPaa* kulkutieOpastin_;
 };
 
 #endif // RATARAIDE_H

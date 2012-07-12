@@ -27,7 +27,10 @@ HEADERS += \
     laajennettukisko.h \
     rataikkuna.h \
     rataview.h \
-    opastin.h
+    opastin.h \
+    kulkutieelementti.h \
+    kulkutienmuodostaja.h \
+    naapuruus.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -53,7 +56,10 @@ SOURCES += \
     laajennettukisko.cpp \
     rataikkuna.cpp \
     rataview.cpp \
-    opastin.cpp
+    opastin.cpp \
+    kulkutieelementti.cpp \
+    kulkutienmuodostaja.cpp \
+    naapuruus.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
