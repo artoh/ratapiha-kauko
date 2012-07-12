@@ -8,7 +8,7 @@
 #include "editorikisko.h"
 #include "editoriscene.h"
 #include "editoriraide.h"
-#include "editoriraiteenpaa.h"
+#include "raiteenpaa.h"
 
 #include <QPainter>
 #include <QPen>
@@ -87,28 +87,28 @@ void EditoriKisko::tarkistaPaanTyypit()
     {
         if( etelaTyyppi() > 10 ) // Raiteen pohjoispäässä on vaihde... tai RR
         {
-            if( raidePointteri()->pohjoinen()->paanTyyppi() !=EditoriRaiteenPaa::RaideRisteys &&
-                    raidePointteri()->pohjoinen()->paanTyyppi() != EditoriRaiteenPaa::Vaihde )
-                raidePointteri()->pohjoinen()->asetaPaanTyyppi(EditoriRaiteenPaa::Vaihde);
+            if( raidePointteri()->pohjoinen()->paanTyyppi() !=RaiteenPaa::RaideRisteys &&
+                    raidePointteri()->pohjoinen()->paanTyyppi() != RaiteenPaa::Vaihde )
+                raidePointteri()->pohjoinen()->asetaPaanTyyppi(RaiteenPaa::Vaihde);
         }
         else if( pohjoisTyyppi() == Kisko::RaidePuskuri)
-            raidePointteri()->pohjoinen()->asetaPaanTyyppi(EditoriRaiteenPaa::RaidePuskuri);
+            raidePointteri()->pohjoinen()->asetaPaanTyyppi(RaiteenPaa::RaidePuskuri);
         else if( pohjoisTyyppi() == Kisko::Paa || pohjoisTyyppi() == Kisko::LiikennePaikanPaa)
-            raidePointteri()->pohjoinen()->asetaPaanTyyppi(EditoriRaiteenPaa::Suora);
+            raidePointteri()->pohjoinen()->asetaPaanTyyppi(RaiteenPaa::Suora);
 
 
 
         if( pohjoisTyyppi() > 10)  // Raiteen eteläpäässä vaihde tai RR
         {
-            if( raidePointteri()->etelainen()->paanTyyppi() !=EditoriRaiteenPaa::RaideRisteys &&
-                    raidePointteri()->etelainen()->paanTyyppi() != EditoriRaiteenPaa::Vaihde )
-                raidePointteri()->etelainen()->asetaPaanTyyppi(EditoriRaiteenPaa::Vaihde);
+            if( raidePointteri()->etelainen()->paanTyyppi() !=RaiteenPaa::RaideRisteys &&
+                    raidePointteri()->etelainen()->paanTyyppi() != RaiteenPaa::Vaihde )
+                raidePointteri()->etelainen()->asetaPaanTyyppi(RaiteenPaa::Vaihde);
 
         }
         else if( etelaTyyppi() == Kisko::RaidePuskuri ) // Ei kun raidepuskuri ...
-            raidePointteri()->etelainen()->asetaPaanTyyppi(EditoriRaiteenPaa::RaidePuskuri);
+            raidePointteri()->etelainen()->asetaPaanTyyppi(RaiteenPaa::RaidePuskuri);
         else if( etelaTyyppi() == Kisko::Paa || etelaTyyppi() == Kisko::LiikennePaikanPaa)
-            raidePointteri()->etelainen()->asetaPaanTyyppi(EditoriRaiteenPaa::Suora);
+            raidePointteri()->etelainen()->asetaPaanTyyppi(RaiteenPaa::Suora);
 
         raidePointteri()->talleta();
     }
@@ -352,7 +352,7 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
     }
 
     // Raideristeykseen lisäviivat
-    if( raidePointteri() && raidePointteri()->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys)
+    if( raidePointteri() && raidePointteri()->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
     {
         painter->setPen(Qt::black);
         painter->drawLine(2.0, 2.5, pituus()-2.0, 2.5);
@@ -361,10 +361,10 @@ void EditoriKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
 
     // Puskurit radalla
     if( (etelaTyyppi() == RaidePuskuri && !skene_->nakyma()) ||
-            (raidePointteri() && ( etelaTyyppi()==Paa || etelaTyyppi()==LiikennePaikanPaa) && raidePointteri()->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaidePuskuri))
+            (raidePointteri() && ( etelaTyyppi()==Paa || etelaTyyppi()==LiikennePaikanPaa) && raidePointteri()->etelainen()->paanTyyppi() == RaiteenPaa::RaidePuskuri))
         painter->drawLine(QLineF(0.0, -4.0, 0.0, 4.0));
     if( (pohjoisTyyppi() == RaidePuskuri && !skene_->nakyma()) ||
-        ( raidePointteri() && ( pohjoisTyyppi()==Paa || pohjoisTyyppi()==LiikennePaikanPaa) && raidePointteri()->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::RaidePuskuri ))
+        ( raidePointteri() && ( pohjoisTyyppi()==Paa || pohjoisTyyppi()==LiikennePaikanPaa) && raidePointteri()->pohjoinen()->paanTyyppi() == RaiteenPaa::RaidePuskuri ))
         painter->drawLine(QLineF(pituus(), -4.0, pituus(), 4.0));
 
 

@@ -19,7 +19,6 @@ HEADERS += \
     mittanauha.h \
     kaukoview.h \
     editoriraide.h \
-    editoriraiteenpaa.h \
     raiteenpaa.h \
     raidetieto.h \
     ratakisko.h \
@@ -46,7 +45,6 @@ SOURCES += \
     mittanauha.cpp \
     kaukoview.cpp \
     editoriraide.cpp \
-    editoriraiteenpaa.cpp \
     raiteenpaa.cpp \
     raidetieto.cpp \
     ratakisko.cpp \

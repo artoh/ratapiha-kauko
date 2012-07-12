@@ -10,11 +10,11 @@
 
 #include <QStringList>
 
-RaiteenPaa::RaiteenPaa() :
+RaiteenPaa::RaiteenPaa(const QString &tila) :
     paanTyyppi_(Suora), vaihdeTila_(EiVaihdetta),
     opastinTyyppi_(EiOpastinta), opaste_(Seis), raiteenSulku_(SpPuuttuu)
 {
-
+    paivitaTila(tila);
 }
 
 QString RaiteenPaa::tilaTieto() const
@@ -83,6 +83,24 @@ bool RaiteenPaa::kaannaVaihde()
     return false;   // Eipä onnistunut kiäntää tai viäntää
 }
 
+
+void RaiteenPaa::asetaPaanTyyppi(PaanTyyppi tyyppi)
+{
+    paanTyyppi_ = tyyppi;
+}
+
+void RaiteenPaa::asetaRaiteenSulku(bool onko)
+{
+    if( onko && raiteenSulku() == SpPuuttuu)
+        raiteenSulku_ = SpSallii;
+    else if(!onko)
+        raiteenSulku_ = SpPuuttuu;
+}
+
+void RaiteenPaa::asetaOpastin(RaiteenPaa::OpastinTyyppi opastintyyppi)
+{
+    opastinTyyppi_ = opastintyyppi;
+}
 
 void RaiteenPaa::paivitysTehtava(const QString &lause)
 {

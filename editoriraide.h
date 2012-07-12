@@ -8,7 +8,7 @@
 #ifndef EDITORIRAIDE_H
 #define EDITORIRAIDE_H
 
-#include "editoriraiteenpaa.h"
+#include "raiteenpaa.h"
 
 #include <QString>
 
@@ -23,8 +23,8 @@ public:
                 const QString& raidetila=QString(), const QString& etelatila=QString(), const QString& pohjoistila=QString());
    ~EditoriRaide();
 
-   EditoriRaiteenPaa* pohjoinen() { return pohjoinen_; }
-   EditoriRaiteenPaa* etelainen() { return etelainen_; }
+   RaiteenPaa* pohjoinen() { return pohjoinen_; }
+   RaiteenPaa* etelainen() { return etelainen_; }
 
    bool sahkoistetty() const { return sahkoistetty_; }
    bool valvottu() const { return valvottu_; }
@@ -37,8 +37,8 @@ protected:
     int raide_;
     int raideid_;
 
-    EditoriRaiteenPaa* pohjoinen_;
-    EditoriRaiteenPaa* etelainen_;
+    RaiteenPaa* pohjoinen_;
+    RaiteenPaa* etelainen_;
 
     bool sahkoistetty_;
     bool valvottu_;

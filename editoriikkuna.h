@@ -87,6 +87,7 @@ protected:
     QAction* vainVaihtotieAktio_;
 
     QActionGroup* opastinAktiot_;
+
     QAction* poEtelaanAktio_;
     QAction* poPohjoiseenAktio_;
     QAction* roEtelaanAktio_;

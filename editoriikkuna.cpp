@@ -9,7 +9,7 @@
 #include "editorikisko.h"
 
 #include "editoriraide.h"
-#include "editoriraiteenpaa.h"
+#include "raiteenpaa.h"
 
 #include "rataikkuna.h"
 
@@ -239,6 +239,7 @@ void EditoriIkkuna::luoAktiot()
 
     connect( opastinAktiot_, SIGNAL(triggered(QAction*)), this, SLOT(paivitaOpastimet()));
 
+
     // RaideRisteys slottaa opastinaktioihin, koska vaikutta raiteeseen
     raideRisteysAktio_ = new QAction( tr("Raideristeys"), opastinAktiot_);
     raideRisteysAktio_->setIcon( QIcon(":/r/pic/raideristeys.png"));
@@ -348,17 +349,17 @@ void EditoriIkkuna::kiskoValittu(EditoriKisko *kisko)
                 roPohjoiseenAktio_->setChecked( rp->pohjoinen()->raideOpastin());
                 soEtelaanAktio_->setChecked( rp->etelainen()->suojastusOpastin());
                 soPohjoiseenAktio_->setChecked( rp->pohjoinen()->suojastusOpastin());
-                raideRisteysAktio_->setChecked( rp->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys);
+                raideRisteysAktio_->setChecked( rp->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys);
                 spEtelaanAktio_->setChecked( rp->etelainen()->raiteenSulku());
                 spPohjoiseenAktio_->setChecked( rp->pohjoinen()->raiteenSulku());
 
                 opastintenHimmennys(rp);
 
                 // Jos molemmilla puolilla vaihde tai RR, niin mahdollista tehdä RR
-                if( (rp->etelainen()->paanTyyppi() == EditoriRaiteenPaa::Vaihde  ||
-                     rp->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys) &&
-                        (rp->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::Vaihde ||
-                         rp->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys) )
+                if( (rp->etelainen()->paanTyyppi() == RaiteenPaa::Vaihde  ||
+                     rp->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys) &&
+                        (rp->pohjoinen()->paanTyyppi() == RaiteenPaa::Vaihde ||
+                         rp->pohjoinen()->paanTyyppi() == RaiteenPaa::RaideRisteys) )
                     raideRisteysAktio_->setEnabled(true);
                 else
                     raideRisteysAktio_->setEnabled(false);
@@ -435,30 +436,39 @@ void EditoriIkkuna::paivitaOpastimet()
     if( !kisko || !kisko->raidePointteri())
         return;
 
-    kisko->raidePointteri()->etelainen()->asetaPaaOpastin( poEtelaanAktio_->isChecked() );
-    kisko->raidePointteri()->pohjoinen()->asetaPaaOpastin(poPohjoiseenAktio_->isChecked());
+    if( poEtelaanAktio_->isChecked())
+        kisko->raidePointteri()->etelainen()->asetaOpastin(RaiteenPaa::PaaOpastin);
+    else if( soEtelaanAktio_->isChecked())
+        kisko->raidePointteri()->etelainen()->asetaOpastin(RaiteenPaa::SuojastusOpastin);
+    else if( roEtelaanAktio_->isChecked())
+        kisko->raidePointteri()->etelainen()->asetaOpastin(RaiteenPaa::RaideOpastin);
+    else
+        kisko->raidePointteri()->etelainen()->asetaOpastin(RaiteenPaa::EiOpastinta);
 
-    kisko->raidePointteri()->etelainen()->asetaRaideOpastin( roEtelaanAktio_->isChecked());
-    kisko->raidePointteri()->pohjoinen()->asetaRaideOpastin( roPohjoiseenAktio_->isChecked());
+    if( poPohjoiseenAktio_->isChecked())
+        kisko->raidePointteri()->pohjoinen()->asetaOpastin(RaiteenPaa::PaaOpastin);
+    else if( soPohjoiseenAktio_->isChecked())
+        kisko->raidePointteri()->pohjoinen()->asetaOpastin(RaiteenPaa::SuojastusOpastin);
+    else if( roPohjoiseenAktio_->isChecked())
+        kisko->raidePointteri()->pohjoinen()->asetaOpastin(RaiteenPaa::RaideOpastin);
+    else
+        kisko->raidePointteri()->pohjoinen()->asetaOpastin(RaiteenPaa::EiOpastinta);
 
-    kisko->raidePointteri()->etelainen()->asetaSuojastusOpastin( soEtelaanAktio_->isChecked());
-    kisko->raidePointteri()->pohjoinen()->asetaSuojastusOpastin(soPohjoiseenAktio_->isChecked());
-
-    if( (kisko->raidePointteri()->etelainen()->paanTyyppi() == EditoriRaiteenPaa::Vaihde  ||
-         kisko->raidePointteri()->etelainen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys) &&
-            (kisko->raidePointteri()->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::Vaihde ||
-             kisko->raidePointteri()->pohjoinen()->paanTyyppi() == EditoriRaiteenPaa::RaideRisteys) )
+    if( (kisko->raidePointteri()->etelainen()->paanTyyppi() == RaiteenPaa::Vaihde  ||
+         kisko->raidePointteri()->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys) &&
+            (kisko->raidePointteri()->pohjoinen()->paanTyyppi() == RaiteenPaa::Vaihde ||
+             kisko->raidePointteri()->pohjoinen()->paanTyyppi() == RaiteenPaa::RaideRisteys) )
     {
             // Voidaan vaihtaa raideristeyksen ja vaihteen väliltä
         if( raideRisteysAktio_->isChecked())
         {
-            kisko->raidePointteri()->etelainen()->asetaPaanTyyppi(EditoriRaiteenPaa::RaideRisteys);
-            kisko->raidePointteri()->pohjoinen()->asetaPaanTyyppi(EditoriRaiteenPaa::RaideRisteys);
+            kisko->raidePointteri()->etelainen()->asetaPaanTyyppi(RaiteenPaa::RaideRisteys);
+            kisko->raidePointteri()->pohjoinen()->asetaPaanTyyppi(RaiteenPaa::RaideRisteys);
         }
         else
         {
-            kisko->raidePointteri()->etelainen()->asetaPaanTyyppi(EditoriRaiteenPaa::Vaihde);
-            kisko->raidePointteri()->pohjoinen()->asetaPaanTyyppi(EditoriRaiteenPaa::Vaihde);
+            kisko->raidePointteri()->etelainen()->asetaPaanTyyppi(RaiteenPaa::Vaihde);
+            kisko->raidePointteri()->pohjoinen()->asetaPaanTyyppi(RaiteenPaa::Vaihde);
         }
 
     }
@@ -475,14 +485,15 @@ void EditoriIkkuna::paivitaOpastimet()
 
 void EditoriIkkuna::opastintenHimmennys(EditoriRaide *raidePointteri)
 {
-    poEtelaanAktio_->setEnabled( !raidePointteri->etelainen()->suojastusOpastin());
-    poPohjoiseenAktio_->setEnabled( !raidePointteri->pohjoinen()->suojastusOpastin() );
+    poEtelaanAktio_->setEnabled( !raidePointteri->etelainen()->suojastusOpastin() && !raidePointteri->etelainen()->raideOpastin());
+    poPohjoiseenAktio_->setEnabled( !raidePointteri->pohjoinen()->suojastusOpastin() && !raidePointteri->pohjoinen()->raideOpastin());
 
-    roEtelaanAktio_->setEnabled( !raidePointteri->etelainen()->suojastusOpastin());
-    roPohjoiseenAktio_->setEnabled( !raidePointteri->pohjoinen()->suojastusOpastin() );
+    roEtelaanAktio_->setEnabled( !raidePointteri->etelainen()->suojastusOpastin() && !raidePointteri->etelainen()->paaOpastin());
+    roPohjoiseenAktio_->setEnabled( !raidePointteri->pohjoinen()->suojastusOpastin() && !raidePointteri->pohjoinen()->paaOpastin());
 
     soEtelaanAktio_->setEnabled( !( raidePointteri->etelainen()->paaOpastin() || raidePointteri->etelainen()->raideOpastin() ));
     soPohjoiseenAktio_->setEnabled( !( raidePointteri->pohjoinen()->paaOpastin() || raidePointteri->pohjoinen()->raideOpastin() ));
+
 }
 
 

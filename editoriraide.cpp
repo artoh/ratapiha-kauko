@@ -6,8 +6,8 @@ EditoriRaide::EditoriRaide(const QString &liikennepaikka, int raide, int raideid
     : liikennepaikka_(liikennepaikka), raide_(raide), raideid_(raideid)
 {
 
-    etelainen_ = new EditoriRaiteenPaa(etelatila);
-    pohjoinen_ = new EditoriRaiteenPaa(pohjoistila);
+    etelainen_ = new RaiteenPaa(etelatila);
+    pohjoinen_ = new RaiteenPaa(pohjoistila);
 
     sahkoistetty_ = !raidetila.contains("SäEi");
     valvottu_ = !raidetila.contains("ValvEi");
