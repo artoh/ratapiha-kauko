@@ -81,7 +81,7 @@ bool KaukoScene::haeNakyma(int nakyma)
 
 void KaukoScene::paivitys()
 {
-    QSqlQuery kysely( QString("select raideid,akseleita,junanro,tila_raide,tila_etela,tila_pohjoinen from kisko natural join raide where nakyma=%1 group by raideid").arg(nakyma_));
+    QSqlQuery kysely( QString("select raideid,akseleita,junanro,tila_raide,tila_etela,tila_pohjoinen,kulkutie from kisko natural join raide where nakyma=%1 group by raideid").arg(nakyma_));
     while( kysely.next())
     {
         int raideid = kysely.value(0).toInt();
@@ -90,11 +90,12 @@ void KaukoScene::paivitys()
         QString raidetila = kysely.value(3).toString();
         QString etelatila = kysely.value(4).toString();
         QString pohjoistila = kysely.value(5).toString();
+        QString kulkutietila = kysely.value(6).toString();
 
         // Päivitetään tiedot raiteen kohdalle ...
         RaideTieto* tieto = raiteet_.value(raideid);
         if( tieto  )
-            tieto->paivita(akseleita, junanumero, raidetila, etelatila, pohjoistila);
+            tieto->paivita(akseleita, junanumero, raidetila, etelatila, pohjoistila,kulkutietila);
 
     }
     // Välkky eri päin kuin edellisellä kerralla...

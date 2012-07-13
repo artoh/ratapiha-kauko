@@ -21,19 +21,21 @@
 
 EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata, int sn) :
     LaajennettuKisko(viiva, kiskoid, liikennepaikka, raide, kiskodata), sn_(sn),
-    kulkutietyypit_(Ensisijainen), skene_(skene),
+    aktiivinenKulkutie_(RaideTieto::EiKulkutieta),
+    skene_(skene),
     esiopastinEtela_(false), esiopastinPohjoinen_(false),
     valittu_(false), raidePtr_(0)
 {
 
-    if( kiskodata.contains("Kt"))
-        kulkutietyypit_ = Toissijainen;
-    else if(kiskodata.contains("Kv "))
-        kulkutietyypit_ = VainVaihto;
+
     if( kiskodata.contains("EoE"))
         esiopastinEtela_ = true;
     if( kiskodata.contains("EoP"))
         esiopastinPohjoinen_ = true;
+    if( kiskodata.contains("UK"))
+        aktiivinenKulkutie_ = RaideTieto::Vaihtokulkutie;
+    if( kiskodata.contains("JK"))
+        aktiivinenKulkutie_ = RaideTieto::Junakulkutie;
 
     skene->addItem(this);
     paidenTarkistusToimet();
@@ -655,6 +657,11 @@ QString EditoriKisko::kiskoTietoTalletettavaksi() const
     else if(kulkutietyypit() == VainVaihto)
         kiskotieto.append("Kv ");
     }
+
+    if( aktiivinenKulkutie_ == RaideTieto::Vaihtokulkutie)
+        kiskotieto.append("UK ");
+    else if( aktiivinenKulkutie_ == RaideTieto::Junakulkutie)
+        kiskotieto.append("JK ");
 
 
     return kiskotieto;

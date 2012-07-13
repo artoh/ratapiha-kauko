@@ -37,9 +37,14 @@ public:
     Ilmansuunta naapurinSuunta() const { return naapurinSuunta_; }
 
     RataRaide* omaRaide() { return omaraide_; }
+    qreal pieninNopeus() const { return pieninNopeus_; }
 
     RaiteenPaa::VaihdeKasite omaVaihde() const { return omaVaihde_; }
     RaiteenPaa::VaihdeKasite naapurinVaihde() const { return naapurinVaihde_; }
+
+    void lukitseVaihteet(); // Lukitsee vaihteet tämän naapuruuden mukaisesti
+
+    Kisko::Kulkutietyypit sallittuKulkutie() const { return sallittuKulkutie_; }
 
 
 protected:
@@ -50,6 +55,11 @@ protected:
 
     RaiteenPaa::VaihdeKasite omaVaihde_;
     RaiteenPaa::VaihdeKasite naapurinVaihde_;
+
+    qreal pieninNopeus_;
+    Kisko::Kulkutietyypit sallittuKulkutie_;
+
+
 };
 
 #endif // NAAPURUUS_H

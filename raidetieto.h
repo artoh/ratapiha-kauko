@@ -20,7 +20,8 @@ public:
     RaideTieto();
 
     void paivita( int akseleita, int junanumero, const QString& tila,
-                  const QString& etelatila, const QString& pohjoistila);
+                  const QString& etelatila, const QString& pohjoistila,
+                  const QString& kulkutietila);
 
     bool sahkoistetty() const { return sahkoistetty_; }
     bool valvottu() const { return valvottu_; }
@@ -28,7 +29,8 @@ public:
 
     int akseleita() const { return akseleita_; }
     int junanumero() const { return junanumero_; }
-    Kulkutietyyppi kulkutie() const { return kulkutie_; }
+    Kulkutietyyppi kulkutieTyyppi() const { return kulkutietyyppi_; }
+
 
     RaiteenPaa* pohjoinen()  { return &pohjoinen_; }
     RaiteenPaa* etelainen()  { return &etelainen_; }
@@ -43,7 +45,7 @@ protected:
     int akseleita_;
     int junanumero_;
 
-    Kulkutietyyppi kulkutie_;
+    Kulkutietyyppi kulkutietyyppi_;
 };
 
 #endif // RAIDETIETO_H

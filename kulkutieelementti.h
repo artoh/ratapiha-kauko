@@ -28,25 +28,43 @@ class KulkutienMuodostaja;
 
 #include <QList>
 
+/** Kulkutietä MUODOSTETTAESSA käytettävä elementti */
 class KulkutieElementti
 {
 public:
-    KulkutieElementti(KulkutienMuodostaja* muodostaja, KulkutieElementti* vanhempi, Naapuruus* naapuri, RaiteenPaa* opastin);
+    KulkutieElementti(KulkutienMuodostaja* muodostaja, KulkutieElementti* vanhempi, Naapuruus* naapuri, RaiteenPaa* opastin, RataRaide* lahtoraide);
     ~KulkutieElementti();
 
     qreal pituus() const { return pituus_; }
+    int pieninNopeus() const { return pieninNopeus_; }
+
+    RataRaide* raide() { return naapuruus_->naapuriRaide(); }
+    RaiteenPaa* lahtoOpastin()  { return opastin_; }
+    RataRaide* lahtoraide() { return lahtoraide_; }
+    bool onkoPohjoiseen() { return naapuruus_->naapurinSuunta()==Naapuruus::Etela; }
 
     void lukitseKulkutielle( KulkutienMuodostaja* kulkutie);
     void laitaVarit(KulkutienMuodostaja* kulkutie);
+
+    int taso() const { return taso_; }  //* Monesko elementti alusta lukien
+
+    KulkutieElementti* vanhempi() { return isi_; }
 
 protected:
     Naapuruus* naapuruus_;
     qreal pituus_;
     RaiteenPaa* opastin_;
+    RataRaide* lahtoraide_;
+    int pieninNopeus_;
+
+    RaiteenPaa* naapurinPaa_;
+    RaiteenPaa* naapurinPaa() { return naapurinPaa_; }
 
 
     QList<KulkutieElementti*> lapset_;
     KulkutieElementti* isi_;
+
+    int taso_;
 
     bool tarkistaKulkutieEhdot(KulkutienMuodostaja* muodostaja);
     void maalissaOllaan(KulkutienMuodostaja* muodostaja);

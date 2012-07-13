@@ -24,17 +24,20 @@ public:
     enum VaihdeKasite { EiVaihdetta, Vasen, Oikea } ;
     enum SpKasite { SpPuuttuu = 0, SpSallii, SpSulkee } ;
 
-    Opaste opaste() const { return opaste_; }
+    Opaste opaste() const;  // Näkyvä opastinkäsite
+    Opaste opasteKasite() const { return opaste_; } // Asetettu opastinkäsite
     OpastinTyyppi opastin() const { return opastinTyyppi_; }
 
     PaanTyyppi paanTyyppi() const { return paanTyyppi_; }
     VaihdeKasite vaihde() const { return vaihdeTila_; }
     SpKasite raiteenSulku() const { return raiteenSulku_; }
+    bool opastinSeis() const { return opastinSeis_; }   // Onko opastin asetettu näyttämään SEIS
 
     QString tilaTieto() const;  // Tilatieto tietokantaan
 
     bool kaannaVaihde();    // Kääntää vaihteen
     bool kaannaVaihde(VaihdeKasite tilaan);
+    bool lukitseVaihde(VaihdeKasite tilaan);
 
     bool paaOpastin() const { return opastin() == PaaOpastin; }
     bool raideOpastin() const { return opastin() == RaideOpastin; }
@@ -44,6 +47,9 @@ public:
     void asetaRaiteenSulku(bool onko);
     void asetaOpastin(OpastinTyyppi opastintyyppi);
     void asetaOpaste(Opaste opaste);
+
+    void seis();    // Asettaa opastimen näyttämään SEIS
+    void aja();     // Poistaa opastimen SEIS-tilan
 
 
 protected:
@@ -56,6 +62,8 @@ protected:
 
     OpastinTyyppi opastinTyyppi_;
     Opaste opaste_;
+
+    bool opastinSeis_;  // FIR-FR762 Asetettu näyttämään SEIS
 
     SpKasite raiteenSulku_;
 };

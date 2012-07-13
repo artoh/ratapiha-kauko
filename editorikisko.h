@@ -9,6 +9,7 @@
 #define EDITORIKISKO_H
 
 #include "laajennettukisko.h"
+#include "raidetieto.h"
 #include <QLineF>
 #include <QColor>
 
@@ -24,7 +25,6 @@ public:
 
     enum { Type = UserType + 2 } ;
 
-    enum Kulkutietyypit { Ensisijainen, Toissijainen, VainVaihto } ;
 
     QRectF boundingRect() const;
 
@@ -34,7 +34,6 @@ public:
 
     void valitse(bool onko=true);
     int sn() const { return sn_; }
-    Kulkutietyypit kulkutietyypit() const { return kulkutietyypit_; }
 
     void asetaLiikennepaikka(const QString& lyhenne);
     void asetaRaide(int raide);
@@ -69,7 +68,7 @@ protected:
 
     int sn_;
 
-    Kulkutietyypit kulkutietyypit_;
+    RaideTieto::Kulkutietyyppi aktiivinenKulkutie_;
     EditoriScene* skene_;
     bool esiopastinEtela_;
     bool esiopastinPohjoinen_;

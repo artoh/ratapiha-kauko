@@ -20,39 +20,52 @@
 #ifndef RATARAIDE_H
 #define RATARAIDE_H
 
+class RataRaide;
+
 #include "raidetieto.h"
+#include "kulkutie.h"
+
 #include <QList>
 
 
 class Naapuruus;
-
+class KulkutienRaide;
 class RataKisko;
 
 class RataRaide : public RaideTieto
 {
 public:
-    RataRaide(int raidetunnus, int raideid, int akseleita, int junanumero, const QString& tila, const QString& etelatila, const QString& pohjoistila);
+    RataRaide(int raidetunnus, const QString& liikennepaikka, int raideid, int akseleita, int junanumero, const QString& tila,
+              const QString& etelatila, const QString& pohjoistila, const QString& kulkutietila);
 
     void lisaaKisko(RataKisko* kisko);
 
+    QString liikennepaikka() const { return liikennepaikka_; }
     int raidetunnus() const { return raidetunnus_; }
 
     QString tilatieto() const;
 
-    void lukitseKulkutielle(RaiteenPaa* kulkutieOpastin, Kulkutietyyppi tyyppi);
+    void lukitseKulkutielle(KulkutienRaide *kulkutieraide);
 
     void paivitaTietokantaan();
     void paivita(); // Piirtää kiskot ja vie tietokantaan
 
     qreal pituus() const { return pituus_; }
+    int pieninNopeus() const { return pieninNopeus_; }
+    int suurinNopeus() const { return suurinNopeus_; }
 
     QList<Naapuruus*> naapurit();   // Palauttaa tiedon naapureista
+    KulkuTie* kulkutie() { return &kulkutie_; }  // Tähän raiteeseen liittyvä kulkutie
+    KulkutienRaide* kulkutienRaide() { return kulkutienraide_; } // Tähän liittyvä kt-raide
 
 
 protected:
     int raidetunnus_;   // Raiteen tunnusnumero
+    QString liikennepaikka_;
     int raideid_;   // Raiteen id tietokannassa
     qreal pituus_;  // Raiteen kiskojen yhteenlaskettu pituus
+    int pieninNopeus_;  // Pienin nopeus tällä raiteella
+    int suurinNopeus_;  // Suurin nopeus tällä raiteella
 
     void haeNaapurit();     // Hakee naapurit listaan
 
@@ -60,7 +73,8 @@ protected:
     QList<RataKisko*> kiskot_;  // Raiteeseen kuuluvat kiskot
     QList<Naapuruus*> naapurit_;
 
-    RaiteenPaa* kulkutieOpastin_;
+    KulkuTie kulkutie_;
+    KulkutienRaide* kulkutienraide_;
 };
 
 #endif // RATARAIDE_H

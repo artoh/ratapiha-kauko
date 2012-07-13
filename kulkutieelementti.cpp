@@ -19,14 +19,36 @@
 
 #include "kulkutieelementti.h"
 #include "kulkutienmuodostaja.h"
+#include "kulkutie.h"
 
 #include <QDebug>
 
-KulkutieElementti::KulkutieElementti(KulkutienMuodostaja *muodostaja, KulkutieElementti *vanhempi, Naapuruus *naapuri, RaiteenPaa* opastin)
-    :  naapuruus_(naapuri), opastin_(opastin), isi_(vanhempi)
+KulkutieElementti::KulkutieElementti(KulkutienMuodostaja *muodostaja, KulkutieElementti *vanhempi, Naapuruus *naapuri, RaiteenPaa* opastin, RataRaide* lahtoraide)
+    :  naapuruus_(naapuri), opastin_(opastin), lahtoraide_(lahtoraide), isi_(vanhempi), taso_(1)
 {
 
+    // Taso
+    if( vanhempi)
+        taso_ = vanhempi->taso() + 1;
+
     qDebug() << naapuri->naapuriRaide()->raidetunnus();
+
+
+    // Se suunta, johon tutkittavaa (naapurin) raidetta pitkin kuljetaan
+    if( naapuri->naapurinSuunta() == Naapuruus::Etela)
+        naapurinPaa_ = naapuri->naapuriRaide()->pohjoinen();
+    else
+        naapurinPaa_ = naapuri->naapuriRaide()->etelainen();
+
+    // 1A) Onko hitaampi??? Valitsee aina nopeamman kiskon, vaikka pidempi!
+    if( naapuri->pieninNopeus() < muodostaja->pieninNopeus())
+        return;  // Liian hidas!
+
+    // Otetaan pienin nopeus muistiin
+    if( vanhempi && vanhempi->pieninNopeus() < naapuri->pieninNopeus() )
+        pieninNopeus_ = vanhempi->pieninNopeus();
+    else
+        pieninNopeus_ = naapuri->pieninNopeus();
 
     // 1) Lisätään pituus
     if( vanhempi)
@@ -47,16 +69,19 @@ KulkutieElementti::KulkutieElementti(KulkutienMuodostaja *muodostaja, KulkutieEl
         maalissaOllaan(muodostaja);
         return;
     }
+    // 3b) Lisäehdot keskellä oleville
+
+
     // 4) Jatketaan seuraaviin
 
     // Jos tässä on ollut opastin, niin se jatkossa eteenpäin
     RaiteenPaa* uusiopastin = opastin;
-    if( naapuruus_->omaSuunta() == Naapuruus::Pohjoinen &&
-            naapuruus_->naapuriRaide()->pohjoinen()->opastin() != RaiteenPaa::EiOpastinta)
-        uusiopastin = naapuruus_->naapuriRaide()->pohjoinen();
-    else if( naapuruus_->omaSuunta() == Naapuruus::Etela &&
-            naapuruus_->naapuriRaide()->etelainen()->opastin() != RaiteenPaa::EiOpastinta)
-        uusiopastin = naapuruus_->naapuriRaide()->etelainen();
+    RataRaide* uusiLahtoraide = lahtoraide;
+    if( naapurinPaa()->opastin() != RaiteenPaa::EiOpastinta )
+    {
+        uusiopastin = naapurinPaa();
+        uusiLahtoraide = naapuri->naapuriRaide();
+    }
 
 
     QList<Naapuruus*> naapurit = naapuruus_->naapuriRaide()->naapurit();
@@ -65,7 +90,7 @@ KulkutieElementti::KulkutieElementti(KulkutienMuodostaja *muodostaja, KulkutieEl
         if( uusinaapuri->naapuriRaide() && uusinaapuri->omaSuunta() != naapuruus_->naapurinSuunta() )
         {
             // Mennään toiseen suuntaan eli eteenpäin
-            lapset_.append(new KulkutieElementti(muodostaja, this, uusinaapuri, uusiopastin));
+            lapset_.append(new KulkutieElementti(muodostaja, this, uusinaapuri, uusiopastin, uusiLahtoraide));
         }
     }
 
@@ -83,39 +108,10 @@ void KulkutieElementti::lukitseKulkutielle(KulkutienMuodostaja *kulkutie)
 {
     // Lukitsee ensin tämän elementin kulkutielle
     // Jos vaihteita, kääntää ne
-    if( naapuruus_->omaVaihde() == RaiteenPaa::Vasen)
-    {
-        if( naapuruus_->omaSuunta()==Naapuruus::Etela)
-            naapuruus_->omaRaide()->etelainen()->kaannaVaihde(RaiteenPaa::Vasen);
-        else
-            naapuruus_->omaRaide()->pohjoinen()->kaannaVaihde(RaiteenPaa::Vasen);
-    }
-    else if( naapuruus_->omaVaihde() == RaiteenPaa::Oikea)
-    {
-        if( naapuruus_->omaSuunta()==Naapuruus::Etela)
-            naapuruus_->omaRaide()->etelainen()->kaannaVaihde(RaiteenPaa::Vasen);
-        else
-            naapuruus_->omaRaide()->pohjoinen()->kaannaVaihde(RaiteenPaa::Vasen);
-    }
+    naapuruus_->lukitseVaihteet();
 
-
-    if( naapuruus_->naapurinVaihde() == RaiteenPaa::Vasen)
-    {
-        if( naapuruus_->naapurinSuunta()==Naapuruus::Etela)
-            naapuruus_->naapuriRaide()->etelainen()->kaannaVaihde(RaiteenPaa::Vasen);
-        else
-            naapuruus_->naapuriRaide()->pohjoinen()->kaannaVaihde(RaiteenPaa::Vasen);
-    }
-    else if( naapuruus_->naapurinVaihde() == RaiteenPaa::Oikea)
-    {
-        if( naapuruus_->naapurinSuunta()==Naapuruus::Etela)
-            naapuruus_->naapuriRaide()->etelainen()->kaannaVaihde(RaiteenPaa::Vasen);
-        else
-            naapuruus_->naapuriRaide()->pohjoinen()->kaannaVaihde(RaiteenPaa::Vasen);
-    }
-
-
-    naapuruus_->naapuriRaide()->lukitseKulkutielle(opastin_, RaideTieto::Vaihtokulkutie);
+    // Lisää tämän olennon kulkutielle ;)
+    naapuruus_->naapuriRaide()->lukitseKulkutielle( kulkutie->mista()->kulkutie()->lisaaElementti(this, kulkutie->kulkutienTyyppi()) );
 
 
     // sitten isin
@@ -125,13 +121,28 @@ void KulkutieElementti::lukitseKulkutielle(KulkutienMuodostaja *kulkutie)
 
 void KulkutieElementti::laitaVarit(KulkutienMuodostaja *kulkutie)
 {
-    if( opastin_->opaste() == RaiteenPaa::Seis)
+
+    if( kulkutie->kulkutienTyyppi() == RataRaide::Vaihtokulkutie)
     {
-        if( kulkutie->kulkutienTyyppi() == KulkutienMuodostaja::Junakulkutie)
-            opastin_->asetaOpaste( RaiteenPaa::Aja);
-        else if( kulkutie->kulkutienTyyppi() == KulkutienMuodostaja::Vaihtokulkutie)
+        if( opastin_->opaste() != RaiteenPaa::AjaVarovasti)
             opastin_->asetaOpaste( RaiteenPaa::AjaVarovasti);
     }
+    else if( kulkutie->kulkutienTyyppi() == RataRaide::Junakulkutie)
+    {
+        // Aja vai AjaSn?
+        int nopeus = naapuruus_->pieninNopeus();
+
+        if( nopeus < 50 || nopeus < naapuruus_->naapuriRaide()->suurinNopeus()  )
+            // AJA SN EHDOT: nopeus alle 50 km/h tai poikkeava (hitaampi) raide
+        {
+            if( opastin_->opasteKasite() != RaiteenPaa::AjaSn)
+                opastin_->asetaOpaste( RaiteenPaa::AjaSn);
+        }
+        else if( opastin_->opasteKasite() == RaiteenPaa::Seis)
+            opastin_->asetaOpaste( RaiteenPaa::Aja);
+    }
+
+    // Päivitetään ja viedään tietokantaankin
     naapuruus_->naapuriRaide()->paivita();
 
     if( isi_)
@@ -145,12 +156,20 @@ void KulkutieElementti::laitaVarit(KulkutienMuodostaja *kulkutie)
 bool KulkutieElementti::tarkistaKulkutieEhdot(KulkutienMuodostaja *muodostaja)
 {
     // Raide ei saa olla toisen kulkutien käytössä
-    // jne..
+    if( naapuruus_->naapuriRaide()->kulkutieTyyppi() != RataRaide::EiKulkutieta)
+        return false;
 
     // Junakulkutie ei saa olla varattu!
-    if( muodostaja->kulkutienTyyppi() == KulkutienMuodostaja::Junakulkutie)
+    if( muodostaja->kulkutienTyyppi() == RataRaide::Junakulkutie)
         if( naapuruus_->naapuriRaide()->akseleita())
             return false;
+
+    if( naapuruus_->sallittuKulkutie() == Kisko::VainVaihto && muodostaja->kulkutienTyyppi() == RaideTieto::Junakulkutie)
+        return false; // Tätä kautta ei voi muodostaa junakulkutietä
+
+    // Jos kulkutie on määritelty toissijaiseksi, lisätään pituus tuplana!!!
+    if( naapuruus_->sallittuKulkutie() == Kisko::Toissijainen && muodostaja->kulkutienTyyppi() == RaideTieto::Junakulkutie)
+        pituus_ += naapuruus_->naapuriRaide()->pituus();
 
     return true;
 }
@@ -158,6 +177,10 @@ bool KulkutieElementti::tarkistaKulkutieEhdot(KulkutienMuodostaja *muodostaja)
 void KulkutieElementti::maalissaOllaan(KulkutienMuodostaja *muodostaja)
 {
     // Tarkastellaan maaliraiteen erityisehdot
+    // Pitää olla päättävä opastin!
+
+    if( naapurinPaa()->opastin() == RaiteenPaa::EiOpastinta && naapurinPaa()->paanTyyppi() != RaiteenPaa::RaidePuskuri )
+        return;
 
     // Jos ne täyttyvät, ilmoitetaan lyhyimmäksi
 

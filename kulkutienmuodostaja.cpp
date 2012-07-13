@@ -20,8 +20,9 @@
 #include "kulkutienmuodostaja.h"
 
 
-KulkutienMuodostaja::KulkutienMuodostaja(KulkutienMuodostaja::Kulkutietyyppi tyyppi, RataRaide *mista, RataRaide *minne)
-    : tyyppi_(tyyppi), mista_(mista), minne_(minne), lyhinReitti_(0)
+KulkutienMuodostaja::KulkutienMuodostaja(RataRaide::Kulkutietyyppi tyyppi, RataRaide *mista, RataRaide *minne)
+    : tyyppi_(tyyppi), mista_(mista), minne_(minne),
+      pieninNopeus_(0),  lyhinReitti_(0)
 {
 }
 
@@ -29,6 +30,7 @@ void KulkutienMuodostaja::reittiLoytynyt(KulkutieElementti *reitinViimeinenEleme
 {
     lyhinReitti_ = reitinViimeinenElementti;
     lyhinPituus_ = reitinViimeinenElementti->pituus();
+    pieninNopeus_ = reitinViimeinenElementti->pieninNopeus();
 }
 
 bool KulkutienMuodostaja::muodostaKulkutie()
@@ -50,10 +52,10 @@ bool KulkutienMuodostaja::muodostaKulkutie()
                 lahtoPaa = mista_->etelainen();
 
             // Pitää olla sopiva aloittava opastin!
-            if( ( kulkutienTyyppi() == Junakulkutie && ( lahtoPaa->opastin() == RaiteenPaa::PaaOpastin ||
+            if( ( kulkutienTyyppi() == RataRaide::Junakulkutie && ( lahtoPaa->opastin() == RaiteenPaa::PaaOpastin ||
                     lahtoPaa->opastin() == RaiteenPaa::RaideOpastin) ) ||
-                    ( kulkutienTyyppi() == Vaihtokulkutie && lahtoPaa->opastin() != RaiteenPaa::EiOpastinta) )
-                elementit.append(new KulkutieElementti(this, 0, naapuri, lahtoPaa));
+                    ( kulkutienTyyppi() == RataRaide::Vaihtokulkutie && lahtoPaa->opastin() != RaiteenPaa::EiOpastinta) )
+                elementit.append(new KulkutieElementti(this, 0, naapuri, lahtoPaa, mista_));
         }
 
 
@@ -65,9 +67,6 @@ bool KulkutienMuodostaja::muodostaKulkutie()
         mista_->paivita();
     }
 
-
-    foreach( Naapuruus* naapuri, naapurit)
-        delete naapuri;
 
     return( lyhinReitti_ != 0);
 }

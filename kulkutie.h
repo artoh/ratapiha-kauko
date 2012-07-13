@@ -1,5 +1,5 @@
 /**************************************************************************
-**  ratakisko.h
+**  kulkutie.h
 **  Copyright (c) 2012 Arto Hyvättinen 
 **
 **  This program is free software: you can redistribute it and/or modify
@@ -14,49 +14,39 @@
 **
 **  See <http://www.gnu.org/licenses/>
 **
-**  RataKisko  10.7.2012
+**  Kulkutie  13.7.2012
 **************************************************************************/
 
-#ifndef RATAKISKO_H
-#define RATAKISKO_H
+#ifndef KULKUTIE_H
+#define KULKUTIE_H
 
-#include "kisko.h"
-#include "opastin.h"
 
-#include <QString>
-#include <QLineF>
+#include "raidetieto.h"
 
+#include <QList>
+
+class KulkutienRaide;
+class KulkutieElementti;
 class RataRaide;
 
-/** Radan yksi pätkä
-
-    - kuuluu raiteeseen
-
-*/
-class RataKisko : public Kisko
+class KulkuTie
 {
 public:
-    RataKisko(RataRaide* raide, const QLineF& viiva, const QString& kiskodata, int sn);
+    KulkuTie();
 
-    enum { Type = UserType + 3 } ;
+    RaideTieto::Kulkutietyyppi kulkutienTyyppi() const { return kulkutienTyyppi_; }
 
-    QRectF boundingRect() const;
+    KulkutienRaide* lisaaElementti(KulkutieElementti* elementti, RaideTieto::Kulkutietyyppi tyyppi);
+    KulkutienRaide *lisaaElementti(const QString& kulkutieto);
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    RataRaide* maaliRaide();
+    QString maaliRaideTunnus();
 
-    int type() const { return Type; }
-    int sn() const { return sn_; }
+protected:
+    RaideTieto::Kulkutietyyppi kulkutienTyyppi_;
+    QList<KulkutienRaide*> elementit_;
 
-    RataRaide* raide() { return raide_; }
-
-
-
-private:
-    RataRaide* raide_;
-    int sn_;
-
-    Opastin* opastinEtelaan_;
-    Opastin* opastinPohjoiseen_;
+    void lisaaListaan(KulkutienRaide* elementti); // Lisää listaan järjestyksessä
 };
 
-#endif // RATAKISKO_H
+#endif // KULKUTIE_H

@@ -23,17 +23,17 @@
 #include "rataraide.h"
 #include "kulkutieelementti.h"
 
-
 class KulkutienMuodostaja
 {
 public:
-    enum Kulkutietyyppi { Junakulkutie, Vaihtokulkutie , EiKulkutieta} ;
 
-    KulkutienMuodostaja(Kulkutietyyppi tyyppi, RataRaide* mista, RataRaide* minne);
+    KulkutienMuodostaja(RataRaide::Kulkutietyyppi tyyppi, RataRaide* mista, RataRaide* minne);
 
-    Kulkutietyyppi kulkutienTyyppi() const { return tyyppi_; }
-    RataRaide* minne() const { return minne_; }
+    RataRaide::Kulkutietyyppi kulkutienTyyppi() const { return tyyppi_; }
+    RataRaide* minne()  { return minne_; }
+    RataRaide* mista()  { return mista_; }
     qreal lyhinPituus() const { return lyhinPituus_; }
+    int pieninNopeus() const { return pieninNopeus_; }
 
     void reittiLoytynyt(KulkutieElementti* reitinViimeinenElementti);
 
@@ -41,12 +41,13 @@ public:
 
 protected:
 
-    Kulkutietyyppi tyyppi_;
+    RataRaide::Kulkutietyyppi tyyppi_;
 
     RataRaide* mista_;
     RataRaide* minne_;
 
     qreal lyhinPituus_;
+    int pieninNopeus_;
     KulkutieElementti* lyhinReitti_;
 };
 

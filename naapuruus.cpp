@@ -22,7 +22,9 @@
 #include <QGraphicsScene>
 
 Naapuruus::Naapuruus(RataKisko *omaKisko, Ilmansuunta omasuunta)
-    : omaSuunta_(omasuunta), naapurinSuunta_(Virhe), naapurinVaihde_(RaiteenPaa::EiVaihdetta)
+    : omaSuunta_(omasuunta), naapurinSuunta_(Virhe), naapurinVaihde_(RaiteenPaa::EiVaihdetta),
+      pieninNopeus_(0),
+      sallittuKulkutie_(Kisko::Ensisijainen)
 {
     // Hakee tässä päässä olevan naapurin ja laittaa sen tietoja ylös
 
@@ -104,5 +106,53 @@ Naapuruus::Naapuruus(RataKisko *omaKisko, Ilmansuunta omasuunta)
             naapurinVaihde_ = RaiteenPaa::Oikea;
     }
 
+    // Sitten pienempi nopeus
+    pieninNopeus_ = omaKisko->sn();
+    if( naapuriKisko->sn() < pieninNopeus())
+        pieninNopeus_ = naapuriKisko->sn();
+
+
+    // Mitä kulkuteitä voidaan tätä kautta muodostaa??
+    if( omaKisko->kulkutietyypit()==Kisko::VainVaihto || naapuriKisko->kulkutietyypit() == Kisko::VainVaihto )
+        sallittuKulkutie_ = Kisko::VainVaihto;
+    else if( omaKisko->kulkutietyypit() == Kisko::Toissijainen || naapuriKisko->kulkutietyypit() == Kisko::Toissijainen)
+        sallittuKulkutie_ = Kisko::Toissijainen;
+
+
+}
+
+void Naapuruus::lukitseVaihteet()
+{
+    // Ensin oma vaihde
+    if( omaVaihde() == RaiteenPaa::Vasen)
+    {
+        if( omaSuunta() == Etela)
+            omaRaide()->etelainen()->lukitseVaihde(RaiteenPaa::Vasen);
+        else if(omaSuunta() == Pohjoinen)
+            omaRaide()->pohjoinen()->lukitseVaihde(RaiteenPaa::Vasen);
+    }
+    else if( omaVaihde() == RaiteenPaa::Oikea)
+    {
+        if( omaSuunta() == Etela)
+            omaRaide()->etelainen()->lukitseVaihde(RaiteenPaa::Oikea);
+        else if(omaSuunta() == Pohjoinen)
+            omaRaide()->pohjoinen()->lukitseVaihde(RaiteenPaa::Oikea);
+    }
+
+    // Sitten naapurin vaihde
+    if( naapurinVaihde() == RaiteenPaa::Vasen)
+    {
+        if( naapurinSuunta() == Etela)
+            naapuriRaide()->etelainen()->lukitseVaihde(RaiteenPaa::Vasen);
+        else if(omaSuunta() == Pohjoinen)
+            naapuriRaide()->pohjoinen()->lukitseVaihde(RaiteenPaa::Vasen);
+    }
+    else if( naapurinVaihde() == RaiteenPaa::Oikea)
+    {
+        if( naapurinSuunta() == Etela)
+            naapuriRaide()->etelainen()->lukitseVaihde(RaiteenPaa::Oikea);
+        else if(omaSuunta() == Pohjoinen)
+            naapuriRaide()->pohjoinen()->lukitseVaihde(RaiteenPaa::Oikea);
+    }
 
 }

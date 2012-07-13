@@ -30,7 +30,9 @@ HEADERS += \
     opastin.h \
     kulkutieelementti.h \
     kulkutienmuodostaja.h \
-    naapuruus.h
+    naapuruus.h \
+    kulkutienraide.h \
+    kulkutie.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -59,7 +61,9 @@ SOURCES += \
     opastin.cpp \
     kulkutieelementti.cpp \
     kulkutienmuodostaja.cpp \
-    naapuruus.cpp
+    naapuruus.cpp \
+    kulkutienraide.cpp \
+    kulkutie.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

@@ -49,7 +49,7 @@ void RataScene::lataaRata()
 
     QSqlQuery nkys("select liikennepaikka, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, "
                    "sn, kiskotieto, akseleita, junanro, tila_raide, tila_etela, tila_pohjoinen, "
-                   "raideid "
+                   "raideid, kulkutie "
                    "from kisko natural join raide "
                    "where nakyma=0");
 
@@ -78,9 +78,10 @@ void RataScene::lataaRata()
             QString etelatila = nkys.value(11).toString();
             QString pohjoistila = nkys.value(12).toString();
             int raideid = nkys.value(13).toInt();
+            QString kulkutie = nkys.value(14).toString();
 
             // Luodaan raide
-            praide = new RataRaide(raide, raideid, akseleita, junanro, raidetila, etelatila, pohjoistila);
+            praide = new RataRaide(raide, liikennepaikka, raideid, akseleita, junanro, raidetila, etelatila, pohjoistila, kulkutie);
 
             // Lisätään se skenen listoihin
             raiteet_.insert(raideid, praide);
@@ -157,18 +158,44 @@ QString RataScene::ASLKasky(const QString &parametrit)
 
         if( paramLista.first() == "UK")
         {
-            KulkutienMuodostaja ktie(KulkutienMuodostaja::Vaihtokulkutie, mista, minne);
+            KulkutienMuodostaja ktie(RataRaide::Vaihtokulkutie, mista, minne);
             if(ktie.muodostaKulkutie())
                 return QString("OK");
         }
         else if( paramLista.first() == "JK")
         {
-            KulkutienMuodostaja ktie(KulkutienMuodostaja::Junakulkutie, mista, minne);
+            KulkutienMuodostaja ktie(RataRaide::Junakulkutie, mista, minne);
             if(ktie.muodostaKulkutie())
                 return QString("OK");
         }
         return QString("Kulkutie ei onnistu");
 
+    }
+
+    // SEIS ja AJA [raide] [E/P]
+    if( (paramLista.first()=="SEIS" || paramLista.first()=="AJA" ) && paramLista.count() > 2 )
+    {
+        RataRaide* raide = raideTunnukset_.value(paramLista[1],0);
+
+        if( !raide)
+        {
+            return QString("VIRHE Väärä raide %1").arg(paramLista[1]);
+        }
+        RaiteenPaa* rpaa = 0;
+        if( paramLista[2] == "P")
+            rpaa = raide->pohjoinen();
+        else if( paramLista[2] == "E")
+            rpaa = raide->etelainen();
+
+        if( raide && paramLista.first() == "SEIS")
+            rpaa->seis();
+        else if( raide && paramLista.first() == "AJA")
+            rpaa->aja();
+        else
+            return QString("VIRHE Ei onnistu");
+
+        raide->paivita();
+        return QString("OK");
     }
 
     // V [Vaihde] [A|C]  Vaihteen kääntökäsky

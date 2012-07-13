@@ -37,6 +37,9 @@ Opastin::Opastin(RaiteenPaa *raiteenpaa, RaiteenPaa::Opaste esiopastin, const QS
     else
         opastintyyppi_ = Korkea;
 
+    if( raiteenpaa)
+        esiopastinkasite_ = RaiteenPaa::Seis; // Oletuksena eo seis
+
     setZValue(100);
 }
 

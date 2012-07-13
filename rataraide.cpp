@@ -20,12 +20,15 @@
 #include "rataraide.h"
 #include "ratakisko.h"
 #include "naapuruus.h"
+#include "kulkutie.h"
+#include "kulkutienraide.h"
 #include <QSqlQuery>
 
-RataRaide::RataRaide(int raidetunnus, int raideid, int akseleita, int junanumero, const QString& tila, const QString& etelatila, const QString& pohjoistila)
-    : raidetunnus_(raidetunnus), raideid_(raideid), pituus_(0.0), kulkutieOpastin_(0)
+RataRaide::RataRaide(int raidetunnus, const QString& liikennepaikka, int raideid, int akseleita, int junanumero, const QString& tila, const QString& etelatila, const QString& pohjoistila, const QString& kulkutietila)
+    : raidetunnus_(raidetunnus), liikennepaikka_(liikennepaikka), raideid_(raideid), pituus_(0.0), pieninNopeus_(999), suurinNopeus_(0),
+      kulkutienraide_(0)
 {
-    RaideTieto::paivita(akseleita, junanumero, tila, etelatila, pohjoistila);
+    RaideTieto::paivita(akseleita, junanumero, tila, etelatila, pohjoistila, kulkutietila);
 }
 
 
@@ -33,6 +36,10 @@ void RataRaide::lisaaKisko(RataKisko *kisko)
 {
     kiskot_.append(kisko);
     pituus_ += kisko->pituus();
+    if( kisko->sn() < pieninNopeus())
+        pieninNopeus_ = kisko->sn();
+    if( kisko->sn() > suurinNopeus_)
+        suurinNopeus_ = kisko->sn();
 }
 
 
@@ -44,24 +51,26 @@ QString RataRaide::tilatieto() const
         raidetila.append("SäEi ");
     if( !valvottu_)
         raidetila.append("ValvEi ");
-    if( kulkutie_ == RaideTieto::Vaihtokulkutie)
-        raidetila.append("UK ");
 
     return raidetila;
 }
 
-void RataRaide::lukitseKulkutielle(RaiteenPaa *kulkutieOpastin, RaideTieto::Kulkutietyyppi tyyppi)
+void RataRaide::lukitseKulkutielle(KulkutienRaide *kulkutieraide)
 {
-    kulkutieOpastin_ = kulkutieOpastin;
-    kulkutie_ = tyyppi;
+    kulkutietyyppi_ = kulkutieraide->kulkutie()->kulkutienTyyppi();
+    kulkutienraide_ = kulkutieraide;
 }
 
 void RataRaide::paivitaTietokantaan()
 {
     QSqlQuery kysely;
 
-    kysely.exec( QString("update raide set tila_raide=\"%4\",tila_etela=\"%1\",tila_pohjoinen=\"%2\" where raideid=%3").arg(etelainen()->tilaTieto())
-                 .arg(pohjoinen()->tilaTieto()).arg(raideid_).arg(tilatieto()));
+    QString kulkutieto;
+    if( kulkutienRaide())
+        kulkutieto = kulkutienRaide()->kulkutieto();
+
+    kysely.exec( QString("update raide set tila_raide=\"%4\",tila_etela=\"%1\",tila_pohjoinen=\"%2\",kulkutie=\"%5\" where raideid=%3").arg(etelainen()->tilaTieto())
+                 .arg(pohjoinen()->tilaTieto()).arg(raideid_).arg(tilatieto()).arg(kulkutieto));
 }
 
 

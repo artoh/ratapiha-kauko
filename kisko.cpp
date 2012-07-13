@@ -15,7 +15,8 @@ Kisko::Kisko(const QLineF &viiva, const QString &kiskodata) :
     viiva_(viiva),
     etelapaaTyyppi_(Valille),
     pohjoispaaTyyppi_(Valille),
-    silta_(false)
+    silta_(false),
+    kulkutietyypit_(Ensisijainen)
 {
     // Ensin sijoitetaan viivan fyysinen sijainti
     pituus_ = viiva.length();
@@ -57,6 +58,11 @@ Kisko::Kisko(const QLineF &viiva, const QString &kiskodata) :
         pohjoispaaTyyppi_ = Paa;
 
     silta_ = kiskodata.contains("Silta");
+
+    if( kiskodata.contains("Kt"))
+        kulkutietyypit_ = Toissijainen;
+    else if(kiskodata.contains("Kv "))
+        kulkutietyypit_ = VainVaihto;
 
 }
 

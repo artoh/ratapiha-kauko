@@ -71,6 +71,14 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         alku += 0.8;
         if( raidetieto())
         {
+            // Laatikko: ensiksi vain paikallisseis
+
+            if( raidetieto()->etelainen()->opastinSeis())
+            {
+                painter->setBrush( QBrush(Qt::blue));
+                painter->setPen( Qt::NoPen);
+                painter->drawRect( QRectF(0.0, -4.0, 8.0, 8.0));
+            }
 
             QPolygonF kuvio;
             kuvio << QPointF(0.0, 0.0) << QPointF(8.0, -4.0) << QPointF(8.0, 4.0);
@@ -109,6 +117,8 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
 
                 alku += 8.0;
             }
+
+
         }
     }
 
@@ -118,6 +128,14 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         loppu -= 0.8;
         if( raidetieto())
         {
+
+            // Laatikot
+            if( raidetieto()->pohjoinen()->opastinSeis())
+            {
+                painter->setBrush( QBrush(Qt::blue));
+                painter->setPen( Qt::NoPen);
+                painter->drawRect( QRectF(loppu-8.0, -4.0, 8.0, 8.0));
+            }
 
             QColor vari;
             switch( raidetieto()->pohjoinen()->opaste())
@@ -156,38 +174,48 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
 
                 loppu -= 8.0;
             }
+
+
         }
     }
 
 
-
+    bool sivuhaara = false ; // Se vaihteen haara, johon ei käännytä
 
     if( raidetieto() )
     {
         // Vaihde sivulla...
         if( etelaTyyppi() == VaihdeVasen  && raidetieto()->pohjoinen()->vaihde() == RaiteenPaa::Oikea  )
-            alku += 5.0;
+            { alku += 5.0; sivuhaara = true; }
         else if( etelaTyyppi() == VaihdeOikea && raidetieto()->pohjoinen()->vaihde() == RaiteenPaa::Vasen )
-            alku += 5.0;
+            {  alku += 5.0; sivuhaara = true; }
         else if( pohjoisTyyppi() == VaihdeVasen && raidetieto()->etelainen()->vaihde() == RaiteenPaa::Oikea )
-            loppu -= 5.0;
+            { loppu -= 5.0; sivuhaara = true; }
         else if( pohjoisTyyppi() == VaihdeOikea && raidetieto()->etelainen()->vaihde() == RaiteenPaa::Vasen )
-            loppu -= 5.0;
+            { loppu -= 5.0; sivuhaara = true; }
 
     }
 
     // Tässä vaiheessa piirretään vain viiva ja teksti
 
+    QColor viivavari = Qt::white;
+    Qt::PenStyle viivatyyppi = Qt::SolidLine;
+
     if( skene_->onkoVikatilassa() || !raidetieto() )
-        painter->setPen( QPen(QBrush(Qt::magenta),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
-    else if( raidetieto()->akseleita())
-        painter->setPen( QPen(QBrush(Qt::red),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
-    else if( raidetieto()->kulkutie() == RaideTieto::Vaihtokulkutie)
-        painter->setPen( QPen(QBrush(Qt::yellow),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
-    else
-        painter->setPen( QPen(QBrush(Qt::white),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        viivavari = Qt::magenta;
+    else if( raidetieto()->akseleita() && !sivuhaara)
+        viivavari = Qt::red;
+    else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Vaihtokulkutie && !sivuhaara)
+        viivavari = Qt::yellow;
+    else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Junakulkutie && !sivuhaara)
+        viivavari = Qt::green;
+    else if( !raidetieto()->sahkoistetty())
+        viivavari = Qt::blue;
 
+    if( !raidetieto()->valvottu())
+        viivatyyppi = Qt::DashLine;
 
+    painter->setPen( QPen(QBrush(viivavari),2.0, viivatyyppi, Qt::FlatCap, Qt::MiterJoin));
     painter->drawLine(alku, 0.0, loppu, 0.0);
 
 

@@ -25,6 +25,8 @@ public:
     enum PaanTyyppi { Virhe = 0, Valille = 1, Paa = 2, LiikennePaikanPaa = 3, RaidePuskuri = 4 /** Päättyvä raide */ ,
                       VaihdeJatkos = 10, VaihdeVasen = 11, VaihdeOikea = 12 };
 
+    enum Kulkutietyypit { Ensisijainen, Toissijainen, VainVaihto } ;
+
     Kisko( const QLineF& viiva, const QString& kiskodata = QString());
 
 
@@ -33,6 +35,7 @@ public:
 
 
     bool silta() const { return silta_; }
+    Kulkutietyypit kulkutietyypit() const { return kulkutietyypit_; }
 
     QPointF etelainen() const { return viiva_.p1(); }
     QPointF pohjoinen() const { return viiva_.p2(); }
@@ -63,6 +66,7 @@ protected:
     bool silta_;
 
     qreal pituus_; /** Kiskon pituus */
+    Kulkutietyypit kulkutietyypit_;
 
 
 

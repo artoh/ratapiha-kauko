@@ -13,7 +13,9 @@
 
 RaiteenPaa::RaiteenPaa(const QString &tila) :
     paanTyyppi_(Suora), vaihdeTila_(EiVaihdetta),
-    opastinTyyppi_(EiOpastinta), opaste_(Seis), raiteenSulku_(SpPuuttuu)
+    opastinTyyppi_(EiOpastinta), opaste_(Seis),
+    opastinSeis_(false),
+    raiteenSulku_(SpPuuttuu)
 {
     paivitaTila(tila);
 }
@@ -42,8 +44,6 @@ QString RaiteenPaa::tilaTieto() const
 
     switch( opaste() )
     {
-    case Seis:
-        tila.append("Seis "); break;
     case Aja:
         tila.append("Aja "); break;
     case AjaSn:
@@ -65,6 +65,9 @@ QString RaiteenPaa::tilaTieto() const
 
     if( paanTyyppi() == RaidePuskuri)
         tila.append("RP ");
+
+    if( opastinSeis())
+        tila.append("SEIS ");
 
 
     return tila;
@@ -88,8 +91,15 @@ bool RaiteenPaa::kaannaVaihde(RaiteenPaa::VaihdeKasite tilaan)
         return true;
     }
     return false;
-
 }
+
+bool RaiteenPaa::lukitseVaihde(RaiteenPaa::VaihdeKasite tilaan)
+{
+    // Myöhemmin tässä myös haetaan sivusuojia sun muita!!!
+    return kaannaVaihde(tilaan);
+}
+
+
 
 
 void RaiteenPaa::asetaPaanTyyppi(PaanTyyppi tyyppi)
@@ -130,9 +140,9 @@ void RaiteenPaa::paivitysTehtava(const QString &lause)
     {
         opastinTyyppi_ = SuojastusOpastin;
     }
-    else if( lause == "Seis")
+    else if( lause == "SEIS")
     {
-        opaste_ = Seis;
+        opastinSeis_ = true;    // Liikenteenohjaus asettanut SEIS-käsitteen!
     }
     else if( lause == "AjaVarovasti")
     {
@@ -181,8 +191,27 @@ void RaiteenPaa::paivitysTehtava(const QString &lause)
 void RaiteenPaa::paivitaTila(const QString &tila)
 {
     QStringList listana = tila.split(" ");
+    opastinSeis_ = false;   // Oletuksena opastimella ei SEIS-asetusta
     foreach( QString kohde, listana)
     {
         paivitysTehtava(kohde);
     }
+}
+
+RaiteenPaa::Opaste RaiteenPaa::opaste() const
+{
+    // Jos asetettu liikenteenohjauksessa SEIS, niin sitten SEIS
+    if( opastinSeis())
+        return Seis;
+    return opaste_;
+}
+
+void RaiteenPaa::seis()
+{
+    opastinSeis_ = true;
+}
+
+void RaiteenPaa::aja()
+{
+    opastinSeis_ = false;
 }
