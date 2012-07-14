@@ -37,7 +37,7 @@ public:
     RaideTieto::Kulkutietyyppi kulkutienTyyppi() const { return kulkutienTyyppi_; }
 
     KulkutienRaide* lisaaElementti(KulkutieElementti* elementti, RaideTieto::Kulkutietyyppi tyyppi);
-    KulkutienRaide *lisaaElementti(const QString& kulkutieto);
+    KulkutienRaide* lisaaElementti(RataRaide* raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide, RaideTieto::Kulkutietyyppi tyyppi);
 
     RataRaide* maaliRaide();
     QString maaliRaideTunnus();

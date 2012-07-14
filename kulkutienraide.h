@@ -31,22 +31,24 @@ class KulkutienRaide
 {
 public:
 
-    KulkutienRaide( RataRaide* raide=0, RaiteenPaa* lahtoOpastin = 0,
-                    RataRaide* lahtoRaide = 0, bool pohjoiseenko = true, int moneskoraide = 0,
+    KulkutienRaide( RataRaide* raide=0, RaiteenPaa::Suunta suunta=RaiteenPaa::Virhe,
+                    QString lahtoOpastin=QString(),
+                    int moneskoraide = 0,
                     KulkuTie* kulkutie = 0);
+
     KulkutienRaide(KulkutieElementti *elementti, KulkuTie* kulkutie);
 
     bool operator <(const KulkutienRaide& toinen) const;
 
     int moneskoRaide() const { return moneskoRaide_; }
 
-    bool onkoPohjoiseen() const { return pohjoiseenko_; }
-    bool onkoEtelaan() const { return !pohjoiseenko_; }
+    bool onkoPohjoiseen() const { return suunta_ == RaiteenPaa::Pohjoiseen; }
+    bool onkoEtelaan() const { return suunta_ == RaiteenPaa::Etelaan; }
 
     RataRaide* raide()  { return raide_; }
-    RaiteenPaa* lahtoOpastin()  { return lahtoOpastin_; }
-    RataRaide* lahtoRaide() { return lahtoRaide_; }
-    QString lahtoOpastinTunnus();
+    RaiteenPaa* lahtoOpastin();
+    RataRaide* lahtoRaide();
+    QString lahtoOpastinTunnus() { return lahtoOpastinTunnus_; }
 
     QString kulkutieto();   //* Tietokantaan talletettava kenttä
     KulkuTie* kulkutie() { return kulkutie_;  }
@@ -54,9 +56,9 @@ public:
 
 protected:
     RataRaide* raide_;
-    RaiteenPaa* lahtoOpastin_;
-    RataRaide* lahtoRaide_;
-    bool pohjoiseenko_;
+    RaiteenPaa::Suunta suunta_;
+
+    QString lahtoOpastinTunnus_;
     int moneskoRaide_;
 
     KulkuTie* kulkutie_;

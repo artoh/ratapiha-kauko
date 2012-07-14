@@ -3,13 +3,13 @@
 RaideTieto::RaideTieto() :
     pohjoinen_(), etelainen_(),
     sahkoistetty_(true), valvottu_(true),
-    akseleita_(0), junanumero_(0),
+    akseleita_(0),
     kulkutietyyppi_(EiKulkutieta)
 {
 }
 
 
-void RaideTieto::paivita(int akseleita, int junanumero, const QString &tila, const QString& etelatila, const QString &pohjoistila, const QString& kulkutietila)
+void RaideTieto::paivita(int akseleita, const QString &junanumero, const QString &tila, const QString& etelatila, const QString &pohjoistila, const QString& kulkutietila)
 {
     akseleita_ = akseleita;
     junanumero_ = junanumero;

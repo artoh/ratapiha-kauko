@@ -23,6 +23,7 @@ public:
 
     enum VaihdeKasite { EiVaihdetta, Vasen, Oikea } ;
     enum SpKasite { SpPuuttuu = 0, SpSallii, SpSulkee } ;
+    enum Suunta { Virhe=0, Etelaan, Pohjoiseen} ;
 
     Opaste opaste() const;  // Näkyvä opastinkäsite
     Opaste opasteKasite() const { return opaste_; } // Asetettu opastinkäsite

@@ -22,9 +22,12 @@
 #include "kulkutie.h"
 #include "kulkutieelementti.h"
 
+#include "rataikkuna.h"
 
-KulkutienRaide::KulkutienRaide(RataRaide *raide, RaiteenPaa *lahtoOpastin, RataRaide *lahtoRaide, bool pohjoiseenko, int moneskoraide, KulkuTie *kulkutie)
-    : raide_(raide), lahtoOpastin_(lahtoOpastin), lahtoRaide_(lahtoRaide), pohjoiseenko_(pohjoiseenko), moneskoRaide_(moneskoraide), kulkutie_(kulkutie)
+
+KulkutienRaide::KulkutienRaide(RataRaide *raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide, KulkuTie *kulkutie)
+    : raide_(raide), suunta_(suunta), lahtoOpastinTunnus_(lahtoOpastin),
+      moneskoRaide_(moneskoraide), kulkutie_(kulkutie)
 {
 }
 
@@ -33,10 +36,22 @@ KulkutienRaide::KulkutienRaide(KulkutieElementti* elementti, KulkuTie *kulkutie)
     : kulkutie_(kulkutie)
 {
     raide_ = elementti->raide();
-    lahtoOpastin_ = elementti->lahtoOpastin();
-    lahtoRaide_ = elementti->lahtoraide();
-    pohjoiseenko_ = elementti->onkoPohjoiseen();
+
+    QChar suuntakirjain;
+    if( lahtoOpastin() == lahtoRaide()->etelainen())
+        suuntakirjain = 'E';
+    else
+        suuntakirjain= 'P';
+    lahtoOpastinTunnus_ = QString("%1%2%3").arg(suuntakirjain).arg(elementti->lahtoraide()->liikennepaikka()).arg(elementti->lahtoraide()->raidetunnus(),3,10,QChar('0'));
+
+    if( elementti->onkoPohjoiseen())
+        suunta_ = RaiteenPaa::Pohjoiseen;
+    else
+        suunta_ = RaiteenPaa::Etelaan;
+
     moneskoRaide_ = elementti->taso();
+
+    kulkutie_ = kulkutie;
 }
 
 bool KulkutienRaide::operator <(const KulkutienRaide &toinen) const
@@ -44,15 +59,16 @@ bool KulkutienRaide::operator <(const KulkutienRaide &toinen) const
     return moneskoRaide_<toinen.moneskoRaide();
 }
 
-QString KulkutienRaide::lahtoOpastinTunnus()
+RaiteenPaa *KulkutienRaide::lahtoOpastin()
 {
-    QChar suuntakirjain;
-    if( lahtoOpastin() == lahtoRaide()->etelainen())
-        suuntakirjain = 'E';
-    else
-        suuntakirjain= 'P';
-    return QString("%1%2%3").arg(suuntakirjain).arg(lahtoRaide()->liikennepaikka()).arg(lahtoRaide()->raidetunnus(),3,10,QChar('0'));
+    return RataIkkuna::rataSkene()->haeRaiteenPaa(lahtoOpastinTunnus());
 }
+
+RataRaide *KulkutienRaide::lahtoRaide()
+{
+    return RataIkkuna::rataSkene()->haeRaide(lahtoOpastinTunnus().mid(1));
+}
+
 
 
 QString KulkutienRaide::kulkutieto()

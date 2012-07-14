@@ -21,7 +21,6 @@
 #include "kulkutienraide.h"
 
 #include "kulkutieelementti.h"
-
 #include <QMutableListIterator>
 
 KulkuTie::KulkuTie() :
@@ -39,10 +38,16 @@ KulkutienRaide* KulkuTie::lisaaElementti(KulkutieElementti *elementti, RaideTiet
     return ktraide;
 }
 
-KulkutienRaide* KulkuTie::lisaaElementti(const QString &kulkutieto)
+KulkutienRaide *KulkuTie::lisaaElementti(RataRaide *raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide, RaideTieto::Kulkutietyyppi tyyppi)
 {
-    // Eipä vielä osaa lisätä kannasta...
-    return 0;
+    if( kulkutienTyyppi() == RataRaide::EiKulkutieta)
+        kulkutienTyyppi_ = tyyppi;
+
+    KulkutienRaide* ktraide = new KulkutienRaide(raide, suunta, lahtoOpastin, moneskoraide, this);
+    lisaaListaan(ktraide);
+
+    return ktraide;
+
 }
 
 QString KulkuTie::maaliRaideTunnus()
@@ -64,12 +69,17 @@ void KulkuTie::lisaaListaan(KulkutienRaide *elementti)
 {
     QMutableListIterator<KulkutienRaide*> i(elementit_);
 
-    while( i.hasNext() && i.next()->moneskoRaide() < elementti->moneskoRaide() )
-    {;}
-
-    if( i.hasNext())    // Ei olla lopussa
-        i.previous();
-
+    while( i.hasNext() )
+    {
+        if(i.next()->moneskoRaide() > elementti->moneskoRaide() )
+        {
+            // Lisätään paikalleen ennen isompaa
+            i.previous();
+            i.insert(elementti);
+            return;
+        }
+    }
+    // Ollaan lopussa, lisätään loppuun
     i.insert(elementti);
 }
 

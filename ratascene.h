@@ -24,6 +24,7 @@
 #include <QHash>
 
 class RataRaide;
+class RaiteenPaa;
 
 class RataScene : public QGraphicsScene
 {
@@ -32,7 +33,10 @@ public:
     explicit RataScene(QObject *parent = 0);
 
     QString ASLKasky(const QString& parametrit); // Asetinlaitteen käskyn suorittaminen
+    RataRaide* haeRaide(QString raidetunnus) { return raideTunnukset_.value(raidetunnus,0); }
+    RaiteenPaa* haeRaiteenPaa(QString paatunnus);
 
+    RataRaide* luoTyhjanaRaide(const QString& raidetunnus); // Luo "tyhjän" raiteen pitämään paikkaa, tarttee kulkuteiden takia
 signals:
     
 public slots:

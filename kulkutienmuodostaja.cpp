@@ -64,7 +64,7 @@ bool KulkutienMuodostaja::muodostaKulkutie()
     {
         lyhinReitti_->lukitseKulkutielle(this);
         lyhinReitti_->laitaVarit(this);
-        mista_->paivita();
+        mista_->muutaTiedot();
     }
 
 

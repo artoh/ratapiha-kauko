@@ -86,7 +86,7 @@ void KaukoScene::paivitys()
     {
         int raideid = kysely.value(0).toInt();
         int akseleita = kysely.value(1).toInt();
-        int junanumero = kysely.value(2).toInt();
+        QString junanumero = kysely.value(2).toString();
         QString raidetila = kysely.value(3).toString();
         QString etelatila = kysely.value(4).toString();
         QString pohjoistila = kysely.value(5).toString();

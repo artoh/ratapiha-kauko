@@ -68,24 +68,61 @@ void RataScene::lataaRata()
         // Löytyykö raidetta??
         RataRaide* praide = raideTunnukset_.value(raidetunnus,0);
 
-        if( !praide)
+        if( !praide  || !praide->raidetunnus())
         {
             // Raiteen tilatiedot tarpeen lukea vain, jos raidetta ei jo haettu
 
             int akseleita = nkys.value(8).toInt();
-            int junanro = nkys.value(9).toInt();
+            QString junanro = nkys.value(9).toString();
             QString raidetila = nkys.value(10).toString();
             QString etelatila = nkys.value(11).toString();
             QString pohjoistila = nkys.value(12).toString();
             int raideid = nkys.value(13).toInt();
-            QString kulkutie = nkys.value(14).toString();
+            QString kulkutietila = nkys.value(14).toString();
 
-            // Luodaan raide
-            praide = new RataRaide(raide, liikennepaikka, raideid, akseleita, junanro, raidetila, etelatila, pohjoistila, kulkutie);
+            // Luodaan raide, lisätään listoihin
+            if( !praide )
+            {
+                praide = new RataRaide(raide, liikennepaikka, raideid, akseleita, junanro, raidetila, etelatila, pohjoistila, kulkutietila);
+                raiteet_.insert(raideid, praide);
+                raideTunnukset_.insert(raidetunnus,praide);
+            }
+            else
+            {
+                // Raide luoto "tyhjänä"
+                praide->muutaTiedot(raide, liikennepaikka, raideid, akseleita, junanro, raidetila, etelatila, pohjoistila, kulkutietila);
+                raideTunnukset_.insert(raidetunnus,praide);
+            }
 
-            // Lisätään se skenen listoihin
-            raiteet_.insert(raideid, praide);
-            raideTunnukset_.insert(raidetunnus,praide);
+            // Kulkutien selvittäminen
+            if( !kulkutietila.isEmpty() )
+            {
+                // Muodostetaan ao. kulkutie
+                QStringList kulkutiedot = kulkutietila.split(' ');
+                int monesko = kulkutietila.mid(3).toInt();
+
+                RataRaide* maaliraide = haeRaide(kulkutiedot.value(1).mid(1));
+                // Ellei maaliraidetta ole vielä haettu kannasta, luodaan se "tyhjänä"
+                if( !maaliraide)
+                    maaliraide = luoTyhjanaRaide(kulkutiedot.value(1).mid(1));
+
+                RaiteenPaa::Suunta kulkutiensuunta = RaiteenPaa::Virhe;
+                if( kulkutietila[1] == 'P')
+                    kulkutiensuunta = RaiteenPaa::Pohjoiseen;
+                else if(kulkutietila[1] == 'E')
+                    kulkutiensuunta = RaiteenPaa::Etelaan;
+
+                RataRaide::Kulkutietyyppi ktyyppi = RataRaide::EiKulkutieta;
+                if( kulkutietila[0] == 'J')
+                    ktyyppi = RataRaide::Junakulkutie;
+                else if( kulkutietila[1] == 'K')
+                    ktyyppi = RataRaide::Vaihtokulkutie;
+
+                maaliraide->kulkutieRaiteelle()->lisaaElementti(praide, kulkutiensuunta, kulkutiedot[2], monesko, ktyyppi);
+
+            }
+
+
 
         }
         // Nyt raide ainakin olemassa, voidaan lisätä itse kisko
@@ -194,7 +231,7 @@ QString RataScene::ASLKasky(const QString &parametrit)
         else
             return QString("VIRHE Ei onnistu");
 
-        raide->paivita();
+        raide->muutaTiedot();
         return QString("OK");
     }
 
@@ -229,8 +266,28 @@ QString RataScene::ASLKasky(const QString &parametrit)
                 return QString("VIRHE Ei ole vaihde");
 
         }
-        vaihde->paivita();
+        vaihde->muutaTiedot();
         return QString("OK");
     }
     return QString("?");
+}
+
+RaiteenPaa *RataScene::haeRaiteenPaa(QString paatunnus)
+{
+    RataRaide* raide = haeRaide(paatunnus.mid(1));
+    if( raide )
+    {
+        if( paatunnus.startsWith('P'))
+            return raide->pohjoinen();
+        else if( paatunnus.startsWith('E'))
+            return raide->etelainen();
+    }
+    return 0;
+}
+
+RataRaide *RataScene::luoTyhjanaRaide(const QString& raidetunnus)
+{
+    RataRaide* uusiraide = new RataRaide();
+    raideTunnukset_.insert(raidetunnus, uusiraide);
+    return uusiraide;
 }

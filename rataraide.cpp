@@ -22,13 +22,26 @@
 #include "naapuruus.h"
 #include "kulkutie.h"
 #include "kulkutienraide.h"
+#include "ratascene.h"
+#include "rataikkuna.h"
 #include <QSqlQuery>
 
-RataRaide::RataRaide(int raidetunnus, const QString& liikennepaikka, int raideid, int akseleita, int junanumero, const QString& tila, const QString& etelatila, const QString& pohjoistila, const QString& kulkutietila)
+RataRaide::RataRaide(int raidetunnus, const QString& liikennepaikka, int raideid, int akseleita, const QString& junanumero, const QString& tila, const QString& etelatila, const QString& pohjoistila, const QString& kulkutietila)
     : raidetunnus_(raidetunnus), liikennepaikka_(liikennepaikka), raideid_(raideid), pituus_(0.0), pieninNopeus_(999), suurinNopeus_(0),
       kulkutienraide_(0)
 {
+    if( raidetunnus)
+        muutaTiedot(raidetunnus, liikennepaikka, raideid, akseleita, junanumero, tila, etelatila, pohjoistila, kulkutietila);
+}
+
+void RataRaide::muutaTiedot(int raidetunnus, const QString &liikennepaikka, int raideid, int akseleita, const QString& junanumero, const QString &tila, const QString &etelatila, const QString &pohjoistila, const QString &kulkutietila)
+{
+    raidetunnus_ = raidetunnus;
+    liikennepaikka_ = liikennepaikka;
+    raideid_ = raideid;
+
     RaideTieto::paivita(akseleita, junanumero, tila, etelatila, pohjoistila, kulkutietila);
+
 }
 
 
@@ -74,7 +87,7 @@ void RataRaide::paivitaTietokantaan()
 }
 
 
-void RataRaide::paivita()
+void RataRaide::muutaTiedot()
 {
     foreach( RataKisko* kisko, kiskot_)
         kisko->update(kisko->boundingRect());

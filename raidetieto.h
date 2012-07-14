@@ -15,11 +15,11 @@ class RaideTieto
 {
 public:
 
-    enum Kulkutietyyppi { Junakulkutie, Vaihtokulkutie , EiKulkutieta} ;
+    enum Kulkutietyyppi { Junakulkutie, Vaihtokulkutie , EiKulkutieta } ;
 
     RaideTieto();
 
-    void paivita( int akseleita, int junanumero, const QString& tila,
+    void paivita( int akseleita, const QString& junanumero, const QString& tila,
                   const QString& etelatila, const QString& pohjoistila,
                   const QString& kulkutietila);
 
@@ -28,7 +28,7 @@ public:
     bool onkoVaihde(); /** Onko vaihde */
 
     int akseleita() const { return akseleita_; }
-    int junanumero() const { return junanumero_; }
+    QString junanumero() const { return junanumero_; }
     Kulkutietyyppi kulkutieTyyppi() const { return kulkutietyyppi_; }
 
 
@@ -43,7 +43,7 @@ protected:
     bool valvottu_;
 
     int akseleita_;
-    int junanumero_;
+    QString junanumero_;
 
     Kulkutietyyppi kulkutietyyppi_;
 };
