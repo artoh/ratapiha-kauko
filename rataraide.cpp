@@ -73,9 +73,11 @@ void RataRaide::paivitaTietokantaan()
 
     QString kulkutieto;
     if( kulkutienRaide())
-        kulkutieto = kulkutienRaide()->kulkutieto();
+        kulkutieto = QString("\"%1\"").arg(kulkutienRaide()->kulkutieto());
+    else
+        kulkutieto = QString("NULL");
 
-    kysely.exec( QString("update raide set tila_raide=\"%4\",tila_etela=\"%1\",tila_pohjoinen=\"%2\",kulkutie=\"%5\" where raideid=%3").arg(etelainen()->tilaTieto())
+    kysely.exec( QString("update raide set tila_raide=\"%4\",tila_etela=\"%1\",tila_pohjoinen=\"%2\",kulkutie=%5 where raideid=%3").arg(etelainen()->tilaTieto())
                  .arg(pohjoinen()->tilaTieto()).arg(raideid_).arg(tilatieto()).arg(kulkutieto));
 }
 
@@ -85,6 +87,14 @@ void RataRaide::paivita()
     foreach( RataKisko* kisko, kiskot_)
         kisko->update(kisko->boundingRect());
     paivitaTietokantaan();
+}
+
+void RataRaide::kulkutiePurettu()
+{
+    kulkutienraide_ = 0;
+    kulkutietyyppi_ = EiKulkutieta;
+
+    QSqlQuery(QString("update raide set kulkutie=NULL where raideid=%1").arg(raideid_));
 }
 
 QList<Naapuruus *> RataRaide::naapurit()

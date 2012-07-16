@@ -39,6 +39,7 @@ public:
 
     void kulkutieValmis(const QString& maaliraide, KulkuTie* kulkutie); /** Lisää kulkutien */
     KulkuTie* haeKulkutie(const QString& maaliraide);
+    void puraKulkutie(const QString& maaliraide);
 
 signals:
     

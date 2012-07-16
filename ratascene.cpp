@@ -22,6 +22,7 @@
 #include "rataraide.h"
 #include "opastin.h"
 #include "kulkutienmuodostaja.h"
+#include "kulkutienraide.h"
 
 #include <QSqlQuery>
 #include <QVariant>
@@ -107,10 +108,11 @@ void RataScene::lataaRata()
                         ktyyppi = RataRaide::Vaihtokulkutie;
 
                     kulkutie = new KulkuTie(ktyyppi);
-                    kulkutiet_.insert(kulkutiedot.value(1), kulkutie);
+                    kulkutiet_.insert(kulkutiedot.value(1).mid(1), kulkutie);
                 }
 
-                kulkutie->lisaaElementti(praide, kulkutiensuunta, kulkutiedot[2].mid(1), monesko );
+                KulkutienRaide* ktraide = kulkutie->lisaaElementti(praide, kulkutiensuunta, kulkutiedot[2], monesko );
+                praide->lukitseKulkutielle(ktraide);
             }
 
         }
@@ -199,7 +201,7 @@ QString RataScene::ASLKasky(const QString &parametrit)
     }
 
     // SEIS ja AJA [raide] [E/P]
-    if( (paramLista.first()=="SEIS" || paramLista.first()=="AJA" ) && paramLista.count() > 2 )
+    else if( (paramLista.first()=="SEIS" || paramLista.first()=="AJA" ) && paramLista.count() > 2 )
     {
         RataRaide* raide = raideTunnukset_.value(paramLista[1],0);
 
@@ -225,7 +227,7 @@ QString RataScene::ASLKasky(const QString &parametrit)
     }
 
     // V [Vaihde] [A|C]  Vaihteen kääntökäsky
-    if( paramLista.first() == "V" && paramLista.count() > 1)
+    else if( paramLista.first() == "V" && paramLista.count() > 1)
     {
         RataRaide* vaihde = raideTunnukset_.value(paramLista[1],0);
         if( !vaihde)
@@ -258,6 +260,18 @@ QString RataScene::ASLKasky(const QString &parametrit)
         vaihde->paivita();
         return QString("OK");
     }
+    else if( paramLista.first()=="KPER" && paramLista.count() > 1)
+    {
+        RataRaide* raide = haeRaide(paramLista[1]);
+        if( !raide )
+            return QString("VIRHE Ei raidetta %1 ").arg(paramLista[1]);
+        KulkutienRaide* ktraide = raide->kulkutienRaide();
+        if( !ktraide )
+            return QString("VIRHE Ei kulkutietä raiteella %1").arg(paramLista[1]);
+        puraKulkutie( ktraide->kulkutie()->maaliRaideTunnus() );
+        return QString("OK");
+    }
+
     return QString("?");
 }
 
@@ -282,5 +296,16 @@ void RataScene::kulkutieValmis(const QString& maaliraide, KulkuTie* kulkutie)
 KulkuTie *RataScene::haeKulkutie(const QString &maaliraide)
 {
     return kulkutiet_.value(maaliraide,0);
+}
+
+void RataScene::puraKulkutie(const QString &maaliraide)
+{
+    KulkuTie* kulkutie = haeKulkutie(maaliraide);
+    if( kulkutie)
+    {
+        kulkutie->puraKulkutie();
+        kulkutiet_.remove(maaliraide);
+        delete kulkutie;
+    }
 }
 

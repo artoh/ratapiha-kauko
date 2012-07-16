@@ -144,14 +144,14 @@ void Naapuruus::lukitseVaihteet()
     {
         if( naapurinSuunta() == Etela)
             naapuriRaide()->etelainen()->lukitseVaihde(RaiteenPaa::Vasen);
-        else if(omaSuunta() == Pohjoinen)
+        else if(naapurinSuunta() == Pohjoinen)
             naapuriRaide()->pohjoinen()->lukitseVaihde(RaiteenPaa::Vasen);
     }
     else if( naapurinVaihde() == RaiteenPaa::Oikea)
     {
         if( naapurinSuunta() == Etela)
             naapuriRaide()->etelainen()->lukitseVaihde(RaiteenPaa::Oikea);
-        else if(omaSuunta() == Pohjoinen)
+        else if(naapurinSuunta() == Pohjoinen)
             naapuriRaide()->pohjoinen()->lukitseVaihde(RaiteenPaa::Oikea);
     }
 

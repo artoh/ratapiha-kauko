@@ -104,14 +104,14 @@ KulkutieElementti::~KulkutieElementti()
         delete lapsi;
 }
 
-void KulkutieElementti::lukitseKulkutielle(KulkutienMuodostaja *kulkutie)
+void KulkutieElementti::lukitseKulkutielle(KulkuTie* kulkutie)
 {
     // Lukitsee ensin tämän elementin kulkutielle
     // Jos vaihteita, kääntää ne
     naapuruus_->lukitseVaihteet();
 
     // Lisää tämän olennon kulkutielle ;)
-    naapuruus_->naapuriRaide()->lukitseKulkutielle( kulkutie->mista()->kulkutieRaiteelle()->lisaaElementti(this) );
+    naapuruus_->naapuriRaide()->lukitseKulkutielle( kulkutie->lisaaElementti(this) );
 
 
     // sitten isin

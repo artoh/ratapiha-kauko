@@ -192,6 +192,7 @@ void RaiteenPaa::paivitaTila(const QString &tila)
 {
     QStringList listana = tila.split(" ");
     opastinSeis_ = false;   // Oletuksena opastimella ei SEIS-asetusta
+    opaste_ = RaiteenPaa::Seis; // Oletuksena opastin näyttää SEIS
     foreach( QString kohde, listana)
     {
         paivitysTehtava(kohde);

@@ -67,11 +67,11 @@ bool KulkutienMuodostaja::muodostaKulkutie()
     {
         KulkuTie* kulkutie = new KulkuTie(tyyppi_);
 
-        lyhinReitti_->lukitseKulkutielle(this);
+        lyhinReitti_->lukitseKulkutielle(kulkutie);
         lyhinReitti_->laitaVarit(this);
         mista_->paivita();
 
-        RataIkkuna::rataSkene()->kulkutieValmis(mista_->raidetunnusLiikennepaikalla(), kulkutie);
+        RataIkkuna::rataSkene()->kulkutieValmis(minne_->raidetunnusLiikennepaikalla(), kulkutie);
     }
 
 

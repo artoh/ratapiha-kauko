@@ -38,11 +38,13 @@ KulkutienRaide::KulkutienRaide(KulkutieElementti* elementti, KulkuTie *kulkutie)
     raide_ = elementti->raide();
 
     QChar suuntakirjain;
-    if( lahtoOpastin() == lahtoRaide()->etelainen())
+    if( elementti->lahtoOpastin() == elementti->lahtoRaide()->etelainen())
         suuntakirjain = 'E';
     else
         suuntakirjain= 'P';
-    lahtoOpastinTunnus_ = QString("%1%2%3").arg(suuntakirjain).arg(elementti->lahtoraide()->liikennepaikka()).arg(elementti->lahtoraide()->raidetunnus(),3,10,QChar('0'));
+
+    lahtoOpastinTunnus_ = QString("%1%2").arg(suuntakirjain).arg( elementti->lahtoRaide()->raidetunnusLiikennepaikalla());
+
 
     if( elementti->onkoPohjoiseen())
         suunta_ = RaiteenPaa::Pohjoiseen;
@@ -89,7 +91,23 @@ QString KulkutienRaide::kulkutieto()
     else if( kulkutie()->kulkutienTyyppi() == RataRaide::Vaihtokulkutie)
         kulkutiekirjain = QChar('U');
 
-    return QString("%1%2%3 %4 %5").arg(kulkutiekirjain).arg(suuntakirjain).arg(moneskoRaide()).arg(kulkutie()->maaliRaideTunnus()).arg(lahtoOpastinTunnus());
+    return QString("%1%2%3 %4 %5").arg(kulkutiekirjain).arg(suuntakirjain).arg(moneskoRaide()).arg(kulkutie()->maaliRaideTunnusSuunnalla() ).arg(lahtoOpastinTunnus());
+}
+
+void KulkutienRaide::puraKulkutielta()
+{
+    // Opastin punaiselle
+    if( lahtoOpastin()->opasteKasite() != RaiteenPaa::Seis)
+    {
+        lahtoOpastin()->asetaOpaste(RaiteenPaa::Seis);
+        lahtoRaide()->paivita();
+    }
+
+    // Ensimmäisenä poistaa raiteelta
+    raide()->kulkutiePurettu();
+    // Sitten listalta
+    kulkutie()->poistaElementti(this);
+    // Huom! Nyt on tuhottu!!!!!!!!
 }
 
 

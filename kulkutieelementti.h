@@ -40,10 +40,10 @@ public:
 
     RataRaide* raide() { return naapuruus_->naapuriRaide(); }
     RaiteenPaa* lahtoOpastin()  { return opastin_; }
-    RataRaide* lahtoraide() { return lahtoraide_; }
+    RataRaide* lahtoRaide() { return lahtoraide_; }
     bool onkoPohjoiseen() { return naapuruus_->naapurinSuunta()==Naapuruus::Etela; }
 
-    void lukitseKulkutielle( KulkutienMuodostaja* kulkutie);
+    void lukitseKulkutielle( KulkuTie* kulkutie);
     void laitaVarit(KulkutienMuodostaja* kulkutie);
 
     int taso() const { return taso_; }  //* Monesko elementti alusta lukien

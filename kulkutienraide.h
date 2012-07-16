@@ -53,6 +53,8 @@ public:
     QString kulkutieto();   //* Tietokantaan talletettava kenttä
     KulkuTie* kulkutie() { return kulkutie_;  }
 
+    void puraKulkutielta();     //* Purkaa kulkutien tämän elementin osalta */
+
 
 protected:
     RataRaide* raide_;

@@ -34,14 +34,19 @@ class KulkuTie
 {
 public:
     KulkuTie(RaideTieto::Kulkutietyyppi kulkutientyyppi);
+    ~KulkuTie();
 
     RaideTieto::Kulkutietyyppi kulkutienTyyppi() const { return kulkutienTyyppi_; }
 
     KulkutienRaide* lisaaElementti(KulkutieElementti* elementti);
     KulkutienRaide* lisaaElementti(RataRaide* raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide);
 
+    void puraKulkutie();    // Purkaa kulkutien
+    void poistaElementti(KulkutienRaide* elementti);    // Elementti itse kutsuu tätä purkautuessaan!
+
     RataRaide* maaliRaide();
     QString maaliRaideTunnus();
+    QString maaliRaideTunnusSuunnalla();
 
 protected:
     RaideTieto::Kulkutietyyppi kulkutienTyyppi_;

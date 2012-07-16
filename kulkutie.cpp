@@ -21,11 +21,21 @@
 #include "kulkutienraide.h"
 
 #include "kulkutieelementti.h"
+
+#include "ratascene.h"
+#include "rataikkuna.h"
+
 #include <QMutableListIterator>
 
 KulkuTie::KulkuTie(RaideTieto::Kulkutietyyppi kulkutientyyppi) :
     kulkutienTyyppi_( kulkutientyyppi )
 {
+}
+
+KulkuTie::~KulkuTie()
+{
+    foreach( KulkutienRaide* ktraide, elementit_)
+        delete ktraide;
 }
 
 KulkutienRaide* KulkuTie::lisaaElementti(KulkutieElementti *elementti)
@@ -42,10 +52,34 @@ KulkutienRaide *KulkuTie::lisaaElementti(RataRaide *raide, RaiteenPaa::Suunta su
     lisaaListaan(ktraide);
 
     return ktraide;
-
 }
 
+void KulkuTie::puraKulkutie()
+{
+    foreach( KulkutienRaide* ktraide, elementit_)
+    {
+        ktraide->puraKulkutielta();
+    }
+    elementit_.clear(); // Poistetaan pointterit
+}
+
+void KulkuTie::poistaElementti(KulkutienRaide *elementti)
+{
+    elementit_.removeOne(elementti);
+    delete elementti;
+}
+
+
+
 QString KulkuTie::maaliRaideTunnus()
+{
+    if( elementit_.empty())
+        return QString();
+
+    return elementit_.last()->raide()->raidetunnusLiikennepaikalla();
+}
+
+QString KulkuTie::maaliRaideTunnusSuunnalla()
 {
     if( elementit_.empty())
         return QString();
@@ -56,7 +90,7 @@ QString KulkuTie::maaliRaideTunnus()
     else
         suuntakirjain= 'P';
 
-    return QString("%1%2%3").arg(suuntakirjain).arg(elementit_.last()->raide()->liikennepaikka()).arg(elementit_.last()->raide()->raidetunnus(),3,10,QChar('0'));
+    return QString("%1%2").arg(suuntakirjain).arg(elementit_.last()->raide()->raidetunnusLiikennepaikalla());
 }
 
 
