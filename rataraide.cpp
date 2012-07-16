@@ -97,6 +97,18 @@ void RataRaide::kulkutiePurettu()
     QSqlQuery(QString("update raide set kulkutie=NULL where raideid=%1").arg(raideid_));
 }
 
+void RataRaide::naapuritTarkistakaaKulkutiet(KulkuTie *pyytaja)
+{
+    // Vihjaa naapuriraiteille, että on syytä tarkistaa mitä tapahtuu
+    QList<Naapuruus*> raiteenNaapurit = naapurit();
+    foreach( Naapuruus* naapuruus, raiteenNaapurit)
+    {
+        if( naapuruus->naapuriRaide() &&
+                naapuruus->naapuriRaide()->kulkutienRaide() )
+            naapuruus->naapuriRaide()->kulkutienRaide()->tarkistaNaapurinPyynnosta(pyytaja);
+    }
+}
+
 QList<Naapuruus *> RataRaide::naapurit()
 {
     if( naapurit_.isEmpty())

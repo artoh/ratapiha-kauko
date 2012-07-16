@@ -26,9 +26,10 @@
 #include "rataikkuna.h"
 
 #include <QMutableListIterator>
+#include <QDebug>
 
 KulkuTie::KulkuTie(RaideTieto::Kulkutietyyppi kulkutientyyppi) :
-    kulkutienTyyppi_( kulkutientyyppi )
+    kulkutienTyyppi_( kulkutientyyppi ), tila_(RaideTieto::Valmis)
 {
 }
 
@@ -45,7 +46,7 @@ KulkutienRaide* KulkuTie::lisaaElementti(KulkutieElementti *elementti)
     return ktraide;
 }
 
-KulkutienRaide *KulkuTie::lisaaElementti(RataRaide *raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide)
+KulkutienRaide *KulkuTie::lisaaElementti(RataRaide *raide, RaiteenPaa::Suunta suunta, const QString& lahtoOpastin, int moneskoraide )
 {
 
     KulkutienRaide* ktraide = new KulkutienRaide(raide, suunta, lahtoOpastin, moneskoraide, this);
@@ -54,19 +55,93 @@ KulkutienRaide *KulkuTie::lisaaElementti(RataRaide *raide, RaiteenPaa::Suunta su
     return ktraide;
 }
 
+KulkutienRaide *KulkuTie::lisaaElementti(const QString &raidesuunnalla, const QString &lahtoopastin)
+{
+    RataRaide* raide = RataIkkuna::rataSkene()->haeRaide( raidesuunnalla.mid(1));
+    RaiteenPaa::Suunta suunta = RaiteenPaa::Etelaan;
+    if( raidesuunnalla.startsWith('P'))
+        suunta = RaiteenPaa::Pohjoiseen;
+    int moneskoraide = elementit_.count() + 1;
+
+    KulkutienRaide* ktraide = new KulkutienRaide(raide, suunta, lahtoopastin, moneskoraide, this);
+    elementit_.append(ktraide);
+    return ktraide;
+}
+
 void KulkuTie::puraKulkutie()
 {
+    if( kulkutienTyyppi_ == RaideTieto::EiKulkutieta)
+        return;
+
+    kulkutienTyyppi_ = RaideTieto::EiKulkutieta;
+    RataIkkuna::rataSkene()->poistaKulkutieListalta( maaliRaideTunnus() );
+
     foreach( KulkutienRaide* ktraide, elementit_)
     {
         ktraide->puraKulkutielta();
     }
     elementit_.clear(); // Poistetaan pointterit
+
 }
 
 void KulkuTie::poistaElementti(KulkutienRaide *elementti)
 {
     elementit_.removeOne(elementti);
     delete elementti;
+}
+
+void KulkuTie::vahvistaKulkutie()
+{
+    foreach( KulkutienRaide* elementti, elementit_)
+    {
+        elementti->raide()->lukitseKulkutielle(elementti);
+        elementti->raide()->paivita();
+    }
+    RataIkkuna::rataSkene()->kulkutieValmis(maaliRaideTunnus(), this);
+}
+
+void KulkuTie::tarkista()
+{
+    // Suojastuksen automaattinen purkautuminen
+    if( kulkutienTyyppi() == RataRaide::Linjasuojastus )
+    {
+        // Onko raiteilla joku...
+        if( !varattujaRaiteita() && !lahtoRaide()->akseleita()
+                && lahtoRaide()->kulkutieTyyppi() != RataRaide::Junakulkutie)
+            puraKulkutie();
+        else
+        {
+            if( varattujaRaiteita() && tila_ != RataRaide::Virhetila)
+                tila_ = RataRaide::Varattu;
+            else
+                tila_ = RataRaide::Valmis;
+            paivitaKaikki();
+        }
+    }
+
+}
+
+int KulkuTie::varattujaRaiteita()
+{
+    int varattuja = 0;
+    foreach( KulkutienRaide* elementti, elementit_)
+        if( elementti->raide()->akseleita())
+            varattuja++;
+    return varattuja;
+}
+
+
+RataRaide *KulkuTie::lahtoRaide()
+{
+    return RataIkkuna::rataSkene()->haeRaide(lahtoRaideTunnus());
+}
+
+QString KulkuTie::lahtoRaideTunnus()
+{
+    if( elementit_.empty())
+        return QString();
+
+    return elementit_.first()->raide()->raidetunnusLiikennepaikalla();
 }
 
 
@@ -91,6 +166,14 @@ QString KulkuTie::maaliRaideTunnusSuunnalla()
         suuntakirjain= 'P';
 
     return QString("%1%2").arg(suuntakirjain).arg(elementit_.last()->raide()->raidetunnusLiikennepaikalla());
+}
+
+void KulkuTie::paivitaKaikki()
+{
+    foreach( KulkutienRaide* ktraide, elementit_)
+    {
+        ktraide->raide()->paivita();
+    }
 }
 
 

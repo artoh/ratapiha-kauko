@@ -13,7 +13,7 @@
 
 
 KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int kiskoid, const QString &liikennepaikka, int raide, const QString &kiskodata)
-    : LaajennettuKisko(viiva, kiskoid, liikennepaikka, raide, kiskodata), raidetieto_(0)
+    : LaajennettuKisko(viiva, kiskoid, liikennepaikka, raide, kiskodata), skene_(skene), raidetieto_(0)
 {
 
     // Sijoitetaan tunnus, jos numero sopii
@@ -33,6 +33,20 @@ QRectF KaukoKisko::boundingRect() const
 
 void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
+
+    if( !raidetieto())
+    {
+        painter->setPen( QPen(QBrush(Qt::magenta),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->drawLine(0.8, 0.0, pituus()-0.8, 0.0);
+
+        if( naytaRaideNumero() ) // Näytellään raiteen numeroa
+        {
+            painter->setFont( QFont("Helvetica",4,QFont::Bold));
+            painter->drawText(QRectF(-10.0, -9.0, pituus()+20, 5.0), raidetunnus_, QTextOption(Qt::AlignCenter));
+        }
+        // Pitää hypätä pois ettei tule ongelmia!!!
+        return;
+    }
 
     // Sillalle taustalaatikko
     if( silta())
@@ -179,6 +193,27 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         }
     }
 
+    // Suojastusnuolet
+    if( raidetieto()->kulkutieTyyppi() == RaideTieto::Linjasuojastus )
+    {
+        painter->setPen(Qt::NoPen);
+        if( raidetieto()->kulkutieTila() == RaideTieto::Valmis )
+            painter->setBrush( QBrush(Qt::green));
+        else if( raidetieto()->kulkutieTila() == RaideTieto::Varattu)
+            painter->setBrush( QBrush( Qt::yellow));
+        else
+            painter->setBrush( QBrush(Qt::red));
+
+        QPolygonF kuvio;
+        if( raidetieto()->suunta() == RaiteenPaa::Etelaan)
+            kuvio << QPointF(alku, -7.0) << QPointF(alku+16.0, -3.0) << QPointF(alku+16.0, -11.0);
+         else
+            kuvio << QPointF(loppu-16.0, -3.0) << QPointF(loppu-16.0, -11.0) << QPointF(loppu, -7.0);
+
+        painter->drawPolygon(kuvio);
+
+    }
+
 
     bool sivuhaara = false ; // Se vaihteen haara, johon ei käännytä
 
@@ -201,13 +236,15 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     QColor viivavari = Qt::white;
     Qt::PenStyle viivatyyppi = Qt::SolidLine;
 
-    if( skene_->onkoVikatilassa() || !raidetieto() )
+    if( skene_->onkoVikatilassa() )
         viivavari = Qt::magenta;
     else if( raidetieto()->akseleita() && !sivuhaara)
         viivavari = Qt::red;
     else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Vaihtokulkutie && !sivuhaara)
         viivavari = Qt::yellow;
     else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Junakulkutie && !sivuhaara)
+        viivavari = Qt::green;
+    else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Linjasuojastus )
         viivavari = Qt::green;
     else if( !raidetieto()->sahkoistetty())
         viivavari = Qt::blue;
@@ -249,7 +286,7 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
             laituriviiva << QPointF(10.0, 7.0) << QPointF(10.0, 4.0) << QPointF( pituus()-10.0, 4.0) << QPointF(pituus()-10.0,7.0);
             painter->drawPolyline(laituriviiva);
         }
-   }
+    }
 
 
 }

@@ -90,7 +90,7 @@ void RataScene::lataaRata()
             {
                 // Muodostetaan ao. kulkutie
                 QStringList kulkutiedot = kulkutietila.split(' ');
-                int monesko = kulkutiedot.value(0).mid(2).toInt();
+                int monesko = kulkutiedot.value(0).mid(3).toInt();
 
                 RaiteenPaa::Suunta kulkutiensuunta = RaiteenPaa::Virhe;
                 if( kulkutietila[1] == 'P')
@@ -104,8 +104,10 @@ void RataScene::lataaRata()
                     RataRaide::Kulkutietyyppi ktyyppi = RataRaide::EiKulkutieta;
                     if( kulkutietila[0] == 'J')
                         ktyyppi = RataRaide::Junakulkutie;
-                    else if( kulkutietila[1] == 'K')
+                    else if( kulkutietila[0] == 'U')
                         ktyyppi = RataRaide::Vaihtokulkutie;
+                    else if( kulkutietila[0] == 'S')
+                        ktyyppi = RataRaide::Linjasuojastus;
 
                     kulkutie = new KulkuTie(ktyyppi);
                     kulkutiet_.insert(kulkutiedot.value(1).mid(1), kulkutie);
@@ -309,8 +311,11 @@ void RataScene::puraKulkutie(const QString &maaliraide)
     if( kulkutie)
     {
         kulkutie->puraKulkutie();
-        kulkutiet_.remove(maaliraide);
-        delete kulkutie;
     }
+}
+
+void RataScene::poistaKulkutieListalta(const QString &maaliraide)
+{
+    kulkutiet_.remove(maaliraide);
 }
 

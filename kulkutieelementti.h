@@ -62,12 +62,15 @@ protected:
 
 
     QList<KulkutieElementti*> lapset_;
+    QList<QString> suojastus_;   /** Jatkeeksi tarvittava suojastus */
     KulkutieElementti* isi_;
 
     int taso_;
 
     bool tarkistaKulkutieEhdot(KulkutienMuodostaja* muodostaja);
     void maalissaOllaan(KulkutienMuodostaja* muodostaja);
+
+    bool voikoMuodostaaSuojastuksen(Naapuruus* naapuri);
 
 };
 

@@ -90,24 +90,51 @@ QString KulkutienRaide::kulkutieto()
         kulkutiekirjain = QChar('J');
     else if( kulkutie()->kulkutienTyyppi() == RataRaide::Vaihtokulkutie)
         kulkutiekirjain = QChar('U');
+    else if( kulkutie()->kulkutienTyyppi() == RataRaide::Linjasuojastus)
+        kulkutiekirjain = QChar('S');
 
-    return QString("%1%2%3 %4 %5").arg(kulkutiekirjain).arg(suuntakirjain).arg(moneskoRaide()).arg(kulkutie()->maaliRaideTunnusSuunnalla() ).arg(lahtoOpastinTunnus());
+    QChar tilateksti;
+    switch( kulkutie()->tila())
+    {
+    case RaideTieto::Valmis:
+        tilateksti = QChar('-');
+        break;
+    case RaideTieto::Varattu:
+        tilateksti = QChar('+');
+        break;
+    default:
+        tilateksti = QChar('!');
+    }
+
+
+    return QString("%1%2%3%4 %5 %6").arg(kulkutiekirjain).arg(suuntakirjain).arg(tilateksti).arg(moneskoRaide()).arg(kulkutie()->maaliRaideTunnusSuunnalla() ).arg(lahtoOpastinTunnus());
 }
 
 void KulkutienRaide::puraKulkutielta()
 {
+    RataRaide* raidePtr = raide();
     // Opastin punaiselle
-    if( lahtoOpastin()->opasteKasite() != RaiteenPaa::Seis)
+    if( lahtoOpastin() && lahtoOpastin()->opasteKasite() != RaiteenPaa::Seis)
     {
         lahtoOpastin()->asetaOpaste(RaiteenPaa::Seis);
         lahtoRaide()->paivita();
     }
 
     // Ensimmäisenä poistaa raiteelta
-    raide()->kulkutiePurettu();
+    raidePtr->kulkutiePurettu();
     // Sitten listalta
     kulkutie()->poistaElementti(this);
     // Huom! Nyt on tuhottu!!!!!!!!
+
+    raidePtr->naapuritTarkistakaaKulkutiet();
+    // Kulkutien purkautuminen voi purkaa suojastuksen..
+}
+
+void KulkutienRaide::tarkistaNaapurinPyynnosta(KulkuTie *pyytaja)
+{
+    if( pyytaja != kulkutie())
+        kulkutie()->tarkista();
+
 }
 
 

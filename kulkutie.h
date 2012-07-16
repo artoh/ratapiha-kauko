@@ -33,23 +33,36 @@ class RataRaide;
 class KulkuTie
 {
 public:
+
     KulkuTie(RaideTieto::Kulkutietyyppi kulkutientyyppi);
     ~KulkuTie();
 
     RaideTieto::Kulkutietyyppi kulkutienTyyppi() const { return kulkutienTyyppi_; }
 
     KulkutienRaide* lisaaElementti(KulkutieElementti* elementti);
-    KulkutienRaide* lisaaElementti(RataRaide* raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide);
+    KulkutienRaide* lisaaElementti(RataRaide* raide, RaiteenPaa::Suunta suunta, const QString& lahtoOpastin, int moneskoraide);
+    KulkutienRaide* lisaaElementti(const QString& raidesuunnalla, const QString& lahtoopastin);
 
     void puraKulkutie();    // Purkaa kulkutien
     void poistaElementti(KulkutienRaide* elementti);    // Elementti itse kutsuu tätä purkautuessaan!
+    void vahvistaKulkutie();    // Vahvistaa (suojastus)kulkutien
+    void tarkista(); // Tätä kutsutaan joiden varautumisten yms jälkeen
 
+    int varattujaRaiteita();
+
+    RataRaide* lahtoRaide();
+    QString lahtoRaideTunnus();
     RataRaide* maaliRaide();
     QString maaliRaideTunnus();
     QString maaliRaideTunnusSuunnalla();
 
+    void paivitaKaikki();
+
+    RaideTieto::KulkutieTila tila() const { return tila_; }
+
 protected:
     RaideTieto::Kulkutietyyppi kulkutienTyyppi_;
+    RaideTieto::KulkutieTila tila_;
     QList<KulkutienRaide*> elementit_;
 
     void lisaaListaan(KulkutienRaide* elementti); // Lisää listaan järjestyksessä

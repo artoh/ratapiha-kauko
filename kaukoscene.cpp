@@ -99,7 +99,7 @@ void KaukoScene::paivitys()
 
     }
     // Välkky eri päin kuin edellisellä kerralla...
-    valkytys_ = !valkytys();
+    valkytys_ = !valkytys_;
     // Sitten invalitoidaan
     invalidate( sceneRect());
 }

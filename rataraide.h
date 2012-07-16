@@ -52,6 +52,8 @@ public:
     void paivita(); // Piirtää kiskot ja vie tietokantaan
     void kulkutiePurettu(); // Poistaa kulkutietiedot ja päivittää samantien tilanteen myös tietokantaan
 
+    void naapuritTarkistakaaKulkutiet(KulkuTie* pyytaja = 0);
+
     qreal pituus() const { return pituus_; }
     int pieninNopeus() const { return pieninNopeus_; }
     int suurinNopeus() const { return suurinNopeus_; }

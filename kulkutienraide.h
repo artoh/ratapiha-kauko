@@ -54,7 +54,7 @@ public:
     KulkuTie* kulkutie() { return kulkutie_;  }
 
     void puraKulkutielta();     //* Purkaa kulkutien tämän elementin osalta */
-
+    void tarkistaNaapurinPyynnosta(KulkuTie* pyytaja=0);   //* Naapuri pyytää tarkistelemaan*/
 
 protected:
     RataRaide* raide_;

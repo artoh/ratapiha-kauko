@@ -15,7 +15,8 @@ class RaideTieto
 {
 public:
 
-    enum Kulkutietyyppi { Junakulkutie, Vaihtokulkutie , EiKulkutieta } ;
+    enum Kulkutietyyppi { EiKulkutieta, Junakulkutie, Vaihtokulkutie, Linjasuojastus } ;
+    enum KulkutieTila { Valmis, Varattu, Virhetila } ;
 
     RaideTieto();
 
@@ -30,7 +31,8 @@ public:
     int akseleita() const { return akseleita_; }
     QString junanumero() const { return junanumero_; }
     Kulkutietyyppi kulkutieTyyppi() const { return kulkutietyyppi_; }
-
+    KulkutieTila kulkutieTila() const { return kulkutietila_; }
+    RaiteenPaa::Suunta suunta() const { return suunta_; }
 
     RaiteenPaa* pohjoinen()  { return &pohjoinen_; }
     RaiteenPaa* etelainen()  { return &etelainen_; }
@@ -46,6 +48,8 @@ protected:
     QString junanumero_;
 
     Kulkutietyyppi kulkutietyyppi_;
+    KulkutieTila kulkutietila_;
+    RaiteenPaa::Suunta suunta_;
 };
 
 #endif // RAIDETIETO_H
