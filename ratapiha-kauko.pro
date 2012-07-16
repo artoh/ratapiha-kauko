@@ -95,6 +95,20 @@ OTHER_FILES += \
     pic/silta.png \
     pic/eivalvottu.png \
     pic/sahko.png \
-    pic/raiteensulku-pohjoiseen.png
+    pic/raiteensulku-pohjoiseen.png \
+    pic/vihrea.png \
+    pic/varojunaa.png \
+    pic/vaihtokulkutienkursori.png \
+    pic/vaihtokulkutieloppuunkursori.png \
+    pic/vaihteenkaanto.png \
+    pic/vaihdekursori.png \
+    pic/raideopastin.png \
+    pic/nuoliyhdistelma.xcf \
+    pic/kulkutienpurkukursori.png \
+    pic/kulkutienpurku.png \
+    pic/kasiyhdistelma.xcf \
+    pic/junakulkutienkursori.png \
+    pic/junakulkutieloppuunkursori.png \
+    pic/esiopastin.png
 
 

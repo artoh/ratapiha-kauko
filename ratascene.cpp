@@ -98,7 +98,7 @@ void RataScene::lataaRata()
                 else if(kulkutietila[1] == 'E')
                     kulkutiensuunta = RaiteenPaa::Etelaan;
 
-                KulkuTie* kulkutie = kulkutiet_.value(kulkutiedot.value(1),0);
+                KulkuTie* kulkutie = kulkutiet_.value(kulkutiedot.value(1).mid(1),0);
                 if( !kulkutie )     // Ensimmäinen elementti kulkutielle, pitää luoda kulkutieolio
                 {
                     RataRaide::Kulkutietyyppi ktyyppi = RataRaide::EiKulkutieta;
@@ -200,38 +200,40 @@ QString RataScene::ASLKasky(const QString &parametrit)
 
     }
 
-    // SEIS ja AJA [raide] [E/P]
-    else if( (paramLista.first()=="SEIS" || paramLista.first()=="AJA" ) && paramLista.count() > 2 )
+    // SEIS ja AJA P|E+RAIDE
+    else if( (paramLista.first()=="SEIS" || paramLista.first()=="AJA" ) && paramLista.count() > 1 )
     {
-        RataRaide* raide = raideTunnukset_.value(paramLista[1],0);
+        RataRaide* raide = haeRaide( paramLista.value(1).mid(1));
+        RaiteenPaa* rpaa = haeRaiteenPaa(paramLista[1]);
 
-        if( !raide)
+        if( !raide || !rpaa || rpaa->opastin() == RaiteenPaa::EiOpastinta )
         {
-            return QString("VIRHE Väärä raide %1").arg(paramLista[1]);
+            return QString("VIRHE Opastin puuttuu %1").arg(paramLista[1]);
         }
-        RaiteenPaa* rpaa = 0;
-        if( paramLista[2] == "P")
-            rpaa = raide->pohjoinen();
-        else if( paramLista[2] == "E")
-            rpaa = raide->etelainen();
 
-        if( raide && paramLista.first() == "SEIS")
+        if( paramLista.first() == "SEIS")
             rpaa->seis();
-        else if( raide && paramLista.first() == "AJA")
+        else if( paramLista.first() == "AJA")
             rpaa->aja();
-        else
-            return QString("VIRHE Ei onnistu");
 
         raide->paivita();
         return QString("OK");
     }
 
-    // V [Vaihde] [A|C]  Vaihteen kääntökäsky
+    // V [Vaihde]  - raide TAI E/P+Raide
     else if( paramLista.first() == "V" && paramLista.count() > 1)
     {
-        RataRaide* vaihde = raideTunnukset_.value(paramLista[1],0);
+        QString raidetunnari = paramLista[1];
+        if( raidetunnari[1].isUpper())
+            raidetunnari = paramLista[1].mid(1);
+
+        RataRaide* vaihde = haeRaide(raidetunnari);
+
         if( !vaihde)
             return QString("VIRHE Ei raidetta %1").arg(paramLista[1]);
+
+        if( vaihde->kulkutieTyyppi() != RataRaide::EiKulkutieta)
+            return QString("VIRHE Lukittu kulkutielle");
 
         if( vaihde->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
         {
@@ -239,12 +241,15 @@ QString RataScene::ASLKasky(const QString &parametrit)
             vaihde->etelainen()->kaannaVaihde();
             vaihde->pohjoinen()->kaannaVaihde();
         }
-        else if(paramLista.count() > 2 && paramLista[2]=="C")
+        // Risteysvaihde - pitää määrätä käännettävä pää
+        else if( vaihde->etelainen()->paanTyyppi()==RaiteenPaa::Vaihde && vaihde->pohjoinen()->paanTyyppi() == RaiteenPaa::Vaihde)
         {
-            if( vaihde->pohjoinen()->paanTyyppi() == RaiteenPaa::Vaihde)
+            if( raidetunnari != paramLista[1] && paramLista.value(1).startsWith('E'))
+                vaihde->etelainen()->kaannaVaihde();
+            else if( raidetunnari != paramLista[1] && paramLista.value(1).startsWith('P'))
                 vaihde->pohjoinen()->kaannaVaihde();
             else
-                return QString("VIRHE Ei ole vaihde");
+                return QString("VIRHE Risteysvaihteen puolta ei määrätty");
         }
         else
         {

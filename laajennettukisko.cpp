@@ -117,3 +117,8 @@ void LaajennettuKisko::tarkistaPaanTyypit()
 
     update(boundingRect());
 }
+
+QString LaajennettuKisko::raideTunnariLiikennepaikalla() const
+{
+    return QString("%1%2").arg(liikennePaikka()).arg( raide(), 3, 10, QChar('0') );
+}

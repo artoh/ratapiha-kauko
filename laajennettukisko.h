@@ -41,6 +41,8 @@ public:
 
     void tarkistaPaanTyypit();
 
+    QString raideTunnariLiikennepaikalla() const;
+
 
 protected:
     int kiskoid_;

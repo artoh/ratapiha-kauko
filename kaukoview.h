@@ -15,15 +15,39 @@ class KaukoView : public QGraphicsView
     Q_OBJECT
 public:
     explicit KaukoView(KaukoScene *skene );
+
+    enum KaukoTila { Vierita,
+                     JunaKulkutieAlkaa,
+                     JunaKulkutiePaattyy,
+                     VaihtoKulkutieAlkaa,
+                     VaihtoKulkutiePaattyy,
+                     PeruKulkutie,
+                     VaihteenKaanto,
+                     SeisKasky,
+                     AjaKasky} ;
     
+
+
+    int tila() { return tila_; }
+
 signals:
+    void vastausKomentoon(const QString& vastaus);
+    void tilaVaihtunut(int tila);
     
 public slots:
+    void valitseTila( int tila);
 
 protected:
-    void wheelEvent(QWheelEvent *event);
 
-    
+    void wheelEvent(QWheelEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+
+    QString raiteenPaaTunnusPisteessa( QPoint piste);
+
+    QString alkaaRaiteesta_;    /** Ensimmäisen klikkauksen pää+raidetunnus */
+    int tila_;
+
+    void komento(const QString& komento);   /** Välittää komennon asetinlaitteelle */
 };
 
 #endif // KAUKOVIEW_H

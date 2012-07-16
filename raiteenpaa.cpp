@@ -86,7 +86,8 @@ bool RaiteenPaa::kaannaVaihde(RaiteenPaa::VaihdeKasite tilaan)
 {
     if( paanTyyppi() == Vaihde || paanTyyppi() == RaideRisteys )
     {
-        // Tässä pitäisi tarkistaa lukitukset sun muut!
+        // Tässä pitäisi tarkistaa lukitukset sun muut
+
         vaihdeTila_ = tilaan;
         return true;
     }

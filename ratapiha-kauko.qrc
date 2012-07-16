@@ -28,5 +28,20 @@
         <file>pic/silta.png</file>
         <file>pic/raiteensulku-pohjoiseen.png</file>
         <file>pic/varojunaa.png</file>
+        <file>pic/esiopastin.png</file>
+        <file>pic/junakulkutieloppuunkursori.png</file>
+        <file>pic/junakulkutienkursori.png</file>
+        <file>pic/kulkutienpurku.png</file>
+        <file>pic/kulkutienpurkukursori.png</file>
+        <file>pic/raideopastin.png</file>
+        <file>pic/vaihtokulkutieloppuunkursori.png</file>
+        <file>pic/vaihtokulkutienkursori.png</file>
+        <file>pic/vihrea.png</file>
+        <file>pic/vaihteenkaanto.png</file>
+        <file>pic/vaihdekursori.png</file>
+        <file>pic/ajakasky.png</file>
+        <file>pic/ajakursori.png</file>
+        <file>pic/seiskursori.png</file>
+        <file>pic/seiskasky.png</file>
     </qresource>
 </RCC>

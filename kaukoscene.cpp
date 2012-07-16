@@ -74,7 +74,7 @@ bool KaukoScene::haeNakyma(int nakyma)
 
     haeTekstit();
     paivitys(); // Haetaan heti päivitettävät tiedot
-    paivitysTimer_->start(1000);    // Päivitetään sekunnin välein
+    paivitysTimer_->start(500);    // Päivitetään puolen sekunnin välein
 
     return true;
 }
