@@ -25,6 +25,7 @@
 
 class RataRaide;
 class RaiteenPaa;
+class KulkuTie;
 
 class RataScene : public QGraphicsScene
 {
@@ -36,7 +37,9 @@ public:
     RataRaide* haeRaide(QString raidetunnus) { return raideTunnukset_.value(raidetunnus,0); }
     RaiteenPaa* haeRaiteenPaa(QString paatunnus);
 
-    RataRaide* luoTyhjanaRaide(const QString& raidetunnus); // Luo "tyhjän" raiteen pitämään paikkaa, tarttee kulkuteiden takia
+    void kulkutieValmis(const QString& maaliraide, KulkuTie* kulkutie); /** Lisää kulkutien */
+    KulkuTie* haeKulkutie(const QString& maaliraide);
+
 signals:
     
 public slots:
@@ -48,6 +51,7 @@ private:
 
     QHash<int,RataRaide*> raiteet_;  /** Raiteen avaimena raideid */
     QHash<QString, RataRaide*> raideTunnukset_; /** Raiteen avaimena raidetunnus: Hki001 */
+    QHash<QString, KulkuTie*> kulkutiet_;   /** Kulkutien avaimena maaliraide: Hki001 */
     
 };
 

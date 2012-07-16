@@ -18,6 +18,9 @@
 **************************************************************************/
 
 #include "kulkutienmuodostaja.h"
+#include "kulkutie.h"
+#include "ratascene.h"
+#include "rataikkuna.h"
 
 
 KulkutienMuodostaja::KulkutienMuodostaja(RataRaide::Kulkutietyyppi tyyppi, RataRaide *mista, RataRaide *minne)
@@ -62,9 +65,13 @@ bool KulkutienMuodostaja::muodostaKulkutie()
     // Nyt pitäisi olla elementit lukittavaksi
     if( lyhinReitti_)
     {
+        KulkuTie* kulkutie = new KulkuTie(tyyppi_);
+
         lyhinReitti_->lukitseKulkutielle(this);
         lyhinReitti_->laitaVarit(this);
-        mista_->muutaTiedot();
+        mista_->paivita();
+
+        RataIkkuna::rataSkene()->kulkutieValmis(mista_->raidetunnusLiikennepaikalla(), kulkutie);
     }
 
 

@@ -23,25 +23,20 @@
 #include "kulkutieelementti.h"
 #include <QMutableListIterator>
 
-KulkuTie::KulkuTie() :
-    kulkutienTyyppi_( RataRaide::EiKulkutieta)
+KulkuTie::KulkuTie(RaideTieto::Kulkutietyyppi kulkutientyyppi) :
+    kulkutienTyyppi_( kulkutientyyppi )
 {
 }
 
-KulkutienRaide* KulkuTie::lisaaElementti(KulkutieElementti *elementti, RaideTieto::Kulkutietyyppi tyyppi)
+KulkutienRaide* KulkuTie::lisaaElementti(KulkutieElementti *elementti)
 {
-    if( kulkutienTyyppi() == RataRaide::EiKulkutieta)
-        kulkutienTyyppi_ = tyyppi;
-
     KulkutienRaide* ktraide = new KulkutienRaide(elementti, this);
     lisaaListaan(ktraide);
     return ktraide;
 }
 
-KulkutienRaide *KulkuTie::lisaaElementti(RataRaide *raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide, RaideTieto::Kulkutietyyppi tyyppi)
+KulkutienRaide *KulkuTie::lisaaElementti(RataRaide *raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide)
 {
-    if( kulkutienTyyppi() == RataRaide::EiKulkutieta)
-        kulkutienTyyppi_ = tyyppi;
 
     KulkutienRaide* ktraide = new KulkutienRaide(raide, suunta, lahtoOpastin, moneskoraide, this);
     lisaaListaan(ktraide);

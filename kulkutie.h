@@ -29,15 +29,16 @@ class KulkutienRaide;
 class KulkutieElementti;
 class RataRaide;
 
+/** Tieto aktiivisesta kulkutiestä */
 class KulkuTie
 {
 public:
-    KulkuTie();
+    KulkuTie(RaideTieto::Kulkutietyyppi kulkutientyyppi);
 
     RaideTieto::Kulkutietyyppi kulkutienTyyppi() const { return kulkutienTyyppi_; }
 
-    KulkutienRaide* lisaaElementti(KulkutieElementti* elementti, RaideTieto::Kulkutietyyppi tyyppi);
-    KulkutienRaide* lisaaElementti(RataRaide* raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide, RaideTieto::Kulkutietyyppi tyyppi);
+    KulkutienRaide* lisaaElementti(KulkutieElementti* elementti);
+    KulkutienRaide* lisaaElementti(RataRaide* raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide);
 
     RataRaide* maaliRaide();
     QString maaliRaideTunnus();

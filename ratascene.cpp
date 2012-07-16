@@ -68,7 +68,7 @@ void RataScene::lataaRata()
         // Löytyykö raidetta??
         RataRaide* praide = raideTunnukset_.value(raidetunnus,0);
 
-        if( !praide  || !praide->raidetunnus())
+        if( !praide )
         {
             // Raiteen tilatiedot tarpeen lukea vain, jos raidetta ei jo haettu
 
@@ -80,31 +80,16 @@ void RataScene::lataaRata()
             int raideid = nkys.value(13).toInt();
             QString kulkutietila = nkys.value(14).toString();
 
-            // Luodaan raide, lisätään listoihin
-            if( !praide )
-            {
-                praide = new RataRaide(raide, liikennepaikka, raideid, akseleita, junanro, raidetila, etelatila, pohjoistila, kulkutietila);
-                raiteet_.insert(raideid, praide);
-                raideTunnukset_.insert(raidetunnus,praide);
-            }
-            else
-            {
-                // Raide luoto "tyhjänä"
-                praide->muutaTiedot(raide, liikennepaikka, raideid, akseleita, junanro, raidetila, etelatila, pohjoistila, kulkutietila);
-                raideTunnukset_.insert(raidetunnus,praide);
-            }
+            praide = new RataRaide(raide, liikennepaikka, raideid, akseleita, junanro, raidetila, etelatila, pohjoistila, kulkutietila);
+            raiteet_.insert(raideid, praide);
+            raideTunnukset_.insert(raidetunnus,praide);
 
             // Kulkutien selvittäminen
             if( !kulkutietila.isEmpty() )
             {
                 // Muodostetaan ao. kulkutie
                 QStringList kulkutiedot = kulkutietila.split(' ');
-                int monesko = kulkutietila.mid(3).toInt();
-
-                RataRaide* maaliraide = haeRaide(kulkutiedot.value(1).mid(1));
-                // Ellei maaliraidetta ole vielä haettu kannasta, luodaan se "tyhjänä"
-                if( !maaliraide)
-                    maaliraide = luoTyhjanaRaide(kulkutiedot.value(1).mid(1));
+                int monesko = kulkutiedot.value(0).mid(2).toInt();
 
                 RaiteenPaa::Suunta kulkutiensuunta = RaiteenPaa::Virhe;
                 if( kulkutietila[1] == 'P')
@@ -112,17 +97,21 @@ void RataScene::lataaRata()
                 else if(kulkutietila[1] == 'E')
                     kulkutiensuunta = RaiteenPaa::Etelaan;
 
-                RataRaide::Kulkutietyyppi ktyyppi = RataRaide::EiKulkutieta;
-                if( kulkutietila[0] == 'J')
-                    ktyyppi = RataRaide::Junakulkutie;
-                else if( kulkutietila[1] == 'K')
-                    ktyyppi = RataRaide::Vaihtokulkutie;
+                KulkuTie* kulkutie = kulkutiet_.value(kulkutiedot.value(1),0);
+                if( !kulkutie )     // Ensimmäinen elementti kulkutielle, pitää luoda kulkutieolio
+                {
+                    RataRaide::Kulkutietyyppi ktyyppi = RataRaide::EiKulkutieta;
+                    if( kulkutietila[0] == 'J')
+                        ktyyppi = RataRaide::Junakulkutie;
+                    else if( kulkutietila[1] == 'K')
+                        ktyyppi = RataRaide::Vaihtokulkutie;
 
-                maaliraide->kulkutieRaiteelle()->lisaaElementti(praide, kulkutiensuunta, kulkutiedot[2], monesko, ktyyppi);
+                    kulkutie = new KulkuTie(ktyyppi);
+                    kulkutiet_.insert(kulkutiedot.value(1), kulkutie);
+                }
 
+                kulkutie->lisaaElementti(praide, kulkutiensuunta, kulkutiedot[2].mid(1), monesko );
             }
-
-
 
         }
         // Nyt raide ainakin olemassa, voidaan lisätä itse kisko
@@ -231,7 +220,7 @@ QString RataScene::ASLKasky(const QString &parametrit)
         else
             return QString("VIRHE Ei onnistu");
 
-        raide->muutaTiedot();
+        raide->paivita();
         return QString("OK");
     }
 
@@ -266,7 +255,7 @@ QString RataScene::ASLKasky(const QString &parametrit)
                 return QString("VIRHE Ei ole vaihde");
 
         }
-        vaihde->muutaTiedot();
+        vaihde->paivita();
         return QString("OK");
     }
     return QString("?");
@@ -285,9 +274,13 @@ RaiteenPaa *RataScene::haeRaiteenPaa(QString paatunnus)
     return 0;
 }
 
-RataRaide *RataScene::luoTyhjanaRaide(const QString& raidetunnus)
+void RataScene::kulkutieValmis(const QString& maaliraide, KulkuTie* kulkutie)
 {
-    RataRaide* uusiraide = new RataRaide();
-    raideTunnukset_.insert(raidetunnus, uusiraide);
-    return uusiraide;
+    kulkutiet_.insert(maaliraide, kulkutie);
 }
+
+KulkuTie *RataScene::haeKulkutie(const QString &maaliraide)
+{
+    return kulkutiet_.value(maaliraide,0);
+}
+

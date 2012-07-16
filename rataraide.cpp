@@ -30,20 +30,8 @@ RataRaide::RataRaide(int raidetunnus, const QString& liikennepaikka, int raideid
     : raidetunnus_(raidetunnus), liikennepaikka_(liikennepaikka), raideid_(raideid), pituus_(0.0), pieninNopeus_(999), suurinNopeus_(0),
       kulkutienraide_(0)
 {
-    if( raidetunnus)
-        muutaTiedot(raidetunnus, liikennepaikka, raideid, akseleita, junanumero, tila, etelatila, pohjoistila, kulkutietila);
-}
-
-void RataRaide::muutaTiedot(int raidetunnus, const QString &liikennepaikka, int raideid, int akseleita, const QString& junanumero, const QString &tila, const QString &etelatila, const QString &pohjoistila, const QString &kulkutietila)
-{
-    raidetunnus_ = raidetunnus;
-    liikennepaikka_ = liikennepaikka;
-    raideid_ = raideid;
-
     RaideTieto::paivita(akseleita, junanumero, tila, etelatila, pohjoistila, kulkutietila);
-
 }
-
 
 void RataRaide::lisaaKisko(RataKisko *kisko)
 {
@@ -53,6 +41,11 @@ void RataRaide::lisaaKisko(RataKisko *kisko)
         pieninNopeus_ = kisko->sn();
     if( kisko->sn() > suurinNopeus_)
         suurinNopeus_ = kisko->sn();
+}
+
+QString RataRaide::raidetunnusLiikennepaikalla() const
+{
+    return QString("%1%2").arg(liikennepaikka()).arg(raidetunnus(),3,10,QChar('0'));
 }
 
 
@@ -87,7 +80,7 @@ void RataRaide::paivitaTietokantaan()
 }
 
 
-void RataRaide::muutaTiedot()
+void RataRaide::paivita()
 {
     foreach( RataKisko* kisko, kiskot_)
         kisko->update(kisko->boundingRect());
@@ -99,6 +92,11 @@ QList<Naapuruus *> RataRaide::naapurit()
     if( naapurit_.isEmpty())
         haeNaapurit();
     return naapurit_;
+}
+
+KulkuTie *RataRaide::kulkutieRaiteelle()
+{
+    return RataIkkuna::rataSkene()->haeKulkutie(raidetunnusLiikennepaikalla());
 }
 
 void RataRaide::haeNaapurit()

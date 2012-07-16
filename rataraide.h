@@ -38,28 +38,25 @@ public:
     RataRaide(int raidetunnus=0, const QString& liikennepaikka=QString(), int raideid=0, int akseleita=0, const QString& junanumero=QString(), const QString& tila=QString(),
               const QString& etelatila=QString(), const QString& pohjoistila=QString(), const QString& kulkutietila=QString());
 
-    void muutaTiedot(int raidetunnus, const QString& liikennepaikka, int raideid, int akseleita, const QString& junanumero, const QString& tila,
-                 const QString& etelatila, const QString& pohjoistila, const QString& kulkutietila);
-
-
     void lisaaKisko(RataKisko* kisko);
 
     QString liikennepaikka() const { return liikennepaikka_; }
     int raidetunnus() const { return raidetunnus_; }
+    QString raidetunnusLiikennepaikalla() const;
 
     QString tilatieto() const;
 
     void lukitseKulkutielle(KulkutienRaide *kulkutieraide);
 
     void paivitaTietokantaan();
-    void muutaTiedot(); // Piirtää kiskot ja vie tietokantaan
+    void paivita(); // Piirtää kiskot ja vie tietokantaan
 
     qreal pituus() const { return pituus_; }
     int pieninNopeus() const { return pieninNopeus_; }
     int suurinNopeus() const { return suurinNopeus_; }
 
     QList<Naapuruus*> naapurit();   // Palauttaa tiedon naapureista
-    KulkuTie* kulkutieRaiteelle() { return &kulkutie_; }  // Kulkutie, joka päättyy tähän raiteeseen
+    KulkuTie* kulkutieRaiteelle();  // Kulkutie, joka päättyy tähän raiteeseen
     KulkutienRaide* kulkutienRaide() { return kulkutienraide_; } // Tähän liittyvä kt-raide
 
 
@@ -77,7 +74,6 @@ protected:
     QList<RataKisko*> kiskot_;  // Raiteeseen kuuluvat kiskot
     QList<Naapuruus*> naapurit_;
 
-    KulkuTie kulkutie_;
     KulkutienRaide* kulkutienraide_;
 };
 

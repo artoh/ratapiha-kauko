@@ -111,7 +111,7 @@ void KulkutieElementti::lukitseKulkutielle(KulkutienMuodostaja *kulkutie)
     naapuruus_->lukitseVaihteet();
 
     // Lisää tämän olennon kulkutielle ;)
-    naapuruus_->naapuriRaide()->lukitseKulkutielle( kulkutie->mista()->kulkutieRaiteelle()->lisaaElementti(this, kulkutie->kulkutienTyyppi()) );
+    naapuruus_->naapuriRaide()->lukitseKulkutielle( kulkutie->mista()->kulkutieRaiteelle()->lisaaElementti(this) );
 
 
     // sitten isin
@@ -143,7 +143,7 @@ void KulkutieElementti::laitaVarit(KulkutienMuodostaja *kulkutie)
     }
 
     // Päivitetään ja viedään tietokantaankin
-    naapuruus_->naapuriRaide()->muutaTiedot();
+    naapuruus_->naapuriRaide()->paivita();
 
     if( isi_)
             isi_->laitaVarit(kulkutie);
