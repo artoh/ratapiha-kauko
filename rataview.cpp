@@ -26,6 +26,7 @@
 
 #include "vaunu.h"
 #include "rataraide.h"
+#include "vaunukataloogi.h"
 
 #include <cmath>
 #include <QDebug>
@@ -34,6 +35,7 @@ RataView::RataView(RataScene *skene) :
     QGraphicsView(skene), rullaSkaalaa_(true), tila_(Vierita)
 {
     setDragMode(ScrollHandDrag);
+    setAcceptDrops(true);
 }
 
 
@@ -71,61 +73,68 @@ void RataView::wheelEvent(QWheelEvent *event)
 void RataView::mousePressEvent(QMouseEvent *event)
 {
 
-    if( event->button() == Qt::MidButton )
+    QGraphicsView::mousePressEvent(event);
+
+}
+
+RataKisko* RataView::kiskoKohdalla(const QPoint &sijainti)
+{
+    RataKisko* klikattuKisko = 0;
+    qreal etaisyys = 99;
+    QList<QGraphicsItem*> lista = items( sijainti);
+    foreach( QGraphicsItem* item, lista)
     {
-        if( tila_ == Vierita)
+        RataKisko* kisko = qgraphicsitem_cast<RataKisko*>(item);
+        if( kisko )
         {
-            setDragMode(NoDrag);
-            tila_ = SijoitaAkseli;
-        }
-        else
-        {
-            tila_ = Vierita;
-            setDragMode( ScrollHandDrag );
-        }
-    }
-    else if( tila_ == SijoitaAkseli)
-    {
-        RataKisko* klikattuKisko = 0;
-        qreal etaisyys = 99;
-        QList<QGraphicsItem*> lista = items(event->pos());
-        foreach( QGraphicsItem* item, lista)
-        {
-            RataKisko* kisko = qgraphicsitem_cast<RataKisko*>(item);
-            if( kisko )
+            // Lasketaan etäisyyttä kiskolle
+            QPointF kiskoPos = kisko->mapFromScene( mapToScene(sijainti) );
+            qreal tamaEtaisyys = qAbs(kiskoPos.y());
+            if( kiskoPos.x() < 0)
+                tamaEtaisyys += 0 - kiskoPos.x() * 2;
+            else if( kiskoPos.x() > kisko->pituus())
+                tamaEtaisyys += (kiskoPos.x() - kisko->pituus()) * 2;
+
+            qDebug()  << kisko->raide()->raidetunnusLiikennepaikalla() << "..." << tamaEtaisyys;
+
+            if( tamaEtaisyys < etaisyys)
             {
-                // Lasketaan etäisyyttä kiskolle
-                QPointF kiskoPos = kisko->mapFromScene( mapToScene(event->pos()) ) ;
-                qreal tamaEtaisyys = qAbs(kiskoPos.y());
-                if( kiskoPos.x() < 0)
-                    tamaEtaisyys += 0 - kiskoPos.x() * 2;
-                else if( kiskoPos.x() > kisko->pituus())
-                    tamaEtaisyys += (kiskoPos.x() - kisko->pituus()) * 2;
+                etaisyys = tamaEtaisyys;
+                klikattuKisko = kisko;
+            }
 
-                qDebug()  << kisko->raide()->raidetunnusLiikennepaikalla() << "..." << tamaEtaisyys;
+        } // if
 
-                if( tamaEtaisyys < etaisyys)
-                {
-                    etaisyys = tamaEtaisyys;
-                    klikattuKisko = kisko;
-                }
+    } // foreach
+    return klikattuKisko;
+}
 
-            } // if
-
-        } // foreach
-
-        // Nyt pitäisi olla olemassa valittu kisko, jolle laitetaan akseli ;)
-
-        if( klikattuKisko )
+void RataView::dragMoveEvent(QDragMoveEvent *event)
+{
+    VaunuKataloogi *lahde = qobject_cast<VaunuKataloogi*>(event->source());
+    if( lahde )
+    {
+        RataKisko* kisko = kiskoKohdalla(event->pos());
+        if( kisko )
         {
-            Vaunu* vaunu = new Vaunu("Dr16",0);
-            vaunu->sijoitaKiskolle(klikattuKisko);
-            qDebug() << "Vaunu sijoitettu kiskolle " << klikattuKisko->raide()->raidetunnusLiikennepaikalla() << " at " << vaunu->pos();
+            // Hyväksytään jos ollaan kiskon kohdalla!
+            event->accept();
+            return;
         }
-
-
     }
-    else
-        QGraphicsView::mousePressEvent(event);
+    event->ignore(QRect());
+}
+
+void RataView::dropEvent(QDropEvent *event)
+{
+    RataKisko* kisko = kiskoKohdalla( event->pos());
+    QString tyyppi = event->mimeData()->text();
+
+    if( kisko && !tyyppi.isEmpty())
+    {
+        Vaunu* vaunu = new Vaunu(tyyppi,0);
+        vaunu->sijoitaKiskolle(kisko);
+    }
+
 
 }

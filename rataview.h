@@ -24,6 +24,8 @@
 
 #include <QGraphicsView>
 
+class RataKisko;
+
 class RataView : public QGraphicsView
 {
     Q_OBJECT
@@ -39,6 +41,11 @@ public slots:
 protected:
     void wheelEvent(QWheelEvent *event);
     void mousePressEvent(QMouseEvent *event);
+
+    void dragMoveEvent(QDragMoveEvent *event);
+    void dropEvent(QDropEvent *event);
+
+    RataKisko* kiskoKohdalla(const QPoint& sijainti);
 
 
     /** Käytetäänkö hiiren rullaa skaalaamiseen vai vierittäimiseen */

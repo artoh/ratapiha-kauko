@@ -34,7 +34,8 @@ HEADERS += \
     kulkutienraide.h \
     kulkutie.h \
     akseli.h \
-    vaunu.h
+    vaunu.h \
+    vaunukataloogi.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -67,7 +68,8 @@ SOURCES += \
     kulkutienraide.cpp \
     kulkutie.cpp \
     akseli.cpp \
-    vaunu.cpp
+    vaunu.cpp \
+    vaunukataloogi.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

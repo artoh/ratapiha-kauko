@@ -42,6 +42,8 @@ public slots:
 
 
 private:
+    void teeDockit();
+
     RataView* view_;
     static RataScene* scene__;   // Vain yksi scene!!!
     

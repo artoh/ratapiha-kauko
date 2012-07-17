@@ -18,6 +18,9 @@
 **************************************************************************/
 
 #include "rataikkuna.h"
+#include "vaunukataloogi.h"
+
+#include <QDockWidget>
 
 RataIkkuna::RataIkkuna(QWidget *parent) :
     QMainWindow(parent)
@@ -28,6 +31,9 @@ RataIkkuna::RataIkkuna(QWidget *parent) :
     view_ = new RataView(scene__);
     view_->scale(0.5, 0.5);
     setCentralWidget(view_);
+
+    teeDockit();
+
 
 }
 
@@ -42,6 +48,15 @@ RataScene* RataIkkuna::rataSkene()
 bool RataIkkuna::onkoSkenea()
 {
     return( scene__ != 0);
+}
+
+
+void RataIkkuna::teeDockit()
+{
+    VaunuKataloogi* luettelo = new VaunuKataloogi();
+    QDockWidget *vaunuLuetteloDock = new QDockWidget( tr("Lisää vaunu"), this);
+    vaunuLuetteloDock->setWidget( luettelo);
+    addDockWidget( Qt::RightDockWidgetArea, vaunuLuetteloDock);
 }
 
 RataScene* RataIkkuna::scene__ = 0;

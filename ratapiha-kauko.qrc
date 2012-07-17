@@ -44,5 +44,16 @@
         <file>pic/seiskursori.png</file>
         <file>pic/seiskasky.png</file>
         <file>pic/vaunut.svg</file>
+        <file>junakuvat/Cabb.png</file>
+        <file>junakuvat/Dm10.png</file>
+        <file>junakuvat/Dm12.png</file>
+        <file>junakuvat/Dr16.png</file>
+        <file>junakuvat/Dv12.png</file>
+        <file>junakuvat/Eiu.png</file>
+        <file>junakuvat/Gbln.png</file>
+        <file>junakuvat/Sm2.png</file>
+        <file>junakuvat/Sm3.png</file>
+        <file>junakuvat/Sm4.png</file>
+        <file>junakuvat/Sr1.png</file>
     </qresource>
 </RCC>
