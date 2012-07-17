@@ -124,8 +124,6 @@ void RataScene::lataaRata()
         // Lopuksi kisko lisätään raiteeseen ja näkymään
         praide->lisaaKisko(kisko);
         addItem(kisko);
-
-
     }
 
 
@@ -156,6 +154,11 @@ void RataScene::lataaRata()
         }
     }
     // PURKKAKOODI PÄÄTTYY TÄHÄN
+
+    foreach( RataRaide* raide, raiteet_)
+        if( raide->etelainen()->opaste() != RaiteenPaa::Seis ||
+                raide->pohjoinen()->opaste() != RaiteenPaa::Seis)
+            raide->esiopastinPaivitys();
 
 
 }

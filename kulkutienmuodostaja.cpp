@@ -38,7 +38,7 @@ void KulkutienMuodostaja::reittiLoytynyt(KulkutieElementti *reitinViimeinenEleme
 
 bool KulkutienMuodostaja::muodostaKulkutie()
 {
-   lyhinPituus_ = 8000; // Testikoodia, jatkossa lasketaan etäisyyksistä
+   lyhinPituus_ = 12000; // Testikoodia, jatkossa lasketaan etäisyyksistä
 
 
     // Tehdään elementtien muodostaminen

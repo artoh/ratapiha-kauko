@@ -18,6 +18,7 @@
 **************************************************************************/
 
 #include "opastin.h"
+#include "ratakisko.h"
 
 #include <QPainter>
 #include <QBrush>
@@ -26,8 +27,8 @@
 #include <QFont>
 #include <QTextOption>
 
-Opastin::Opastin(RaiteenPaa *raiteenpaa, RaiteenPaa::Opaste esiopastin, const QString& tunnus)
-    : raiteenpaa_(raiteenpaa), esiopastinkasite_(esiopastin), tunnus_(tunnus)
+Opastin::Opastin(RataKisko* kisko, RaiteenPaa *raiteenpaa, RaiteenPaa::Opaste esiopastin, const QString& tunnus)
+    : raiteenpaa_(raiteenpaa), kisko_(kisko), esiopastinkasite_(esiopastin), tunnus_(tunnus)
 {
 
     if( !raiteenpaa )
@@ -262,6 +263,18 @@ void Opastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
         }
 
     }
+}
+
+void Opastin::asetaEsiOpastin(RaiteenPaa::Opaste opaste)
+{
+    esiopastinkasite_ = opaste;
+}
+
+RaiteenPaa::Opaste Opastin::opaste()
+{
+    if( raiteenpaa_)
+        return raiteenpaa()->opaste();
+    return RaiteenPaa::Pimea;
 }
 
 void Opastin::valkky()

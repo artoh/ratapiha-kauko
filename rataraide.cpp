@@ -86,6 +86,7 @@ void RataRaide::paivita()
 {
     foreach( RataKisko* kisko, kiskot_)
         kisko->update(kisko->boundingRect());
+    esiopastinPaivitys();
     paivitaTietokantaan();
 }
 
@@ -95,6 +96,7 @@ void RataRaide::kulkutiePurettu()
     kulkutietyyppi_ = EiKulkutieta;
 
     QSqlQuery(QString("update raide set kulkutie=NULL where raideid=%1").arg(raideid_));
+    esiopastinPaivitys();
 }
 
 void RataRaide::naapuritTarkistakaaKulkutiet(KulkuTie *pyytaja)
@@ -107,6 +109,13 @@ void RataRaide::naapuritTarkistakaaKulkutiet(KulkuTie *pyytaja)
                 naapuruus->naapuriRaide()->kulkutienRaide() )
             naapuruus->naapuriRaide()->kulkutienRaide()->tarkistaNaapurinPyynnosta(pyytaja);
     }
+}
+
+void RataRaide::esiopastinPaivitys()
+{
+    // Tarkistetaan esiopastimet
+    foreach(RataKisko* kisko, kiskot_)
+        kisko->kerroOpastimet();
 }
 
 QList<Naapuruus *> RataRaide::naapurit()

@@ -24,6 +24,7 @@ public:
     enum Laituri { LaituriEi = 0, LaituriVasemmalla = 1, LaituriOikealla = 2, LaituriMolemmat = 3};
     enum PaanTyyppi { Virhe = 0, Valille = 1, Paa = 2, LiikennePaikanPaa = 3, RaidePuskuri = 4 /** Päättyvä raide */ ,
                       VaihdeJatkos = 10, VaihdeVasen = 11, VaihdeOikea = 12 };
+    enum PaanSuunta { EtelaPaa, PohjoisPaa };
 
     enum Kulkutietyypit { Ensisijainen, Toissijainen, VainVaihto } ;
 

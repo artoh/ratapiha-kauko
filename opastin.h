@@ -24,6 +24,7 @@
 
 #include <QGraphicsItem>
 
+class RataKisko;
 
 class Opastin : public QGraphicsItem
 {
@@ -32,20 +33,26 @@ public:
 
     enum OpastinTyyppi { Korkea, Esiopastin, Matala } ;
 
-    Opastin(RaiteenPaa* raiteenpaa = 0, RaiteenPaa::Opaste esiopastin = RaiteenPaa::Tyhja, const QString& tunnus=QString());
+    Opastin(RataKisko* kisko, RaiteenPaa* raiteenpaa = 0, RaiteenPaa::Opaste esiopastin = RaiteenPaa::Tyhja, const QString& tunnus=QString());
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     int type() const { return Type; }
 
+    void asetaEsiOpastin( RaiteenPaa::Opaste opaste);
+
     RaiteenPaa::Opaste esiOpastin() const  { return esiopastinkasite_; }
     OpastinTyyppi opastintyyppi() const { return opastintyyppi_; }
+
+    RaiteenPaa::Opaste opaste();
 
     static void valkky();
 
 protected:
     RaiteenPaa* raiteenpaa_;
     RaiteenPaa* raiteenpaa() { return raiteenpaa_; }
+
+    RataKisko* kisko_;
 
     RaiteenPaa::Opaste esiopastinkasite_;
 

@@ -49,6 +49,14 @@ public:
 
     RataRaide* raide() { return raide_; }
 
+    bool aktiivinen(PaanSuunta paassa, RaiteenPaa::VaihdeKasite raideRisteysSuunta);
+
+    void esiopastinIlmoitus( RaiteenPaa::Opaste opaste, Opastin* opastimelta);
+
+    void esiopastinHaku( RaiteenPaa::Opaste opaste, QPointF naapurilta, qreal metria);
+    void kerroOpastimet();
+
+    RataKisko* haeAktiivinenNaapuri( QPointF sijainnista);
 
 
 private:

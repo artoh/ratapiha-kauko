@@ -53,6 +53,7 @@ public:
     void kulkutiePurettu(); // Poistaa kulkutietiedot ja päivittää samantien tilanteen myös tietokantaan
 
     void naapuritTarkistakaaKulkutiet(KulkuTie* pyytaja = 0);
+    void esiopastinPaivitys();
 
     qreal pituus() const { return pituus_; }
     int pieninNopeus() const { return pieninNopeus_; }

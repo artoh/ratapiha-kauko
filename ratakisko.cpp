@@ -25,6 +25,9 @@
 #include <QBrush>
 #include <QPen>
 #include <QStyleOptionGraphicsItem>
+#include <QGraphicsScene>
+
+#include <QDebug>
 
 RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, const QString &kiskodata, int sn)
     : Kisko(viiva, kiskodata), raide_(raide), sn_(sn), opastinEtelaan_(0), opastinPohjoiseen_(0)
@@ -39,11 +42,11 @@ RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, const QString &kisko
         if( etelaTyyppi() == Paa || etelaTyyppi() == LiikennePaikanPaa )
         {
             if( raide->etelainen()->opastin() != RaiteenPaa::EiOpastinta )
-                opastinEtelaan_ = new Opastin(raide->etelainen(), esiopastinkasiteEtela,
+                opastinEtelaan_ = new Opastin(this, raide->etelainen(), esiopastinkasiteEtela,
                                               QString("E%1").arg(raide->raidetunnus(),3,10,QChar('0')));
         }
         else if( esiopastinkasiteEtela != RaiteenPaa::Tyhja)
-            opastinEtelaan_ = new Opastin(0, esiopastinkasiteEtela);
+            opastinEtelaan_ = new Opastin(this, 0, esiopastinkasiteEtela);
 
         if( opastinEtelaan_)
         {
@@ -60,11 +63,11 @@ RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, const QString &kisko
         if( pohjoisTyyppi() == Paa || pohjoisTyyppi() == LiikennePaikanPaa )
         {
             if( raide->pohjoinen()->opastin() != RaiteenPaa::EiOpastinta )
-                opastinPohjoiseen_ = new Opastin(raide->pohjoinen(), esiopastinkasitePohjoinen,
+                opastinPohjoiseen_ = new Opastin(this, raide->pohjoinen(), esiopastinkasitePohjoinen,
                                                  QString("P%1").arg(raide->raidetunnus(),3,10,QChar('0')));
         }
         else if( esiopastinkasitePohjoinen != RaiteenPaa::Tyhja)
-            opastinPohjoiseen_ = new Opastin(0, esiopastinkasiteEtela);
+            opastinPohjoiseen_ = new Opastin(this, 0, esiopastinkasiteEtela);
 
         if( opastinPohjoiseen_)
         {
@@ -164,3 +167,122 @@ void RataKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     painter->drawLine(alku, 0.0, loppu, 0.0);
 
 }
+
+bool RataKisko::aktiivinen(Kisko::PaanSuunta paassa, RaiteenPaa::VaihdeKasite raideRisteysSuunta)
+{
+    if( paassa == EtelaPaa)
+    {
+        if( etelaTyyppi() == Paa || etelaTyyppi() == Valille )
+            return true;
+
+        if( etelaTyyppi() == VaihdeVasen && raide()->pohjoinen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
+            return (raideRisteysSuunta == RaiteenPaa::Vasen );
+        else if( etelaTyyppi() == VaihdeOikea && raide()->pohjoinen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
+            return (raideRisteysSuunta == RaiteenPaa::Oikea);
+        else if( etelaTyyppi() == VaihdeVasen )
+            return raide()->pohjoinen()->vaihde() == RaiteenPaa::Vasen;
+        else if( etelaTyyppi() == VaihdeOikea)
+            return raide()->pohjoinen()->vaihde() == RaiteenPaa::Oikea;
+    }
+    else
+    {
+        if( pohjoisTyyppi() == Paa || pohjoisTyyppi() == Valille )
+            return true;
+
+        if( pohjoisTyyppi() == VaihdeVasen && raide()->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
+            return (raideRisteysSuunta == RaiteenPaa::Vasen );
+        else if( pohjoisTyyppi() == VaihdeOikea && raide()->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
+            return (raideRisteysSuunta == RaiteenPaa::Oikea);
+        else if( pohjoisTyyppi() == VaihdeVasen )
+            return raide()->etelainen()->vaihde() == RaiteenPaa::Vasen;
+        else if( pohjoisTyyppi() == VaihdeOikea)
+            return raide()->etelainen()->vaihde() == RaiteenPaa::Oikea;
+    }
+    return true;
+
+}
+
+void RataKisko::esiopastinIlmoitus(RaiteenPaa::Opaste opaste, Opastin *opastimelta)
+{
+    // Oma opastin ilmoittaa opastinkäsitteen muutoksesta
+    if( opastimelta == opastinPohjoiseen_)
+    {
+        RataKisko* seuraava = haeAktiivinenNaapuri( etelainen());
+        if( seuraava )
+            seuraava->esiopastinHaku(opaste, etelainen(), pituus());
+    }
+    else
+    {
+        RataKisko* seuraava = haeAktiivinenNaapuri( pohjoinen());
+        if( seuraava )
+            seuraava->esiopastinHaku(opaste, pohjoinen(), pituus());
+    }
+
+
+}
+
+
+
+RataKisko *RataKisko::haeAktiivinenNaapuri(QPointF sijainnista)
+{
+    QList<QGraphicsItem*> lista = scene()->items(sijainnista);
+    foreach( QGraphicsItem* item, lista)
+    {
+        RataKisko* kisko = qgraphicsitem_cast<RataKisko*>(item);
+
+        if( kisko && kisko != this )
+        {
+            if( kisko->etelainen() == sijainnista && kisko->aktiivinen( EtelaPaa,
+                                                                        raide()->pohjoinen()->vaihde()) )
+                return kisko;
+            else if( kisko->pohjoinen() == sijainnista && kisko->aktiivinen( PohjoisPaa,
+                                                                             raide()->etelainen()->vaihde()))
+                return kisko;
+        }
+    }
+    return 0;
+
+}
+
+void RataKisko::esiopastinHaku(RaiteenPaa::Opaste opaste, QPointF naapurilta, qreal metria)
+{
+    qreal yhteensa = metria + pituus();
+    if( yhteensa > 5000)
+        return;
+
+
+    if( naapurilta == pohjoinen())
+    {
+        if( opastinPohjoiseen_ )    // On itsellään...
+            opastinPohjoiseen_->asetaEsiOpastin(opaste);
+        else
+        {
+            RataKisko* seuraava = haeAktiivinenNaapuri( etelainen());
+            if( seuraava )
+                seuraava->esiopastinHaku(opaste, etelainen(), yhteensa);
+        }
+    }
+    else if( naapurilta == etelainen())
+    {
+        if( opastinEtelaan_ )    // On itsellään...
+            opastinEtelaan_->asetaEsiOpastin(opaste);
+        else
+        {
+            RataKisko* seuraava = haeAktiivinenNaapuri( pohjoinen());
+            if( seuraava )
+                seuraava->esiopastinHaku(opaste, pohjoinen(), yhteensa);
+        }
+    }
+
+}
+
+void RataKisko::kerroOpastimet()
+{
+    if( opastinPohjoiseen_)
+        esiopastinIlmoitus(opastinPohjoiseen_->opaste(), opastinPohjoiseen_);
+    if( opastinEtelaan_)
+        esiopastinIlmoitus(opastinEtelaan_->opaste(), opastinEtelaan_);
+
+}
+
+
