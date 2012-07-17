@@ -43,6 +43,7 @@ public:
     void asetaToinenAkseli(Akseli* toinenAkseli);
 
     RataKisko* kiskolla() { return kiskolla_; }
+    qreal sijaintiKiskolla() { return sijaintiKiskolla_; }
 
 private:
 

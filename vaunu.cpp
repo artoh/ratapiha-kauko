@@ -43,9 +43,29 @@ Vaunu::Vaunu(const QString &tyyppi, int vaunuNumero) :
 
 bool Vaunu::sijoitaKiskolle(RataKisko *kiskolle)
 {
+    // Pitäisi sijoittaa edellisten perään
+    QList<QGraphicsItem*> lista = kiskolle->collidingItems();
+
+    qreal alkukohta = 15;
+
+    foreach( QGraphicsItem* item, lista)
+    {
+        Akseli* akseli = qgraphicsitem_cast<Akseli*>(item);
+        if( akseli )
+        {
+            if( akseli->sijaintiKiskolla() > alkukohta)
+                alkukohta = akseli->sijaintiKiskolla()+5;
+
+        }
+    }
+
+    if( alkukohta + pituus() > kiskolle->pituus() - 10)
+        return false;   // Ei mahdu kiskolle!!!!!!!!!!!
+
+
     // Sijoittaa vaunun kiskoille...
-    etuAkseli_->sijoitaKiskolle(kiskolle, 10, RaiteenPaa::Etelaan);
-    takaAkseli_->sijoitaKiskolle(kiskolle, 10 + pituus() , RaiteenPaa::Pohjoiseen);
+    etuAkseli_->sijoitaKiskolle(kiskolle, alkukohta, RaiteenPaa::Etelaan);
+    takaAkseli_->sijoitaKiskolle(kiskolle, alkukohta + pituus() , RaiteenPaa::Pohjoiseen);
     paivita();
     return true;
 }

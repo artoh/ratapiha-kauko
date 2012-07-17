@@ -113,6 +113,7 @@ OTHER_FILES += \
     pic/kasiyhdistelma.xcf \
     pic/junakulkutienkursori.png \
     pic/junakulkutieloppuunkursori.png \
-    pic/esiopastin.png
+    pic/esiopastin.png \
+    pic/vaunut.svg
 
 
