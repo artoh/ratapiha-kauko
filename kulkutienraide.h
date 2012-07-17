@@ -56,6 +56,9 @@ public:
     void puraKulkutielta();     //* Purkaa kulkutien tämän elementin osalta */
     void tarkistaNaapurinPyynnosta(KulkuTie* pyytaja=0);   //* Naapuri pyytää tarkistelemaan*/
 
+    void raideVarautuu(RaiteenPaa::Suunta suunta);
+    void raideVapautuu(RaiteenPaa::Suunta suunta);
+
 protected:
     RataRaide* raide_;
     RaiteenPaa::Suunta suunta_;

@@ -59,6 +59,7 @@ public:
     RataKisko* haeAktiivinenNaapuri( QPointF sijainnista);
 
 
+
 private:
     RataRaide* raide_;
     int sn_;

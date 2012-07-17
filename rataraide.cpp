@@ -77,8 +77,10 @@ void RataRaide::paivitaTietokantaan()
     else
         kulkutieto = QString("NULL");
 
-    kysely.exec( QString("update raide set tila_raide=\"%4\",tila_etela=\"%1\",tila_pohjoinen=\"%2\",kulkutie=%5 where raideid=%3").arg(etelainen()->tilaTieto())
-                 .arg(pohjoinen()->tilaTieto()).arg(raideid_).arg(tilatieto()).arg(kulkutieto));
+    kysely.exec( QString("update raide set tila_raide=\"%4\",tila_etela=\"%1\",tila_pohjoinen=\"%2\","
+                         "kulkutie=%5, akseleita=%6 where raideid=%3").arg(etelainen()->tilaTieto())
+                 .arg(pohjoinen()->tilaTieto()).arg(raideid_).arg(tilatieto())
+                 .arg(kulkutieto).arg(akseleita()));
 }
 
 
@@ -129,6 +131,29 @@ KulkuTie *RataRaide::kulkutieRaiteelle()
 {
     return RataIkkuna::rataSkene()->haeKulkutie(raidetunnusLiikennepaikalla());
 }
+
+void RataRaide::akseliSisaan(RaiteenPaa::Suunta suunta)
+{
+
+    akseleita_++;
+    // Kulkutiehen liittyvät asiat...
+    if( akseleita() == 1 && kulkutienRaide())
+        kulkutienRaide()->raideVarautuu(suunta);
+
+    paivita();
+}
+
+void RataRaide::akseliUlos(RaiteenPaa::Suunta suunta)
+{
+    akseleita_--;
+    // Kulkutiehen liittyvät asiat. Ja negatiivisesta pitäisi mennä vikatilaan ;)
+    if( akseleita() == 0 && kulkutienRaide())
+        kulkutienRaide()->raideVapautuu(suunta);
+
+    paivita();
+}
+
+
 
 void RataRaide::haeNaapurit()
 {

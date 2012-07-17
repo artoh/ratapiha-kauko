@@ -20,6 +20,7 @@
 #include "akseli.h"
 
 #include "ratakisko.h"
+#include "rataraide.h"
 
 #include <QPainter>
 #include <QBrush>
@@ -59,6 +60,22 @@ void Akseli::sijoitaKiskolle( RataKisko *kiskolle, qreal sijainti, RaiteenPaa::S
     suuntaKiskolla_ = suunta;
 
     laskeSijainti();
+
+    // Yhteenkytkeminen, jos osuu toiseen akseliin
+    QList<QGraphicsItem*> lista = collidingItems();
+
+    foreach( QGraphicsItem* item, lista)
+    {
+        Akseli* toinen = qgraphicsitem_cast<Akseli*>(item);
+        if( toinen )
+        {
+            // Liitetään yhteen
+            kytkettyAkseli_ = toinen;
+            toinen->kytkettyAkseli_=this;
+            update( boundingRect());
+            return;
+        }
+    }
 
 }
 

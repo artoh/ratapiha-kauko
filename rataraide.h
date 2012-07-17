@@ -63,6 +63,10 @@ public:
     KulkuTie* kulkutieRaiteelle();  // Kulkutie, joka päättyy tähän raiteeseen
     KulkutienRaide* kulkutienRaide() { return kulkutienraide_; } // Tähän liittyvä kt-raide
 
+    // Näitä kutsutaan akselinlaskennalla, kun raide varautuu tai vapautuu
+    void akseliSisaan(RaiteenPaa::Suunta suunta);
+    void akseliUlos(RaiteenPaa::Suunta suunta);
+
 
 protected:
     int raidetunnus_;   // Raiteen tunnusnumero

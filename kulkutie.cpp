@@ -86,8 +86,11 @@ void KulkuTie::puraKulkutie()
 
 void KulkuTie::poistaElementti(KulkutienRaide *elementti)
 {
+    QString maaliraidetunnus = maaliRaideTunnus();
     elementit_.removeOne(elementti);
     delete elementti;
+    if( elementit_.empty())
+        RataIkkuna::rataSkene()->poistaKulkutieListalta(maaliraidetunnus);
 }
 
 void KulkuTie::vahvistaKulkutie()
@@ -117,6 +120,26 @@ void KulkuTie::tarkista()
                 tila_ = RataRaide::Valmis;
             paivitaKaikki();
         }
+    }
+
+}
+
+void KulkuTie::raideVarautuu(KulkutienRaide* elementti)
+{
+    if( tila_ == RataRaide::Valmis)
+        tila_ = RataRaide::Varattu;
+
+    // Kaikkien ennen tätä pitää olla varattuja!
+    foreach( KulkutienRaide* ktraide, elementit_)
+    {
+        if( !ktraide->raide()->akseleita())
+        {
+            // Ei ole varattu oikein
+            vikatilaan();
+            return;
+        }
+        if( ktraide == elementti)
+            break;  // Meni aivan oikein!!
     }
 
 }
@@ -172,8 +195,28 @@ void KulkuTie::paivitaKaikki()
 {
     foreach( KulkutienRaide* ktraide, elementit_)
     {
+        // Jos ollaan vikatilassa, kaikki opastimet punaiselle!
+        if( tila() == RataRaide::Virhetila)
+        {
+            if(ktraide->lahtoOpastin()->opaste() != RaiteenPaa::Seis )
+                ktraide->lahtoOpastin()->asetaOpaste(RaiteenPaa::Seis);
+        }
+
         ktraide->raide()->paivita();
     }
+}
+
+KulkutienRaide *KulkuTie::ekaRaide()
+{
+    if( elementit_.empty())
+        return 0;
+    return elementit_.first();
+}
+
+void KulkuTie::vikatilaan()
+{
+    tila_ = RataRaide::Virhetila;
+    paivitaKaikki();
 }
 
 

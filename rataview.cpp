@@ -117,9 +117,10 @@ void RataView::dragMoveEvent(QDragMoveEvent *event)
     if( lahde )
     {
         RataKisko* kisko = kiskoKohdalla(event->pos());
-        if( kisko )
+        if( kisko && kisko->raide()->kulkutieTyyppi() == RataRaide::EiKulkutieta)
         {
             // Hyväksytään jos ollaan kiskon kohdalla!
+            // Kulkutielle ei kuitenkaan saa lisätä vaunuja koska siitä tulisi VIRHE
             event->accept();
             return;
         }
@@ -136,6 +137,13 @@ void RataView::dropEvent(QDropEvent *event)
     {
         Vaunu* vaunu = RataIkkuna::rataSkene()->lisaaVaunu(tyyppi);
         vaunu->sijoitaKiskolle(kisko);
+
+        // Varataan raide kahdella akselilla
+        kisko->raide()->akseliSisaan( RaiteenPaa::Virhe);
+        kisko->raide()->akseliSisaan( RaiteenPaa::Virhe);
+
+        // Suuntana on "Virhe" koska akselit eivät tulleet akselinlaskennan kautta.
+        // Kulkutielle EI saa lisätä vaunut
     }
 
 

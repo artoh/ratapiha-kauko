@@ -48,6 +48,8 @@ public:
     void vahvistaKulkutie();    // Vahvistaa (suojastus)kulkutien
     void tarkista(); // Tätä kutsutaan joiden varautumisten yms jälkeen
 
+    void raideVarautuu(KulkutienRaide* elementti);  // Elementti kutsuu varautuessaan
+
     int varattujaRaiteita();
 
     RataRaide* lahtoRaide();
@@ -57,8 +59,10 @@ public:
     QString maaliRaideTunnusSuunnalla();
 
     void paivitaKaikki();
+    KulkutienRaide* ekaRaide();
 
     RaideTieto::KulkutieTila tila() const { return tila_; }
+    void vikatilaan();  // Kutsutaan, kun jossain elementissa havaitaan vika!
 
 protected:
     RaideTieto::Kulkutietyyppi kulkutienTyyppi_;

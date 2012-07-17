@@ -137,4 +137,37 @@ void KulkutienRaide::tarkistaNaapurinPyynnosta(KulkuTie *pyytaja)
 
 }
 
+void KulkutienRaide::raideVarautuu(RaiteenPaa::Suunta suunta)
+{
+    // Ekana opastin punaiselle!!
+    if( lahtoOpastin()->opaste() != RaiteenPaa::Seis)
+        lahtoOpastin()->asetaOpaste(RaiteenPaa::Seis);
+
+    // Tarkastetaan, ollaanko tultu oikeasta suunnasta!!
+    if( suunta != suunta_)
+        kulkutie()->vikatilaan();
+    else
+        kulkutie()->raideVarautuu(this);
+}
+
+void KulkutienRaide::raideVapautuu(RaiteenPaa::Suunta suunta)
+{
+    if( kulkutie()->kulkutienTyyppi() == RataRaide::Linjasuojastus)
+        kulkutie()->tarkista();
+    else if( kulkutie()->tila() == RataRaide::Varattu)
+    {
+        if( suunta == suunta_ && kulkutie()->ekaRaide() == this)
+        {
+            // Jos vapautuva raide on kulkutien ensimmäinen, niin kaikki on hyvin ja voi purkautua
+            puraKulkutielta();
+        }
+        else
+        {
+            // Muuten ollaan vikatilassa!!!
+            kulkutie()->vikatilaan();
+        }
+    }
+
+}
+
 
