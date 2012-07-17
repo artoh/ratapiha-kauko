@@ -28,7 +28,7 @@ public:
 
     enum Kulkutietyypit { Ensisijainen, Toissijainen, VainVaihto } ;
 
-    Kisko( const QLineF& viiva, const QString& kiskodata = QString());
+    Kisko( const QLineF& viiva, int kiskoId, const QString& kiskodata = QString());
 
 
     qreal pituus() const { return pituus_; }
@@ -52,6 +52,7 @@ public:
     /** Vaihtaa etelan pohjoiseksi ja pohjoisen eteläksi*/
     void kaannaSuunta();
 
+   int kiskoId() const { return kiskoid_; }
 
 signals:
     
@@ -59,6 +60,7 @@ public slots:
 
 
 protected:
+    int kiskoid_;
     Laituri laituri_;
     QLineF viiva_;
     PaanTyyppi etelapaaTyyppi_;

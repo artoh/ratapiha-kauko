@@ -33,7 +33,9 @@ class Vaunu : public QGraphicsItem
 public:
     enum { Type = UserType + 505 } ;
 
-    Vaunu(const QString& tyyppi, int vaunuNumero);
+    Vaunu(const QString& tyyppi, int vaunuNumero, RataScene* skene);
+    Vaunu(const QString &tyyppi, int vaunuNumero, RataKisko* etu_kisko, qreal etu_etaisyys, QChar etu_suunta,
+          RataKisko* taka_kisko, qreal taka_etaisyys, QChar taka_suunta, RataScene* skene);
     bool sijoitaKiskolle(RataKisko* kiskolle);
 
     QRectF boundingRect() const;
@@ -45,8 +47,11 @@ public:
     qreal pituus() const { return vaununPituus_; }
 
     void paivita();
+    void laskeSijainti();
 
 protected:
+    void luoVaunu(RataScene* skene); // Yhteiset luontitoimet
+
     Akseli* etuAkseli_;
     Akseli* takaAkseli_;
 

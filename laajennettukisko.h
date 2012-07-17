@@ -31,7 +31,6 @@ public:
                      const QString& kiskodata = QString());
 
     QString liikennePaikka() const {return liikennepaikka_; }
-    int kiskoId() const { return kiskoid_; }
     int raide() const { return raide_; }
 
     QList<LaajennettuKisko*> haeNaapurit(QPointF sijainnista);
@@ -45,7 +44,6 @@ public:
 
 
 protected:
-    int kiskoid_;
     QString liikennepaikka_;
     int raide_;
 

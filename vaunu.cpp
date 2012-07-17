@@ -23,8 +23,28 @@
 #include "ratascene.h"
 #include "rataikkuna.h"
 
-Vaunu::Vaunu(const QString &tyyppi, int vaunuNumero) :
+#include <QSqlQuery>
+
+Vaunu::Vaunu(const QString &tyyppi, int vaunuNumero, RataScene *skene) :
     vaununTyyppi_(tyyppi), vaununNumero_(vaunuNumero)
+{
+    luoVaunu(skene);
+
+    QSqlQuery lisays( QString("insert into vaunu (vaunuid, vaunutyyppi) values (%1,\"%2\")").arg(vaunuNumero).arg(tyyppi) );
+}
+
+Vaunu::Vaunu(const QString &tyyppi, int vaunuNumero, RataKisko* etu_kisko, qreal etu_etaisyys, QChar etu_suunta, RataKisko* taka_kisko, qreal taka_etaisyys, QChar taka_suunta, RataScene* skene)
+    : vaununTyyppi_(tyyppi), vaununNumero_(vaunuNumero)
+{
+    luoVaunu(skene);
+
+    etuAkseli_->sijoitaKiskolle(etu_kisko, etu_etaisyys, etu_suunta);
+    takaAkseli_->sijoitaKiskolle( taka_kisko, taka_etaisyys, taka_suunta);
+
+    laskeSijainti();
+}
+
+void Vaunu::luoVaunu(RataScene *skene)
 {
     vaununPituus_ = renderoija()->boundsOnElement( vaununTyyppi() ).width();
 
@@ -34,9 +54,9 @@ Vaunu::Vaunu(const QString &tyyppi, int vaunuNumero) :
     etuAkseli_->asetaToinenAkseli(takaAkseli_);
     takaAkseli_->asetaToinenAkseli(etuAkseli_);
 
-    RataIkkuna::rataSkene()->addItem(etuAkseli_);
-    RataIkkuna::rataSkene()->addItem(takaAkseli_);
-    RataIkkuna::rataSkene()->addItem(this);
+    skene->addItem(etuAkseli_);
+    skene->addItem(takaAkseli_);
+    skene->addItem(this);
 
     setZValue(100);
 }
@@ -71,6 +91,26 @@ bool Vaunu::sijoitaKiskolle(RataKisko *kiskolle)
 }
 
 void Vaunu::paivita()
+{
+    laskeSijainti();
+
+    int etukiskoid = 0;
+    if( etuAkseli_->kiskolla())
+        etukiskoid = etuAkseli_->kiskolla()->kiskoId();
+    int takakiskoid = 0;
+    if( takaAkseli_->kiskolla())
+        takakiskoid = takaAkseli_->kiskolla()->kiskoId();
+
+    // Sitten vielä päivitys tietokantaan!
+    QSqlQuery(QString("update vaunu set etu_kisko=%1, etu_sijainti=%2, etu_suunta=\"%3\","
+                      "taka_kisko=%4, taka_sijainti=%5, taka_suunta=\"%6\" where vaunuid=%7")
+              .arg(etukiskoid).arg(etuAkseli_->sijaintiKiskolla()).arg(etuAkseli_->suuntaKirjain())
+              .arg(takakiskoid).arg(takaAkseli_->sijaintiKiskolla()).arg(takaAkseli_->suuntaKirjain())
+              .arg( vaununNumero_ ));
+
+}
+
+void Vaunu::laskeSijainti()
 {
     setPos( etuAkseli_->pos());
     QLineF suunta( etuAkseli_->pos(), takaAkseli_->pos());

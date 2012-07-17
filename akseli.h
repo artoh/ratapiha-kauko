@@ -40,10 +40,13 @@ public:
     int type() const { return Type; }
 
     void sijoitaKiskolle( RataKisko* kiskolle, qreal sijainti, RaiteenPaa::Suunta suunta);
+    void sijoitaKiskolle( RataKisko* kiskolle, qreal sijainti, QChar suuntakirjain);
     void asetaToinenAkseli(Akseli* toinenAkseli);
 
     RataKisko* kiskolla() { return kiskolla_; }
     qreal sijaintiKiskolla() { return sijaintiKiskolla_; }
+    RaiteenPaa::Suunta suuntaKiskolla() { return suuntaKiskolla_; }
+    QChar suuntaKirjain();
 
 private:
 

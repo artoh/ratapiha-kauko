@@ -10,8 +10,9 @@
 
 #include <QDebug>
 
-Kisko::Kisko(const QLineF &viiva, const QString &kiskodata) :
+Kisko::Kisko(const QLineF &viiva, int kiskoId, const QString &kiskodata) :
     QGraphicsItem(),
+    kiskoid_(kiskoId),
     viiva_(viiva),
     etelapaaTyyppi_(Valille),
     pohjoispaaTyyppi_(Valille),

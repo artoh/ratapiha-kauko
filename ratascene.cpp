@@ -23,19 +23,28 @@
 #include "opastin.h"
 #include "kulkutienmuodostaja.h"
 #include "kulkutienraide.h"
+#include "vaunu.h"
 
 #include <QSqlQuery>
 #include <QVariant>
 #include <QTimer>
+#include <QDebug>
 
 #include <cmath>
 
 RataScene::RataScene(QObject *parent) :
-    QGraphicsScene(parent)
+    QGraphicsScene(parent), seuraavaVaunuNumero_(1)
 {
     lataaRata();
+    lataaVaunut();
 
     setBackgroundBrush( QBrush(Qt::lightGray));
+
+    foreach( RataRaide* raide, raiteet_)
+        if( raide->etelainen()->opaste() != RaiteenPaa::Seis ||
+                raide->pohjoinen()->opaste() != RaiteenPaa::Seis)
+            raide->esiopastinPaivitys();
+
 
     // Opastinten välkytys
     QTimer* valkkytimer = new QTimer(this);
@@ -50,7 +59,7 @@ void RataScene::lataaRata()
 
     QSqlQuery nkys("select liikennepaikka, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, "
                    "sn, kiskotieto, akseleita, junanro, tila_raide, tila_etela, tila_pohjoinen, "
-                   "raideid, kulkutie "
+                   "raideid, kulkutie, kisko "
                    "from kisko natural join raide "
                    "where nakyma=0");
 
@@ -62,6 +71,7 @@ void RataScene::lataaRata()
                               nkys.value(4).toInt(), 0-nkys.value(5).toInt());
         int sn = nkys.value(6).toInt();
         QString kiskotieto = nkys.value(7).toString();
+        int kiskoid = nkys.value(15).toInt();
 
         // Raiteen tunnus
         QString raidetunnus = QString("%1%2").arg(liikennepaikka).arg(raide,3,10,QChar('0'));
@@ -119,11 +129,12 @@ void RataScene::lataaRata()
 
         }
         // Nyt raide ainakin olemassa, voidaan lisätä itse kisko
-        RataKisko* kisko = new RataKisko(praide, viiva, kiskotieto, sn);
+        RataKisko* kisko = new RataKisko(praide, viiva, kiskoid, kiskotieto, sn);
 
         // Lopuksi kisko lisätään raiteeseen ja näkymään
         praide->lisaaKisko(kisko);
         addItem(kisko);
+        kiskot_.insert( kisko->kiskoId(), kisko);
     }
 
 
@@ -155,10 +166,37 @@ void RataScene::lataaRata()
     }
     // PURKKAKOODI PÄÄTTYY TÄHÄN
 
-    foreach( RataRaide* raide, raiteet_)
-        if( raide->etelainen()->opaste() != RaiteenPaa::Seis ||
-                raide->pohjoinen()->opaste() != RaiteenPaa::Seis)
-            raide->esiopastinPaivitys();
+
+
+}
+
+void RataScene::lataaVaunut()
+{
+    QSqlQuery nkys("select vaunuid, vaunutyyppi, etu_kisko, etu_sijainti, etu_suunta, "
+                   "taka_kisko, taka_sijainti, taka_suunta from vaunu");
+
+    while( nkys.next())
+    {
+        int vaunuid = nkys.value(0).toInt();
+        QString vaunutyyppi = nkys.value(1).toString();
+
+        int etukisko = nkys.value(2).toInt();
+        qreal etusijainti = nkys.value(3).toDouble();
+        QChar etusuunta = nkys.value(4).toString()[0];
+
+        int takakisko = nkys.value(5).toInt();
+        qreal takasijainti = nkys.value(6).toDouble();
+        QChar takasuunta = nkys.value(7).toString()[0];
+        qDebug() << takasuunta;
+        qDebug() << nkys.value(7).toChar();
+        qDebug() << nkys.value(7);
+
+        if( vaunuid >= seuraavaVaunuNumero_)
+            seuraavaVaunuNumero_ = vaunuid + 1;
+
+        Vaunu* vaunu = new Vaunu(vaunutyyppi, vaunuid, kiskot_.value(etukisko,0), etusijainti, etusuunta, kiskot_.value(takakisko,0), takasijainti, takasuunta, this);
+        vaunut_.insert( vaunuid, vaunu);
+    }
 
 
 }
@@ -322,3 +360,10 @@ void RataScene::poistaKulkutieListalta(const QString &maaliraide)
     kulkutiet_.remove(maaliraide);
 }
 
+Vaunu* RataScene::lisaaVaunu(const QString &tyyppi)
+{
+    Vaunu* uusi = new Vaunu(tyyppi, seuraavaVaunuNumero_, this);
+    vaunut_.insert(seuraavaVaunuNumero_, uusi);
+    seuraavaVaunuNumero_++;
+    return uusi;
+}

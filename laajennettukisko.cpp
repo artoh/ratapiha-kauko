@@ -22,7 +22,7 @@
 #include "laajennettukisko.h"
 
 LaajennettuKisko::LaajennettuKisko(const QLineF viiva, int kiskoid, const QString liikennepaikka, int raide, const QString &kiskodata)
-    :     Kisko(viiva, kiskodata), kiskoid_(kiskoid), liikennepaikka_(liikennepaikka), raide_(raide)
+    :     Kisko(viiva, kiskoid, kiskodata), liikennepaikka_(liikennepaikka), raide_(raide)
 {
     // Junanumeroiden ja raitetten näyttö
     naytaJunaNumero_ = kiskodata.contains("Nj");

@@ -62,9 +62,27 @@ void Akseli::sijoitaKiskolle( RataKisko *kiskolle, qreal sijainti, RaiteenPaa::S
 
 }
 
+void Akseli::sijoitaKiskolle(RataKisko *kiskolle, qreal sijainti, QChar suuntakirjain)
+{
+    if( suuntakirjain == 'E')
+        sijoitaKiskolle( kiskolle, sijainti, RaiteenPaa::Etelaan);
+    else if( suuntakirjain == 'P')
+        sijoitaKiskolle(kiskolle, sijainti, RaiteenPaa::Pohjoiseen);
+}
+
 void Akseli::asetaToinenAkseli(Akseli *toinenAkseli)
 {
     toinenAkseli_ = toinenAkseli;
+}
+
+QChar Akseli::suuntaKirjain()
+{
+    if( suuntaKiskolla() == RaiteenPaa::Etelaan)
+        return QChar('E');
+    else if(suuntaKiskolla() == RaiteenPaa::Pohjoiseen)
+        return QChar('P');
+    else
+        return QChar();
 }
 
 

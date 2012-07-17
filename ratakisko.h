@@ -36,7 +36,7 @@ class RataRaide;
 class RataKisko : public Kisko
 {
 public:
-    RataKisko(RataRaide* raide, const QLineF& viiva, const QString& kiskodata, int sn);
+    RataKisko(RataRaide* raide, const QLineF& viiva, int kiskoid, const QString& kiskodata, int sn);
 
     enum { Type = UserType + 3 } ;
 

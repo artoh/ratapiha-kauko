@@ -19,6 +19,8 @@
 
 #include "rataview.h"
 #include "ratakisko.h"
+#include "rataikkuna.h"
+#include "ratascene.h"
 
 #include <QWheelEvent>
 #include <QScrollBar>
@@ -132,7 +134,7 @@ void RataView::dropEvent(QDropEvent *event)
 
     if( kisko && !tyyppi.isEmpty())
     {
-        Vaunu* vaunu = new Vaunu(tyyppi,0);
+        Vaunu* vaunu = RataIkkuna::rataSkene()->lisaaVaunu(tyyppi);
         vaunu->sijoitaKiskolle(kisko);
     }
 

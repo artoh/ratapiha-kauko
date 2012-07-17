@@ -29,8 +29,8 @@
 
 #include <QDebug>
 
-RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, const QString &kiskodata, int sn)
-    : Kisko(viiva, kiskodata), raide_(raide), sn_(sn), opastinEtelaan_(0), opastinPohjoiseen_(0)
+RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, int kiskoid, const QString &kiskodata, int sn)
+    : Kisko(viiva, kiskoid, kiskodata), raide_(raide), sn_(sn), opastinEtelaan_(0), opastinPohjoiseen_(0)
 {
 
 
