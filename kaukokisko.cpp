@@ -194,15 +194,20 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     }
 
     // Suojastusnuolet
-    if( raidetieto()->kulkutieTyyppi() == RaideTieto::Linjasuojastus )
+    if( raidetieto()->kulkutieTyyppi() == RaideTieto::Linjasuojastus ||
+            (raidetieto()->kulkutieTyyppi() != RaideTieto::EiKulkutieta &&
+             raidetieto()->kulkutieTila() == RaideTieto::Virhetila &&
+             pituus() > 39 ) )
     {
         painter->setPen(Qt::NoPen);
         if( raidetieto()->kulkutieTila() == RaideTieto::Valmis )
             painter->setBrush( QBrush(Qt::green));
         else if( raidetieto()->kulkutieTila() == RaideTieto::Varattu)
             painter->setBrush( QBrush( Qt::yellow));
-        else
+        else if( skene_->valkytys() )
             painter->setBrush( QBrush(Qt::red));
+        else
+            painter->setBrush( Qt::NoBrush);
 
         QPolygonF kuvio;
         if( raidetieto()->suunta() == RaiteenPaa::Etelaan)

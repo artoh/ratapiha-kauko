@@ -117,7 +117,7 @@ void RataView::dragMoveEvent(QDragMoveEvent *event)
     if( lahde )
     {
         RataKisko* kisko = kiskoKohdalla(event->pos());
-        if( kisko && kisko->raide()->kulkutieTyyppi() == RataRaide::EiKulkutieta)
+        if( kisko  &&  kisko->raide()->kulkutieTyyppi() == RataRaide::EiKulkutieta  )
         {
             // Hyväksytään jos ollaan kiskon kohdalla!
             // Kulkutielle ei kuitenkaan saa lisätä vaunuja koska siitä tulisi VIRHE

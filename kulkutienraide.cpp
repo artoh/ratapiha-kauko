@@ -141,7 +141,10 @@ void KulkutienRaide::raideVarautuu(RaiteenPaa::Suunta suunta)
 {
     // Ekana opastin punaiselle!!
     if( lahtoOpastin()->opaste() != RaiteenPaa::Seis)
+    {
         lahtoOpastin()->asetaOpaste(RaiteenPaa::Seis);
+        lahtoRaide()->paivita();
+    }
 
     // Tarkastetaan, ollaanko tultu oikeasta suunnasta!!
     if( suunta != suunta_)

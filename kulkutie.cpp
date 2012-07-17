@@ -193,15 +193,11 @@ QString KulkuTie::maaliRaideTunnusSuunnalla()
 
 void KulkuTie::paivitaKaikki()
 {
+    if( elementit_.count())
+        ekaRaide()->raide()->paivita();
+
     foreach( KulkutienRaide* ktraide, elementit_)
     {
-        // Jos ollaan vikatilassa, kaikki opastimet punaiselle!
-        if( tila() == RataRaide::Virhetila)
-        {
-            if(ktraide->lahtoOpastin()->opaste() != RaiteenPaa::Seis )
-                ktraide->lahtoOpastin()->asetaOpaste(RaiteenPaa::Seis);
-        }
-
         ktraide->raide()->paivita();
     }
 }
@@ -216,6 +212,15 @@ KulkutienRaide *KulkuTie::ekaRaide()
 void KulkuTie::vikatilaan()
 {
     tila_ = RataRaide::Virhetila;
+
+    // Vikatilassa, kaikki opastimet punaiselle!
+    foreach( KulkutienRaide* ktraide, elementit_)
+    {
+        qDebug() << ktraide->raide()->raidetunnusLiikennepaikalla() << " OP " << ktraide->lahtoOpastinTunnus();
+        if(ktraide->lahtoOpastin()->opasteKasite() != RaiteenPaa::Seis )
+            ktraide->lahtoOpastin()->asetaOpaste(RaiteenPaa::Seis);
+    }
+
     paivitaKaikki();
 }
 
