@@ -43,5 +43,6 @@
         <file>pic/ajakursori.png</file>
         <file>pic/seiskursori.png</file>
         <file>pic/seiskasky.png</file>
+        <file>pic/vaunut.svg</file>
     </qresource>
 </RCC>

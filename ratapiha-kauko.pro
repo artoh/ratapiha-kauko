@@ -1,5 +1,5 @@
 
-QT  += core qui sql
+QT  += core qui sql svg
 
 TARGET = ratapiha-kauko
 TEMPLATE = app
@@ -32,7 +32,9 @@ HEADERS += \
     kulkutienmuodostaja.h \
     naapuruus.h \
     kulkutienraide.h \
-    kulkutie.h
+    kulkutie.h \
+    akseli.h \
+    vaunu.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -63,7 +65,9 @@ SOURCES += \
     kulkutienmuodostaja.cpp \
     naapuruus.cpp \
     kulkutienraide.cpp \
-    kulkutie.cpp
+    kulkutie.cpp \
+    akseli.cpp \
+    vaunu.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

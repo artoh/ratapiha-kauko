@@ -28,6 +28,8 @@ class RataView : public QGraphicsView
 {
     Q_OBJECT
 public:
+    enum RataViewTila { Vierita, SijoitaAkseli } ;
+
     RataView(RataScene* skene);
     
 signals:
@@ -36,10 +38,12 @@ public slots:
 
 protected:
     void wheelEvent(QWheelEvent *event);
+    void mousePressEvent(QMouseEvent *event);
 
 
     /** Käytetäänkö hiiren rullaa skaalaamiseen vai vierittäimiseen */
     bool rullaSkaalaa_;
+    RataViewTila tila_;
     
 };
 

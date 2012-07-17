@@ -1,0 +1,69 @@
+/**************************************************************************
+**  akseli.h
+**  Copyright (c) 2012 Arto Hyvättinen 
+**
+**  This program is free software: you can redistribute it and/or modify
+**  it under the terms of the GNU General Public License as published by
+**  the Free Software Foundation, either version 3 of the License, or
+**  (at your option) any later version.
+**
+**  This program is distributed in the hope that it will be useful,
+**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**  GNU General Public License for more details.
+**
+**  See <http://www.gnu.org/licenses/>
+**
+**  Akseli  17.7.2012
+**************************************************************************/
+
+#ifndef AKSELI_H
+#define AKSELI_H
+
+#include "raiteenpaa.h"
+
+#include <QGraphicsItem>
+
+class RataKisko;
+class Vaunu;
+
+class Akseli : public QGraphicsItem
+{
+public:
+    enum { Type = UserType + 500 };
+
+    Akseli(Vaunu* vaunu);
+
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget* );
+    int type() const { return Type; }
+
+    void sijoitaKiskolle( RataKisko* kiskolle, qreal sijainti, RaiteenPaa::Suunta suunta);
+    void asetaToinenAkseli(Akseli* toinenAkseli);
+
+    RataKisko* kiskolla() { return kiskolla_; }
+
+private:
+
+    void laskeSijainti();
+
+    Vaunu* vaunu_;
+
+    /** Saman vaunun toinen akseli */
+    Akseli* toinenAkseli_;
+
+    /** Kytkimellä kiinni liitetty akseli*/
+    Akseli* kytkettyAkseli_;
+
+    /** Kisko, jolla ollaan */
+    RataKisko* kiskolla_;
+
+    /** sijainti kiskolla, väli 0 - pituus */
+    qreal sijaintiKiskolla_;
+
+    /** Positiivinen kulkusuunta */
+    RaiteenPaa::Suunta suuntaKiskolla_;
+};
+
+#endif // AKSELI_H

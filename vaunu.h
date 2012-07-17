@@ -1,0 +1,62 @@
+/**************************************************************************
+**  vaunu.h
+**  Copyright (c) 2012 Arto Hyvättinen 
+**
+**  This program is free software: you can redistribute it and/or modify
+**  it under the terms of the GNU General Public License as published by
+**  the Free Software Foundation, either version 3 of the License, or
+**  (at your option) any later version.
+**
+**  This program is distributed in the hope that it will be useful,
+**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**  GNU General Public License for more details.
+**
+**  See <http://www.gnu.org/licenses/>
+**
+**  Vaunu  17.7.2012
+**************************************************************************/
+
+#ifndef VAUNU_H
+#define VAUNU_H
+
+#include "akseli.h"
+#include "ratakisko.h"
+
+#include <QGraphicsItem>
+#include <QSvgRenderer>
+
+class RataScene;
+
+class Vaunu : public QGraphicsItem
+{
+public:
+    enum { Type = UserType + 505 } ;
+
+    Vaunu(const QString& tyyppi, int vaunuNumero);
+    bool sijoitaKiskolle(RataKisko* kiskolle);
+
+    QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+    int type() const { return UserType; }
+    QString vaununTyyppi() const { return vaununTyyppi_; }
+
+    qreal pituus() const { return vaununPituus_; }
+
+    void paivita();
+
+protected:
+    Akseli* etuAkseli_;
+    Akseli* takaAkseli_;
+
+    qreal vaununPituus_;
+    QString vaununTyyppi_;
+
+    int vaununNumero_;
+
+    static QSvgRenderer* renderoija();
+    static QSvgRenderer* vaununpiirtaja__;
+};
+
+#endif // VAUNU_H
