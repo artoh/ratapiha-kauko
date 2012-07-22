@@ -149,11 +149,13 @@ void RataRaide::akseliSisaan(RaiteenPaa::Suunta suunta, RataRaide *raiteelta)
 
     akseleita_++;
     // Kulkutiehen liittyvät asiat...
-    if( akseleita() == 1 && kulkutienRaide())
+    if( akseleita() == 1 )
     {
-        kulkutienRaide()->raideVarautuu(suunta);
         if( raiteelta )
             junanumero_ = raiteelta->junanumero();
+        if( kulkutienRaide())
+            kulkutienRaide()->raideVarautuu(suunta);
+
     }
 
     paivita();

@@ -69,7 +69,8 @@ void Akseli::sijoitaKiskolle( RataKisko *kiskolle, qreal sijainti, RaiteenPaa::S
     foreach( QGraphicsItem* item, lista)
     {
         Akseli* toinen = qgraphicsitem_cast<Akseli*>(item);
-        if( toinen )
+        if( toinen && toinen != toinenAkseli_ &&
+                (toinenAkseli_ == 0 || toinenAkseli_ != toinen->kytkettyAkseli_))
         {
             // Liitetään yhteen
             kytkettyAkseli_ = toinen;
@@ -147,7 +148,8 @@ void Akseli::liiku(qreal matka)
         RataKisko* uusiKisko = kiskolla()->haeAktiivinenNaapuri( kiskolla()->etelainen());
         if( !uusiKisko)
             return; // Törmäys raidepuskimeen??
-        if( uusiKisko->etelainen() == kiskolla()->pohjoinen())
+
+        if( uusiKisko->etelainen() == kiskolla()->etelainen())
         {
             vaihdaSuunta();
             sijaintiKiskolla_ = 0; // Mennään eteläpäästä sisään
@@ -179,7 +181,7 @@ void Akseli::liiku(qreal matka)
         if( uusiKisko->pohjoinen() == kiskolla()->pohjoinen())
         {
             vaihdaSuunta();
-            sijaintiKiskolla_ = uusiKisko->pituus();    // Pohjoispäästä sisään
+            sijaintiKiskolla_= uusiKisko->pituus();    // Pohjoispäästä sisään
         }
         else
             sijaintiKiskolla_ = 0;  // Eteläpäästä sisään

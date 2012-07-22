@@ -131,19 +131,23 @@ void KulkuTie::raideVarautuu(KulkutienRaide* elementti)
     if( tila_ == RataRaide::Valmis)
         tila_ = RataRaide::Varattu;
 
-    // Kaikkien ennen tätä pitää olla varattuja!
-    foreach( KulkutienRaide* ktraide, elementit_)
+    if( kulkutienTyyppi() != RataRaide::Linjasuojastus)
     {
-        if( !ktraide->raide()->akseleita())
+        // Kaikkien ennen tätä pitää olla varattuja!
+        foreach( KulkutienRaide* ktraide, elementit_)
         {
-            // Ei ole varattu oikein
-            vikatilaan();
-            return;
+            if( !ktraide->raide()->akseleita())
+            {
+                // Ei ole varattu oikein
+                vikatilaan();
+                qDebug() << "Vikatila: Väärä varautuminen " << elementti->kulkutieto();
+                return;
+            }
+            if( ktraide == elementti)
+                break;  // Meni aivan oikein!!
         }
-        if( ktraide == elementti)
-            break;  // Meni aivan oikein!!
-    }
 
+    }
 }
 
 int KulkuTie::varattujaRaiteita()

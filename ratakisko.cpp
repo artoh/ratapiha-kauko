@@ -168,17 +168,22 @@ void RataKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
 }
 
-bool RataKisko::aktiivinen(Kisko::PaanSuunta paassa, RaiteenPaa::VaihdeKasite raideRisteysSuunta)
+bool RataKisko::aktiivinen(Kisko::PaanSuunta paassa, RataKisko *toinenKisko)
 {
+    if( raide()->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys )
+    {
+        if( paassa == EtelaPaa && ( etelaTyyppi()==VaihdeVasen || etelaTyyppi()==VaihdeOikea))
+            return etelaTyyppi()==toinenKisko->pohjoisTyyppi();
+        else if( paassa == PohjoisPaa && ( pohjoisTyyppi()==VaihdeVasen || pohjoisTyyppi()==VaihdeOikea ))
+            return pohjoisTyyppi() == toinenKisko->etelaTyyppi();
+    }
+
     if( paassa == EtelaPaa)
     {
-        if( etelaTyyppi() == Paa || etelaTyyppi() == Valille )
+        if( etelaTyyppi() == Paa || etelaTyyppi()==LiikennePaikanPaa || etelaTyyppi() == Valille )
             return true;
-
-        if( etelaTyyppi() == VaihdeVasen && raide()->pohjoinen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
-            return (raideRisteysSuunta == RaiteenPaa::Vasen );
-        else if( etelaTyyppi() == VaihdeOikea && raide()->pohjoinen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
-            return (raideRisteysSuunta == RaiteenPaa::Oikea);
+        else if( etelainen() != toinenKisko->pohjoinen())
+            return false;
         else if( etelaTyyppi() == VaihdeVasen )
             return raide()->pohjoinen()->vaihde() == RaiteenPaa::Vasen;
         else if( etelaTyyppi() == VaihdeOikea)
@@ -188,11 +193,8 @@ bool RataKisko::aktiivinen(Kisko::PaanSuunta paassa, RaiteenPaa::VaihdeKasite ra
     {
         if( pohjoisTyyppi() == Paa || pohjoisTyyppi() == Valille )
             return true;
-
-        if( pohjoisTyyppi() == VaihdeVasen && raide()->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
-            return (raideRisteysSuunta == RaiteenPaa::Vasen );
-        else if( pohjoisTyyppi() == VaihdeOikea && raide()->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
-            return (raideRisteysSuunta == RaiteenPaa::Oikea);
+        else if( pohjoinen() != toinenKisko->etelainen())
+            return false;
         else if( pohjoisTyyppi() == VaihdeVasen )
             return raide()->etelainen()->vaihde() == RaiteenPaa::Vasen;
         else if( pohjoisTyyppi() == VaihdeOikea)
@@ -232,11 +234,9 @@ RataKisko *RataKisko::haeAktiivinenNaapuri(QPointF sijainnista)
 
         if( kisko && kisko != this )
         {
-            if( kisko->etelainen() == sijainnista && kisko->aktiivinen( EtelaPaa,
-                                                                        raide()->pohjoinen()->vaihde()) )
+            if( kisko->etelainen() == sijainnista && kisko->aktiivinen( EtelaPaa , this)  )
                 return kisko;
-            else if( kisko->pohjoinen() == sijainnista && kisko->aktiivinen( PohjoisPaa,
-                                                                             raide()->etelainen()->vaihde()))
+            else if( kisko->pohjoinen() == sijainnista && kisko->aktiivinen( PohjoisPaa, this ) )
                 return kisko;
         }
     }

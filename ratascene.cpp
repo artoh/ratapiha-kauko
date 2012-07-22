@@ -395,14 +395,10 @@ Vaunu* RataScene::lisaaVaunu(const QString &tyyppi)
 {
     Vaunu* uusi;
     if( tyyppi.startsWith("S") || tyyppi.startsWith('D'))
-    {
-        Veturi* uusiveturi = new Veturi(tyyppi, seuraavaVaunuNumero_, this);
-        uusiveturi->asetaAjoPoyta(1);
-        uusiveturi->asetaTavoiteNopeus(80);
-        uusi = uusiveturi;
-    }
+        uusi = new Veturi(tyyppi, seuraavaVaunuNumero_, this);
     else
         uusi = new Vaunu(tyyppi, seuraavaVaunuNumero_, this);
+
     vaunut_.insert(seuraavaVaunuNumero_, uusi);
     seuraavaVaunuNumero_++;
     return uusi;

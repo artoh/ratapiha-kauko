@@ -49,7 +49,7 @@ public:
 
     RataRaide* raide() { return raide_; }
 
-    bool aktiivinen(PaanSuunta paassa, RaiteenPaa::VaihdeKasite raideRisteysSuunta);
+    bool aktiivinen(PaanSuunta paassa, RataKisko* toinenKisko);
 
     void esiopastinIlmoitus( RaiteenPaa::Opaste opaste, Opastin* opastimelta);
 

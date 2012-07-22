@@ -150,7 +150,10 @@ void KulkutienRaide::raideVarautuu(RaiteenPaa::Suunta suunta)
 
     // Tarkastetaan, ollaanko tultu oikeasta suunnasta!!
     if( suunta != suunta_)
+    {
         kulkutie()->vikatilaan();
+        qDebug() << "Vikatila: Suunta " << raide()->raidetunnusLiikennepaikalla() << " " << kulkutieto();
+    }
     else
         kulkutie()->raideVarautuu(this);
 }
@@ -174,6 +177,8 @@ void KulkutienRaide::raideVapautuu(RaiteenPaa::Suunta suunta)
         {
             // Muuten ollaan vikatilassa!!!
             kulkutie()->vikatilaan();
+            qDebug() << "Vikatila: Purkautuminen " << raide()->raidetunnusLiikennepaikalla() << " " << kulkutieto();
+
         }
     }
 

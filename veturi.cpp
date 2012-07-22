@@ -96,6 +96,9 @@ void Veturi::paint(QPainter *painter, const QStyleOptionGraphicsItem* , QWidget 
 
 void Veturi::aja()
 {
+    if( nopeus()==0 && tavoiteNopeus()==0)
+        return; // Eipä mitään jos ei tartte liikkua!
+
     // Haetaan jkvnopeus, eli suurin nopeus, jolla jkv-laite sallii ajettavan
 
     int jkvnopeus = 80;

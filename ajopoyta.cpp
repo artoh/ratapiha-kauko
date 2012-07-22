@@ -132,13 +132,15 @@ void Ajopoyta::valitseVeturi(int veturinNumero)
         ui->ajopoyta1->setVisible( veturi->ajopoydat() == Vaunu::AjopoytaYksi || veturi->ajopoydat() == Vaunu::MolemmatAjopoydat);
         ui->ajopoyta2->setVisible( veturi->ajopoydat() == Vaunu::AjopoytaKaksi || veturi->ajopoydat() == Vaunu::MolemmatAjopoydat);
 
+        ui->nopeusSaadin->setEnabled( veturi->ajopoyta() );
+
         naytaNopeus( veturi_->nopeus());
     }
     else
     {
         // Varmistetaan veturinnumeron näyttö
         if( veturi_)
-            ui->veturiValinta->setText( QString::number(veturi->vaunuNumero()) );
+            ui->veturiValinta->setText( QString::number(veturi_->vaunuNumero()) );
         else
             ui->veturiValinta->clear();
     }
@@ -175,13 +177,17 @@ void Ajopoyta::ajopoytaYksi(bool onko)
     {
         ui->ajopoyta2->setChecked(false);
         if( veturi_)
+        {
             veturi_->asetaAjoPoyta(1);
+            ui->nopeusSaadin->setEnabled(true);
+        }
     }
     else
     {
         if( veturi_)
             veturi_->asetaAjoPoyta(0);
         ui->jkvTieto->clear();
+        ui->nopeusSaadin->setEnabled(false);
     }
     // Yhdistetään jkv-laite näyttöön
     // if( veturi_ && veturi_->jkvlaite())
@@ -198,13 +204,20 @@ void Ajopoyta::ajopoytaKaksi(bool onko)
     {
         ui->ajopoyta1->setChecked(false);
         if( veturi_)
+        {
             veturi_->asetaAjoPoyta(2);
+            ui->nopeusSaadin->setEnabled(true);
+        }
     }
     else
     {
         if( veturi_)
+        {
             veturi_->asetaAjoPoyta(0);
+            ui->nopeusSaadin->setEnabled(false);
+        }
             ui->jkvTieto->clear();
+        ui->nopeusSaadin->setEnabled(false);
     }
     // if( veturi_ && veturi_->jkvlaite())
     //    connect( veturi_->jkvlaite(), SIGNAL(jkvIlmoitus(QPixmap)), this, SLOT(naytaJkvIlmoitus(QPixmap)));
