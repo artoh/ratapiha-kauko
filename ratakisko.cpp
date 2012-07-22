@@ -172,6 +172,8 @@ bool RataKisko::aktiivinen(Kisko::PaanSuunta paassa, RataKisko *toinenKisko)
 {
     if( raide()->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys )
     {
+        if( !toinenKisko)
+            return true;    /* Raideristeys aina "aktiivinen" ellei nimenomaisesti... */
         if( paassa == EtelaPaa && ( etelaTyyppi()==VaihdeVasen || etelaTyyppi()==VaihdeOikea))
             return etelaTyyppi()==toinenKisko->pohjoisTyyppi();
         else if( paassa == PohjoisPaa && ( pohjoisTyyppi()==VaihdeVasen || pohjoisTyyppi()==VaihdeOikea ))
@@ -182,7 +184,7 @@ bool RataKisko::aktiivinen(Kisko::PaanSuunta paassa, RataKisko *toinenKisko)
     {
         if( etelaTyyppi() == Paa || etelaTyyppi()==LiikennePaikanPaa || etelaTyyppi() == Valille )
             return true;
-        else if( etelainen() != toinenKisko->pohjoinen())
+        else if( toinenKisko && etelainen() != toinenKisko->pohjoinen())
             return false;
         else if( etelaTyyppi() == VaihdeVasen )
             return raide()->pohjoinen()->vaihde() == RaiteenPaa::Vasen;
@@ -193,7 +195,7 @@ bool RataKisko::aktiivinen(Kisko::PaanSuunta paassa, RataKisko *toinenKisko)
     {
         if( pohjoisTyyppi() == Paa || pohjoisTyyppi() == Valille )
             return true;
-        else if( pohjoinen() != toinenKisko->etelainen())
+        else if( toinenKisko && pohjoinen() != toinenKisko->etelainen())
             return false;
         else if( pohjoisTyyppi() == VaihdeVasen )
             return raide()->etelainen()->vaihde() == RaiteenPaa::Vasen;

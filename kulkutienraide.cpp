@@ -168,9 +168,11 @@ void KulkutienRaide::raideVapautuu(RaiteenPaa::Suunta suunta)
     }
     else if( kulkutie()->tila() == RataRaide::Varattu)
     {
-        if( suunta == suunta_ && kulkutie()->ekaRaide() == this)
+        if( (suunta == suunta_ && kulkutie()->ekaRaide() == this) || raide()==kulkutie()->maaliRaide() )
         {
             // Jos vapautuva raide on kulkutien ensimmäinen, niin kaikki on hyvin ja voi purkautua
+            // Myös maaliraide purkautuu aina, mihin suuntaan tahansa
+            // (pitäisi itse asiassa purkautua aikaviiveellä vaikkei olisi tyhjä)
             puraKulkutielta();
         }
         else

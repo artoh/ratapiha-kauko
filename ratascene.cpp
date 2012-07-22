@@ -292,8 +292,9 @@ QString RataScene::ASLKasky(const QString &parametrit)
 
         if( vaihde->kulkutieTyyppi() != RataRaide::EiKulkutieta)
             return QString("VIRHE Lukittu kulkutielle");
-
-        if( vaihde->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
+        else if( vaihde->akseleita())
+            return QString("VIRHE Vaihde varattu");
+        else if( vaihde->etelainen()->paanTyyppi() == RaiteenPaa::RaideRisteys)
         {
              // Käännettävä molemmat päät!
             vaihde->etelainen()->kaannaVaihde();
@@ -348,6 +349,20 @@ QString RataScene::ASLKasky(const QString &parametrit)
             raide->asetaJunanumero( QString()); // Pelkkä JN Raide tyhjää numeron
         return QString("OK");
     }
+    else if( paramLista.first()=="VAP" && paramLista.count() > 1)
+    {
+        // Aukiajetun vaihteen hätävarainen kääntö
+        RataRaide* raide = haeRaide(paramLista[1]);
+        if( !raide )
+            return QString("VIRHE Ei raidetta %1 ").arg(paramLista[1]);
+        bool ok = raide->etelainen()->aukiajonKaanto() || raide->pohjoinen()->aukiajonKaanto();
+        raide->paivita();
+        if( ok )
+            return QString("OK");
+        else
+            return QString("VIRHE Ei aukiajettu %1 ").arg(paramLista[1]);
+    }
+
 
 
 

@@ -21,7 +21,7 @@ public:
     enum OpastinTyyppi { EiOpastinta, PaaOpastin, SuojastusOpastin, RaideOpastin };
     enum PaanTyyppi { Suora, Vaihde, RaideRisteys, RaidePuskuri } ;
 
-    enum VaihdeKasite { EiVaihdetta, Vasen, Oikea } ;
+    enum VaihdeKasite { EiVaihdetta, Vasen, Oikea, Aukiajettu } ;
     enum SpKasite { SpPuuttuu = 0, SpSallii, SpSulkee } ;
     enum Suunta { Virhe=0, Etelaan, Pohjoiseen} ;
 
@@ -39,6 +39,8 @@ public:
     bool kaannaVaihde();    // Kääntää vaihteen
     bool kaannaVaihde(VaihdeKasite tilaan);
     bool lukitseVaihde(VaihdeKasite tilaan);
+    void aukiaja(); /* Vaihde aukiajettuun tilaan!*/
+    bool aukiajonKaanto();  /* Käännetään aukiajettu vaihde vasemmalle*/
 
     bool paaOpastin() const { return opastin() == PaaOpastin; }
     bool raideOpastin() const { return opastin() == RaideOpastin; }

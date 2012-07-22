@@ -143,7 +143,10 @@ void Akseli::liiku(qreal matka)
      // Mennäänkö toiselle kiskolle?
     if( sijaintiKiskolla() < 0.00 )
     {
-        qDebug() << "Etelään ";
+        // Aukiajo, jos tullaan vaihteen pasiivisesta haarasta!!
+        if( !kiskolla()->aktiivinen(RataKisko::EtelaPaa) )
+            kiskolla()->raide()->pohjoinen()->aukiaja();
+
         // Mennään etelänpuoleiselle kiskolle
         RataKisko* uusiKisko = kiskolla()->haeAktiivinenNaapuri( kiskolla()->etelainen());
         if( !uusiKisko)
@@ -175,6 +178,11 @@ void Akseli::liiku(qreal matka)
     }
     else if( uusiSijainti > kiskolla_->pituus())
     {
+        // Mennään ulos pohjoisesta...
+
+        if( !kiskolla()->aktiivinen(RataKisko::PohjoisPaa) )
+            kiskolla()->raide()->etelainen()->aukiaja();
+
          RataKisko* uusiKisko=kiskolla()->haeAktiivinenNaapuri( kiskolla()->pohjoinen());
         if( !uusiKisko)
             return;

@@ -243,6 +243,24 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
 
     if( skene_->onkoVikatilassa() )
         viivavari = Qt::magenta;
+    else if( raidetieto()->etelainen()->vaihde()==RaiteenPaa::Aukiajettu ||
+             raidetieto()->pohjoinen()->vaihde()==RaiteenPaa::Aukiajettu )
+    {
+        // Vaihde aukiajettu!!!
+        if( !skene_->valkytys() )
+            viivavari = Qt::lightGray;
+        else if( raidetieto()->akseleita())
+            viivavari = Qt::red;
+        else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Junakulkutie ||
+                 raidetieto()->kulkutieTyyppi() == RaideTieto::Linjasuojastus)
+            viivavari = Qt::green;
+        else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Vaihtokulkutie)
+            viivavari = Qt::yellow;
+        else
+            viivavari = Qt::white;
+
+        alku = 0.0; loppu=pituus();
+    }
     else if( raidetieto()->akseleita() && !sivuhaara)
         viivavari = Qt::red;
     else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Vaihtokulkutie && !sivuhaara)

@@ -28,6 +28,8 @@ QString RaiteenPaa::tilaTieto() const
         tila.append("V- ");
     else if(paanTyyppi() == Vaihde && vaihde()==Oikea)
         tila.append("V+");
+    else if(paanTyyppi() == Vaihde && vaihde() == Aukiajettu)
+        tila.append("V! ");
 
     if( paanTyyppi() == RaideRisteys && vaihde() == Vasen )
         tila.append("RR- ");
@@ -86,8 +88,6 @@ bool RaiteenPaa::kaannaVaihde(RaiteenPaa::VaihdeKasite tilaan)
 {
     if( paanTyyppi() == Vaihde || paanTyyppi() == RaideRisteys )
     {
-        // Tässä pitäisi tarkistaa lukitukset sun muut
-
         vaihdeTila_ = tilaan;
         return true;
     }
@@ -98,6 +98,21 @@ bool RaiteenPaa::lukitseVaihde(RaiteenPaa::VaihdeKasite tilaan)
 {
     // Myöhemmin tässä myös haetaan sivusuojia sun muita!!!
     return kaannaVaihde(tilaan);
+}
+
+void RaiteenPaa::aukiaja()
+{
+    vaihdeTila_ = Aukiajettu;
+}
+
+bool RaiteenPaa::aukiajonKaanto()
+{
+    if( vaihde() == Aukiajettu)
+    {
+        vaihdeTila_ = Vasen;
+        return true;
+    }
+    return false;
 }
 
 
@@ -185,6 +200,8 @@ void RaiteenPaa::paivitysTehtava(const QString &lause)
             vaihdeTila_ = Vasen;
         else if( lause.startsWith("V+"))
             vaihdeTila_ = Oikea;
+        else if( lause.startsWith("V!"))
+            vaihdeTila_ = Aukiajettu;
     }
 }
 

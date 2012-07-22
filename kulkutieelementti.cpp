@@ -212,6 +212,11 @@ bool KulkutieElementti::tarkistaKulkutieEhdot(KulkutienMuodostaja *muodostaja)
     if( naapuruus_->sallittuKulkutie() == Kisko::Toissijainen && muodostaja->kulkutienTyyppi() == RaideTieto::Junakulkutie)
         pituus_ += naapuruus_->naapuriRaide()->pituus();
 
+    // Aukiajetun vaihteen kautta EI sallita kulkuteitä!
+    if( naapuruus_->naapuriRaide()->etelainen()->vaihde() == RaiteenPaa::Aukiajettu ||
+            naapuruus_->naapuriRaide()->pohjoinen()->vaihde() == RaiteenPaa::Aukiajettu)
+        return false;
+
     return true;
 }
 
