@@ -272,6 +272,17 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         painter->drawText(QRectF(-10.0, -9.0, pituus()+20, 5.0), raidetunnus_, QTextOption(Qt::AlignCenter));
     }
 
+
+    if( naytaJunaNumero() && !raidetieto()->junanumero().isEmpty())
+    {
+        // Junanumerolätkän piirtäminen
+        painter->setBrush(QBrush(Qt::white));
+        painter->setPen( Qt::black);
+        painter->drawRect(QRectF( pituus() / 2 - 14.0 , -4.0 , 28.0 , 8.0  ));
+        painter->drawText(QRectF( pituus() / 2 - 14.0 , -4.0 , 28.0 , 8.0 ),  raidetieto()->junanumero() , QTextOption(Qt::AlignCenter));
+
+    }
+
     // Laiturin piirtäminenn
     // Piirretään laituri.
 
@@ -292,6 +303,9 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
             painter->drawPolyline(laituriviiva);
         }
     }
+
+
+
 
 
 }

@@ -48,9 +48,16 @@ public:
     RaiteenPaa::Suunta suuntaKiskolla() { return suuntaKiskolla_; }
     QChar suuntaKirjain();
 
+    void liiku( qreal matka);
+
+    void moottoriLiike( qreal matka);
+    void kytkinLiike( qreal matka);
+    void vaunuLiike( qreal matka);
+
 private:
 
     void laskeSijainti();
+    void vaihdaSuunta();
 
     Vaunu* vaunu_;
 

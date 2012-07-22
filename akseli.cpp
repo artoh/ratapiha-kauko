@@ -21,10 +21,12 @@
 
 #include "ratakisko.h"
 #include "rataraide.h"
+#include "vaunu.h"
 
 #include <QPainter>
 #include <QBrush>
 #include <QPen>
+#include <QDebug>
 
 Akseli::Akseli(Vaunu *vaunu) :
     vaunu_(vaunu), toinenAkseli_(0), kytkettyAkseli_(0),
@@ -113,4 +115,126 @@ void Akseli::laskeSijainti()
 
     setPos(liikeVektori.p2());
 
+}
+
+void Akseli::vaihdaSuunta()
+{
+    if( suuntaKiskolla() == RaiteenPaa::Etelaan)
+        suuntaKiskolla_ = RaiteenPaa::Pohjoiseen;
+    else if( suuntaKiskolla() == RaiteenPaa::Pohjoiseen)
+        suuntaKiskolla_ = RaiteenPaa::Etelaan;
+}
+
+
+void Akseli::liiku(qreal matka)
+{
+    if( !kiskolla() )
+        return;
+    // Ei voi liikkua ilman kiskoa
+
+    qreal uusiSijainti;
+
+    if( suuntaKiskolla() == RaiteenPaa::Etelaan)
+        uusiSijainti = sijaintiKiskolla() - matka;
+    else
+        uusiSijainti = sijaintiKiskolla() + matka;
+
+     // Mennäänkö toiselle kiskolle?
+    if( sijaintiKiskolla() < 0.00 )
+    {
+        qDebug() << "Etelään ";
+        // Mennään etelänpuoleiselle kiskolle
+        RataKisko* uusiKisko = kiskolla()->haeAktiivinenNaapuri( kiskolla()->etelainen());
+        if( !uusiKisko)
+            return; // Törmäys raidepuskimeen??
+        if( uusiKisko->etelainen() == kiskolla()->pohjoinen())
+        {
+            vaihdaSuunta();
+            sijaintiKiskolla_ = 0; // Mennään eteläpäästä sisään
+        }
+        else
+            sijaintiKiskolla_ = uusiKisko->pituus();    // Pohjoispäästä sisään
+
+        // Raiteen vaihtaminen?
+        if( kiskolla()->raide() != uusiKisko->raide())
+        {
+            kiskolla()->raide()->akseliUlos(RaiteenPaa::Etelaan, uusiKisko->raide());
+            if( kiskolla()->etelainen() == uusiKisko->pohjoinen())
+                uusiKisko->raide()->akseliSisaan(RaiteenPaa::Etelaan, kiskolla()->raide());
+            else
+                uusiKisko->raide()->akseliSisaan(RaiteenPaa::Pohjoiseen, kiskolla()->raide());
+        }
+
+        kiskolla_ = uusiKisko;
+        if( matka < 0)
+            liiku( uusiSijainti );
+        else
+            liiku( 0 - uusiSijainti);
+    }
+    else if( uusiSijainti > kiskolla_->pituus())
+    {
+         RataKisko* uusiKisko=kiskolla()->haeAktiivinenNaapuri( kiskolla()->pohjoinen());
+        if( !uusiKisko)
+            return;
+        if( uusiKisko->pohjoinen() == kiskolla()->pohjoinen())
+        {
+            vaihdaSuunta();
+            sijaintiKiskolla_ = uusiKisko->pituus();    // Pohjoispäästä sisään
+        }
+        else
+            sijaintiKiskolla_ = 0;  // Eteläpäästä sisään
+
+        // Raiteen vaihtaminen?
+        if( kiskolla()->raide() != uusiKisko->raide())
+        {
+            kiskolla()->raide()->akseliUlos(RaiteenPaa::Pohjoiseen, uusiKisko->raide());
+            if( kiskolla()->pohjoinen() == uusiKisko->etelainen())
+                uusiKisko->raide()->akseliSisaan(RaiteenPaa::Pohjoiseen, kiskolla()->raide());
+            else
+                uusiKisko->raide()->akseliSisaan(RaiteenPaa::Etelaan, kiskolla()->raide());
+        }
+
+        qreal jaannosMatka = 0;
+        if( matka < 0)
+            jaannosMatka = kiskolla()->pituus() - uusiSijainti;
+        else
+            jaannosMatka = uusiSijainti - kiskolla()->pituus();
+        kiskolla_ = uusiKisko;
+
+        liiku( jaannosMatka );
+    }
+    else
+    {
+        sijaintiKiskolla_ = uusiSijainti;
+        laskeSijainti();
+    }
+
+}
+
+
+void Akseli::moottoriLiike(qreal matka)
+{
+    liiku(matka);
+    if( kytkettyAkseli_)
+        kytkettyAkseli_->kytkinLiike( 0 - matka);
+    if( toinenAkseli_)
+        toinenAkseli_->vaunuLiike( 0 - matka);
+    vaunu_->paivita();
+
+}
+
+void Akseli::kytkinLiike(qreal matka)
+{
+    liiku(matka);
+    if( toinenAkseli_)
+        toinenAkseli_->vaunuLiike( 0 - matka);
+    vaunu_->paivita();
+}
+
+void Akseli::vaunuLiike(qreal matka)
+{
+    liiku(matka);
+    if( kytkettyAkseli_)
+        kytkettyAkseli_->kytkinLiike( 0 - matka);
+    vaunu_->paivita();
 }

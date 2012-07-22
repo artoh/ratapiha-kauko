@@ -61,6 +61,7 @@ void Vaunu::luoVaunu(RataScene *skene)
     setZValue(100);
 }
 
+
 bool Vaunu::sijoitaKiskolle(RataKisko *kiskolle)
 {
     // Pitäisi sijoittaa edellisten perään

@@ -19,6 +19,7 @@
 
 #include "rataikkuna.h"
 #include "vaunukataloogi.h"
+#include "ajopoyta.h"
 
 #include <QDockWidget>
 
@@ -53,10 +54,16 @@ bool RataIkkuna::onkoSkenea()
 
 void RataIkkuna::teeDockit()
 {
+    Ajopoyta* ajopoyta = new Ajopoyta();
+    QDockWidget* ajopoytaDock = new QDockWidget( tr("Ajopöytä"),this);
+    ajopoytaDock->setWidget( ajopoyta);
+    addDockWidget( Qt::RightDockWidgetArea, ajopoytaDock);
+
     VaunuKataloogi* luettelo = new VaunuKataloogi();
     QDockWidget *vaunuLuetteloDock = new QDockWidget( tr("Lisää vaunu"), this);
     vaunuLuetteloDock->setWidget( luettelo);
     addDockWidget( Qt::RightDockWidgetArea, vaunuLuetteloDock);
+
 }
 
 RataScene* RataIkkuna::scene__ = 0;

@@ -25,6 +25,7 @@
 #include "naapuruus.h"
 
 class KulkutienMuodostaja;
+class Kulkutie;
 
 #include <QList>
 

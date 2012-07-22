@@ -35,7 +35,9 @@ HEADERS += \
     kulkutie.h \
     akseli.h \
     vaunu.h \
-    vaunukataloogi.h
+    vaunukataloogi.h \
+    veturi.h \
+    ajopoyta.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -69,7 +71,9 @@ SOURCES += \
     kulkutie.cpp \
     akseli.cpp \
     vaunu.cpp \
-    vaunukataloogi.cpp
+    vaunukataloogi.cpp \
+    veturi.cpp \
+    ajopoyta.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
@@ -117,5 +121,8 @@ OTHER_FILES += \
     pic/junakulkutieloppuunkursori.png \
     pic/esiopastin.png \
     pic/vaunut.svg
+
+FORMS += \
+    ajopoyta.ui
 
 

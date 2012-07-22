@@ -34,6 +34,7 @@ class RataScene : public QGraphicsScene
     Q_OBJECT
 public:
     explicit RataScene(QObject *parent = 0);
+    ~RataScene();
 
     QString ASLKasky(const QString& parametrit); // Asetinlaitteen käskyn suorittaminen
     RataRaide* haeRaide(QString raidetunnus) { return raideTunnukset_.value(raidetunnus,0); }
@@ -45,6 +46,9 @@ public:
     void poistaKulkutieListalta(const QString& maaliraide); /** Poistaa puretun listalta */
 
     Vaunu* lisaaVaunu(const QString& tyyppi);
+    Vaunu* haeVaunu(int vaununumero);
+
+    int nopeutusKerroin() const { return nopeutusKerroin_; }
 
 signals:
     
@@ -62,6 +66,7 @@ private:
     QHash<int, Vaunu*> vaunut_;
     QHash<int, RataKisko*> kiskot_;
     int seuraavaVaunuNumero_;
+    int nopeutusKerroin_;   /** Kuinka moninkertaiseksi simulaation kello on nopeutettu */
 
 };
 

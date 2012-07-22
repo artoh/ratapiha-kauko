@@ -42,7 +42,7 @@ void RaideTieto::paivita(int akseleita, const QString &junanumero, const QString
 
         if( kulkutietila[2]==QChar('-'))
             kulkutietila_ = Valmis;
-        else if( kulkutietila[3]==QChar('+'))
+        else if( kulkutietila[2]==QChar('+'))
             kulkutietila_ = Varattu;
         else
             kulkutietila_ = Virhetila;

@@ -114,7 +114,9 @@ void KulkuTie::tarkista()
             puraKulkutie();
         else
         {
-            if( varattujaRaiteita() && tila_ != RataRaide::Virhetila)
+            if( tila() == RataRaide::Virhetila)
+                 {;}   // Virhetilaa ei muuteta!!!
+            else if( varattujaRaiteita() )
                 tila_ = RataRaide::Varattu;
             else
                 tila_ = RataRaide::Valmis;

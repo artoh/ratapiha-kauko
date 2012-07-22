@@ -24,6 +24,7 @@
 #include "kulkutienmuodostaja.h"
 #include "kulkutienraide.h"
 #include "vaunu.h"
+#include "veturi.h"
 
 #include <QSqlQuery>
 #include <QVariant>
@@ -33,7 +34,8 @@
 #include <cmath>
 
 RataScene::RataScene(QObject *parent) :
-    QGraphicsScene(parent), seuraavaVaunuNumero_(1)
+    QGraphicsScene(parent), seuraavaVaunuNumero_(1),
+    nopeutusKerroin_(5)
 {
     lataaRata();
     lataaVaunut();
@@ -50,6 +52,15 @@ RataScene::RataScene(QObject *parent) :
     QTimer* valkkytimer = new QTimer(this);
     connect( valkkytimer, SIGNAL(timeout()), this, SLOT(valkytys()));
     valkkytimer->start(500);
+}
+
+RataScene::~RataScene()
+{
+    // Päivittää vasta tässä vaiheessa vaunut tietokantaan, jottei raksuta koko ajan ;)
+    foreach(Vaunu* vaunu, vaunut_)
+        vaunu->paivita();
+
+    qDebug() << "Skene pois...";
 }
 
 
@@ -194,7 +205,11 @@ void RataScene::lataaVaunut()
         if( vaunuid >= seuraavaVaunuNumero_)
             seuraavaVaunuNumero_ = vaunuid + 1;
 
-        Vaunu* vaunu = new Vaunu(vaunutyyppi, vaunuid, kiskot_.value(etukisko,0), etusijainti, etusuunta, kiskot_.value(takakisko,0), takasijainti, takasuunta, this);
+        Vaunu* vaunu;
+        if( vaunutyyppi.startsWith('D') || vaunutyyppi.startsWith('S'))
+            vaunu = new Veturi(vaunutyyppi, vaunuid, kiskot_.value(etukisko,0), etusijainti, etusuunta, kiskot_.value(takakisko,0), takasijainti, takasuunta, this);
+        else
+            vaunu = new Vaunu(vaunutyyppi, vaunuid, kiskot_.value(etukisko,0), etusijainti, etusuunta, kiskot_.value(takakisko,0), takasijainti, takasuunta, this);
         vaunut_.insert( vaunuid, vaunu);
     }
 
@@ -319,6 +334,22 @@ QString RataScene::ASLKasky(const QString &parametrit)
         puraKulkutie( ktraide->kulkutie()->maaliRaideTunnus() );
         return QString("OK");
     }
+    else if( paramLista.first()=="JN" && paramLista.count() > 1)
+    {
+        // JUNANUMERON ASETTAMINEN
+        RataRaide* raide = haeRaide(paramLista[1]);
+        if( !raide )
+            return QString("VIRHE Ei raidetta %1 ").arg(paramLista[1]);
+        if( !raide->akseleita() )
+            return QString("VIRHE Ei akseleita raiteella %1").arg(paramLista[1]);
+        if( paramLista.count() > 2)
+            raide->asetaJunanumero( paramLista[2]);
+        else
+            raide->asetaJunanumero( QString()); // Pelkkä JN Raide tyhjää numeron
+        return QString("OK");
+    }
+
+
 
     return QString("?");
 }
@@ -362,8 +393,22 @@ void RataScene::poistaKulkutieListalta(const QString &maaliraide)
 
 Vaunu* RataScene::lisaaVaunu(const QString &tyyppi)
 {
-    Vaunu* uusi = new Vaunu(tyyppi, seuraavaVaunuNumero_, this);
+    Vaunu* uusi;
+    if( tyyppi.startsWith("S") || tyyppi.startsWith('D'))
+    {
+        Veturi* uusiveturi = new Veturi(tyyppi, seuraavaVaunuNumero_, this);
+        uusiveturi->asetaAjoPoyta(1);
+        uusiveturi->asetaTavoiteNopeus(80);
+        uusi = uusiveturi;
+    }
+    else
+        uusi = new Vaunu(tyyppi, seuraavaVaunuNumero_, this);
     vaunut_.insert(seuraavaVaunuNumero_, uusi);
     seuraavaVaunuNumero_++;
     return uusi;
+}
+
+Vaunu *RataScene::haeVaunu(int vaununumero)
+{
+    return vaunut_.value(vaununumero,0);
 }

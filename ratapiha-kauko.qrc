@@ -55,5 +55,7 @@
         <file>junakuvat/Sm3.png</file>
         <file>junakuvat/Sm4.png</file>
         <file>junakuvat/Sr1.png</file>
+        <file>pic/stop.png</file>
+        <file>pic/fit-best.png</file>
     </qresource>
 </RCC>

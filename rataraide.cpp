@@ -77,10 +77,16 @@ void RataRaide::paivitaTietokantaan()
     else
         kulkutieto = QString("NULL");
 
+    QString junanro;
+    if( !junanumero().isEmpty())
+        junanro = QString("\"%1\"").arg(junanumero());
+    else
+        junanro = QString("NULL");
+
     kysely.exec( QString("update raide set tila_raide=\"%4\",tila_etela=\"%1\",tila_pohjoinen=\"%2\","
-                         "kulkutie=%5, akseleita=%6 where raideid=%3").arg(etelainen()->tilaTieto())
+                         "kulkutie=%5, akseleita=%6, junanro=%7 where raideid=%3").arg(etelainen()->tilaTieto())
                  .arg(pohjoinen()->tilaTieto()).arg(raideid_).arg(tilatieto())
-                 .arg(kulkutieto).arg(akseleita()));
+                 .arg(kulkutieto).arg(akseleita()).arg(junanro));
 }
 
 
@@ -132,23 +138,38 @@ KulkuTie *RataRaide::kulkutieRaiteelle()
     return RataIkkuna::rataSkene()->haeKulkutie(raidetunnusLiikennepaikalla());
 }
 
-void RataRaide::akseliSisaan(RaiteenPaa::Suunta suunta)
+void RataRaide::asetaJunanumero(const QString &junanumero)
+{
+    junanumero_ = junanumero;
+    paivita();
+}
+
+void RataRaide::akseliSisaan(RaiteenPaa::Suunta suunta, RataRaide *raiteelta)
 {
 
     akseleita_++;
     // Kulkutiehen liittyvät asiat...
     if( akseleita() == 1 && kulkutienRaide())
+    {
         kulkutienRaide()->raideVarautuu(suunta);
+        if( raiteelta )
+            junanumero_ = raiteelta->junanumero();
+    }
 
     paivita();
 }
 
-void RataRaide::akseliUlos(RaiteenPaa::Suunta suunta)
+void RataRaide::akseliUlos(RaiteenPaa::Suunta suunta, RataRaide * /* raiteelle */ )
 {
     akseleita_--;
     // Kulkutiehen liittyvät asiat. Ja negatiivisesta pitäisi mennä vikatilaan ;)
-    if( akseleita() == 0 && kulkutienRaide())
-        kulkutienRaide()->raideVapautuu(suunta);
+    if( akseleita() == 0 )
+    {
+        if( kulkutienRaide())
+            kulkutienRaide()->raideVapautuu(suunta);
+
+        junanumero_ = QString();
+    }
 
     paivita();
 }

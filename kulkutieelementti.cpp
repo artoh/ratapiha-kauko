@@ -27,7 +27,8 @@
 #include <QDebug>
 
 KulkutieElementti::KulkutieElementti(KulkutienMuodostaja *muodostaja, KulkutieElementti *vanhempi, Naapuruus *naapuri, RaiteenPaa* opastin, RataRaide* lahtoraide)
-    :  naapuruus_(naapuri), opastin_(opastin), lahtoraide_(lahtoraide), isi_(vanhempi), taso_(1)
+    :  naapuruus_(naapuri), opastin_(opastin), lahtoraide_(lahtoraide),
+     isi_(vanhempi), taso_(1)
 {
 
     // Taso
@@ -224,9 +225,11 @@ void KulkutieElementti::maalissaOllaan(KulkutienMuodostaja *muodostaja)
 
     // Junakulkutien pitää herättää suojastus
     if( muodostaja->kulkutienTyyppi() == RaideTieto::Junakulkutie && naapurinPaa()->opastin() == RaiteenPaa::SuojastusOpastin)
+    {
         if( naapurinPaa()->opaste() != RaiteenPaa::Aja)
             if( !voikoMuodostaaSuojastuksen(naapuruus_))
                 return; // Ei onnaa suojastusvaatimuksen takia!!!
+    }
 
     // Jos ne täyttyvät, ilmoitetaan lyhyimmäksi
 
@@ -235,12 +238,12 @@ void KulkutieElementti::maalissaOllaan(KulkutienMuodostaja *muodostaja)
 
 bool KulkutieElementti::voikoMuodostaaSuojastuksen(Naapuruus *naapuri)
 {
-    // Suojastuksen voi muodostaa, jos suojaväli seuraavaan pääopastimeen asti on selvä ja vaihteeton
-
+    // Suojastuksen voi muodostaa, jos suojaväli seuraavaan pääopastimeen asti on selvä ja vaihteeton   
 
     QList<Naapuruus*> naapurit = naapuri->naapuriRaide()->naapurit();
     foreach( Naapuruus* uusinaapuri, naapurit)
     {
+
         if( uusinaapuri->naapuriRaide() && uusinaapuri->omaSuunta() != naapuri->naapurinSuunta() )
         {
             // Tarkastetaan kelpaako raide

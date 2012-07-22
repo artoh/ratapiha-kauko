@@ -63,9 +63,11 @@ public:
     KulkuTie* kulkutieRaiteelle();  // Kulkutie, joka päättyy tähän raiteeseen
     KulkutienRaide* kulkutienRaide() { return kulkutienraide_; } // Tähän liittyvä kt-raide
 
+    void asetaJunanumero(const QString& junanumero);  /** Asettaa raiteen junanumeron */
+
     // Näitä kutsutaan akselinlaskennalla, kun raide varautuu tai vapautuu
-    void akseliSisaan(RaiteenPaa::Suunta suunta);
-    void akseliUlos(RaiteenPaa::Suunta suunta);
+    void akseliSisaan(RaiteenPaa::Suunta suunta, RataRaide* raiteelta = 0);
+    void akseliUlos(RaiteenPaa::Suunta suunta, RataRaide* raiteelle = 0);
 
 
 protected:

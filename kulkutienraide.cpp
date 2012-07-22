@@ -25,6 +25,8 @@
 #include "rataikkuna.h"
 
 
+#include <QDebug>
+
 KulkutienRaide::KulkutienRaide(RataRaide *raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide, KulkuTie *kulkutie)
     : raide_(raide), suunta_(suunta), lahtoOpastinTunnus_(lahtoOpastin),
       moneskoRaide_(moneskoraide), kulkutie_(kulkutie)
@@ -156,7 +158,11 @@ void KulkutienRaide::raideVarautuu(RaiteenPaa::Suunta suunta)
 void KulkutienRaide::raideVapautuu(RaiteenPaa::Suunta suunta)
 {
     if( kulkutie()->kulkutienTyyppi() == RataRaide::Linjasuojastus)
+    {
+        // Ajon salliva opaste
+        lahtoOpastin()->asetaOpaste(RaiteenPaa::Aja);
         kulkutie()->tarkista();
+    }
     else if( kulkutie()->tila() == RataRaide::Varattu)
     {
         if( suunta == suunta_ && kulkutie()->ekaRaide() == this)
