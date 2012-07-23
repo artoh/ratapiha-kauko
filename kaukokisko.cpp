@@ -246,9 +246,9 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     else if( raidetieto()->etelainen()->vaihde()==RaiteenPaa::Aukiajettu ||
              raidetieto()->pohjoinen()->vaihde()==RaiteenPaa::Aukiajettu )
     {
-        // Vaihde aukiajettu!!!
+        // Vaihde aukiajettu!!! Siitä tulee välkytys!
         if( !skene_->valkytys() )
-            viivavari = Qt::lightGray;
+            viivavari = Qt::gray;
         else if( raidetieto()->akseleita())
             viivavari = Qt::red;
         else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Junakulkutie ||
@@ -256,11 +256,14 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
             viivavari = Qt::green;
         else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Vaihtokulkutie)
             viivavari = Qt::yellow;
+        else if( !raidetieto()->sahkoistetty())
+            viivavari = Qt::blue;
         else
             viivavari = Qt::white;
 
         alku = 0.0; loppu=pituus();
     }
+    // Tavalliset raidevärit
     else if( raidetieto()->akseleita() && !sivuhaara)
         viivavari = Qt::red;
     else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Vaihtokulkutie && !sivuhaara)
@@ -278,6 +281,16 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     painter->setPen( QPen(QBrush(viivavari),2.0, viivatyyppi, Qt::FlatCap, Qt::MiterJoin));
     painter->drawLine(alku, 0.0, loppu, 0.0);
 
+    // Raidepuskurit
+    if( !raidetieto()->sahkoistetty())
+        painter->setPen( QPen(QBrush(Qt::blue),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    else
+        painter->setPen( QPen(QBrush(Qt::white),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+
+    if( etelaTyyppi() == Paa && raidetieto()->etelainen()->paanTyyppi() == RaiteenPaa::RaidePuskuri)
+        painter->drawLine(QLineF(0.0, -4.0, 0.0, 4.0));
+    if( pohjoisTyyppi() == Paa && raidetieto()->pohjoinen()->paanTyyppi() == RaiteenPaa::RaidePuskuri)
+        painter->drawLine(QLineF(pituus(), -4.0, pituus(), 4.0));
 
     if( naytaRaideNumero() ) // Näytellään raiteen numeroa
     {
@@ -300,6 +313,7 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         painter->drawText(QRectF( pituus() / 2 - 14.0 , -4.0 , 28.0 , 8.0 ),  raidetieto()->junanumero() , QTextOption(Qt::AlignCenter));
 
     }
+
 
     // Laiturin piirtäminenn
     // Piirretään laituri.

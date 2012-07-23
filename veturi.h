@@ -49,7 +49,7 @@ public:
 
     qreal kiihtyvyys() const { return 1.0; }
     qreal hidastuvuus() const { return 1.0; }
-    int enimmaisNopeus() const { return 80; }
+    int enimmaisNopeus() const { return 120; }
 
     virtual AjoPoydat ajopoydat() const { return MolemmatAjopoydat; }
 

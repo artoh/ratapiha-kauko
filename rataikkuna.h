@@ -23,6 +23,7 @@
 
 #include "ratascene.h"
 #include "rataview.h"
+#include "ratapihaikkuna.h"
 
 #include <QMainWindow>
 
@@ -31,10 +32,10 @@ class RataIkkuna : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit RataIkkuna(QWidget *parent = 0);
+    explicit RataIkkuna(RatapihaIkkuna *parent = 0);
+    ~RataIkkuna();
 
     static RataScene* rataSkene();
-    static bool onkoSkenea();
     
 signals:
     
@@ -45,7 +46,8 @@ private:
     void teeDockit();
 
     RataView* view_;
-    static RataScene* scene__;   // Vain yksi scene!!!
+
+    RataScene* skene_;
     
 };
 

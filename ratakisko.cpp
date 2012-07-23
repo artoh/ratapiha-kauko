@@ -164,7 +164,15 @@ void RataKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     else
         painter->setPen( QPen(QBrush(Qt::darkBlue),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
 
+    if( etelaTyyppi() == Paa && raide()->etelainen()->paanTyyppi() == RaiteenPaa::RaidePuskuri)
+        painter->drawLine(QLineF(0.0, -4.0, 0.0, 4.0));
+    if( pohjoisTyyppi() == Paa && raide()->pohjoinen()->paanTyyppi() == RaiteenPaa::RaidePuskuri)
+        painter->drawLine(QLineF(pituus(), -4.0, pituus(), 4.0));
+
+
     painter->drawLine(alku, 0.0, loppu, 0.0);
+
+
 
 }
 

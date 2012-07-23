@@ -222,6 +222,11 @@ void RataScene::valkytys()
     invalidate( sceneRect());
 }
 
+void RataScene::asetaNopeutus(int nopeutuskerroin)
+{
+    nopeutusKerroin_ = nopeutuskerroin;
+}
+
 
 QString RataScene::ASLKasky(const QString &parametrit)
 {
@@ -422,4 +427,12 @@ Vaunu* RataScene::lisaaVaunu(const QString &tyyppi)
 Vaunu *RataScene::haeVaunu(int vaununumero)
 {
     return vaunut_.value(vaununumero,0);
+}
+
+void RataScene::tallennaVaunut()
+{
+    foreach( Vaunu* vaunu, vaunut_)
+    {
+        vaunu->paivita();
+    }
 }

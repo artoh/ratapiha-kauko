@@ -38,20 +38,29 @@ EditoriKisko::EditoriKisko(EditoriScene *skene, const QLineF &viiva, int kiskoid
         aktiivinenKulkutie_ = RaideTieto::Junakulkutie;
 
     skene->addItem(this);
-    paidenTarkistusToimet();
 
-    // Jos ollaan vaihteessa, pyydetään numerotiedot naapurilta
-    if( etelaTyyppi() > 9 || pohjoisTyyppi() > 9)
+    // Kokeellinen: Jos haetaan kannasta eli on raidetunnus, niin luetaan
+    // kiskotiedot vain suoraan kannasta
+
+    if(!raide)
     {
-        QList<QGraphicsItem*> tormaajat = collidingItems();
-        foreach( QGraphicsItem* item, tormaajat)
+
+        paidenTarkistusToimet();
+
+        // Jos ollaan vaihteessa, pyydetään numerotiedot naapurilta
+        if( etelaTyyppi() > 9 || pohjoisTyyppi() > 9)
         {
-            if( EditoriKisko* ekisko = qgraphicsitem_cast<EditoriKisko*>(item))
+            QList<QGraphicsItem*> tormaajat = collidingItems();
+            foreach( QGraphicsItem* item, tormaajat)
             {
-                ekisko->levitaRaiteenAsetus();
+                if( EditoriKisko* ekisko = qgraphicsitem_cast<EditoriKisko*>(item))
+                {
+                    ekisko->levitaRaiteenAsetus();
+                }
             }
         }
     }
+
     if( raide_)
         raidePtr_ = skene->haeRaide(liikennepaikka,raide);
 

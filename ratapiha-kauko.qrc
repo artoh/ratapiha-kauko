@@ -57,5 +57,10 @@
         <file>junakuvat/Sr1.png</file>
         <file>pic/stop.png</file>
         <file>pic/fit-best.png</file>
+        <file>pic/tausta.png</file>
+        <file>pic/ktas_harmaa.png</file>
+        <file>pic/ktas_keltainen.png</file>
+        <file>pic/ktas_punainen.png</file>
+        <file>pic/ktas_vihrea.png</file>
     </qresource>
 </RCC>

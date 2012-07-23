@@ -50,10 +50,13 @@ public:
 
     int nopeutusKerroin() const { return nopeutusKerroin_; }
 
+    void tallennaVaunut();
+
 signals:
     
 public slots:
     void valkytys();
+    void asetaNopeutus(int nopeutuskerroin);
 
 private:
     void lataaRata();

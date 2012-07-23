@@ -21,15 +21,17 @@
 #include "vaunukataloogi.h"
 #include "ajopoyta.h"
 
+#include "ratapihaikkuna.h"
+
 #include <QDockWidget>
 
-RataIkkuna::RataIkkuna(QWidget *parent) :
-    QMainWindow(parent)
+RataIkkuna::RataIkkuna(RatapihaIkkuna *parent) :
+    QMainWindow(parent),
+    skene_( parent->skene())
 {
-    // Luodaan ensin skene, ellei sellaista ole
-    rataSkene();
+    setAttribute(Qt::WA_DeleteOnClose);
 
-    view_ = new RataView(scene__);
+    view_ = new RataView(skene_);
     view_->scale(0.5, 0.5);
     setCentralWidget(view_);
 
@@ -38,18 +40,19 @@ RataIkkuna::RataIkkuna(QWidget *parent) :
 
 }
 
+RataIkkuna::~RataIkkuna()
+{
+
+}
+
 
 RataScene* RataIkkuna::rataSkene()
 {
-    if( !scene__)
-        scene__ = new RataScene;
-    return scene__;
+    // Skenen omistus on siirretty RatapihaIkkunalle
+    // yhteensopivuuden takia löytyy myös täältä
+    return RatapihaIkkuna::getInstance()->skene();
 }
 
-bool RataIkkuna::onkoSkenea()
-{
-    return( scene__ != 0);
-}
 
 
 void RataIkkuna::teeDockit()
@@ -66,4 +69,3 @@ void RataIkkuna::teeDockit()
 
 }
 
-RataScene* RataIkkuna::scene__ = 0;

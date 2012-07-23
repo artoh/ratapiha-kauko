@@ -25,7 +25,7 @@ EditoriIkkuna::EditoriIkkuna(int nakyma, QWidget *parent) :
 {
     setWindowTitle("Editori");
     luoAktiot();
-    luoTyoPalkki();
+    luoTyoPalkki(nakyma == 0);
 
     skene_ = new EditoriScene;
     view_ = new EditoriView( skene_, this);
@@ -40,7 +40,14 @@ EditoriIkkuna::EditoriIkkuna(int nakyma, QWidget *parent) :
 
     connect( naytaNopeusRajoitusAktio_, SIGNAL(toggled(bool)), skene_, SLOT(naytaNopeusRajoitus(bool)));
 
-    nakymaValinta_->setCurrentIndex( nakymaValinta_->findData(nakyma) );
+    if( nakyma < 0)
+        nakyma = nakymaValinta_->itemData(0).toInt();
+
+    if( nakyma )    // Rataa muokattaessa ei vaihtolaatikkoa ollenkaan...
+        nakymaValinta_->setCurrentIndex( nakymaValinta_->findData(nakyma) );
+    else
+        nakymaValinta_->setVisible(false);
+
     skene_->haeNakyma(nakyma);
     view_->valitseTila(EditoriView::Osoitin);
     kiskoValittu(0);
@@ -49,13 +56,6 @@ EditoriIkkuna::EditoriIkkuna(int nakyma, QWidget *parent) :
 
 void EditoriIkkuna::nakymanVaihto(int valintaind)
 {
-    if( nakymaValinta_->itemData( valintaind).toInt() == 0 && RataIkkuna::onkoSkenea())
-    {
-        // Skene pyörimässä!! ei voi muokata rataa!
-        QMessageBox::critical(this, tr("Ratapiha"),tr("Rataa ei voi muokata, koska junarata on käytössä. Sulje ohjelma ja yritä uudelleen."));
-        return;
-    }
-
 
     view_->poistaValinta();
     if( nakymaValinta_->itemData(valintaind) == -1)
@@ -73,9 +73,6 @@ void EditoriIkkuna::nakymanVaihto(int valintaind)
     {
         int nakymanId = nakymaValinta_->itemData( valintaind).toInt();
         skene_->haeNakyma( nakymanId );
-
-        rataKiskonToolBar_->setVisible( nakymanId == 0);
-        nakymaKiskonToolBar_->setVisible( nakymanId != 0);
     }
     kiskoValittu(0);
 
@@ -264,7 +261,6 @@ void EditoriIkkuna::haeNakymaLista()
 {
     // Luodaan näkymän valinta
     nakymaValinta_->clear();
-    nakymaValinta_->addItem("RATA",0);
 
     QSqlQuery nakymaKysely("select nakyma,nakymanimi from nakyma");
     while( nakymaKysely.next())
@@ -524,13 +520,16 @@ void EditoriIkkuna::raideNumeroaMuutettu()
 
 
 
-void EditoriIkkuna::luoTyoPalkki()
+void EditoriIkkuna::luoTyoPalkki(bool ratanakyma)
 {
-    hallintaToolBar_ = addToolBar( tr("Hallinta"));
     nakymaValinta_ = new QComboBox;
-    haeNakymaLista();
-    connect( nakymaValinta_, SIGNAL(activated(int)), this, SLOT(nakymanVaihto(int)));
-    hallintaToolBar_->addWidget(nakymaValinta_);
+    if( !ratanakyma )
+    {
+        hallintaToolBar_ = addToolBar( tr("Hallinta"));
+        haeNakymaLista();
+        connect( nakymaValinta_, SIGNAL(activated(int)), this, SLOT(nakymanVaihto(int)));
+        hallintaToolBar_->addWidget(nakymaValinta_);
+    }
 
     muokkausToolBar_ = addToolBar( tr("Muokkaus"));
     muokkausToolBar_->addAction(osoitinAktio_);
@@ -553,43 +552,46 @@ void EditoriIkkuna::luoTyoPalkki()
     connect( raideLineEdit_, SIGNAL(editingFinished()), this, SLOT(raideNumeroaMuutettu()));
     tunnisteToolBar_->addWidget(raideLineEdit_);
 
-    rataKiskonToolBar_ = addToolBar( tr("Muokkaa rataa"));
-    rataKiskonToolBar_->setVisible(false);
-    rataKiskonToolBar_->addAction(spEtelaanAktio_);
-    rataKiskonToolBar_->addAction(poEtelaanAktio_);
-    rataKiskonToolBar_->addAction(roEtelaanAktio_);
-    rataKiskonToolBar_->addAction(soEtelaanAktio_);
-    rataKiskonToolBar_->addSeparator();
+    if( ratanakyma )
+    {
+        rataKiskonToolBar_ = addToolBar( tr("Muokkaa rataa"));
+        rataKiskonToolBar_->addAction(spEtelaanAktio_);
+        rataKiskonToolBar_->addAction(poEtelaanAktio_);
+        rataKiskonToolBar_->addAction(roEtelaanAktio_);
+        rataKiskonToolBar_->addAction(soEtelaanAktio_);
+        rataKiskonToolBar_->addSeparator();
 
-    rataKiskonToolBar_->addAction(eoEtelaanAktio_);
-    rataKiskonToolBar_->addSeparator();
-    rataKiskonToolBar_->addAction(laituriVasenAktio_);
-    rataKiskonToolBar_->addAction(laituriOikeaAktio_);
-    rataKiskonToolBar_->addAction(siltaAktio_);
-    rataKiskonToolBar_->addAction(sahkoistettyAktio_);
-    rataKiskonToolBar_->addAction(valvomatonAktio_);
-    rataKiskonToolBar_->addAction(naytaNopeusRajoitusAktio_);
-    teeSnCombo();
-    rataKiskonToolBar_->addWidget(snCombo_);
-    rataKiskonToolBar_->addAction(raideRisteysAktio_);
-    rataKiskonToolBar_->addAction(ensisijainenKulkutieAktio_);
-    rataKiskonToolBar_->addAction(toissijainenKulkutieAktio_);
-    rataKiskonToolBar_->addAction(vainVaihtotieAktio_);
-    rataKiskonToolBar_->addSeparator();
-    rataKiskonToolBar_->addAction(eoPohjoiseenAktio_);
-    rataKiskonToolBar_->addSeparator();
-    rataKiskonToolBar_->addAction(soPohjoiseenAktio_);
-    rataKiskonToolBar_->addAction(roPohjoiseenAktio_);
-    rataKiskonToolBar_->addAction(poPohjoiseenAktio_);
-    rataKiskonToolBar_->addAction(spPohjoiseenAktio_);
-
-
-    nakymaKiskonToolBar_ = addToolBar( tr("Muokkaa näkymän kiskoa"));
-    nakymaKiskonToolBar_->addAction(laituriVasenAktio_);
-    nakymaKiskonToolBar_->addAction(laituriOikeaAktio_);
-    nakymaKiskonToolBar_->addAction(siltaAktio_);
-    nakymaKiskonToolBar_->addAction(naytaJunanumerotAktio_);
-    nakymaKiskonToolBar_->addAction(naytaaRaidenumerotAktio_);
+        rataKiskonToolBar_->addAction(eoEtelaanAktio_);
+        rataKiskonToolBar_->addSeparator();
+        rataKiskonToolBar_->addAction(laituriVasenAktio_);
+        rataKiskonToolBar_->addAction(laituriOikeaAktio_);
+        rataKiskonToolBar_->addAction(siltaAktio_);
+        rataKiskonToolBar_->addAction(sahkoistettyAktio_);
+        rataKiskonToolBar_->addAction(valvomatonAktio_);
+        rataKiskonToolBar_->addAction(naytaNopeusRajoitusAktio_);
+        teeSnCombo();
+        rataKiskonToolBar_->addWidget(snCombo_);
+        rataKiskonToolBar_->addAction(raideRisteysAktio_);
+        rataKiskonToolBar_->addAction(ensisijainenKulkutieAktio_);
+        rataKiskonToolBar_->addAction(toissijainenKulkutieAktio_);
+        rataKiskonToolBar_->addAction(vainVaihtotieAktio_);
+        rataKiskonToolBar_->addSeparator();
+        rataKiskonToolBar_->addAction(eoPohjoiseenAktio_);
+        rataKiskonToolBar_->addSeparator();
+        rataKiskonToolBar_->addAction(soPohjoiseenAktio_);
+        rataKiskonToolBar_->addAction(roPohjoiseenAktio_);
+        rataKiskonToolBar_->addAction(poPohjoiseenAktio_);
+        rataKiskonToolBar_->addAction(spPohjoiseenAktio_);
+    }
+    else
+    {
+        nakymaKiskonToolBar_ = addToolBar( tr("Muokkaa näkymän kiskoa"));
+        nakymaKiskonToolBar_->addAction(laituriVasenAktio_);
+        nakymaKiskonToolBar_->addAction(laituriOikeaAktio_);
+        nakymaKiskonToolBar_->addAction(siltaAktio_);
+        nakymaKiskonToolBar_->addAction(naytaJunanumerotAktio_);
+        nakymaKiskonToolBar_->addAction(naytaaRaidenumerotAktio_);
+    }
 
 
 }

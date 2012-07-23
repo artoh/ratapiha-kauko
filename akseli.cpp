@@ -229,7 +229,7 @@ void Akseli::moottoriLiike(qreal matka)
         kytkettyAkseli_->kytkinLiike( 0 - matka);
     if( toinenAkseli_)
         toinenAkseli_->vaunuLiike( 0 - matka);
-    vaunu_->paivita();
+    vaunu_->laskeSijainti();
 
 }
 
@@ -238,7 +238,7 @@ void Akseli::kytkinLiike(qreal matka)
     liiku(matka);
     if( toinenAkseli_)
         toinenAkseli_->vaunuLiike( 0 - matka);
-    vaunu_->paivita();
+    vaunu_->laskeSijainti();
 }
 
 void Akseli::vaunuLiike(qreal matka)
@@ -246,5 +246,5 @@ void Akseli::vaunuLiike(qreal matka)
     liiku(matka);
     if( kytkettyAkseli_)
         kytkettyAkseli_->kytkinLiike( 0 - matka);
-    vaunu_->paivita();
+    vaunu_->laskeSijainti();
 }

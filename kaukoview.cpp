@@ -10,6 +10,8 @@
 #include "rataikkuna.h"
 #include "ratascene.h"
 
+#include "ratapihaikkuna.h"
+
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <cmath>
@@ -205,6 +207,5 @@ QString KaukoView::raiteenPaaTunnusPisteessa(QPoint piste)
 
 void KaukoView::komento(const QString &komento)
 {
-    QString vastaus = RataIkkuna::rataSkene()->ASLKasky(komento);
-    emit vastausKomentoon( QString("[%1] %2").arg(komento).arg(vastaus));
+    RatapihaIkkuna::getInstance()->aslKasky(komento);
 }

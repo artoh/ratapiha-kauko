@@ -1,5 +1,5 @@
 
-QT  += core qui sql svg
+QT  += core qui sql svg network
 
 TARGET = ratapiha-kauko
 TEMPLATE = app
@@ -37,7 +37,8 @@ HEADERS += \
     vaunu.h \
     vaunukataloogi.h \
     veturi.h \
-    ajopoyta.h
+    ajopoyta.h \
+    ratapihaikkuna.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -73,7 +74,8 @@ SOURCES += \
     vaunu.cpp \
     vaunukataloogi.cpp \
     veturi.cpp \
-    ajopoyta.cpp
+    ajopoyta.cpp \
+    ratapihaikkuna.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
@@ -123,6 +125,7 @@ OTHER_FILES += \
     pic/vaunut.svg
 
 FORMS += \
-    ajopoyta.ui
+    ajopoyta.ui \
+    ratapihaikkuna.ui
 
 

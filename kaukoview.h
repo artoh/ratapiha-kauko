@@ -31,7 +31,6 @@ public:
     int tila() { return tila_; }
 
 signals:
-    void vastausKomentoon(const QString& vastaus);
     void tilaVaihtunut(int tila);
     
 public slots:

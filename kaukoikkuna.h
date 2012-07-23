@@ -17,17 +17,17 @@
 #include <QAction>
 #include <QLineEdit>
 
+class RatapihaIkkuna;
 
 class KaukoIkkuna : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit KaukoIkkuna(QWidget *parent = 0);
+    explicit KaukoIkkuna(RatapihaIkkuna *parent = 0);
     
 signals:
     
 public slots:
-    void rataIkkuna();
     void uusiIkkuna();
     void nakymanVaihto(int valintaind);
     void editori();
@@ -46,7 +46,6 @@ protected:
     QToolBar* asetinlaiteToolBar_;
     QComboBox* nakymaValinta_;
 
-    QAction* rataIkkunaAktio_;
     QAction* uusiIkkunaAktio_;
     QAction* editoriAktio_;
 
@@ -61,6 +60,8 @@ protected:
 
     KaukoScene* skene_;
     KaukoView* view_;
+
+    RatapihaIkkuna* rpIkkuna_;
 
 };
 

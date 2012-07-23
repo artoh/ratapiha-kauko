@@ -55,7 +55,7 @@ public slots:
 
 protected:
     void luoAktiot();
-    void luoTyoPalkki();
+    void luoTyoPalkki(bool ratanakyma=false);
     void haeNakymaLista();
     void haeLiikennepaikkaLista();
     void teeSnCombo();

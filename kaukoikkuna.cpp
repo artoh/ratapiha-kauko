@@ -9,14 +9,16 @@
 
 #include "editoriikkuna.h"
 #include "rataikkuna.h"
+#include "ratapihaikkuna.h"
 
 #include <QSqlQuery>
 #include <QIcon>
 #include <QDebug>
 #include <QStatusBar>
 
-KaukoIkkuna::KaukoIkkuna(QWidget *parent) :
-    QMainWindow(parent)
+KaukoIkkuna::KaukoIkkuna(RatapihaIkkuna *parent) :
+    QMainWindow(parent),
+    rpIkkuna_(parent)
 {
     setWindowTitle("Kaukokäyttö");
 
@@ -32,16 +34,10 @@ KaukoIkkuna::KaukoIkkuna(QWidget *parent) :
     setCentralWidget(view_);
 
     connect( view_, SIGNAL(vastausKomentoon(QString)), statusBar(), SLOT( showMessage(QString))  );
+    connect( rpIkkuna_, SIGNAL(aslVastaus(QString)), statusBar(), SLOT(showMessage(QString)));
     connect( view_, SIGNAL(tilaVaihtunut(int)), this, SLOT(paivitaNapit(int)));
 
     nakymanVaihto(0);
-}
-
-
-void KaukoIkkuna::rataIkkuna()
-{
-    RataIkkuna* rataikkuna = new RataIkkuna;
-    rataikkuna->show();
 }
 
 void KaukoIkkuna::uusiIkkuna()
@@ -64,7 +60,7 @@ void KaukoIkkuna::editori()
 
 void KaukoIkkuna::kasky()
 {
-    qDebug() << RataIkkuna::rataSkene()->ASLKasky( kaskyLine_->text());
+    rpIkkuna_->aslKasky( kaskyLine_->text() );
     kaskyLine_->clear();
 }
 
@@ -92,9 +88,6 @@ void KaukoIkkuna::paivitaNapit(int tila)
 
 void KaukoIkkuna::luoAktiot()
 {
-    rataIkkunaAktio_ = new QAction( QIcon(":/r/pic/varojunaa.png"),tr("Rata"), this);
-    rataIkkunaAktio_->setToolTip("Avaa rataikkunan");
-    connect( rataIkkunaAktio_, SIGNAL(triggered()), this, SLOT(rataIkkuna()));
 
     uusiIkkunaAktio_ = new QAction( QIcon(":/r/pic/ikkuna-uusi.png"), tr("Uusi ikkuna"), this );
     uusiIkkunaAktio_->setToolTip(tr("Avaa uuden ikkunan"));
@@ -151,7 +144,6 @@ void KaukoIkkuna::luoTyoPalkki()
 {
     hallintaToolBar_ = addToolBar( tr("Hallinta"));
 
-    hallintaToolBar_->addAction( rataIkkunaAktio_);
     hallintaToolBar_->addAction(uusiIkkunaAktio_);
 
     // Luodaan näkymän valinta
