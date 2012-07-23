@@ -44,13 +44,22 @@ RatapihaIkkuna::RatapihaIkkuna(QWidget *parent) :
 
     setAttribute( Qt::WA_DeleteOnClose);
 
+    connect( ui->yhdistaNappi, SIGNAL(clicked()), this, SLOT(yhdistaPalvelimeen()));
+    connect( ui->katkaiseNappi, SIGNAL(clicked()), this, SLOT(katkaiseYhteys()));
+
     connect( ui->kaynnistaPalvelinNappi, SIGNAL(clicked()), this, SLOT(kaynnistaPalvelin()));
     connect( ui->rataButton, SIGNAL(clicked()), this, SLOT(rataIkkuna()));
     connect( ui->ohjausKaukoButton, SIGNAL(clicked()), this, SLOT(ohjausIkkuna()));
     connect( ui->ohjausPaikButton, SIGNAL(clicked()), this, SLOT(ohjausIkkuna()));
+    connect( ui->pysaytaPalvelinNappi, SIGNAL(clicked()), this, SLOT(pysaytaPalvelin()));
 
     connect( ui->muokkaaNakymiaNappi, SIGNAL(clicked()), this, SLOT(muokkaaNakymaa()));
     connect( ui->muokkaaRataaNappi, SIGNAL(clicked()), this, SLOT(muokkaaRataa()));
+
+    connect( &tcpsokka_, SIGNAL(connected()), this, SLOT(yhdistettyPalvelimeen()));
+    connect( &tcpsokka_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(verkkovirhe()));
+    connect( &tcpsokka_, SIGNAL(disconnected()), this, SLOT(palvelinSulkiYhteyden()));
+    connect( &tcpsokka_, SIGNAL(readyRead()), this, SLOT(vastausPalvelimelta()));
 
     QSettings settings;
     restoreGeometry( settings.value("geometry").toByteArray());
@@ -63,7 +72,7 @@ RatapihaIkkuna::RatapihaIkkuna(QWidget *parent) :
 
 RatapihaIkkuna::~RatapihaIkkuna()
 {
-    qApp->closeAllWindows();
+    qApp->closeAllWindows();    // Suljetaan KAIKKI ohjelman ikkunat
 
     QSettings settings;
     settings.setValue("geometry",saveGeometry());
@@ -100,12 +109,75 @@ bool RatapihaIkkuna::aslKasky(const QString &kasky)
 {
     if( tila() == PaikallinenPalvelin )
     {
+        // Käsky ohjataan paikalliselle palvelimelle...
         QString vastaus = skene()->ASLKasky(kasky);
-        emit aslVastaus(vastaus);
+        // Ja vastaus komentonäkymiin
+        emit aslVastaus( QString("[%1] %2").arg(kasky).arg(vastaus) );
         return true;
     }
+
+    // Ellei löydy yhteyttä, tulee virhe!
+    emit aslVastaus( tr("[%1] JÄRJESTELMÄVIRHE - EI YHTEYTTÄ ").arg(kasky));
     return false;
 }
+
+void RatapihaIkkuna::yhdistaPalvelimeen()
+{
+    if( yhdistaTietokantaan())
+    {
+        tcpsokka_.connectToHost( ui->palvelinEdit->text(), ui->porttiSpin->value() );
+        ui->varivalo->setPixmap( QPixmap(":/r/pic/ktas_keltainen.png") );
+        ui->tilaLabel->setText( tr("Yhdistetään palvelimeen..."));
+        yhteystila_ = LukuYhteys;
+        nappienHimmennykset();
+    }
+
+}
+
+void RatapihaIkkuna::yhdistettyPalvelimeen()
+{
+    ui->varivalo->setPixmap( QPixmap(":/r/pic/ktas_vihreä.png") );
+    ui->tilaLabel->setText( tr("Yhdistetty palvelimeen."));
+    yhteystila_ = KaukoYhteys;
+    emit yhdistetty(true);
+    nappienHimmennykset();
+}
+
+void RatapihaIkkuna::verkkovirhe()
+{
+    ui->tilaLabel->setText(tr("Virhe verkkoyhteydessä %1").arg( tcpsokka_.errorString() ));
+
+}
+
+void RatapihaIkkuna::palvelinSulkiYhteyden()
+{
+    ui->varivalo->setPixmap( QPixmap(":/r/pic/ktas_punainen.png") );
+    ui->tilaLabel->setText( tr("Palvelin sulki yhteyden"));
+    tcpsokka_.close();
+    yhteystila_ = EiYhteytta;
+    emit yhdistetty(false);
+    nappienHimmennykset();
+}
+
+void RatapihaIkkuna::katkaiseYhteys()
+{
+    ui->varivalo->setPixmap( QPixmap(":/r/pic/ktas_punainen.png") );
+    ui->tilaLabel->setText( tr("Yhteys palvelimeen katkaistu"));
+    tcpsokka_.close();
+    yhteystila_ = EiYhteytta;
+    emit yhdistetty(false);
+    nappienHimmennykset();
+}
+
+void RatapihaIkkuna::vastausPalvelimelta()
+{
+    // Ottaa vastauksen palvelimelta ja välittää eteenpäin
+    // Ehkä joskus ohjauskomentojakin täältä tulisi
+
+    while( tcpsokka_.canReadLine())
+        emit aslVastaus( tcpsokka_.readLine(256) );
+}
+
 
 void RatapihaIkkuna::kaynnistaPalvelin()
 {
@@ -123,9 +195,34 @@ void RatapihaIkkuna::kaynnistaPalvelin()
         ui->varivalo->setPixmap( QPixmap(":/r/pic/ktas_vihrea.png") );
         ui->tilaLabel->setText( tr("Paikallinen palvelin"));
 
+        emit yhdistetty(true);
     }
 
 }
+
+void RatapihaIkkuna::pysaytaPalvelin()
+{
+    yhteystila_ = EiYhteytta;
+    emit yhdistetty(false);
+    // Ensin suljetaan paikalliset rataikkunat
+    // (kaukoikkunat eivät haittaa, vaikka eivät sitten saakaan yhteyttä)
+    foreach( QWidget *win, qApp->topLevelWidgets())
+    {
+        if( RataIkkuna* ikkuna = qobject_cast<RataIkkuna*>(win))
+            ikkuna->close();
+    }
+    // Sitten poistetaan skene
+    delete ratascene_;
+    ratascene_ = 0;
+
+    // Ja muutetaan tiedot
+    nappienHimmennykset();
+
+    ui->varivalo->setPixmap( QPixmap(":/r/pic/ktas_punainen.png") );
+    ui->tilaLabel->setText( tr("Paikallinen palvelin pysäytetty"));
+
+}
+
 
 void RatapihaIkkuna::ohjausIkkuna()
 {
@@ -149,6 +246,11 @@ void RatapihaIkkuna::muokkaaRataa()
 {
     // Näkymä 0 on rata
     muokkaaNakymaa(0);
+}
+
+bool RatapihaIkkuna::onkoYhteydessa()
+{
+    return( tila()==KaukoYhteys || tila()==PaikallinenPalvelin );
 }
 
 

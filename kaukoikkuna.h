@@ -15,6 +15,7 @@
 #include <QComboBox>
 #include <QToolBar>
 #include <QAction>
+#include <QActionGroup>
 #include <QLineEdit>
 
 class RatapihaIkkuna;
@@ -37,6 +38,8 @@ public slots:
     void vaihdaTila();
     void paivitaNapit(int tila);
 
+    void yhteysAsettimeen(bool onkoYhteytta);
+
 protected:
     void luoTyoPalkki();
     void luoAktiot();
@@ -48,6 +51,8 @@ protected:
 
     QAction* uusiIkkunaAktio_;
     QAction* editoriAktio_;
+
+    QActionGroup* aslAktiot_;
 
     QAction* kulkutieAktio_;
     QAction* vaihtoKulkutieAktio_;

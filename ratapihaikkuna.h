@@ -59,7 +59,15 @@ public:
 
 
 public slots:
+    void yhdistaPalvelimeen();
+    void yhdistettyPalvelimeen();   // tiedetään, että yhteys pelaa...
+    void verkkovirhe();             // että ei pelaa..
+    void palvelinSulkiYhteyden();
+    void katkaiseYhteys();
+    void vastausPalvelimelta();
+
     void kaynnistaPalvelin();
+    void pysaytaPalvelin();
 
     void ohjausIkkuna();
     void rataIkkuna();
@@ -67,10 +75,13 @@ public slots:
     void muokkaaNakymaa();
     void muokkaaRataa();
 
+    /** Onko yhteyttä asetinlaitteelle? */
+    bool onkoYhteydessa();
 
 signals:
     /* Asetinlaitteelle annettuun käskyyn tullut vastaus */
     void aslVastaus(const QString& kasky);
+    void yhdistetty(bool onkoyhteydessa);
 
 
 private:
