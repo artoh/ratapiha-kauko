@@ -20,6 +20,8 @@
 #ifndef RATAPIHAIKKUNA_H
 #define RATAPIHAIKKUNA_H
 
+#include "palvelin.h"
+
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QSqlDatabase>
@@ -57,6 +59,8 @@ public:
     /* Toteuttaa yksittäisen asetinlaitekäskyn */
     bool aslKasky(const QString& kasky);
 
+    /** Asiakkaita lisää tai vähemmän */
+    void asiakasMuutos(int muutos);
 
 public slots:
     void yhdistaPalvelimeen();
@@ -98,9 +102,12 @@ private:
 
     QTcpSocket tcpsokka_;
     QSqlDatabase tietokanta_;
+    Palvelin* palvelin_; // Tcp-palvelin
 
     YhteysTila yhteystila_;
     RataScene* ratascene_;
+
+    int asiakkaita_;
 
     static RatapihaIkkuna* instance__;
 };

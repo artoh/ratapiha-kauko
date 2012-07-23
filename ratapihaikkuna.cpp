@@ -35,8 +35,10 @@
 RatapihaIkkuna::RatapihaIkkuna(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::RatapihaIkkuna),
+    palvelin_(0),
     yhteystila_(EiYhteytta),
-    ratascene_(0)
+    ratascene_(0),
+    asiakkaita_(0)
 {
     ui->setupUi(this);
 
@@ -87,7 +89,11 @@ RatapihaIkkuna::~RatapihaIkkuna()
 
     if( ratascene_ )    // Tuhotaan skene
         delete ratascene_;
-
+    if( palvelin_)
+    {
+        palvelin_->close();
+        delete palvelin_;
+    }
 
 }
 
@@ -115,10 +121,24 @@ bool RatapihaIkkuna::aslKasky(const QString &kasky)
         emit aslVastaus( QString("[%1] %2").arg(kasky).arg(vastaus) );
         return true;
     }
+    else if( tila() == KaukoYhteys)
+    {
+        // Käsky ohjataan verkon yli
+        // ja vastaus tulee ajallaan
+        QString viesti = kasky + "\n";
+        tcpsokka_.write( viesti.toAscii() );
+        return true;
+    }
 
     // Ellei löydy yhteyttä, tulee virhe!
     emit aslVastaus( tr("[%1] JÄRJESTELMÄVIRHE - EI YHTEYTTÄ ").arg(kasky));
     return false;
+}
+
+void RatapihaIkkuna::asiakasMuutos(int muutos)
+{
+    asiakkaita_ += muutos;
+    ui->tilaLabel->setText( tr("Palvelimella %1 asiakasta").arg(asiakkaita_));
 }
 
 void RatapihaIkkuna::yhdistaPalvelimeen()
@@ -136,7 +156,7 @@ void RatapihaIkkuna::yhdistaPalvelimeen()
 
 void RatapihaIkkuna::yhdistettyPalvelimeen()
 {
-    ui->varivalo->setPixmap( QPixmap(":/r/pic/ktas_vihreä.png") );
+    ui->varivalo->setPixmap( QPixmap(":/r/pic/ktas_vihrea.png") );
     ui->tilaLabel->setText( tr("Yhdistetty palvelimeen."));
     yhteystila_ = KaukoYhteys;
     emit yhdistetty(true);
@@ -175,7 +195,7 @@ void RatapihaIkkuna::vastausPalvelimelta()
     // Ehkä joskus ohjauskomentojakin täältä tulisi
 
     while( tcpsokka_.canReadLine())
-        emit aslVastaus( tcpsokka_.readLine(256) );
+        emit aslVastaus( tcpsokka_.readLine() );
 }
 
 
@@ -192,9 +212,27 @@ void RatapihaIkkuna::kaynnistaPalvelin()
         yhteystila_ = PaikallinenPalvelin;
         nappienHimmennykset();
 
-        ui->varivalo->setPixmap( QPixmap(":/r/pic/ktas_vihrea.png") );
-        ui->tilaLabel->setText( tr("Paikallinen palvelin"));
+        if( !palvelin_)
+            palvelin_ = new Palvelin(this);
 
+        if( palvelin_->listen(QHostAddress::Any, ui->porttiSpin->value()))
+        {
+            // Palvelimen käynnistäminen onnistui
+            ui->varivalo->setPixmap( QPixmap(":/r/pic/ktas_vihrea.png") );
+            ui->tilaLabel->setText( tr("Palvelin käynnistetty"));
+
+        }
+        else
+        {
+            // Palvelimen käynnistäminen ei onnistunut, mutta kuitenkin
+            // palvellaan paikallisesti
+            ui->varivalo->setPixmap( QPixmap(":/r/pic/ktas_oranssi.png") );
+            ui->tilaLabel->setText( tr("Paikallinen käyttö, verkkopalvelin ei käytössä"));
+            palvelin_->close();
+            delete palvelin_;
+            palvelin_ = 0;
+
+        }
         emit yhdistetty(true);
     }
 
@@ -204,6 +242,12 @@ void RatapihaIkkuna::pysaytaPalvelin()
 {
     yhteystila_ = EiYhteytta;
     emit yhdistetty(false);
+    if( palvelin_)
+    {
+        palvelin_->close();
+        delete palvelin_;
+        palvelin_ = 0;
+    }
     // Ensin suljetaan paikalliset rataikkunat
     // (kaukoikkunat eivät haittaa, vaikka eivät sitten saakaan yhteyttä)
     foreach( QWidget *win, qApp->topLevelWidgets())

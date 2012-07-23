@@ -38,7 +38,9 @@ HEADERS += \
     vaunukataloogi.h \
     veturi.h \
     ajopoyta.h \
-    ratapihaikkuna.h
+    ratapihaikkuna.h \
+    palvelinsokka.h \
+    palvelin.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -75,7 +77,9 @@ SOURCES += \
     vaunukataloogi.cpp \
     veturi.cpp \
     ajopoyta.cpp \
-    ratapihaikkuna.cpp
+    ratapihaikkuna.cpp \
+    palvelinsokka.cpp \
+    palvelin.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
@@ -122,7 +126,19 @@ OTHER_FILES += \
     pic/junakulkutienkursori.png \
     pic/junakulkutieloppuunkursori.png \
     pic/esiopastin.png \
-    pic/vaunut.svg
+    pic/vaunut.svg \
+    pic/tausta.png \
+    pic/stop.png \
+    pic/seiskursori.png \
+    pic/seiskasky.png \
+    pic/ktas_vihrea.png \
+    pic/ktas_punainen.png \
+    pic/ktas_oranssi.png \
+    pic/ktas_keltainen.png \
+    pic/ktas_harmaa.png \
+    pic/fit-best.png \
+    pic/ajakursori.png \
+    pic/ajakasky.png
 
 FORMS += \
     ajopoyta.ui \
