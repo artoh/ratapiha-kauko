@@ -25,6 +25,7 @@
 #include "kulkutienraide.h"
 #include "vaunu.h"
 #include "veturi.h"
+#include "kulkutieautomaatti.h"
 
 #include <QSqlQuery>
 #include <QVariant>
@@ -37,6 +38,8 @@ RataScene::RataScene(QObject *parent) :
     QGraphicsScene(parent), seuraavaVaunuNumero_(1),
     nopeutusKerroin_(5)
 {
+    kulkutieautomaatti_ = new KulkutieAutomaatti(this);
+
     lataaRata();
     lataaVaunut();
 
@@ -237,6 +240,7 @@ QString RataScene::ASLKasky(const QString &parametrit)
     }
 
     // UK raide raide -- vaihtokulkutie
+    // JK raide raide -- junakulkutie
     if( (paramLista.first() == "UK" || paramLista.first() == "JK" ) && paramLista.count() > 2)
     {
         RataRaide* mista = raideTunnukset_.value(paramLista[1],0);
@@ -435,4 +439,10 @@ void RataScene::tallennaVaunut()
     {
         vaunu->paivita();
     }
+}
+
+void RataScene::raideVarautunut(RataRaide *raide, RaiteenPaa::Suunta suunta)
+{
+    // Kun raide varautunut, ilmoitetaan kulkutieautomaatiolle
+    kulkutieautomaatti_->saapuiRaiteelle( RaiteenPaa::suuntakirjain(suunta) + raide->raidetunnusLiikennepaikalla(), raide->junanumero() );
 }

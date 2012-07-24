@@ -85,14 +85,11 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         alku += 0.8;
         if( raidetieto())
         {
-            // Laatikko: ensiksi vain paikallisseis
+            // Laatikko
+            painter->setPen( Qt::NoPen);
+            painter->setBrush( laatikonBrushPaalle(raidetieto()->etelainen()) );
+            painter->drawRect( QRectF(0.0, -4.0, 8.0, 8.0));
 
-            if( raidetieto()->etelainen()->opastinSeis())
-            {
-                painter->setBrush( QBrush(Qt::blue));
-                painter->setPen( Qt::NoPen);
-                painter->drawRect( QRectF(0.0, -4.0, 8.0, 8.0));
-            }
 
             QPolygonF kuvio;
             kuvio << QPointF(0.0, 0.0) << QPointF(8.0, -4.0) << QPointF(8.0, 4.0);
@@ -143,13 +140,11 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         if( raidetieto())
         {
 
-            // Laatikot
-            if( raidetieto()->pohjoinen()->opastinSeis())
-            {
-                painter->setBrush( QBrush(Qt::blue));
-                painter->setPen( Qt::NoPen);
-                painter->drawRect( QRectF(loppu-8.0, -4.0, 8.0, 8.0));
-            }
+            // Laatikko
+            painter->setPen( Qt::NoPen);
+            painter->setBrush( laatikonBrushPaalle(raidetieto()->pohjoinen()) );
+            painter->drawRect( QRectF(loppu-8.0, -4.0, 8.0, 8.0));
+
 
             QColor vari;
             switch( raidetieto()->pohjoinen()->opaste())
@@ -345,4 +340,24 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
 void KaukoKisko::asetaRaide(RaideTieto *praidetieto)
 {
     raidetieto_ = praidetieto;
+}
+
+QBrush KaukoKisko::laatikonBrushPaalle(RaiteenPaa *paa)
+{
+
+    if( paa->opastinSeis())
+        return( QBrush(Qt::blue));
+    else if( paa->automaatioTila() == RaiteenPaa::AutomaatioKaytossa ||
+             (paa->automaatioTila() == RaiteenPaa::AutomaatioAktiivinen && skene_->valkytys()))
+        return ( QBrush( Qt::yellow));
+    else if( paa->automaatioTila() == RaiteenPaa::AutomaatioViive)
+        return( QBrush( Qt::darkYellow));
+
+    else if( paa->automaatioTila() == RaiteenPaa::Lapikulku ||
+             (paa->automaatioTila() == RaiteenPaa::LapikulkuAktiivinen && skene_->valkytys()))
+        return ( QBrush( Qt::black));
+    else if( paa->automaatioTila() == RaiteenPaa::LapikulkuViive)
+        return( QBrush( Qt::darkGray));
+
+    return Qt::NoBrush;
 }

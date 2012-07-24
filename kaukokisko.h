@@ -12,9 +12,11 @@
 
 #include <QString>
 #include <QLineF>
+#include <QBrush>
 
 class KaukoScene;
 class RaideTieto;
+class RaiteenPaa;
 
 class KaukoKisko : public LaajennettuKisko
 {
@@ -40,7 +42,7 @@ public:
 
 protected:
     RaideTieto* raidetieto() { return raidetieto_; }
-
+    QBrush laatikonBrushPaalle(RaiteenPaa* paa);
 
     KaukoScene* skene_;
     QString raidetunnus_;

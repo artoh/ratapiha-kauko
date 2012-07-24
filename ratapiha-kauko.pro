@@ -40,7 +40,10 @@ HEADERS += \
     ajopoyta.h \
     ratapihaikkuna.h \
     palvelinsokka.h \
-    palvelin.h
+    palvelin.h \
+    kulkutieautomaatti.h \
+    automaatioopastin.h \
+    automaatiopyynto.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -79,7 +82,10 @@ SOURCES += \
     ajopoyta.cpp \
     ratapihaikkuna.cpp \
     palvelinsokka.cpp \
-    palvelin.cpp
+    palvelin.cpp \
+    kulkutieautomaatti.cpp \
+    automaatioopastin.cpp \
+    automaatiopyynto.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

@@ -22,10 +22,11 @@
 #include "ratascene.h"
 #include "rataikkuna.h"
 
+#include <QLineF>
 
-KulkutienMuodostaja::KulkutienMuodostaja(RataRaide::Kulkutietyyppi tyyppi, RataRaide *mista, RataRaide *minne)
+KulkutienMuodostaja::KulkutienMuodostaja(RataRaide::Kulkutietyyppi tyyppi, RataRaide *mista, RataRaide *minne, RaiteenPaa::Suunta lahtosuunta)
     : tyyppi_(tyyppi), mista_(mista), minne_(minne),
-      pieninNopeus_(0),  lyhinReitti_(0)
+      pieninNopeus_(0),  lyhinReitti_(0), lahtoSuunta_(lahtosuunta)
 {
 }
 
@@ -38,6 +39,7 @@ void KulkutienMuodostaja::reittiLoytynyt(KulkutieElementti *reitinViimeinenEleme
 
 bool KulkutienMuodostaja::muodostaKulkutie()
 {
+
    lyhinPituus_ = 12000; // Testikoodia, jatkossa lasketaan etäisyyksistä
 
 
@@ -49,6 +51,13 @@ bool KulkutienMuodostaja::muodostaKulkutie()
         if( naapuri->naapuriRaide())
         {
             RaiteenPaa* lahtoPaa;
+
+            // Jos on määritelty lähtösuunta, seurataan vain sitä
+            if( lahtoSuunta_ == RaiteenPaa::Etelaan && naapuri->omaSuunta() == Naapuruus::Pohjoinen )
+                continue;
+            else if( lahtoSuunta_ == RaiteenPaa::Pohjoiseen && naapuri->omaSuunta() == Naapuruus::Etela)
+                continue;
+
             if( naapuri->omaSuunta() == Naapuruus::Pohjoinen)
                 lahtoPaa = mista_->pohjoinen();
             else

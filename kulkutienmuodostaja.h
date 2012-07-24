@@ -27,7 +27,7 @@ class KulkutienMuodostaja
 {
 public:
 
-    KulkutienMuodostaja(RataRaide::Kulkutietyyppi tyyppi, RataRaide* mista, RataRaide* minne);
+    KulkutienMuodostaja(RataRaide::Kulkutietyyppi tyyppi, RataRaide* mista, RataRaide* minne, RaiteenPaa::Suunta lahtosuunta = RaiteenPaa::Virhe);
 
     RataRaide::Kulkutietyyppi kulkutienTyyppi() const { return tyyppi_; }
     RataRaide* minne()  { return minne_; }
@@ -49,6 +49,8 @@ protected:
     qreal lyhinPituus_;
     int pieninNopeus_;
     KulkutieElementti* lyhinReitti_;
+
+    RaiteenPaa::Suunta lahtoSuunta_;
 };
 
 

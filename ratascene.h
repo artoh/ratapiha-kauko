@@ -23,11 +23,13 @@
 #include <QGraphicsScene>
 #include <QHash>
 
+#include "raiteenpaa.h"
+
 class RataRaide;
-class RaiteenPaa;
 class KulkuTie;
 class Vaunu;
 class RataKisko;
+class KulkutieAutomaatti;
 
 class RataScene : public QGraphicsScene
 {
@@ -52,6 +54,8 @@ public:
 
     void tallennaVaunut();
 
+    void raideVarautunut(RataRaide* raide, RaiteenPaa::Suunta suunta );
+
 signals:
     
 public slots:
@@ -71,6 +75,7 @@ private:
     int seuraavaVaunuNumero_;
     int nopeutusKerroin_;   /** Kuinka moninkertaiseksi simulaation kello on nopeutettu */
 
+    KulkutieAutomaatti* kulkutieautomaatti_;
 };
 
 #endif // RATASCENE_H

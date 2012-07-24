@@ -25,6 +25,8 @@ public:
     enum SpKasite { SpPuuttuu = 0, SpSallii, SpSulkee } ;
     enum Suunta { Virhe=0, Etelaan, Pohjoiseen} ;
 
+    enum Automaatio { EiAutomaatiota, AutomaatioKaytossa, AutomaatioViive, AutomaatioAktiivinen, Lapikulku, LapikulkuAktiivinen, LapikulkuViive };
+
     Opaste opaste() const;  // Näkyvä opastinkäsite
     Opaste opasteKasite() const { return opaste_; } // Asetettu opastinkäsite
     OpastinTyyppi opastin() const { return opastinTyyppi_; }
@@ -50,10 +52,13 @@ public:
     void asetaRaiteenSulku(bool onko);
     void asetaOpastin(OpastinTyyppi opastintyyppi);
     void asetaOpaste(Opaste opaste);
+    void asetaAutomaationTila(Automaatio automaatio);
+    Automaatio automaatioTila() const { return automaatio_; }
 
     void seis();    // Asettaa opastimen näyttämään SEIS
     void aja();     // Poistaa opastimen SEIS-tilan
 
+    static QChar suuntakirjain(Suunta suunta);
 
 protected:
     /** Päivittää yhden kohteen*/
@@ -65,6 +70,7 @@ protected:
 
     OpastinTyyppi opastinTyyppi_;
     Opaste opaste_;
+    Automaatio automaatio_;
 
     bool opastinSeis_;  // FIR-FR762 Asetettu näyttämään SEIS
 

@@ -15,7 +15,8 @@ RaiteenPaa::RaiteenPaa(const QString &tila) :
     paanTyyppi_(Suora), vaihdeTila_(EiVaihdetta),
     opastinTyyppi_(EiOpastinta), opaste_(Seis),
     opastinSeis_(false),
-    raiteenSulku_(SpPuuttuu)
+    raiteenSulku_(SpPuuttuu),
+    automaatio_(EiAutomaatiota)
 {
     paivitaTila(tila);
 }
@@ -59,7 +60,6 @@ QString RaiteenPaa::tilaTieto() const
     }
 
 
-
     if( raiteenSulku() == SpSallii)
         tila.append("Sp- ");
     else if(raiteenSulku() == SpSulkee)
@@ -71,6 +71,18 @@ QString RaiteenPaa::tilaTieto() const
     if( opastinSeis())
         tila.append("SEIS ");
 
+    if( automaatioTila() == AutomaatioKaytossa)
+        tila.append("Auto ");
+    else if( automaatioTila() == AutomaatioAktiivinen )
+        tila.append("AutoAktiivinen ");
+    else if( automaatioTila() == AutomaatioViive)
+        tila.append("AutomaatioViive");
+    else if( automaatioTila() == Lapikulku)
+        tila.append("Läpikulku");
+    else if( automaatioTila() == LapikulkuAktiivinen )
+        tila.append("LäpikulkuAktiivinen");
+    else if( automaatioTila() == LapikulkuViive )
+        tila.append("LäpikulkuViive");
 
     return tila;
 }
@@ -142,6 +154,11 @@ void RaiteenPaa::asetaOpaste(RaiteenPaa::Opaste opaste)
 
 }
 
+void RaiteenPaa::asetaAutomaationTila(RaiteenPaa::Automaatio automaatio)
+{
+    automaatio_ = automaatio;
+}
+
 void RaiteenPaa::paivitysTehtava(const QString &lause)
 {
     if( lause == "Po")
@@ -196,13 +213,32 @@ void RaiteenPaa::paivitysTehtava(const QString &lause)
     else if( lause.startsWith("V"))
     {
         paanTyyppi_ = Vaihde;
-        if(lause.startsWith("V-"))
+        if(lause == "V-")
             vaihdeTila_ = Vasen;
-        else if( lause.startsWith("V+"))
+        else if( lause == "V+")
             vaihdeTila_ = Oikea;
-        else if( lause.startsWith("V!"))
+        else if( lause == "V!")
             vaihdeTila_ = Aukiajettu;
     }
+    else if( lause.startsWith("Auto"))
+    {
+        if( lause == "AutoViive")
+            automaatio_ = AutomaatioViive;
+        else if( lause == "AutoAktiivinen")
+            automaatio_ = AutomaatioAktiivinen;
+        else
+            automaatio_ = AutomaatioKaytossa;
+    }
+    else if( lause.startsWith("Läpikulku"))
+    {
+        if( lause == "LäpikulkuViive")
+            automaatio_ = LapikulkuViive;
+        else if( lause == "LäpikulkuAktiivinen")
+            automaatio_ = LapikulkuAktiivinen;
+        else
+            automaatio_ = Lapikulku;
+    }
+
 }
 
 
@@ -211,6 +247,7 @@ void RaiteenPaa::paivitaTila(const QString &tila)
     QStringList listana = tila.split(" ");
     opastinSeis_ = false;   // Oletuksena opastimella ei SEIS-asetusta
     opaste_ = RaiteenPaa::Seis; // Oletuksena opastin näyttää SEIS
+    automaatio_ = EiAutomaatiota;   // Oletuksena ei kulkutieautomaatiota
     foreach( QString kohde, listana)
     {
         paivitysTehtava(kohde);
@@ -233,4 +270,13 @@ void RaiteenPaa::seis()
 void RaiteenPaa::aja()
 {
     opastinSeis_ = false;
+}
+
+QChar RaiteenPaa::suuntakirjain(RaiteenPaa::Suunta suunta)
+{
+    if(suunta == Etelaan)
+        return QChar('E');
+    else if( suunta == Pohjoiseen )
+        return QChar('P');
+    return QChar();
 }

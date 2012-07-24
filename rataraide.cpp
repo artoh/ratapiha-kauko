@@ -156,6 +156,9 @@ void RataRaide::akseliSisaan(RaiteenPaa::Suunta suunta, RataRaide *raiteelta)
         if( kulkutienRaide())
             kulkutienRaide()->raideVarautuu(suunta);
 
+        // Kulkutieautomaatin herättäminen
+        RataIkkuna::rataSkene()->raideVarautunut(this, suunta);
+
     }
 
     paivita();
