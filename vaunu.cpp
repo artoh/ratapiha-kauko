@@ -119,6 +119,11 @@ void Vaunu::laskeSijainti()
     update( boundingRect());
 }
 
+void Vaunu::siirtyyRaiteelle(RataRaide* /* raiteelle */)
+{
+    ;   // Ei mitään!
+}
+
 void Vaunu::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     renderoija()->render( painter, vaununTyyppi(), QRectF(0,-5.5, pituus(),11) );

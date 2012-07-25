@@ -36,7 +36,7 @@ RataIkkuna::RataIkkuna(RatapihaIkkuna *parent) :
     setCentralWidget(view_);
 
     teeDockit();
-
+    setWindowTitle(tr("Ratapiha (Ratanäkymä)"));
 
 }
 

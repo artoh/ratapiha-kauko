@@ -21,10 +21,12 @@
 
 #include "rataikkuna.h"
 #include "ratascene.h"
+#include "rataraide.h"
 
 #include <QPainter>
 #include <QFont>
 #include <QPen>
+#include <QSqlQuery>
 
 Veturi::Veturi(const QString &tyyppi, int vaununumero, RataScene *skene) :
     QObject(), Vaunu(tyyppi, vaununumero, skene),
@@ -92,6 +94,48 @@ void Veturi::paint(QPainter *painter, const QStyleOptionGraphicsItem* , QWidget 
 
     */
 
+}
+
+void Veturi::kirjoitaLokiin(const QString &ilmoitustyyppi, RataRaide *raide, const QString &lisatieto)
+{
+    QString aika = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().toString(Qt::ISODate);
+    aika[10] = QChar(' ');
+
+    QString liikennepaikka, raidetunnus, lisatietoa;
+    QString junanumero = "NULL";
+    if( raide )
+    {
+        liikennepaikka = QString("\"%1\"").arg(raide->liikennepaikka());
+        raidetunnus = QString::number(raide->raidetunnus());
+        if( !raide->junanumero().isEmpty())
+            junanumero = QString("\"%1\"").arg(raide->junanumero());
+    }
+    else
+    {
+        liikennepaikka = "NULL";
+        raidetunnus = "NULL";
+    }
+
+    if( lisatieto.isEmpty())
+        lisatietoa = "NULL";
+    else
+        lisatietoa = QString("\"%1\"").arg(lisatieto);
+
+
+
+    QString paivitys = QString("insert into veturiloki(aika,veturi,ilmoitus,liikennepaikka,raide,nopeus,lisatieto,junanro)"
+                               "values (\"%1\",%2,\"%3\",%4,%5,%6,%7,%8) ")
+            .arg(aika).arg(vaunuNumero()).arg(ilmoitustyyppi).arg(liikennepaikka).arg(raidetunnus)
+            .arg(nopeus()).arg(lisatietoa).arg(junanumero);
+
+    QSqlQuery paivityskysely;
+    paivityskysely.exec(paivitys);
+}
+
+void Veturi::siirtyyRaiteelle(RataRaide *raiteelle)
+{
+    if( nopeusMs())
+        kirjoitaLokiin("R",raiteelle);
 }
 
 void Veturi::aja()

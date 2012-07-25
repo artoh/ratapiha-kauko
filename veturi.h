@@ -54,6 +54,11 @@ public:
     virtual AjoPoydat ajopoydat() const { return MolemmatAjopoydat; }
 
     int tavoiteNopeus() const { return tavoiteNopeus_; }
+
+    void kirjoitaLokiin(const QString& ilmoitustyyppi, RataRaide* raide = 0,
+                        const QString& lisatieto=QString());
+
+    void siirtyyRaiteelle(RataRaide *raiteelle);
 signals:
     void nopeusIlmoitus(int nopeus);
     

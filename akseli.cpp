@@ -168,6 +168,7 @@ void Akseli::liiku(qreal matka)
                 uusiKisko->raide()->akseliSisaan(RaiteenPaa::Etelaan, kiskolla()->raide());
             else
                 uusiKisko->raide()->akseliSisaan(RaiteenPaa::Pohjoiseen, kiskolla()->raide());
+            vaunu_->siirtyyRaiteelle(uusiKisko->raide());   // Lokia varten
         }
 
         kiskolla_ = uusiKisko;
@@ -202,6 +203,7 @@ void Akseli::liiku(qreal matka)
                 uusiKisko->raide()->akseliSisaan(RaiteenPaa::Pohjoiseen, kiskolla()->raide());
             else
                 uusiKisko->raide()->akseliSisaan(RaiteenPaa::Etelaan, kiskolla()->raide());
+            vaunu_->siirtyyRaiteelle(uusiKisko->raide());   // Lokia varten
         }
 
         qreal jaannosMatka = 0;
