@@ -31,6 +31,9 @@ KaukoIkkuna::KaukoIkkuna(RatapihaIkkuna *parent) :
     luoAktiot();
     luoTyoPalkki();
 
+    aikaLabel_ = new QLabel("Tervetuloa!");
+    statusBar()->addPermanentWidget(aikaLabel_);
+
     setCentralWidget(view_);
 
     connect( rpIkkuna_, SIGNAL(aslVastaus(QString)), statusBar(), SLOT(showMessage(QString)));
@@ -90,6 +93,12 @@ void KaukoIkkuna::paivitaNapit(int tila)
 void KaukoIkkuna::yhteysAsettimeen(bool onkoYhteytta)
 {
     aslAktiot_->setEnabled( onkoYhteytta );
+    aikaLabel_->setEnabled( onkoYhteytta );
+}
+
+void KaukoIkkuna::paivitaKello(const QDateTime &aika)
+{
+    aikaLabel_->setText( aika.toString("dd.MM.yyyy HH:mm"));
 }
 
 void KaukoIkkuna::luoAktiot()

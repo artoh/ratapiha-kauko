@@ -35,6 +35,8 @@ signals:
 private slots:
     void palvele();
     void yhteysKatkaistu();
+
+    void ilmoitaAika(const QDateTime& aika);
     
 public slots:
     

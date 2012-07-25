@@ -104,7 +104,8 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
 
         // Sittenpä ei muuta kuin laittamaan ehdot voimaan!
 
-        // TODO: Aikataulun raideautomaatio (maaliraide liikennepaikkana)
+
+        // Aikataulun raideautomaatio (maaliraide liikennepaikkana)
         QString maaliRaiteenTunnus = kysely.value(1).toString();
         RataRaide* maaliRaide = 0;
 
@@ -131,7 +132,10 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
         if( !maaliRaide)
             continue;
 
+
         // TODO: aikataulun alkuviive
+        // Jos ollaan raiteella, josta lähtöaika on aikataulussa vasta edessäpäin,
+        // lisätään tarpeellinen viive
 
 
         int viive = kysely.value(3).toInt();

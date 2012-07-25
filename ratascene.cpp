@@ -54,6 +54,7 @@ RataScene::RataScene(QObject *parent) :
     // Opastinten välkytys
     QTimer* valkkytimer = new QTimer(this);
     connect( valkkytimer, SIGNAL(timeout()), this, SLOT(valkytys()));
+    connect( &kelloTimer_, SIGNAL(timeout()), this, SLOT(kellonPaivitys()));
     valkkytimer->start(500);
 }
 
@@ -63,9 +64,21 @@ RataScene::~RataScene()
     foreach(Vaunu* vaunu, vaunut_)
         vaunu->paivita();
 
-    qDebug() << "Skene pois...";
+    // Kirjoittaa ajan tietokantaan
+    if( simulaatioAika().isValid())
+        QSqlQuery ajanPaivitys( QString("update ratapiha set arvo=\"%1\" where avain=\"aika\"").arg(simulaatioAika_.toString(Qt::ISODate)));
+
 }
 
+
+void RataScene::kellonPaivitys()
+{
+    simulaatioAika_ = simulaatioAika_.addSecs(1);
+    // Simulaatioaikaa ylläpidetään sekunnin tarkkuudella, mutta vain tasaminuuteista
+    // ilmoitetaan asiakkaille
+    if( simulaatioAika().time().second() == 0)
+        emit kello( simulaatioAika() );
+}
 
 void RataScene::lataaRata()
 {
@@ -181,6 +194,12 @@ void RataScene::lataaRata()
     // PURKKAKOODI PÄÄTTYY TÄHÄN
 
 
+    // Kellonajan asettaminen
+    kysely.exec("select arvo from ratapiha where avain=\"aika\"");
+    if( kysely.next())
+        simulaatioAika_ = QDateTime::fromString( kysely.value(0).toString(), Qt::ISODate );
+    if( !simulaatioAika_.isValid())
+        simulaatioAika_ = QDateTime(QDate(2012,6,1),QTime(6,0));
 
 }
 
@@ -228,6 +247,8 @@ void RataScene::valkytys()
 void RataScene::asetaNopeutus(int nopeutuskerroin)
 {
     nopeutusKerroin_ = nopeutuskerroin;
+    kelloTimer_.stop();
+    kelloTimer_.start(1000 / nopeutuskerroin);
 }
 
 

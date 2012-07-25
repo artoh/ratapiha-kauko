@@ -195,7 +195,19 @@ void RatapihaIkkuna::vastausPalvelimelta()
     // Ehkä joskus ohjauskomentojakin täältä tulisi
 
     while( tcpsokka_.canReadLine())
-        emit aslVastaus( tcpsokka_.readLine() );
+    {
+        QString vastaus = tcpsokka_.readLine();
+        if( vastaus.startsWith('@'))
+        {
+            // Ohjauskomento
+            if( vastaus.startsWith("@aika"))
+                // Ilmoitus kellonajasta
+                aikaMuuttunut( QDateTime::fromString(vastaus.mid(6),Qt::ISODate));
+        }
+        else
+            // On vastaus asetinlaitekomentoon
+            emit aslVastaus( vastaus );
+    }
 }
 
 
@@ -205,6 +217,8 @@ void RatapihaIkkuna::kaynnistaPalvelin()
     {
         // Luodaan skene
         ratascene_ = new RataScene(this);
+        connect( ratascene_, SIGNAL(kello(QDateTime)), this, SLOT(aikaMuuttunut(QDateTime)));
+
         ratascene_->asetaNopeutus( ui->nopeusSlider->value() );
 
         connect( ui->nopeusSlider, SIGNAL(valueChanged(int)), ratascene_, SLOT(asetaNopeutus(int)) );
@@ -233,6 +247,7 @@ void RatapihaIkkuna::kaynnistaPalvelin()
             palvelin_ = 0;
 
         }
+
         emit yhdistetty(true);
     }
 
@@ -272,6 +287,7 @@ void RatapihaIkkuna::ohjausIkkuna()
 {
     KaukoIkkuna* ikkuna = new KaukoIkkuna(this);
     ikkuna->show();
+    connect( this, SIGNAL(kello(QDateTime)), ikkuna, SLOT(paivitaKello(QDateTime)));
 }
 
 void RatapihaIkkuna::rataIkkuna()
@@ -297,6 +313,12 @@ bool RatapihaIkkuna::onkoYhteydessa()
     return( tila()==KaukoYhteys || tila()==PaikallinenPalvelin );
 }
 
+void RatapihaIkkuna::aikaMuuttunut(const QDateTime &aika)
+{
+    ui->viestiLabel->setText( aika.toString("dd.MM.yyyy    HH:mm") );
+    emit kello(aika);
+}
+
 
 void RatapihaIkkuna::nappienHimmennykset()
 {
@@ -313,6 +335,9 @@ void RatapihaIkkuna::nappienHimmennykset()
     ui->rataButton->setEnabled( tila() == PaikallinenPalvelin );
 
     ui->muokkaaRataaNappi->setEnabled( tila()==EiYhteytta || tila()==LukuYhteys);
+
+    if( tila()==EiYhteytta || tila()==LukuYhteys)
+        ui->viestiLabel->setText("Ratapiha");
 
 }
 

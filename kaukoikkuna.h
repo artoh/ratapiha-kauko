@@ -17,6 +17,7 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QLineEdit>
+#include <QLabel>
 
 class RatapihaIkkuna;
 
@@ -39,6 +40,8 @@ public slots:
     void paivitaNapit(int tila);
 
     void yhteysAsettimeen(bool onkoYhteytta);
+
+    void paivitaKello(const QDateTime& aika);
 
 protected:
     void luoTyoPalkki();
@@ -67,6 +70,8 @@ protected:
     KaukoView* view_;
 
     RatapihaIkkuna* rpIkkuna_;
+
+    QLabel *aikaLabel_;
 
 };
 

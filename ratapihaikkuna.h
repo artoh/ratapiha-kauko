@@ -82,10 +82,14 @@ public slots:
     /** Onko yhteyttä asetinlaitteelle? */
     bool onkoYhteydessa();
 
+    void aikaMuuttunut(const QDateTime& aika);
+
 signals:
     /* Asetinlaitteelle annettuun käskyyn tullut vastaus */
     void aslVastaus(const QString& kasky);
     void yhdistetty(bool onkoyhteydessa);
+
+    void kello(const QDateTime& aika);
 
 
 private:

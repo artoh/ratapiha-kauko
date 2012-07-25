@@ -50,4 +50,10 @@ void PalvelinSokka::yhteysKatkaistu()
     rpIkkuna_->asiakasMuutos(-1);
 }
 
+void PalvelinSokka::ilmoitaAika(const QDateTime &aika)
+{
+    QString ilmoitus = "@aika " + aika.toString(Qt::ISODate) + "\n";
+    write(ilmoitus.toAscii());
+}
+
 

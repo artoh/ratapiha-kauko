@@ -22,6 +22,8 @@
 
 #include <QGraphicsScene>
 #include <QHash>
+#include <QDateTime>
+#include <QTimer>
 
 #include "raiteenpaa.h"
 
@@ -56,11 +58,14 @@ public:
 
     void raideVarautunut(RataRaide* raide, RaiteenPaa::Suunta suunta );
 
+    QDateTime simulaatioAika() const { return simulaatioAika_; }
 signals:
-    
+    void kello(const QDateTime& aika);  /** Kun kello päivitetty */
+
 public slots:
     void valkytys();
     void asetaNopeutus(int nopeutuskerroin);
+    void kellonPaivitys();
 
 private:
     void lataaRata();
@@ -76,6 +81,9 @@ private:
     int nopeutusKerroin_;   /** Kuinka moninkertaiseksi simulaation kello on nopeutettu */
 
     KulkutieAutomaatti* kulkutieautomaatti_;
+    QDateTime simulaatioAika_;
+
+    QTimer kelloTimer_;
 };
 
 #endif // RATASCENE_H

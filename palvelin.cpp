@@ -32,4 +32,6 @@ void Palvelin::incomingConnection(int handle)
 {
     PalvelinSokka* sokka = new PalvelinSokka(this, rpIkkuna_);
     sokka->setSocketDescriptor(handle);
+
+    connect( rpIkkuna_, SIGNAL(kello(QDateTime)), sokka, SLOT(ilmoitaAika(QDateTime)));
 }

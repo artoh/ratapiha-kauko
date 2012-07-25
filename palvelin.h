@@ -35,8 +35,6 @@ public:
     
 signals:
     
-public slots:
-
 protected:
     void incomingConnection(int handle);
 
