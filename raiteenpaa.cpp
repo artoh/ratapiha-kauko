@@ -76,7 +76,7 @@ QString RaiteenPaa::tilaTieto() const
     else if( automaatioTila() == AutomaatioAktiivinen )
         tila.append("AutoAktiivinen ");
     else if( automaatioTila() == AutomaatioViive)
-        tila.append("AutomaatioViive");
+        tila.append("AutoViive");
     else if( automaatioTila() == Lapikulku)
         tila.append("Läpikulku");
     else if( automaatioTila() == LapikulkuAktiivinen )

@@ -351,13 +351,23 @@ QBrush KaukoKisko::laatikonBrushPaalle(RaiteenPaa *paa)
              (paa->automaatioTila() == RaiteenPaa::AutomaatioAktiivinen && skene_->valkytys()))
         return ( QBrush( Qt::yellow));
     else if( paa->automaatioTila() == RaiteenPaa::AutomaatioViive)
-        return( QBrush( Qt::darkYellow));
+    {
+        if( skene_->valkytys())
+            return( QBrush( Qt::darkYellow));
+        else
+            return( QBrush( Qt::yellow));
+    }
 
     else if( paa->automaatioTila() == RaiteenPaa::Lapikulku ||
              (paa->automaatioTila() == RaiteenPaa::LapikulkuAktiivinen && skene_->valkytys()))
         return ( QBrush( Qt::black));
     else if( paa->automaatioTila() == RaiteenPaa::LapikulkuViive)
-        return( QBrush( Qt::darkGray));
+    {
+        if( skene_->valkytys())
+            return( QBrush( Qt::darkGray));
+        else
+            return( QBrush( Qt::black));
+    }
 
     return Qt::NoBrush;
 }

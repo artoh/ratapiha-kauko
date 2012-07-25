@@ -25,7 +25,6 @@
 #include <QRegExp>
 #include <QVariant>
 
-
 KulkutieAutomaatti::KulkutieAutomaatti(RataScene *parent) :
     QObject(parent),
     skene_(parent)
@@ -40,7 +39,8 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
     // Selvitetään ensin, onko tähän kuuluvaa automaatiota
 
     QSqlQuery kysely( QString("select opastin,maaliraide, jnehto, viive, kulkutientyyppi "
-                              "from kulkutieautomaatio where herateraide=\"%1\" "
+                              "from kulkutieautomaatio "
+                              "where herateraide=\"%1\" "
                               "order by prioriteetti desc").arg(herateraide) );
 
     while( kysely.next())
@@ -81,20 +81,58 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
             if( lapikulku)
                 continue;   // Läpikulkuautomatiikassa valitaan läpikuljettava (ehdoton) ehto
 
-            QRegExp testaaja(jnehto);
-            if( !testaaja.exactMatch(junanumero))
-                continue;   // Ei kestä jn-testiä
+            if( jnehto.startsWith('@'))
+            {
+                // @-merkki: ehto liittyy junan reittinumeroon
+                QSqlQuery reittinrokysymys(QString("select reitti from juna where junanro=\"%1\"").arg(junanumero));
+                QString reittitunnus;
+                if( reittinrokysymys.next())
+                    reittitunnus = reittinrokysymys.value(0).toString();
+
+                QRegExp testaaja(jnehto.mid(1));
+                if( !testaaja.exactMatch(reittitunnus))
+                    continue;   // Ei kestä jn-testiä
+            }
+            else
+            {
+                // Ehto liittyy junanumeroon
+                QRegExp testaaja(jnehto);
+                if( !testaaja.exactMatch(junanumero))
+                    continue;   // Ei kestä jn-testiä
+            }
         }
 
         // Sittenpä ei muuta kuin laittamaan ehdot voimaan!
 
-        // TODO: Aikataulun raideautomaatio (maaliraide NULL) ja
-        // aikataulun alkuviive
+        // TODO: Aikataulun raideautomaatio (maaliraide liikennepaikkana)
+        QString maaliRaiteenTunnus = kysely.value(1).toString();
+        RataRaide* maaliRaide = 0;
 
-        RataRaide* maaliRaide = skene_->haeRaide( kysely.value(1).toString() );
+        if( !maaliRaiteenTunnus.at( maaliRaiteenTunnus.length()-1 ).isDigit())
+        {
+            // Maaliraiteen tunnuksena liikennepaikkatunnus (toivottavasti), haetaan raidetieto
+            QString maalikysymys = QString("select raide from juna,aikataulu where "
+                                           "junanro=\"%1\" and juna.reitti=aikataulu.reitti "
+                                           "and liikennepaikka=\"%2\"").arg(junanumero).arg(maaliRaiteenTunnus) ;
+            QSqlQuery raidekysely(maalikysymys);
+            if( raidekysely.next())
+            {
+                // Haetaan maaliraiteeksi raide kyseisellä liikennepaikalla
+                maaliRaide=skene_->haeRaide( QString("%1%2").arg(maaliRaiteenTunnus).arg( raidekysely.value(0).toInt() ,3,10,QChar('0')) );
+            }
+
+        }
+        else
+        {
+            // Maaliraiteen tunnus päättyy numeroon, on siis raiteen tunnus
+            maaliRaide = skene_->haeRaide( maaliRaiteenTunnus );
+        }
 
         if( !maaliRaide)
             continue;
+
+        // TODO: aikataulun alkuviive
+
 
         int viive = kysely.value(3).toInt();
 
