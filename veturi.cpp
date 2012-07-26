@@ -35,7 +35,7 @@ Veturi::Veturi(const QString &tyyppi, int vaununumero, RataScene *skene) :
     QObject(), Vaunu(tyyppi, vaununumero, skene),
     tavoiteNopeus_(0), metriaSekunnissa_(0.0), ajopoyta_(0),
     edellinenLokiRaide_(0),
-    JkvTila_(VaihtoJkv),
+    jkvTila_(VaihtoJkv),
     junaPituus_(0.0),
     matkaMittari_(0.0),
     nopeusRajoitus_(0)
@@ -396,38 +396,49 @@ QPixmap Veturi::jkvKuva()
     painter.setBrush( QBrush(Qt::black));
     painter.drawRect(0,0,150,300);
 
-/**       TODO: Kun ei ajopöytää!!!
-    if( jkvtila_ == EiJKV)
+    if( !ajopoyta())
     {
-        painter.drawPixmap(0,0,QPixmap(":/pic/jkvkuvat/eikaytossa.png"));
-        if( !opastelista_.empty())
-            opastelista_.first().piirra(&painter,100);
+        painter.setBrush( Qt::NoBrush );
+        painter.setPen(Qt::white);
+        painter.drawRect(5,275,140,20);
+        painter.setFont(QFont("Helvetica",15));
+        painter.drawText(QRectF(10,277,130,15),Qt::AlignCenter, tr(" %1 km").arg(matkaMittari() / 1000)  );
+
+        return kuva;
+    }
+
+    int indeksi = 0;
+
+    if( jkvTila() == EiJkv )
+    {
+        painter.drawPixmap(0,0,QPixmap(":/r/jkvkuvat/eikaytossa.png"));
+        indeksi = 1;
     }
     else
     {
-        if( jkvtila_ == VaihtotyoJKV)
-            painter.drawPixmap(0,0,QPixmap(":/pic/jkvkuvat/vaihtotyo.png"));
-        else if( jkvtila_ == JunaJKV)
-        {
-            painter.setFont(QFont("Helvetica",10));
+        painter.setFont(QFont("Helvetica",10,QFont::Bold));
+
+        if( jkvTila() == VaihtoJkv)
+            painter.setPen( Qt::yellow);
+        else
             painter.setPen( Qt::green);
-            if( junaNumero_.isEmpty())
-                painter.drawStaticText(2,2,QStaticText("Juna ilman tunnusta"));
+
+        if( junaNumero().isEmpty())
+        {
+            if( jkvTila() == VaihtoJkv)
+                painter.drawStaticText(2,2,QStaticText("VAIHTOTYÖ"));
             else
-            {
-                painter.drawText(2,2,140,20,Qt::AlignLeft, junaNumero_);
-                Reitti* reitti = RaideElementti::rata()->reittilista()->reitti( junaNumero_ );
-                if( reitti )
-                {
-                    painter.drawText(QRectF(2,15,150,15),Qt::AlignLeft, reitti->maaraAsema());
-                }
-            }
-
-
+                painter.drawStaticText(2,2,QStaticText("JUNA ILMAN TUNNUSTA"));
         }
+        else
+            painter.drawText(2,2,140,20,Qt::AlignLeft, junaNumero());
 
+        if( 1 )
+        {
+            painter.drawText(QRectF(2,15,150,15),Qt::AlignLeft, "MÄÄRÄASEMA" );
+        }
     }
-*/
+
 
     // Junan pituus
     painter.setFont(QFont("Helvetica",8));
@@ -435,7 +446,7 @@ QPixmap Veturi::jkvKuva()
     painter.drawText(QRectF(75,30,75,15),QString("%1 m").arg((int)junaPituus()),QTextOption(Qt::AlignRight));
 
 
-    int indeksi = 0;
+
     foreach( JkvOpaste opaste, jkvTiedot_)
     {
         // Piirretään kaksi opastetta
@@ -504,31 +515,53 @@ QPixmap Veturi::jkvKuva()
     }
 
 
-/**
+
     // Ja lopuksi alaspäin valikkorivi
-    if( jkvtila_ == VaihtotyoJKV)
+    if( jkvTila() == VaihtoJkv )
     {
-        painter.drawPixmap(0,210,QPixmap(":/pic/jkvkuvat/eijkvnappi.png"));
-        if( veturi_->nopeus() < 1)
-            painter.drawPixmap(76,210,QPixmap(":/pic/jkvkuvat/junanappi.png"));
+        painter.drawPixmap(0,270,QPixmap(":/r/jkvkuvat/eijkvnappi.png"));
+        if( nopeus() < 1)
+            painter.drawPixmap(76,270,QPixmap(":/r/jkvkuvat/junanappi.png"));
 
     }
-    else if(jkvtila_ == EiJKV)
+    else if( jkvTila() == EiJkv)
     {
-        painter.drawPixmap(0,210,QPixmap(":/pic/jkvkuvat/vaihtotyonappi.png"));
-        if( veturi_->nopeus() < 1)
-            painter.drawPixmap(76,210,QPixmap(":/pic/jkvkuvat/junanappi.png"));
+        painter.drawPixmap(0,270,QPixmap(":/r/jkvkuvat/vaihtotyonappi.png"));
+        if( nopeus() < 1)
+            painter.drawPixmap(76,270,QPixmap(":/r/jkvkuvat/junanappi.png"));
     }
-    else if( jkvtila_ == JunaJKV && veturi_->nopeus() < 1)
+    else if( jkvTila() == JunaJkv && nopeus() < 1)
     {
-        painter.drawPixmap(0,210,QPixmap(":/pic/jkvkuvat/eijkvnappi.png"));
-        painter.drawPixmap(76,210,QPixmap(":/pic/jkvkuvat/vaihtotyonappi.png"));
+        painter.drawPixmap(0,270,QPixmap(":/r/jkvkuvat/eijkvnappi.png"));
+        painter.drawPixmap(76,270,QPixmap(":/r/jkvkuvat/vaihtotyonappi.png"));
 
     }
 
-*/
 
 
     return kuva;
+}
+
+void Veturi::tarkistaRaiteenJunanumero()
+{
+    Akseli* akseli = aktiivinenAkseli();
+    if( !akseli && !etuAkseli_->onkoKytketty())
+        akseli = etuAkseli_;
+    else if( !takaAkseli_->onkoKytketty())
+        akseli = takaAkseli_;
+
+    if( akseli && akseli->kiskolla())
+    {
+        // Tarkastetaan junanumero tältä raiteelta
+        QString junatunnus = akseli->kiskolla()->raide()->junanumero();
+        if( junatunnus != junaNumero())
+        {
+            // Vaihdetaan junanumeroa jos mahdollista, mitä toimia siihen liittyykään??
+            junaNumero_ = junatunnus;
+            update(boundingRect());
+        }
+    }
+
+
 }
 

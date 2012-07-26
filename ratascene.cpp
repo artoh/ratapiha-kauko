@@ -229,12 +229,19 @@ void RataScene::lataaVaunut()
 
         Vaunu* vaunu;
         if( vaunutyyppi.startsWith('D') || vaunutyyppi.startsWith('S'))
-            vaunu = new Veturi(vaunutyyppi, vaunuid, kiskot_.value(etukisko,0), etusijainti, etusuunta, kiskot_.value(takakisko,0), takasijainti, takasuunta, this);
+        {
+            Veturi* veturi = new Veturi(vaunutyyppi, vaunuid, kiskot_.value(etukisko,0), etusijainti, etusuunta, kiskot_.value(takakisko,0), takasijainti, takasuunta, this);
+            veturilista_.append(veturi);
+            vaunu = veturi;
+        }
         else
             vaunu = new Vaunu(vaunutyyppi, vaunuid, kiskot_.value(etukisko,0), etusijainti, etusuunta, kiskot_.value(takakisko,0), takasijainti, takasuunta, this);
         vaunut_.insert( vaunuid, vaunu);
     }
 
+    // Vetureille junanumerot
+    foreach(Veturi* veturi, veturilista_)
+        veturi->tarkistaRaiteenJunanumero();
 
 }
 
@@ -374,9 +381,9 @@ QString RataScene::ASLKasky(const QString &parametrit)
         if( !raide->akseleita() )
             return QString("VIRHE Ei akseleita raiteella %1").arg(paramLista[1]);
         if( paramLista.count() > 2)
-            raide->asetaJunanumero( paramLista[2]);
+            asetaJunaNumero(raide, paramLista[2]);
         else
-            raide->asetaJunanumero( QString()); // Pelkkä JN Raide tyhjää numeron
+            asetaJunaNumero(raide, QString());  // Pelkkä JN Raide tyhjää numeron
         return QString("OK");
     }
     else if( paramLista.first()=="VAP" && paramLista.count() > 1)
@@ -440,7 +447,11 @@ Vaunu* RataScene::lisaaVaunu(const QString &tyyppi)
 {
     Vaunu* uusi;
     if( tyyppi.startsWith("S") || tyyppi.startsWith('D'))
-        uusi = new Veturi(tyyppi, seuraavaVaunuNumero_, this);
+    {
+        Veturi* uusiveturi = new Veturi(tyyppi, seuraavaVaunuNumero_, this);
+        veturilista_.append(uusiveturi);
+        uusi = uusiveturi;
+    }
     else
         uusi = new Vaunu(tyyppi, seuraavaVaunuNumero_, this);
 
@@ -466,4 +477,11 @@ void RataScene::raideVarautunut(RataRaide *raide, RaiteenPaa::Suunta suunta)
 {
     // Kun raide varautunut, ilmoitetaan kulkutieautomaatiolle
     kulkutieautomaatti_->saapuiRaiteelle( RaiteenPaa::suuntakirjain(suunta) + raide->raidetunnusLiikennepaikalla(), raide->junanumero() );
+}
+
+void RataScene::asetaJunaNumero(RataRaide *raide, const QString &junanumero)
+{
+    raide->asetaJunanumero(junanumero);
+    foreach(Veturi* veturi, veturilista_)
+        veturi->tarkistaRaiteenJunanumero();
 }

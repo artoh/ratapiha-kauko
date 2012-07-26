@@ -81,6 +81,6 @@ void JunaNuppi::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidge
 
 QRectF JunaNuppi::boundingRect() const
 {
-    return QRect( -10, -10, 20, 20);
+    return QRect( -50, -50, 100, 100);
 }
 

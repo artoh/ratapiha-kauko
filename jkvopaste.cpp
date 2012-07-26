@@ -49,7 +49,7 @@ JkvOpaste::JkvOpaste( RataKisko *kisko, RaiteenPaa::Opaste opaste, qreal matka,
         if( opaste != RaiteenPaa::Aja && opaste != RaiteenPaa::AjaSn)
             sallittuNopeus_ = 0;
     }
-    matka_ = matka - 2.5; // 2,5 metrin vara
+    matka_ = matka - 15; // 15 metrin vara
 }
 
 int JkvOpaste::jkvNopeus()
@@ -163,7 +163,7 @@ void JkvOpaste::laskeJkvNopeus()
     double jkvNopeusMs = std::sqrt((  nopeusMs * nopeusMs )  + 2 * hidastuvuus_ * matka_  );
     if( matka_ < 10.0 )
         jkvNopeusMs = nopeusMs;   // Muuten tulee negatiivisia lukuja lähellä nollaa ja etenkin sen alle
-    if( jkvNopeusMs < 1.0)
+    if( jkvNopeusMs < 3.7)
         jkvNopeusMs = 0.0;    // Aivan lähellä tulee muuten suuria negatiivisia lukuja!
 
     jkvNopeus_ = (int) ( jkvNopeusMs * 3.6);

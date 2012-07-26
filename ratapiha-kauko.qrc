@@ -71,5 +71,9 @@
         <file>jkvkuvat/poSeis.png</file>
         <file>jkvkuvat/roAjavarovasti.png</file>
         <file>jkvkuvat/roEiopastetta.png</file>
+        <file>jkvkuvat/eikaytossa.png</file>
+        <file>jkvkuvat/eijkvnappi.png</file>
+        <file>jkvkuvat/junanappi.png</file>
+        <file>jkvkuvat/vaihtotyonappi.png</file>
     </qresource>
 </RCC>

@@ -32,6 +32,7 @@ class KulkuTie;
 class Vaunu;
 class RataKisko;
 class KulkutieAutomaatti;
+class Veturi;
 
 class RataScene : public QGraphicsScene
 {
@@ -58,6 +59,8 @@ public:
 
     void raideVarautunut(RataRaide* raide, RaiteenPaa::Suunta suunta );
 
+    void asetaJunaNumero(RataRaide* raide, const QString& junanumero);
+
     QDateTime simulaatioAika() const { return simulaatioAika_; }
 signals:
     void kello(const QDateTime& aika);  /** Kun kello päivitetty */
@@ -76,6 +79,7 @@ private:
     QHash<QString, RataRaide*> raideTunnukset_; /** Raiteen avaimena raidetunnus: Hki001 */
     QHash<QString, KulkuTie*> kulkutiet_;   /** Kulkutien avaimena maaliraide: Hki001 */
     QHash<int, Vaunu*> vaunut_;
+    QList<Veturi*> veturilista_;
     QHash<int, RataKisko*> kiskot_;
     int seuraavaVaunuNumero_;
     int nopeutusKerroin_;   /** Kuinka moninkertaiseksi simulaation kello on nopeutettu */

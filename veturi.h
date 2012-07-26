@@ -70,7 +70,9 @@ public:
 
     int nopeusRajoitus() const { return nopeusRajoitus_; }
 
-    QString junaNumero() const { return QString("KOE"); }
+    QString junaNumero() const { return junaNumero_; }
+    void tarkistaRaiteenJunanumero();
+    JkvTila jkvTila() const { return jkvTila_; }
 
 signals:
     void nopeusIlmoitus(int nopeus);
@@ -98,7 +100,7 @@ protected:
 
     QVector<JkvOpaste> jkvTiedot_;
     qreal jkvNopeus_;
-    JkvTila JkvTila_;
+    JkvTila jkvTila_;
 
     qreal junaPituus_;
     qreal matkaMittari_;
@@ -106,6 +108,8 @@ protected:
     QList<QPair<qreal,int > > nopeusRajoitukset_;
     int nopeusRajoitus_;
     JunaNuppi* junaNuppi_;
+
+    QString junaNumero_;
 };
 
 #endif // VETURI_H
