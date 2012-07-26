@@ -254,6 +254,15 @@ RataKisko *RataKisko::haeAktiivinenNaapuri(QPointF sijainnista)
 
 }
 
+Opastin *RataKisko::opastinSijainnissa(QPointF sijainnissa)
+{
+    if( sijainnissa == etelainen())
+        return opastinEtelaan_;
+    else if( sijainnissa == pohjoinen())
+        return opastinPohjoiseen_;
+    return 0;
+}
+
 void RataKisko::esiopastinHaku(RaiteenPaa::Opaste opaste, QPointF naapurilta, qreal metria)
 {
     qreal yhteensa = metria + pituus();

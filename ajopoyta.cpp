@@ -270,5 +270,8 @@ void Ajopoyta::paivitaJKVnaytto()
     //    veturi_->jkvlaite()->paivitaNaytto();
 
     if( veturi_)
+    {
         naytaNopeus( veturi_->nopeus());
+        ui->jkvTieto->setPixmap( veturi_->jkvKuva());
+    }
 }

@@ -20,9 +20,12 @@
 #ifndef VETURI_H
 #define VETURI_H
 
-#include <QObject>
 #include "vaunu.h"
-#include "QTimer"
+#include "jkvopaste.h"
+
+#include <QTimer>
+#include <QObject>
+
 
 class RataScene;
 
@@ -33,6 +36,7 @@ public:
     enum { Type = UserType + 510 } ;
 
     enum VeturiTyyppi { EiTyyppia = 0, Sr1, Sm2, Sm3, Sm4, Dv12, Dr16, Dm12 };
+    enum JkvTila { EiJkv, JunaJkv, VaihtoJkv } ;
 
 
     Veturi(const QString& tyyppi, int vaununumero, RataScene* skene);
@@ -46,6 +50,7 @@ public:
     int nopeus() const { return metriaSekunnissa_ * 3.6; }  /** Nopeus km/h */
 
     int ajopoyta() const { return ajopoyta_; }
+    int jkvNopeus() const { return jkvNopeus_; }
 
     qreal kiihtyvyys() const { return 1.0; }
     qreal hidastuvuus() const { return 1.0; }
@@ -59,6 +64,12 @@ public:
                         const QString& lisatieto=QString());
 
     void siirtyyRaiteelle(RataRaide *raiteelle);
+    QPixmap jkvKuva();
+    qreal junaPituus() const { return junaPituus_; }
+    qreal matkaMittari() const { return matkaMittari_; }
+
+    int nopeusRajoitus() const { return nopeusRajoitus_; }
+
 signals:
     void nopeusIlmoitus(int nopeus);
     
@@ -70,6 +81,8 @@ public slots:
 
 protected:
     void merkitseTyyppi(const QString& tyyppi);
+    void paivitaJkvTiedot();    // Päivittää jkv-tietojen luettelon
+    Akseli* aktiivinenAkseli();
 
     QTimer timer_;
 
@@ -79,6 +92,17 @@ protected:
     int ajopoyta_;
 
     VeturiTyyppi veturiTyyppi_;
+    RataRaide* edellinenLokiRaide_;
+
+    QVector<JkvOpaste> jkvTiedot_;
+    qreal jkvNopeus_;
+    JkvTila JkvTila_;
+
+    qreal junaPituus_;
+    qreal matkaMittari_;
+
+    QList<QPair<qreal,int > > nopeusRajoitukset_;
+    int nopeusRajoitus_;
     
 };
 

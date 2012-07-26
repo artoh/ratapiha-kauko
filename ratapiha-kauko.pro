@@ -43,7 +43,10 @@ HEADERS += \
     palvelin.h \
     kulkutieautomaatti.h \
     automaatioopastin.h \
-    automaatiopyynto.h
+    automaatiopyynto.h \
+    jkvopaste.h \
+    reittitieto.h \
+    junanuppi.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -85,7 +88,10 @@ SOURCES += \
     palvelin.cpp \
     kulkutieautomaatti.cpp \
     automaatioopastin.cpp \
-    automaatiopyynto.cpp
+    automaatiopyynto.cpp \
+    jkvopaste.cpp \
+    reittitieto.cpp \
+    junanuppi.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
@@ -144,7 +150,12 @@ OTHER_FILES += \
     pic/ktas_harmaa.png \
     pic/fit-best.png \
     pic/ajakursori.png \
-    pic/ajakasky.png
+    pic/ajakasky.png \
+    jkvkuvat/roEiopastetta.png \
+    jkvkuvat/roAjavarovasti.png \
+    jkvkuvat/poSeis.png \
+    jkvkuvat/poAjaSn.png \
+    jkvkuvat/poAja.png
 
 FORMS += \
     ajopoyta.ui \

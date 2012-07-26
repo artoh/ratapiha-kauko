@@ -20,7 +20,6 @@ KaukoIkkuna::KaukoIkkuna(RatapihaIkkuna *parent) :
     QMainWindow(parent),
     rpIkkuna_(parent)
 {
-    setWindowTitle("Kaukokäyttö");
 
     skene_ = new KaukoScene;
     view_ = new KaukoView(skene_);
@@ -42,6 +41,7 @@ KaukoIkkuna::KaukoIkkuna(RatapihaIkkuna *parent) :
 
     yhteysAsettimeen( rpIkkuna_->onkoYhteydessa());
     nakymanVaihto(0);
+
 }
 
 void KaukoIkkuna::uusiIkkuna()
@@ -53,6 +53,7 @@ void KaukoIkkuna::uusiIkkuna()
 void KaukoIkkuna::nakymanVaihto(int valintaind)
 {
     skene_->haeNakyma( nakymaValinta_->itemData(valintaind).toInt() );
+    setWindowTitle( tr("Kaukokäyttö - %1").arg( nakymaValinta_->currentText() ));
 }
 
 void KaukoIkkuna::editori()

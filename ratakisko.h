@@ -58,6 +58,7 @@ public:
 
     RataKisko* haeAktiivinenNaapuri( QPointF sijainnista);
 
+    Opastin* opastinSijainnissa( QPointF sijainnissa);
 
 
 private:

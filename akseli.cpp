@@ -250,3 +250,13 @@ void Akseli::vaunuLiike(qreal matka)
         kytkettyAkseli_->kytkinLiike( 0 - matka);
     vaunu_->laskeSijainti();
 }
+
+qreal Akseli::junanPituusKysely(qreal tahanasti)
+{
+    // Selvittää junan pituuden tästä loppuun päin
+    // (kun kysely tulee tähän akseliin)
+    qreal junapituus = tahanasti + vaunu_->pituus();
+    if( toinenAkseli_ && toinenAkseli_->kytkettyAkseli_)
+        return  toinenAkseli_->kytkettyAkseli_->junanPituusKysely(junapituus);
+    return junapituus;  // Tämä on viimeinen vaunu
+}

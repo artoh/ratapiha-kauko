@@ -54,6 +54,8 @@ public:
     void kytkinLiike( qreal matka);
     void vaunuLiike( qreal matka);
 
+    qreal junanPituusKysely(qreal tahanasti);
+
 private:
 
     void laskeSijainti();
@@ -75,6 +77,7 @@ private:
 
     /** Positiivinen kulkusuunta */
     RaiteenPaa::Suunta suuntaKiskolla_;
+
 };
 
 #endif // AKSELI_H

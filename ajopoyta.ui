@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>196</width>
-    <height>378</height>
+    <height>433</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,7 +74,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>300</y>
+     <y>360</y>
      <width>71</width>
      <height>71</height>
     </rect>
@@ -97,7 +97,7 @@
    <property name="geometry">
     <rect>
      <x>60</x>
-     <y>340</y>
+     <y>400</y>
      <width>31</width>
      <height>31</height>
     </rect>
@@ -113,7 +113,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>340</y>
+     <y>400</y>
      <width>31</width>
      <height>31</height>
     </rect>
@@ -129,7 +129,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>300</y>
+     <y>360</y>
      <width>81</width>
      <height>41</height>
     </rect>
@@ -154,7 +154,7 @@
      <x>10</x>
      <y>60</y>
      <width>150</width>
-     <height>240</height>
+     <height>300</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -177,7 +177,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>340</y>
+     <y>400</y>
      <width>21</width>
      <height>31</height>
     </rect>
@@ -263,6 +263,18 @@
     <string/>
    </property>
   </widget>
+  <zorder>jkvTieto</zorder>
+  <zorder>nopeusSaadin</zorder>
+  <zorder>nopeusLabel</zorder>
+  <zorder>stopNappi</zorder>
+  <zorder>ajopoyta2</zorder>
+  <zorder>ajopoyta1</zorder>
+  <zorder>etsi</zorder>
+  <zorder>automaatioNappi</zorder>
+  <zorder>tavoiteNopeusLabel</zorder>
+  <zorder>label</zorder>
+  <zorder>veturiValinta</zorder>
+  <zorder>veturinTyyppi</zorder>
  </widget>
  <resources>
   <include location="ratapiha-kauko.qrc"/>
