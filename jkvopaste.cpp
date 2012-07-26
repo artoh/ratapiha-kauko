@@ -143,7 +143,8 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
 
 void JkvOpaste::asetaYhdistettySn(int sn)
 {
-    sallittuNopeus_ = sn;
+    if( sn < sallittuNopeus_)
+        sallittuNopeus_ = sn;
 
 }
 

@@ -1,7 +1,5 @@
 #include "junanuppi.h"
-#include "jkvlaite.h"
-#include "raideelementti.h"
-#include "rata.h"
+#include "veturi.h"
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
@@ -10,24 +8,37 @@
 JunaNuppi::JunaNuppi(Veturi *veturi)
     : QGraphicsItem(veturi), veturi_(veturi)
 {
-    setFlag( QGraphicsItem::ItemIgnoresTransformations, true);
+//    setFlag( QGraphicsItem::ItemIgnoresTransformations, true);
     setPos( veturi->pituus() / 2.0, 0.0);
+    setZValue(100);
 }
 
 void JunaNuppi::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-    if( veturi_->ajopoyta())
-    {
-        QRadialGradient veturigrad( 0, 0, SADE, 0, 0);
 
-        if( veturi_->nopeus() < 1 && veturi_->jkvlaite() && veturi_->jkvlaite()->jumissa())
+    if( QStyleOptionGraphicsItem::levelOfDetailFromTransform(painter->worldTransform()) > 0.75 )
+        return;
+
+    if( veturi_->ajopoyta() || 1)
+    {
+        // Säde joka huomioi transformin
+        qreal kerroin = 1 / QStyleOptionGraphicsItem::levelOfDetailFromTransform(painter->worldTransform()  );
+        if( QStyleOptionGraphicsItem::levelOfDetailFromTransform(painter->worldTransform()) < 0.02)
+            kerroin = 0.5 / QStyleOptionGraphicsItem::levelOfDetailFromTransform(painter->worldTransform());
+
+        int sade = (int) (kerroin * 10);
+
+
+        QRadialGradient veturigrad( 0, 0, sade, 0, 0);
+
+        if( veturi_->nopeus() < 1  )
         {
             // Punainen jumittuneelle junalle - seisonut 15 s. yli pysähdysajan
             veturigrad.setColorAt(1.0,QColor(117,0,0) );
             veturigrad.setColorAt(0.8,QColor(167,0,0));
             veturigrad.setColorAt(0.0,  QColor(255,0,0));
         }
-        else if( veturi_->nopeus() < 1 )
+        else if( veturi_->nopeus() < 10 )
         {
             // Puna-keltainen pysähtyneelle junalle
 
@@ -55,22 +66,21 @@ void JunaNuppi::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidge
 
         painter->setBrush( QBrush(veturigrad));
         painter->setPen( QPen(Qt::black, 0.5 ));
-        painter->drawEllipse(QPointF(0.0, 0.0),(qreal)SADE, (qreal) SADE);
-        if( veturi_->jkvlaite() && !veturi_->jkvlaite()->junaNumero().isEmpty())
+        painter->drawEllipse(QPointF(0.0, 0.0),(qreal)sade, (qreal) sade);
+        if( !veturi_->junaNumero().isEmpty()  &&  QStyleOptionGraphicsItem::levelOfDetailFromTransform(painter->worldTransform()) > 0.01)
         {
-            painter->setFont( QFont("Helvetica", 10, QFont::Bold));
-            painter->drawText( QRect(-SADE, -SADE, SADE*2, 14), veturi_->jkvlaite()->junaNumero().left(1), QTextOption(Qt::AlignCenter));
-            painter->setFont( QFont("Helvetica", 4));
-            painter->drawText( QRect( -SADE, -SADE+11, SADE*2, SADE*2-12), veturi_->jkvlaite()->junaNumero().mid(1), QTextOption(Qt::AlignCenter));
-
+            painter->setFont( QFont("Helvetica", (int) (kerroin * 10), QFont::Bold));
+            painter->drawText( QRect(-sade, -sade, sade*2, (int) (kerroin * 14)), veturi_->junaNumero().left(1), QTextOption(Qt::AlignCenter));
+            painter->setFont( QFont("Helvetica", (int)(4 * kerroin)));
+            painter->drawText( QRect( -sade, -sade+(int)(11 * kerroin), sade*2, sade*2-(int)(kerroin*12)), veturi_->junaNumero().mid(1), QTextOption(Qt::AlignCenter));
         }
     }
 
 }
 
+
 QRectF JunaNuppi::boundingRect() const
 {
-    return QRect( -SADE-2, -SADE-2, SADE*2+4, SADE*2+4);
+    return QRect( -10, -10, 20, 20);
 }
 
-const int JunaNuppi::SADE;

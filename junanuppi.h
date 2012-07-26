@@ -19,7 +19,6 @@ public:
 protected:
     Veturi* veturi_;
 
-    static const int SADE = 10;
 
 };
 

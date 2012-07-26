@@ -26,7 +26,7 @@
 #include <QTimer>
 #include <QObject>
 
-
+class JunaNuppi;
 class RataScene;
 
 class Veturi : public QObject, public Vaunu
@@ -70,6 +70,8 @@ public:
 
     int nopeusRajoitus() const { return nopeusRajoitus_; }
 
+    QString junaNumero() const { return QString("KOE"); }
+
 signals:
     void nopeusIlmoitus(int nopeus);
     
@@ -103,7 +105,7 @@ protected:
 
     QList<QPair<qreal,int > > nopeusRajoitukset_;
     int nopeusRajoitus_;
-    
+    JunaNuppi* junaNuppi_;
 };
 
 #endif // VETURI_H

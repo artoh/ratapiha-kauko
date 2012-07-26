@@ -22,12 +22,14 @@
 #include "rataikkuna.h"
 #include "ratascene.h"
 #include "rataraide.h"
+#include "junanuppi.h"
 
 #include <QPainter>
 #include <QFont>
 #include <QPen>
 #include <QSqlQuery>
 #include <QStaticText>
+#include <QStyleOptionGraphicsItem>
 
 Veturi::Veturi(const QString &tyyppi, int vaununumero, RataScene *skene) :
     QObject(), Vaunu(tyyppi, vaununumero, skene),
@@ -39,6 +41,7 @@ Veturi::Veturi(const QString &tyyppi, int vaununumero, RataScene *skene) :
     nopeusRajoitus_(0)
 {
     merkitseTyyppi(tyyppi);
+
 }
 
 Veturi::Veturi(const QString &tyyppi, int vaunuNumero, RataKisko *etu_kisko, qreal etu_etaisyys, QChar etu_suunta, RataKisko *taka_kisko, qreal taka_etaisyys, QChar taka_suunta, RataScene *skene) :
@@ -51,6 +54,7 @@ Veturi::Veturi(const QString &tyyppi, int vaunuNumero, RataKisko *etu_kisko, qre
 
 void Veturi::merkitseTyyppi(const QString &tyyppi)
 {
+    // Tekee yleiset alkutoimet
     connect( &timer_, SIGNAL(timeout()), this, SLOT(aja()));
 
     if( tyyppi == "Sr1")
@@ -67,6 +71,8 @@ void Veturi::merkitseTyyppi(const QString &tyyppi)
         veturiTyyppi_ = Dr16;
     else if( tyyppi == "Dm12")
         veturiTyyppi_ = Dr16;
+
+    junaNuppi_ = new JunaNuppi(this);    // Pallo pienelle skaalaukselle
 }
 
 void Veturi::paivitaJkvTiedot()
@@ -229,13 +235,8 @@ void Veturi::paint(QPainter *painter, const QStyleOptionGraphicsItem* , QWidget 
     painter->setFont( QFont("Helvetica",7.0,QFont::Bold));
     painter->drawText( QRectF(0.0, -5.5, pituus(), 11.0), QString::number( vaunuNumero() ), QTextOption(Qt::AlignCenter));
 
-    /**
-    if( QStyleOptionGraphicsItem::levelOfDetailFromTransform(painter->worldTransform()) > 0.75 )
-        junaNuppi_->hide();
-    else
-        junaNuppi_->show();
 
-    */
+
 
 }
 
