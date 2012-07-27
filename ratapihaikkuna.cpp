@@ -70,6 +70,7 @@ RatapihaIkkuna::RatapihaIkkuna(QWidget *parent) :
     ui->kayttajatunnusLine->setText( settings.value("kayttaja").toString());
     ui->salasanaLine->setText(settings.value("salasana").toString());
     ui->nopeusSlider->setValue( settings.value("nopeutus",10).toInt());
+    ui->nopeusArvoLabel->setNum(  ui->nopeusSlider->value());
 }
 
 RatapihaIkkuna::~RatapihaIkkuna()
