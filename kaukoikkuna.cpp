@@ -180,6 +180,10 @@ void KaukoIkkuna::luoTyoPalkki()
     hallintaToolBar_->addAction(editoriAktio_);
 
     asetinlaiteToolBar_ = addToolBar( tr("Asetinlaite"));
+    kaskyLine_ = new QLineEdit;
+    connect( kaskyLine_, SIGNAL(returnPressed()), this, SLOT(kasky()));
+    asetinlaiteToolBar_->addWidget(kaskyLine_);
+
     asetinlaiteToolBar_->addAction( kulkutieAktio_ );
     asetinlaiteToolBar_->addAction( vaihtoKulkutieAktio_);
     asetinlaiteToolBar_->addAction( puraKulkutieAktio_);
@@ -193,9 +197,7 @@ void KaukoIkkuna::luoTyoPalkki()
     asetinlaiteToolBar_->addAction( ajaAktio_);
 
 
-    kaskyLine_ = new QLineEdit;
-    connect( kaskyLine_, SIGNAL(returnPressed()), this, SLOT(kasky()));
-    hallintaToolBar_->addWidget(kaskyLine_);
+
 
 
 }
