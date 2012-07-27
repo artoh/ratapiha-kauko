@@ -20,9 +20,9 @@
    <property name="geometry">
     <rect>
      <x>170</x>
-     <y>10</y>
+     <y>40</y>
      <width>21</width>
-     <height>361</height>
+     <height>381</height>
     </rect>
    </property>
    <property name="maximum">
@@ -192,8 +192,8 @@
   <widget class="QLabel" name="tavoiteNopeusLabel">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>29</y>
+     <x>100</x>
+     <y>30</y>
      <width>51</width>
      <height>31</height>
     </rect>
@@ -235,7 +235,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
+     <y>0</y>
      <width>71</width>
      <height>21</height>
     </rect>
@@ -254,13 +254,26 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>10</y>
+     <y>0</y>
      <width>71</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="Line" name="line">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>20</y>
+     <width>201</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
    </property>
   </widget>
   <zorder>jkvTieto</zorder>
@@ -275,6 +288,7 @@
   <zorder>label</zorder>
   <zorder>veturiValinta</zorder>
   <zorder>veturinTyyppi</zorder>
+  <zorder>line</zorder>
  </widget>
  <resources>
   <include location="ratapiha-kauko.qrc"/>

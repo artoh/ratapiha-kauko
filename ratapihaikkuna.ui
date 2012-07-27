@@ -33,7 +33,7 @@
      <enum>QTabWidget::Triangular</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="kaukoTab">
      <attribute name="title">
@@ -207,7 +207,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>110</y>
+        <y>120</y>
         <width>361</width>
         <height>16</height>
        </rect>
@@ -237,8 +237,8 @@
      <widget class="QLabel" name="label_3">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>90</y>
+        <x>20</x>
+        <y>100</y>
         <width>121</width>
         <height>16</height>
        </rect>
@@ -251,6 +251,35 @@
       </property>
       <property name="text">
        <string>Simulaation nopeus</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="nopeusArvoLabel">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>100</y>
+        <width>53</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>100</y>
+        <width>53</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>x</string>
       </property>
      </widget>
     </widget>
@@ -488,5 +517,22 @@
  <resources>
   <include location="ratapiha-kauko.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>nopeusSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>nopeusArvoLabel</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>232</x>
+     <y>204</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>350</x>
+     <y>187</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

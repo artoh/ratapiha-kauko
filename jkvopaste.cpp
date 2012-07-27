@@ -50,6 +50,9 @@ JkvOpaste::JkvOpaste( RataKisko *kisko, RaiteenPaa::Opaste opaste, qreal matka,
             sallittuNopeus_ = 0;
     }
     matka_ = matka - 15; // 15 metrin vara
+
+    if( hidastuvuus > 0.5)
+        hidastuvuus_ = hidastuvuus - 0.1;   // Vähän varaa hidastaa ettei mene pitkäksi
 }
 
 int JkvOpaste::jkvNopeus()

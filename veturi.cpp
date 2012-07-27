@@ -319,6 +319,7 @@ void Veturi::aja()
       // Lasketaan ensin uusi nopeus.
       if( tavoite > metriaSekunnissa_)
       {
+          // Kiihdytetään
           if( tavoite - metriaSekunnissa_ > kiihtyvyys() * RataIkkuna::rataSkene()->nopeutusKerroin() / 5 )
               metriaSekunnissa_ += kiihtyvyys() * RataIkkuna::rataSkene()->nopeutusKerroin() / 5;
           else
@@ -326,14 +327,15 @@ void Veturi::aja()
       }
       else
       {
-          if( tavoite < 3.6)       // Jos nopeus alle 1 km/h, niin pysäytetään saman tien
+          // Hidastetaan...
+          if( !tavoite && nopeusMs() < 5.0 )       // Jos nopeus alle 1 km/h, niin pysäytetään saman tien
               metriaSekunnissa_ = 0.0;
           else
           {
               if( metriaSekunnissa_ - tavoite > hidastuvuus() * RataIkkuna::rataSkene()->nopeutusKerroin() / 5)   // Normaali jarrutus
                   metriaSekunnissa_ -= hidastuvuus() * RataIkkuna::rataSkene()->nopeutusKerroin() / 5;
               else
-                  metriaSekunnissa_ = tavoite;
+                  metriaSekunnissa_ = tavoite;  // Päästään tavotteeseen tällä vuorolla
           }
       }
 
