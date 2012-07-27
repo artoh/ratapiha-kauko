@@ -155,7 +155,22 @@ OTHER_FILES += \
     jkvkuvat/roAjavarovasti.png \
     jkvkuvat/poSeis.png \
     jkvkuvat/poAjaSn.png \
-    jkvkuvat/poAja.png
+    jkvkuvat/poAja.png \
+    jkvkuvat/eijkvnappi.png \
+    jkvkuvat/eikaytossa.png \
+    jkvkuvat/junanappi.png \
+    jkvkuvat/vaihtotyonappi.png \
+    junakuvat/Sr1.png \
+    junakuvat/Sm4.png \
+    junakuvat/Sm3.png \
+    junakuvat/Sm2.png \
+    junakuvat/Gbln.png \
+    junakuvat/Eiu.png \
+    junakuvat/Dv12.png \
+    junakuvat/Dr16.png \
+    junakuvat/Dm12.png \
+    junakuvat/Dm10.png \
+    junakuvat/Cabb.png
 
 FORMS += \
     ajopoyta.ui \
