@@ -184,7 +184,10 @@ void KaukoIkkuna::luoTyoPalkki()
     asetinlaiteToolBar_->addAction( vaihtoKulkutieAktio_);
     asetinlaiteToolBar_->addAction( puraKulkutieAktio_);
     asetinlaiteToolBar_->addSeparator();
+    asetinlaiteToolBar_->addAction( junanumeroAktio_);
+    asetinlaiteToolBar_->addSeparator();
     asetinlaiteToolBar_->addAction( kaannaVaihdeAktio_);
+    asetinlaiteToolBar_->addAction( aukiajetunKaantoAktio_);
     asetinlaiteToolBar_->addSeparator();
     asetinlaiteToolBar_->addAction( seisAktio_);
     asetinlaiteToolBar_->addAction( ajaAktio_);
