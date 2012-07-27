@@ -51,65 +51,7 @@ Ajopoyta::~Ajopoyta()
 
 void Ajopoyta::valitseVeturi()
 {
-
     valitseVeturi( ui->veturiValinta->text().toInt() );
-
-    /*
-    Vaunu* uusivaunu= RaideElementti::rata()->vaunu(veturi);
-    Veturi* uusiveturi = dynamic_cast<Veturi*>(uusivaunu);
-    if( veturi_ && uusiveturi )
-    {
-        // Puretaan edelliset säädöt
-        disconnect( ui->nopeusSaadin, SIGNAL(valueChanged(int)), veturi_, SLOT(asetaTavoiteNopeus(int)));
-        disconnect( veturi_, SIGNAL(nopeusIlmoitus(int)), this, SLOT(naytaNopeus(int)));
-        disconnect( veturi_, SIGNAL(jkvIlmoitus(QPixmap)), this, SLOT(naytaJkvIlmoitus(QPixmap)));
-        disconnect( ui->stopNappi, SIGNAL(clicked()), veturi_, SLOT(hataJarru()));
-        disconnect( veturi_, SIGNAL(hataJarrutus()), this, SLOT(hataJarrutettu()));
-        disconnect( ui->automaatioNappi, SIGNAL(clicked(bool)), veturi_, SLOT(asetaAikatauluAutomaatio(bool)));
-        disconnect( veturi_, SIGNAL(itseAsetus(int,int,QPixmap)), this, SLOT(tilaMuutos(int,int,QPixmap)));
-
-        // Irroitetaan jkv-laite näytöstä
-        if( veturi_->jkvlaite())
-            disconnect( veturi_->jkvlaite(), SIGNAL(jkvIlmoitus(QPixmap)), this, SLOT(naytaJkvIlmoitus(QPixmap)));
-
-    }
-    if( uusiveturi)
-    {
-        ui->jkvTieto->clear();
-
-        veturi_ = uusiveturi;
-        // Alustetaan veturin tiedot
-        ui->ajopoyta1->setChecked( veturi_->ajopoyta() == 1);
-        ui->ajopoyta2->setChecked(veturi_->ajopoyta() == 2);
-        ui->automaatioNappi->setChecked( veturi_->aikatauluautomaatio());
-
-        ui->maxNopeusLabel->setText( QString::number( veturi_->enimmaisNopeus()) );
-        ui->nopeusSaadin->setRange(0, veturi_->enimmaisNopeus());
-        ui->nopeusSaadin->setValue( veturi_->tavoitenopeus());
-        // Näyttää paitsi nopeuden, myös ohjaa ajopöytänappien 1 ja 2 toimintaa
-        naytaNopeus( veturi_->nopeus());
-
-
-        connect( ui->nopeusSaadin, SIGNAL(valueChanged(int)), veturi_, SLOT(asetaTavoiteNopeus(int)));
-        connect( veturi_, SIGNAL(nopeusIlmoitus(int)), this, SLOT(naytaNopeus(int)));
-        connect( veturi_, SIGNAL(jkvIlmoitus(QPixmap)), this, SLOT(naytaJkvIlmoitus(QPixmap)));
-        connect( ui->stopNappi, SIGNAL(clicked()), this, SLOT(hataJarru()));
-        connect( veturi_, SIGNAL(hataJarrutus()), this, SLOT(hataJarrutettu()));
-        connect( ui->automaatioNappi, SIGNAL(clicked(bool)), veturi_, SLOT(asetaAikatauluAutomaatio(bool)));
-        connect( veturi_, SIGNAL(itseAsetus(int,int,QPixmap)), this, SLOT(tilaMuutos(int,int,QPixmap)));
-
-        // Kytketään jkv-laite näyttöön
-        if( veturi_->jkvlaite())
-        {
-            connect( veturi_->jkvlaite(), SIGNAL(jkvIlmoitus(QPixmap)), this, SLOT(naytaJkvIlmoitus(QPixmap)));
-            ui->jkvTieto->setPixmap( veturi_->jkvlaite()->jkvKuva()  );
-        }
-
-    }
-    else
-    {
-
-    } */
 }
 
 void Ajopoyta::valitseVeturi(int veturinNumero)
@@ -252,13 +194,14 @@ void Ajopoyta::naytaNopeus(int nopeus)
 }
 
 bool Ajopoyta::eventFilter(QObject *target, QEvent *event)
+// Kosketusnäytön toiminnallisuus
 {
     if( target == ui->jkvTieto && event->type() == QEvent::MouseButtonPress)
     {
         QMouseEvent *hiiritapaus = static_cast<QMouseEvent*>(event);
-//        if( veturi_ && veturi_->jkvlaite())
-//            veturi_->jkvlaite()->nayttoonKoskettu( hiiritapaus->pos());
-//        return true;
+        if( veturi_ )
+            veturi_->nayttoonKoskettu( hiiritapaus->pos());
+        return true;
     }
     return QWidget::eventFilter(target,event);
 }
@@ -266,9 +209,6 @@ bool Ajopoyta::eventFilter(QObject *target, QEvent *event)
 
 void Ajopoyta::paivitaJKVnaytto()
 {
-    // if( veturi_ && veturi_->jkvlaite())
-    //    veturi_->jkvlaite()->paivitaNaytto();
-
     if( veturi_)
     {
         naytaNopeus( veturi_->nopeus());

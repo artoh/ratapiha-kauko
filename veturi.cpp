@@ -47,7 +47,12 @@ Veturi::Veturi(const QString &tyyppi, int vaununumero, RataScene *skene) :
 Veturi::Veturi(const QString &tyyppi, int vaunuNumero, RataKisko *etu_kisko, qreal etu_etaisyys, QChar etu_suunta, RataKisko *taka_kisko, qreal taka_etaisyys, QChar taka_suunta, RataScene *skene) :
     QObject(),
     Vaunu(tyyppi, vaunuNumero, etu_kisko, etu_etaisyys, etu_suunta, taka_kisko, taka_etaisyys, taka_suunta, skene),
-    tavoiteNopeus_(0), metriaSekunnissa_(0.0), ajopoyta_(0)
+    tavoiteNopeus_(0), metriaSekunnissa_(0.0), ajopoyta_(0),
+    edellinenLokiRaide_(0),
+    jkvTila_(VaihtoJkv),
+    junaPituus_(0.0),
+    matkaMittari_(0.0),
+    nopeusRajoitus_(0)
 {
     merkitseTyyppi(tyyppi);
 }
@@ -565,5 +570,29 @@ void Veturi::tarkistaRaiteenJunanumero()
     }
 
 
+}
+
+// Tänne kosketusnäytön toiminnallisuus -- tilan vaihto
+void Veturi::nayttoonKoskettu(QPoint pos)
+{
+    if( !ajopoyta())
+        return; // Eipä toiminnallisuutta ilman ajopöytää
+
+    if( (jkvTila() == VaihtoJkv || ( jkvTila() == JunaJkv && nopeus() < 1) )
+             &&   pos.y() > 270 && pos.x() < 75)
+    {
+        jkvTila_ = EiJkv;
+    }
+    else if( jkvTila() == EiJkv  && pos.x() < 75 && pos.y() > 270 )
+    {
+        jkvTila_ = VaihtoJkv;
+    }
+    else if( (jkvTila() == EiJkv || jkvTila() == VaihtoJkv ) &&
+             nopeus() < 1  && pos.x() > 75 && pos.y() > 270 )
+    {
+        jkvTila_ = JunaJkv;
+    }
+    else if( jkvTila() == JunaJkv && pos.x() > 75 && pos.y() > 270 && nopeus()<1 )
+        jkvTila_ = VaihtoJkv;
 }
 

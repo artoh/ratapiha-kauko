@@ -74,6 +74,7 @@ public:
     void tarkistaRaiteenJunanumero();
     JkvTila jkvTila() const { return jkvTila_; }
 
+
 signals:
     void nopeusIlmoitus(int nopeus);
     
@@ -82,6 +83,7 @@ public slots:
     void asetaTavoiteNopeus(int tavoiteNopeus);
 
     void aja();
+    void nayttoonKoskettu(QPoint pos);
 
 protected:
     void merkitseTyyppi(const QString& tyyppi);

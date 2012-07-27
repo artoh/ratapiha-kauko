@@ -365,6 +365,8 @@ void RatapihaIkkuna::muokkaaNakymaa(int nakyma)
 
 bool RatapihaIkkuna::yhdistaTietokantaan()
 {
+    ui->tilaLabel->setText(tr("Yhdistetään tietokantaan..."));
+
     if( tietokanta_.isOpen())
         tietokanta_.close();
 
@@ -375,7 +377,7 @@ bool RatapihaIkkuna::yhdistaTietokantaan()
 
     if( !tietokanta_.open())
     {
-        QMessageBox::critical(0, tr("Tietokantavirhe"),tietokanta_.lastError().text());
+        QMessageBox::critical(0, tr("Ratapiha: Tietokantavirhe"),tietokanta_.lastError().text());
         return false;
     }
     return true;
