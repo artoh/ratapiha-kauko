@@ -69,14 +69,9 @@ void KaukoIkkuna::kasky()
     kaskyLine_->clear();
 }
 
-void KaukoIkkuna::vaihdaTila()
+void KaukoIkkuna::vaihdaTila(QAction* aktio)
 {
-    // Vaihtaa valitun toimintatilan
-    QObject* lahettaja = sender();
-    QAction* aktio = qobject_cast<QAction*>(lahettaja);
-
-    if( aktio)
-        view_->valitseTila(aktio->data().toInt());
+    view_->valitseTila(aktio->data().toInt());
 }
 
 void KaukoIkkuna::paivitaNapit(int tila)
@@ -122,7 +117,7 @@ void KaukoIkkuna::luoAktiot()
     kulkutieAktio_->setCheckable(true);
     kulkutieAktio_->setToolTip(tr("Muodosta junakulkutie"));
     aslAktiot_->addAction(kulkutieAktio_);
-    connect( kulkutieAktio_, SIGNAL( triggered()), this, SLOT(vaihdaTila()));
+    connect( aslAktiot_, SIGNAL(triggered(QAction*)), this, SLOT(vaihdaTila(QAction*)));
 
     vaihtoKulkutieAktio_ = new QAction( tr("Vaihtokulkutie"), this);
     vaihtoKulkutieAktio_->setData(KaukoView::VaihtoKulkutieAlkaa);
@@ -130,7 +125,6 @@ void KaukoIkkuna::luoAktiot()
     vaihtoKulkutieAktio_->setCheckable(true);
     vaihtoKulkutieAktio_->setToolTip(tr("Muodosta vaihtokulkutie"));
     aslAktiot_->addAction(vaihtoKulkutieAktio_);
-    connect( vaihtoKulkutieAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTila()));
 
     puraKulkutieAktio_ = new QAction( tr("Peru kulkutie"),this);
     puraKulkutieAktio_->setIcon( QIcon(":/r/pic/kulkutienpurku.png"));
@@ -138,28 +132,29 @@ void KaukoIkkuna::luoAktiot()
     puraKulkutieAktio_->setData(KaukoView::PeruKulkutie);
     puraKulkutieAktio_->setCheckable(true);
     aslAktiot_->addAction(puraKulkutieAktio_);
-    connect( puraKulkutieAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTila()));
+
+    junanumeroAktio_ = new QAction( tr("Syötä junanumero"), this);
+    junanumeroAktio_->setIcon( QIcon(":/r/pic/junanumero.png"));
+    junanumeroAktio_->setCheckable(true);
+    junanumeroAktio_->setData( KaukoView::JunaNumeronSyotto);
 
     kaannaVaihdeAktio_ = new QAction( tr("Käännä vaihde"),this);
     kaannaVaihdeAktio_->setIcon( QIcon(":/r/pic/vaihteenkaanto.png"));
     kaannaVaihdeAktio_->setCheckable(true);
     kaannaVaihdeAktio_->setData(KaukoView::VaihteenKaanto);
     aslAktiot_->addAction(kaannaVaihdeAktio_);
-    connect( kaannaVaihdeAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTila()));
 
     seisAktio_ = new QAction( tr("Opastimet SEIS-opasteelle"),this);
     seisAktio_->setIcon( QIcon(":/r/pic/seiskasky.png"));
     seisAktio_->setData(KaukoView::SeisKasky);
     seisAktio_->setCheckable(true);
     aslAktiot_->addAction(seisAktio_);
-    connect( seisAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTila()));
 
     ajaAktio_ = new QAction( tr("Opastimen vapautus SEIS-asennosta"),this);
     ajaAktio_->setIcon( QIcon(":/r/pic/ajakasky.png"));
     ajaAktio_->setData(KaukoView::AjaKasky);
     ajaAktio_->setCheckable(true);
     aslAktiot_->addAction(ajaAktio_);
-    connect( ajaAktio_, SIGNAL(triggered()), this, SLOT(vaihdaTila()));
 
 
 }

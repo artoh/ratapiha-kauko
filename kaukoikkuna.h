@@ -36,7 +36,7 @@ public slots:
 
     void kasky();
 
-    void vaihdaTila();
+    void vaihdaTila(QAction* aktio);
     void paivitaNapit(int tila);
 
     void yhteysAsettimeen(bool onkoYhteytta);
@@ -63,6 +63,9 @@ protected:
     QAction* kaannaVaihdeAktio_;
     QAction* seisAktio_;
     QAction* ajaAktio_;
+
+    QAction* junanumeroAktio_;
+    QAction* aukiajetunKaantoAktio_;
 
     QLineEdit* kaskyLine_;
 

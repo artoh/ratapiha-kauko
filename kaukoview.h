@@ -24,7 +24,9 @@ public:
                      PeruKulkutie,
                      VaihteenKaanto,
                      SeisKasky,
-                     AjaKasky} ;
+                     AjaKasky,
+                     JunaNumeronSyotto,
+                     AukiajetunVaihteenKaanto} ;
     
 
 

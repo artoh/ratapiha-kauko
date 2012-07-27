@@ -170,10 +170,15 @@ OTHER_FILES += \
     junakuvat/Dr16.png \
     junakuvat/Dm12.png \
     junakuvat/Dm10.png \
-    junakuvat/Cabb.png
+    junakuvat/Cabb.png \
+    pic/vaihteenkaanto-aukiajettu.png \
+    pic/vaihdekursori-aukiajettu.png \
+    pic/junanumerokursori.png \
+    pic/junanumero.png
 
 FORMS += \
     ajopoyta.ui \
     ratapihaikkuna.ui
+
 
 

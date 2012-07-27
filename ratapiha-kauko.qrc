@@ -72,5 +72,9 @@
         <file>jkvkuvat/eijkvnappi.png</file>
         <file>jkvkuvat/junanappi.png</file>
         <file>jkvkuvat/vaihtotyonappi.png</file>
+        <file>pic/junanumero.png</file>
+        <file>pic/junanumerokursori.png</file>
+        <file>pic/vaihdekursori-aukiajettu.png</file>
+        <file>pic/vaihteenkaanto-aukiajettu.png</file>
     </qresource>
 </RCC>

@@ -15,6 +15,7 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <cmath>
+#include <QInputDialog>
 
 KaukoView::KaukoView(KaukoScene* skene) :
     QGraphicsView(skene)
@@ -58,7 +59,12 @@ void KaukoView::valitseTila(int tila)
     case AjaKasky:
         setCursor( QCursor( QPixmap(":/r/pic/ajakursori.png"),9,0));
         break;
-
+    case JunaNumeronSyotto :
+        setCursor( QCursor( QPixmap(":r/pic/junanumerokursori.png"),9,0));
+        break;
+    case AukiajetunVaihteenKaanto:
+        setCursor( QCursor( QPixmap(":/r/pic/vaihdekursori-aukiajettu.png"),9,0));
+        break;
     }
 
 }
@@ -129,7 +135,7 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
             komento( QString("KPER %1").arg(klikattuTunnus.mid(1)) );
         break;
 
-    case VaihteenKaanto:
+    case VaihteenKaanto :
         if( !klikattuTunnus.isEmpty())
         {
             if( klikattuTunnus.startsWith('X'))
@@ -138,6 +144,14 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
                 komento( QString("V %1").arg(klikattuTunnus) );
         }
         break;
+
+    case AukiajetunVaihteenKaanto:
+        if( !klikattuTunnus.isEmpty())
+        {
+            komento( QString("VAP %1").arg(klikattuTunnus.mid(1)) );
+        }
+        break;
+
 
     case SeisKasky:
         if( !klikattuTunnus.isEmpty())
@@ -148,6 +162,14 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
         if( !klikattuTunnus.isEmpty())
             komento( QString("AJA %1").arg(klikattuTunnus) );
         break;
+
+    case JunaNumeronSyotto :
+        if( !klikattuTunnus.isEmpty())
+        {
+            QString tunnus = QInputDialog::getText(0,"Ratapiha", tr("Syötä junanumero raiteelle %1 ").arg( klikattuTunnus.mid(1) ));
+            if( !tunnus.isEmpty())
+                komento( QString("JN %1 %2").arg(klikattuTunnus.mid(1)).arg(tunnus));
+        }
 
 
     default:
