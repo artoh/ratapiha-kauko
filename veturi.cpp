@@ -30,6 +30,7 @@
 #include <QSqlQuery>
 #include <QStaticText>
 #include <QStyleOptionGraphicsItem>
+#include <QPixmap>
 
 Veturi::Veturi(const QString &tyyppi, int vaununumero, RataScene *skene) :
     QObject(), Vaunu(tyyppi, vaununumero, skene),
@@ -407,6 +408,7 @@ QPixmap Veturi::jkvKuva()
     {
         painter.setBrush( Qt::NoBrush );
         painter.setPen(Qt::white);
+        painter.drawPixmap(5,15,QPixmap( QString(":/r/junakuvat/%1.png").arg( vaununTyyppi() ) ) );
         painter.drawRect(5,275,140,20);
         painter.setFont(QFont("Helvetica",15));
         painter.drawText(QRectF(10,277,130,15),Qt::AlignCenter, tr(" %1 km").arg(matkaMittari() / 1000)  );

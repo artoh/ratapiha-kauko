@@ -112,6 +112,7 @@ protected:
     JunaNuppi* junaNuppi_;
 
     QString junaNumero_;
+
 };
 
 #endif // VETURI_H
