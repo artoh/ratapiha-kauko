@@ -90,6 +90,8 @@ void KaukoIkkuna::yhteysAsettimeen(bool onkoYhteytta)
 {
     aslAktiot_->setEnabled( onkoYhteytta );
     aikaLabel_->setEnabled( onkoYhteytta );
+    if( !onkoYhteytta )
+        view_->valitseTila(KaukoView::Vierita);
 }
 
 void KaukoIkkuna::paivitaKello(const QDateTime &aika)
@@ -110,6 +112,13 @@ void KaukoIkkuna::luoAktiot()
 
     aslAktiot_ = new QActionGroup(this);
     aslAktiot_->setExclusive(false);
+
+    vieritaAktio_ = new QAction(tr("Vieritä"),this);
+    vieritaAktio_->setData(KaukoView::JunaKulkutieAlkaa);
+    vieritaAktio_->setIcon(QIcon(":/r/pic/scroll.png"));
+    vieritaAktio_->setCheckable(true);
+    vieritaAktio_->setToolTip(tr("Vieritä näkymää"));
+    aslAktiot_->addAction(vieritaAktio_);
 
     kulkutieAktio_ = new QAction(tr("Junakulkutie"),this);
     kulkutieAktio_->setData(KaukoView::JunaKulkutieAlkaa);
@@ -138,11 +147,17 @@ void KaukoIkkuna::luoAktiot()
     junanumeroAktio_->setCheckable(true);
     junanumeroAktio_->setData( KaukoView::JunaNumeronSyotto);
 
-    kaannaVaihdeAktio_ = new QAction( tr("Käännä vaihde"),this);
-    kaannaVaihdeAktio_->setIcon( QIcon(":/r/pic/vaihteenkaanto.png"));
+    kaannaVaihdeAktio_ = new QAction( tr("Käännä aukiajettu vaihde"),this);
+    kaannaVaihdeAktio_->setIcon( QIcon(":/r/pic/vaihteenkaanto-aukiajettu.png"));
     kaannaVaihdeAktio_->setCheckable(true);
     kaannaVaihdeAktio_->setData(KaukoView::VaihteenKaanto);
     aslAktiot_->addAction(kaannaVaihdeAktio_);
+
+    aukiajetunKaantoAktio_ = new QAction( tr("Käännä vaihde"),this);
+    aukiajetunKaantoAktio_->setIcon( QIcon(":/r/pic/vaihteenkaanto.png"));
+    aukiajetunKaantoAktio_->setCheckable(true);
+    aukiajetunKaantoAktio_->setData(KaukoView::VaihteenKaanto);
+    aslAktiot_->addAction(aukiajetunKaantoAktio_);
 
     seisAktio_ = new QAction( tr("Opastimet SEIS-opasteelle"),this);
     seisAktio_->setIcon( QIcon(":/r/pic/seiskasky.png"));
@@ -156,6 +171,17 @@ void KaukoIkkuna::luoAktiot()
     ajaAktio_->setCheckable(true);
     aslAktiot_->addAction(ajaAktio_);
 
+    automaatioAktio_ = new QAction( tr("Aseta opastin automaatiokäyttöön"),this);
+    automaatioAktio_->setIcon( QIcon(":/r/pic/automaatioopastin.png"));
+    automaatioAktio_->setCheckable(true);
+    automaatioAktio_->setData(KaukoView::VaihteenKaanto);
+    aslAktiot_->addAction(automaatioAktio_);
+
+    automaatioPoisAktio_ = new QAction( tr("Lopeta opastimen automaatiokäyttö"),this);
+    automaatioPoisAktio_->setIcon( QIcon(":/r/pic/automaatioopastin-pois.png"));
+    automaatioPoisAktio_->setCheckable(true);
+    automaatioPoisAktio_->setData(KaukoView::VaihteenKaanto);
+    aslAktiot_->addAction(automaatioPoisAktio_);
 
 }
 
@@ -178,6 +204,8 @@ void KaukoIkkuna::luoTyoPalkki()
     connect( nakymaValinta_, SIGNAL(currentIndexChanged(int)), this, SLOT(nakymanVaihto(int)));
     hallintaToolBar_->addWidget(nakymaValinta_);
     hallintaToolBar_->addAction(editoriAktio_);
+    hallintaToolBar_->addSeparator();
+    hallintaToolBar_->addAction(vieritaAktio_);
 
     asetinlaiteToolBar_ = addToolBar( tr("Asetinlaite"));
     kaskyLine_ = new QLineEdit;
@@ -195,6 +223,9 @@ void KaukoIkkuna::luoTyoPalkki()
     asetinlaiteToolBar_->addSeparator();
     asetinlaiteToolBar_->addAction( seisAktio_);
     asetinlaiteToolBar_->addAction( ajaAktio_);
+    asetinlaiteToolBar_->addSeparator();
+    asetinlaiteToolBar_->addAction( automaatioAktio_);
+    asetinlaiteToolBar_->addAction(automaatioPoisAktio_);
 
 
 

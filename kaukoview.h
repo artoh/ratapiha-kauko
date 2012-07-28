@@ -26,7 +26,9 @@ public:
                      SeisKasky,
                      AjaKasky,
                      JunaNumeronSyotto,
-                     AukiajetunVaihteenKaanto} ;
+                     AukiajetunVaihteenKaanto,
+                     AutomaatioOn,
+                     AutomaatioEi} ;
     
 
 

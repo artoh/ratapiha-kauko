@@ -57,12 +57,15 @@ protected:
 
     QActionGroup* aslAktiot_;
 
+    QAction* vieritaAktio_;
     QAction* kulkutieAktio_;
     QAction* vaihtoKulkutieAktio_;
     QAction* puraKulkutieAktio_;
     QAction* kaannaVaihdeAktio_;
     QAction* seisAktio_;
     QAction* ajaAktio_;
+    QAction* automaatioAktio_;
+    QAction* automaatioPoisAktio_;
 
     QAction* junanumeroAktio_;
     QAction* aukiajetunKaantoAktio_;

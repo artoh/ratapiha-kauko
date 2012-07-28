@@ -399,6 +399,13 @@ QString RataScene::ASLKasky(const QString &parametrit)
         else
             return QString("VIRHE Ei aukiajettu %1 ").arg(paramLista[1]);
     }
+    else if( paramLista.first() == "AUON" || paramLista.first()=="AUEI")    // Kulkutieautomaation komennot
+    {
+        if( kulkutieautomaatti_->asetaAutomaatioPaalle(paramLista[1], paramLista.first() == "AUON"))
+            return QString("OK");
+        else
+            return QString("VIRHE");
+    }
 
 
 

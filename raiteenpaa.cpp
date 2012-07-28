@@ -14,9 +14,10 @@
 RaiteenPaa::RaiteenPaa(const QString &tila) :
     paanTyyppi_(Suora), vaihdeTila_(EiVaihdetta),
     opastinTyyppi_(EiOpastinta), opaste_(Seis),
+    automaatio_(EiAutomaatiota),
     opastinSeis_(false),
-    raiteenSulku_(SpPuuttuu),
-    automaatio_(EiAutomaatiota)
+    raiteenSulku_(SpPuuttuu)
+
 {
     paivitaTila(tila);
 }
@@ -280,3 +281,5 @@ QChar RaiteenPaa::suuntakirjain(RaiteenPaa::Suunta suunta)
         return QChar('P');
     return QChar();
 }
+
+

@@ -37,6 +37,7 @@ public:
     explicit KulkutieAutomaatti(RataScene *parent = 0);
     
     void saapuiRaiteelle(const QString& herateraide, const QString& junanumero);
+    bool asetaAutomaatioPaalle(const QString lahtoopastin, bool paalle = true);
 
 signals:
     

@@ -174,11 +174,17 @@ OTHER_FILES += \
     pic/vaihteenkaanto-aukiajettu.png \
     pic/vaihdekursori-aukiajettu.png \
     pic/junanumerokursori.png \
-    pic/junanumero.png
+    pic/junanumero.png \
+    pic/automaatioopastin.png \
+    pic/automaatiokursori.png \
+    pic/automaatioopastin-pois.png \
+    pic/automaatiokursori-pois.png
 
 FORMS += \
     ajopoyta.ui \
     ratapihaikkuna.ui
+
+
 
 
 

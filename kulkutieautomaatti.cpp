@@ -182,3 +182,42 @@ void KulkutieAutomaatti::teeTyot()
         }
     }
 }
+
+bool KulkutieAutomaatti::asetaAutomaatioPaalle(const QString lahtoopastin, bool paalle)
+{
+    RaiteenPaa* raiteenpaa = skene_->haeRaiteenPaa(lahtoopastin);
+    if( !raiteenpaa || raiteenpaa->opastin()==RaiteenPaa::EiOpastinta || raiteenpaa->automaatioTila()!=RaiteenPaa::EiAutomaatiota)
+        return false;
+    RataRaide* raide = skene_->haeRaide(lahtoopastin.mid(1));
+    if( !raide)
+        return false;
+
+    if( !paalle )
+    {
+        // Poiskytkennässä pitäisi myös poistaa aktiiviset automaatiot, ei onnistu kuin käymällä läpi automaatiot
+        opastimet_.remove(lahtoopastin);
+        raiteenpaa->asetaAutomaationTila(RaiteenPaa::EiAutomaatiota);
+    }
+    else
+    {
+        // Päällekytkentä
+        // Selvitetään, onko kyseiselle lähtöopastimelle automaatiota
+        QSqlQuery kysely( QString("select jnehto from kulkutieautomaatio "
+                                   "where opastin=\"%1\" "
+                                   "order by prioriteetti desc").arg(lahtoopastin) );
+        if( kysely.next())
+        {
+            // On automaatioehto, voidaan kytkeä automaatio. Sitten vain selvitetään, onko läpikulku (musta)
+            if( kysely.isNull(0))
+                raiteenpaa->asetaAutomaationTila(RaiteenPaa::Lapikulku);
+            else
+                raiteenpaa->asetaAutomaationTila(RaiteenPaa::AutomaatioKaytossa);
+
+        }
+        else
+            return false;   // Ei ole automaatiota tälle opastimelle
+
+    }
+    raide->paivitaTietokantaan();
+    return true;
+}

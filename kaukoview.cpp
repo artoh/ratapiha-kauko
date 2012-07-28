@@ -65,6 +65,13 @@ void KaukoView::valitseTila(int tila)
     case AukiajetunVaihteenKaanto:
         setCursor( QCursor( QPixmap(":/r/pic/vaihdekursori-aukiajettu.png"),9,0));
         break;
+    case AutomaatioOn :
+        setCursor( QCursor( QPixmap(":/r/pic/automaatiokursori.png"),9,0));
+        break;
+    case AutomaatioEi :
+        setCursor( QCursor( QPixmap(":/r/pic/automaatiokursori-pois.png"),9,0));
+        break;
+
     }
 
 }
@@ -170,6 +177,14 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
             if( !tunnus.isEmpty())
                 komento( QString("JN %1 %2").arg(klikattuTunnus.mid(1)).arg(tunnus));
         }
+    case AutomaatioOn:
+        if( !klikattuTunnus.isEmpty())
+            komento( QString("AUON %1").arg(klikattuTunnus) );
+        break;
+    case AutomaatioEi:
+        if( !klikattuTunnus.isEmpty())
+            komento( QString("AUEI %1").arg(klikattuTunnus) );
+        break;
 
 
     default:
