@@ -179,6 +179,10 @@ void Veturi::paivitaJkvTiedot()
         if( opaste.jkvNopeus() < jkvnopeus)
             jkvnopeus = opaste.jkvNopeus();
 
+    // Vaihtotyön sn rajoitetaan 50 km/h
+    if( jkvTila()==VaihtoJkv && jkvnopeus > 50 )
+        jkvnopeus = 35;
+
     // Tarkistetaan vielä raiteen voimassaoleva nopeusrajoitus, josta voi myös
     // tulla jkv-nopeus
 
@@ -200,11 +204,19 @@ void Veturi::paivitaJkvTiedot()
      }
     nopeusRajoitus_ = nopeusrajoitus;
 
+    // Ellei jkv käytössä, jkvnopeus aina 50
+    if( jkvTila() == EiJkv )
+    {
+        jkvNopeus_ = 50;
+        return;
+    }
+
     // Rajoittava nopeus:
     if( nopeusrajoitus < jkvnopeus )
         jkvNopeus_ = nopeusrajoitus;
     else
         jkvNopeus_ = jkvnopeus;
+
 
 }
 
@@ -426,18 +438,26 @@ QPixmap Veturi::jkvKuva()
     else
     {
         painter.setFont(QFont("Helvetica",10,QFont::Bold));
-
+        // Juna tai Vaihtotyö - merkki ylälaitaan
         if( jkvTila() == VaihtoJkv)
-            painter.setPen( Qt::yellow);
+        {
+            painter.setPen( Qt::black);
+            painter.setBrush(QBrush(Qt::yellow));
+        }
         else
-            painter.setPen( Qt::green);
+        {
+            painter.setPen( Qt::white);
+            painter.setBrush( QBrush(Qt::green));
+        }
+        painter.drawRect(0,0,150,30);
+        painter.setBrush(Qt::NoBrush);
 
         if( junaNumero().isEmpty())
         {
             if( jkvTila() == VaihtoJkv)
                 painter.drawStaticText(2,2,QStaticText("VAIHTOTYÖ"));
             else
-                painter.drawStaticText(2,2,QStaticText("JUNA ILMAN TUNNUSTA"));
+                painter.drawStaticText(2,2,QStaticText("JUNA"));
         }
         else
             painter.drawText(2,2,140,20,Qt::AlignLeft, junaNumero());

@@ -80,5 +80,7 @@
         <file>pic/automaatioopastin.png</file>
         <file>pic/automaatiokursori-pois.png</file>
         <file>pic/automaatioopastin-pois.png</file>
+        <file>junakuvat/Sm4o.png</file>
+        <file>junakuvat/Ei3.png</file>
     </qresource>
 </RCC>

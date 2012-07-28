@@ -186,7 +186,7 @@ void KulkutieAutomaatti::teeTyot()
 bool KulkutieAutomaatti::asetaAutomaatioPaalle(const QString lahtoopastin, bool paalle)
 {
     RaiteenPaa* raiteenpaa = skene_->haeRaiteenPaa(lahtoopastin);
-    if( !raiteenpaa || raiteenpaa->opastin()==RaiteenPaa::EiOpastinta || raiteenpaa->automaatioTila()!=RaiteenPaa::EiAutomaatiota)
+    if( !raiteenpaa || raiteenpaa->opastin()==RaiteenPaa::EiOpastinta )
         return false;
     RataRaide* raide = skene_->haeRaide(lahtoopastin.mid(1));
     if( !raide)
@@ -202,13 +202,14 @@ bool KulkutieAutomaatti::asetaAutomaatioPaalle(const QString lahtoopastin, bool 
     {
         // Päällekytkentä
         // Selvitetään, onko kyseiselle lähtöopastimelle automaatiota
-        QSqlQuery kysely( QString("select jnehto from kulkutieautomaatio "
+        QSqlQuery kysely( QString("select jnehto, maaliraide from kulkutieautomaatio "
                                    "where opastin=\"%1\" "
                                    "order by prioriteetti desc").arg(lahtoopastin) );
         if( kysely.next())
         {
+            QString maaliraide = kysely.value(1).toString();
             // On automaatioehto, voidaan kytkeä automaatio. Sitten vain selvitetään, onko läpikulku (musta)
-            if( kysely.isNull(0))
+            if( kysely.isNull(0) && maaliraide[ maaliraide.length()-1].isDigit() )
                 raiteenpaa->asetaAutomaationTila(RaiteenPaa::Lapikulku);
             else
                 raiteenpaa->asetaAutomaationTila(RaiteenPaa::AutomaatioKaytossa);
