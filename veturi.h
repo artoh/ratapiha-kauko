@@ -22,6 +22,7 @@
 
 #include "vaunu.h"
 #include "jkvopaste.h"
+#include "reittitieto.h"
 
 #include <QTimer>
 #include <QObject>
@@ -37,7 +38,7 @@ public:
 
     enum VeturiTyyppi { EiTyyppia = 0, Sr1, Sm2, Sm3, Sm4, Dv12, Dr16, Dm12 };
     enum JkvTila { EiJkv, JunaJkv, VaihtoJkv } ;
-
+    enum VeturiAutomaatio { AutoEi, AutoOn, AutoAktiivinen } ;
 
     Veturi(const QString& tyyppi, int vaununumero, RataScene* skene);
     Veturi(const QString &tyyppi, int vaunuNumero, RataKisko* etu_kisko, qreal etu_etaisyys, QChar etu_suunta,
@@ -56,7 +57,7 @@ public:
     qreal hidastuvuus() const { return 1.0; }
     int enimmaisNopeus() const { return 120; }
 
-    virtual AjoPoydat ajopoydat() const { return MolemmatAjopoydat; }
+    virtual AjoPoydat ajopoydat() const ;
 
     int tavoiteNopeus() const { return tavoiteNopeus_; }
 
@@ -71,12 +72,15 @@ public:
     int nopeusRajoitus() const { return nopeusRajoitus_; }
 
     QString junaNumero() const { return junaNumero_; }
-    void tarkistaRaiteenJunanumero();
+    bool tarkistaRaiteenJunanumero();
     JkvTila jkvTila() const { return jkvTila_; }
+    VeturiAutomaatio veturiAutomaationTila() const { return veturiAutomaatio_; }
 
 
+    bool haeReitti(const QString &reitti = QString(), Akseli* akseli = 0);
 signals:
     void nopeusIlmoitus(int nopeus);
+    void automaatioIlmoitus(int ajopoyta, int tavoitenopeus, const QPixmap& jkvkuva);
     
 public slots:
     void asetaAjoPoyta(int poyta);
@@ -89,6 +93,7 @@ protected:
     void merkitseTyyppi(const QString& tyyppi);
     void paivitaJkvTiedot();    // Päivittää jkv-tietojen luettelon
     Akseli* aktiivinenAkseli();
+    void asetaReitti(const QString& reitti);
 
     QTimer timer_;
 
@@ -112,6 +117,11 @@ protected:
     JunaNuppi* junaNuppi_;
 
     QString junaNumero_;
+    VeturiAutomaatio veturiAutomaatio_;
+
+    QList<ReittiTieto> reitti_;
+    QString maaraAsema_;
+    QString reittitunnus_;
 
 };
 

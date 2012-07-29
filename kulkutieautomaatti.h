@@ -22,6 +22,9 @@
 
 #include "ratascene.h"
 #include "automaatioopastin.h"
+#include "raiteenpaa.h"
+
+class RataRaide;
 
 #include <QObject>
 #include <QMap>
@@ -36,7 +39,8 @@ class KulkutieAutomaatti : public QObject
 public:
     explicit KulkutieAutomaatti(RataScene *parent = 0);
     
-    void saapuiRaiteelle(const QString& herateraide, const QString& junanumero);
+    void saapuiRaiteelle(const QString& herateraide, const QString& junanumero, bool lahiEhto=false);
+    void jnHerateRaiteelle(RataRaide* raide, RaiteenPaa::Suunta suunta);
     bool asetaAutomaatioPaalle(const QString lahtoopastin, bool paalle = true);
 
 signals:

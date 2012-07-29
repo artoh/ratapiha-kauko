@@ -488,7 +488,11 @@ void RataScene::raideVarautunut(RataRaide *raide, RaiteenPaa::Suunta suunta)
 
 void RataScene::asetaJunaNumero(RataRaide *raide, const QString &junanumero)
 {
+
     raide->asetaJunanumero(junanumero);
     foreach(Veturi* veturi, veturilista_)
-        veturi->tarkistaRaiteenJunanumero();
+    {
+        if(veturi->tarkistaRaiteenJunanumero())
+            return;
+    }
 }

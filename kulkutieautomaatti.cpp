@@ -33,15 +33,21 @@ KulkutieAutomaatti::KulkutieAutomaatti(RataScene *parent) :
     timer_.start(1000);
 }
 
-void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QString &junanumero)
+void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QString &junanumero, bool lahiEhto )
 {
 
     // Selvitetään ensin, onko tähän kuuluvaa automaatiota
 
+    // Lähiwhere vaatii heräteraiteen välittömästi opastimen eteen. Näin on tilanne, mikäli heräte
+    // aiheutuu junanumeron asettamisesta.
+    QString lahiWhere;
+    if( lahiEhto)
+        lahiWhere = " and opastin=herateraide ";
+
     QSqlQuery kysely( QString("select opastin,maaliraide, jnehto, viive, kulkutientyyppi "
                               "from kulkutieautomaatio "
-                              "where herateraide=\"%1\" "
-                              "order by prioriteetti desc").arg(herateraide) );
+                              "where herateraide=\"%1\" %2 "
+                              "order by prioriteetti desc").arg(herateraide).arg(lahiWhere) );
 
     while( kysely.next())
     {
@@ -134,7 +140,7 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
 
 
         // TODO: aikataulun alkuviive
-        // Jos ollaan raiteella, josta lähtöaika on aikataulussa vasta edessäpäin,
+        // Jos ollaan raiteella, josta lähtöaika (P, LE, LP)  on aikataulussa vasta edessäpäin,
         // lisätään tarpeellinen viive
 
 
@@ -164,6 +170,16 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
 
 
 }
+
+void KulkutieAutomaatti::jnHerateRaiteelle(RataRaide *raide, RaiteenPaa::Suunta suunta)
+{
+    QString raiteentunnus = RaiteenPaa::suuntakirjain(suunta) + raide->raidetunnusLiikennepaikalla();
+    if(!opastimet_.contains(raiteentunnus) )
+        saapuiRaiteelle(raiteentunnus, raide->junanumero(), true);
+
+    // Heräte aiheutetaan vain, jos lähimmällä opastimella ei ole vielä herätettä!
+}
+
 
 void KulkutieAutomaatti::teeTyot()
 {
@@ -222,3 +238,4 @@ bool KulkutieAutomaatti::asetaAutomaatioPaalle(const QString lahtoopastin, bool 
     raide->paivitaTietokantaan();
     return true;
 }
+

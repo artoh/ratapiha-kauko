@@ -62,6 +62,7 @@ public:
     void asetaJunaNumero(RataRaide* raide, const QString& junanumero);
 
     QDateTime simulaatioAika() const { return simulaatioAika_; }
+    KulkutieAutomaatti* automaatti() { return kulkutieautomaatti_; }
 signals:
     void kello(const QDateTime& aika);  /** Kun kello päivitetty */
 

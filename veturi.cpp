@@ -23,6 +23,7 @@
 #include "ratascene.h"
 #include "rataraide.h"
 #include "junanuppi.h"
+#include "kulkutieautomaatti.h"
 
 #include <QPainter>
 #include <QFont>
@@ -39,7 +40,8 @@ Veturi::Veturi(const QString &tyyppi, int vaununumero, RataScene *skene) :
     jkvTila_(VaihtoJkv),
     junaPituus_(0.0),
     matkaMittari_(0.0),
-    nopeusRajoitus_(0)
+    nopeusRajoitus_(0),
+    veturiAutomaatio_(AutoOn)
 {
     merkitseTyyppi(tyyppi);
 
@@ -53,7 +55,8 @@ Veturi::Veturi(const QString &tyyppi, int vaunuNumero, RataKisko *etu_kisko, qre
     jkvTila_(VaihtoJkv),
     junaPituus_(0.0),
     matkaMittari_(0.0),
-    nopeusRajoitus_(0)
+    nopeusRajoitus_(0),
+    veturiAutomaatio_(AutoOn)
 {
     merkitseTyyppi(tyyppi);
 }
@@ -67,11 +70,11 @@ void Veturi::merkitseTyyppi(const QString &tyyppi)
         veturiTyyppi_ = Sr1;
     else if( tyyppi == "Sm2")
         veturiTyyppi_ = Sm2;
-    else if( tyyppi == "Sm3")
+    else if( tyyppi.startsWith("Sm3"))
         veturiTyyppi_ = Sm3;
     else if( tyyppi == "Sm4")
         veturiTyyppi_ = Sm4;
-    else if( tyyppi == "Dv12")
+    else if( tyyppi.startsWith("Dv12"))
         veturiTyyppi_ = Dv12;
     else if( tyyppi == "Dr16")
         veturiTyyppi_ = Dr16;
@@ -373,6 +376,9 @@ void Veturi::aja()
 
 void Veturi::asetaAjoPoyta(int poyta)
 {
+    if( (poyta == 1 && ajopoydat() == AjopoytaKaksi) || (poyta==2 && ajopoydat() == AjopoytaYksi))
+        return; // Ei ole toivottua ajopöytää!!!
+
     if( !nopeusMs())
     {
         timer_.stop();
@@ -421,11 +427,9 @@ QPixmap Veturi::jkvKuva()
         painter.setBrush( Qt::NoBrush );
         painter.setPen(Qt::white);
         painter.drawPixmap(5,15,QPixmap( QString(":/r/junakuvat/%1.png").arg( vaununTyyppi() ) ) );
-        painter.drawRect(5,275,140,20);
+        painter.drawRect(45,275,140,20);
         painter.setFont(QFont("Helvetica",15));
         painter.drawText(QRectF(10,277,130,15),Qt::AlignCenter, tr(" %1 km").arg(matkaMittari() / 1000)  );
-
-        return kuva;
     }
 
     int indeksi = 0;
@@ -464,9 +468,29 @@ QPixmap Veturi::jkvKuva()
 
         if( 1 )
         {
-            painter.drawText(QRectF(2,15,150,15),Qt::AlignLeft, "MÄÄRÄASEMA" );
+            painter.drawText(QRectF(2,15,150,15),Qt::AlignLeft, maaraAsema_ );
         }
     }
+
+    // AUTOMAATION TILA
+    switch( veturiAutomaatio_)
+    {
+        case AutoEi:
+            painter.setPen(Qt::darkGray);
+            painter.setBrush(QBrush(Qt::lightGray));
+            break;
+        case AutoOn:
+            painter.setPen(Qt::green);
+            painter.setBrush( QBrush(Qt::white));
+            break;
+        case AutoAktiivinen:
+            painter.setPen(Qt::black);
+            painter.setBrush( QBrush(Qt::red));
+            break;
+    }
+    painter.drawRect(125,5,20,20);
+    painter.setFont(QFont("Helvetica",5));
+    painter.drawStaticText(128,10,QStaticText("AUTO"));
 
 
     // Junan pituus
@@ -474,7 +498,8 @@ QPixmap Veturi::jkvKuva()
     painter.setPen(Qt::white);
     painter.drawText(QRectF(75,30,75,15),QString("%1 m").arg((int)junaPituus()),QTextOption(Qt::AlignRight));
 
-
+    if( !ajopoyta())    // Tähän loppuu, jos ajopöytä ei ole aktiivinen
+        return kuva;
 
     foreach( JkvOpaste opaste, jkvTiedot_)
     {
@@ -571,12 +596,12 @@ QPixmap Veturi::jkvKuva()
     return kuva;
 }
 
-void Veturi::tarkistaRaiteenJunanumero()
+bool Veturi::tarkistaRaiteenJunanumero()
 {
     Akseli* akseli = aktiivinenAkseli();
-    if( !akseli && !etuAkseli_->onkoKytketty())
+    if( !akseli && !etuAkseli_->onkoKytketty() && ajopoydat() != AjopoytaKaksi)
         akseli = etuAkseli_;
-    else if( !takaAkseli_->onkoKytketty())
+    else if( !takaAkseli_->onkoKytketty() && ajopoydat() != AjopoytaYksi)
         akseli = takaAkseli_;
 
     if( akseli && akseli->kiskolla())
@@ -588,10 +613,101 @@ void Veturi::tarkistaRaiteenJunanumero()
             // Vaihdetaan junanumeroa jos mahdollista, mitä toimia siihen liittyykään??
             junaNumero_ = junatunnus;
             update(boundingRect());
+
+            // Automaatiotoimi: 1) Ladataan reitti
+
+            if( veturiAutomaatio_ == AutoOn)
+            {
+
+                QSqlQuery reitinkysymys( QString("select reitti from juna where junanro =\"%1\" ").arg(junatunnus));
+                QString reitti = reitinkysymys.value(0).toString();
+
+                if( !reitti.isEmpty())
+                    return haeReitti(reitti, akseli);
+            }
+
+        } // Junatunnus muuttuu
+    } // Löytyy akseli, jolta asettaa tunnus
+    return false; // Ei aktivoitu junaa!
+}
+
+bool Veturi::haeReitti(const QString& reitti, Akseli* akseli)
+{
+    // Tyhjentää reittitiedot
+    reittitunnus_.clear();
+    reitti_.clear();
+    maaraAsema_.clear();
+
+    if( reitti.isEmpty())
+        return false;
+
+
+    // Haetaan reitti ja tehdään mahdollinen kulkutieherätys
+    QSqlQuery reittikysely( QString("select liikennepaikka, nimi, raide, lahtoaika, pysahtyy, tapahtuma, suunta "
+                                    " from aikataulu natural join liikennepaikka "
+                                    " where reitti=\"%1\" ").arg(reitti));
+
+    RaiteenPaa::Suunta lahtoSuunta = RaiteenPaa::Virhe;
+    while( reittikysely.next())
+    {
+
+        QString liikennepaikka = reittikysely.value(0).toString();
+        int raide = reittikysely.value(2).toInt();
+        QTime lahtoaika = reittikysely.value(3).toTime();
+        int pysahtyy = reittikysely.value(4).toInt();
+        QString tapahtuma = reittikysely.value(5).toString();
+
+
+        // Laitetaan reitin kohteet taulukkoon
+        reitti_.append( ReittiTieto( tapahtuma, lahtoaika, pysahtyy)  );
+
+        // Jos määränpää, laitetaan tieto siitäkin...
+        if( tapahtuma.startsWith('S') )
+            maaraAsema_ = reittikysely.value(1).toString();
+
+        // Jos tämä on nykyinen raide, niin hyvä niin ;)
+        if( liikennepaikka == akseli->kiskolla()->raide()->liikennepaikka() &&
+                raide == akseli->kiskolla()->raide()->raidetunnus())
+        {
+            if( reittikysely.value(6).toString().startsWith('P'))
+                lahtoSuunta = RaiteenPaa::Pohjoiseen;
+            else if( reittikysely.value(6).toString().startsWith('E'))
+                lahtoSuunta = RaiteenPaa::Etelaan;
+
+        } // Kulkutieheräte
+    } // Reittikysely.next
+
+    // Aktivoidaan veturiautomaatio pysähtelemään sanotuille raiteille...
+
+    veturiAutomaatio_ = AutoAktiivinen;
+    reittitunnus_ = reitti;
+    if( lahtoSuunta != RaiteenPaa::Virhe)
+    {
+        if( !akseli)
+            akseli = aktiivinenAkseli();
+        if (akseli )
+            RatapihaIkkuna::getInstance()->skene()->automaatti()->jnHerateRaiteelle( akseli->kiskolla()->raide(), lahtoSuunta );
+
+        // Ellei ole ajopöytää aktiivisena, laitetaan aktiiviseksi
+        if( !ajopoyta() )
+        {
+            if( ajopoydat() != AjopoytaKaksi && etuAkseli_->suuntaKiskolla() == lahtoSuunta )
+            {
+                asetaAjoPoyta(1);
+                tavoiteNopeus_ = enimmaisNopeus();
+                emit automaatioIlmoitus(ajopoyta(), tavoiteNopeus(), jkvKuva());
+                return true;
+            }
+            else if( ajopoydat() != AjopoytaYksi && takaAkseli_->suuntaKiskolla() == lahtoSuunta)
+            {
+                asetaAjoPoyta(2);
+                tavoiteNopeus_ = enimmaisNopeus();
+                emit automaatioIlmoitus(ajopoyta(), tavoiteNopeus(), jkvKuva());
+                return true;
+            }
         }
     }
-
-
+    return false;
 }
 
 // Tänne kosketusnäytön toiminnallisuus -- tilan vaihto
@@ -616,5 +732,26 @@ void Veturi::nayttoonKoskettu(QPoint pos)
     }
     else if( jkvTila() == JunaJkv && pos.x() > 75 && pos.y() > 270 && nopeus()<1 )
         jkvTila_ = VaihtoJkv;
+
+    else if( pos.x() > 125 && pos.y() > 4 && pos.y() < 26)
+    {
+        // Automaation päälle tahi pois kytkeminen
+        if( veturiAutomaatio_ == AutoEi)
+            veturiAutomaatio_ = AutoOn;
+        else
+        {
+            veturiAutomaatio_ = AutoEi;
+            haeReitti();
+        }
+    }
+}
+
+Vaunu::AjoPoydat Veturi::ajopoydat() const
+{
+    if( vaununTyyppi().endsWith('o'))   // Ohjaus vain oikealla
+        return Vaunu::AjopoytaKaksi;
+    else if( vaununTyyppi().endsWith('v'))  // Ohjaus vain vasemmalla
+        return Vaunu::AjopoytaYksi;
+    return Vaunu::MolemmatAjopoydat;
 }
 

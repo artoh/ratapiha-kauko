@@ -64,6 +64,12 @@ void Ajopoyta::valitseVeturi(int veturinNumero)
     // Jos on kelpo veturi, niin vaihdetaan, muuten ei!
     if( veturi)
     {
+        if( veturi_)
+        {
+            disconnect( veturi_, SIGNAL(nopeusIlmoitus(int)), ui->nopeusLabel, SLOT(setNum(int)));
+            disconnect( veturi_, SIGNAL(automaatioIlmoitus(int,int,QPixmap)), this, SLOT(tilaMuutos(int,int, QPixmap)));
+        }
+
         veturi_ = veturi;
         ui->veturinTyyppi->setText( veturi->vaununTyyppi());
         ui->nopeusSaadin->setValue( veturi->tavoiteNopeus());
@@ -75,6 +81,9 @@ void Ajopoyta::valitseVeturi(int veturinNumero)
         ui->ajopoyta2->setVisible( veturi->ajopoydat() == Vaunu::AjopoytaKaksi || veturi->ajopoydat() == Vaunu::MolemmatAjopoydat);
 
         ui->nopeusSaadin->setEnabled( veturi->ajopoyta() );
+
+        connect( veturi_, SIGNAL(nopeusIlmoitus(int)), ui->nopeusLabel, SLOT(setNum(int)));
+        connect( veturi_, SIGNAL(automaatioIlmoitus(int,int,QPixmap)), this, SLOT(tilaMuutos(int,int, QPixmap)));
 
         naytaNopeus( veturi_->nopeus());
     }
@@ -112,9 +121,6 @@ void Ajopoyta::hataJarru()
 
 void Ajopoyta::ajopoytaYksi(bool onko)
 {
-    // Irroitetaan vanha jkv-laitteen näyttökytkentä
-    // if( veturi_ && veturi_->jkvlaite())
-    //    disconnect( veturi_->jkvlaite(), SIGNAL(jkvIlmoitus(QPixmap)), this, SLOT(naytaJkvIlmoitus(QPixmap)));
     if( onko )
     {
         ui->ajopoyta2->setChecked(false);
@@ -131,16 +137,11 @@ void Ajopoyta::ajopoytaYksi(bool onko)
         ui->jkvTieto->clear();
         ui->nopeusSaadin->setEnabled(false);
     }
-    // Yhdistetään jkv-laite näyttöön
-    // if( veturi_ && veturi_->jkvlaite())
-    //    connect( veturi_->jkvlaite(), SIGNAL(jkvIlmoitus(QPixmap)), this, SLOT(naytaJkvIlmoitus(QPixmap)));
 
 }
 
 void Ajopoyta::ajopoytaKaksi(bool onko)
 {
-    // if( veturi_ && veturi_->jkvlaite())
-    //    disconnect( veturi_->jkvlaite(), SIGNAL(jkvIlmoitus(QPixmap)), this, SLOT(naytaJkvIlmoitus(QPixmap)));
 
     if( onko )
     {
@@ -161,8 +162,6 @@ void Ajopoyta::ajopoytaKaksi(bool onko)
             ui->jkvTieto->clear();
         ui->nopeusSaadin->setEnabled(false);
     }
-    // if( veturi_ && veturi_->jkvlaite())
-    //    connect( veturi_->jkvlaite(), SIGNAL(jkvIlmoitus(QPixmap)), this, SLOT(naytaJkvIlmoitus(QPixmap)));
 
 }
 
@@ -215,3 +214,4 @@ void Ajopoyta::paivitaJKVnaytto()
         ui->jkvTieto->setPixmap( veturi_->jkvKuva());
     }
 }
+

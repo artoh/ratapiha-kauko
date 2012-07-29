@@ -23,6 +23,7 @@
 
   */
 
+
 #include <QTime>
 
 #ifndef REITTITIETO_H
@@ -35,6 +36,8 @@ public:
 
     ReittiTieto( TapahtumaTyyppi tapahtumaTyyppi = Pysahtyy,
                  QTime lahtoAika=QTime(), int pysahtyySekuntia=0);
+
+    ReittiTieto( QString tapahtumatyyppi, QTime lahtoaika, int pysahtyySekuntia);
 
     QTime lahtoAika() const { return lahtoaika_; }
     int pysahtyy() const { return pysahtyySekuntia_; }

@@ -96,9 +96,9 @@
   <widget class="QPushButton" name="ajopoyta2">
    <property name="geometry">
     <rect>
-     <x>60</x>
+     <x>50</x>
      <y>400</y>
-     <width>31</width>
+     <width>41</width>
      <height>31</height>
     </rect>
    </property>
@@ -114,7 +114,7 @@
     <rect>
      <x>10</x>
      <y>400</y>
-     <width>31</width>
+     <width>41</width>
      <height>31</height>
     </rect>
    </property>
@@ -171,22 +171,6 @@
    </property>
    <property name="text">
     <string/>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="automaatioNappi">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>400</y>
-     <width>21</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>A</string>
-   </property>
-   <property name="checkable">
-    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="tavoiteNopeusLabel">
@@ -283,7 +267,6 @@
   <zorder>ajopoyta2</zorder>
   <zorder>ajopoyta1</zorder>
   <zorder>etsi</zorder>
-  <zorder>automaatioNappi</zorder>
   <zorder>tavoiteNopeusLabel</zorder>
   <zorder>label</zorder>
   <zorder>veturiValinta</zorder>
