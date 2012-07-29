@@ -171,6 +171,9 @@ void Veturi::paivitaJkvTiedot()
             }
         }
 
+        // Matkaa vähennetään, jotta suuri simulaationopeus ei aiheuta läpiajoa
+        matka -= nopeusMs() * RatapihaIkkuna::getInstance()->skene()->nopeutusKerroin() / 5;
+
         JkvOpaste jkvopaste(kiskolla, opaste, matka, nopeusRajoitus, pysahdylaiturille,
                             true /* Vaihtotyö sallittu */, hidastuvuus()) ;
 
@@ -365,45 +368,9 @@ void Veturi::aja()
     // Haetaan jkvnopeus, eli suurin nopeus, jolla jkv-laite sallii ajettavan
     paivitaJkvTiedot();
 
-    // Pysähdystiedon päivitys
-    if( nopeus()==0 )
-    {
-        if( !pysahtyi_.isValid())
-        {
-            pysahtyi_ = RatapihaIkkuna::getInstance()->skene()->simulaatioAika();
-            // Jos ollaan määräraiteella, pysäytetään juna sinne
-
-            if( reitti_.contains(aktiivinenAkseli()->kiskolla()->raide()->raidetunnusLiikennepaikalla() ) &&
-                    reitti_.value(aktiivinenAkseli()->kiskolla()->raide()->raidetunnusLiikennepaikalla() ).tapahtumaTyyppi() == ReittiTieto::Saapuu )
-            {
-                // Saavuttu määräraiteelle!
-                tavoiteNopeus_ = 0;
-                haeReitti();
-                if( veturiAutomaationTila() == AutoAktiivinen )
-                {
-                    asetaAjoPoyta(0);
-                    veturiAutomaatio_ = AutoOn;
-                }
-                emit automaatioIlmoitus(0,0,jkvKuva());
-                kirjoitaLokiin("S", aktiivinenAkseli()->kiskolla()->raide());
-            }
-            else
-            {
-                // Tässä voisi kirjata lokiin, että juna pysähtyi
-                kirjoitaLokiin("P", aktiivinenAkseli()->kiskolla()->raide());
-            }
-
-
-        }
-    }
-    else if( nopeusMs() > 0 )
-    {
-        pysahtyi_ = QDateTime();        // Ei todellakaan ole pysähdyksissä
-        kirjoitaLokiin("L", aktiivinenAkseli()->kiskolla()->raide());  // Juna lähti taas liikkeelle!
-    }
-
     if( nopeus()==0 && tavoiteNopeus()==0)
         return; // Eipä mitään jos ei tartte liikkua!
+
 
 
     qreal jkvMs = jkvNopeus() / 3.6;  // JKV-nopeus metreinä sekunnissa
@@ -453,6 +420,45 @@ void Veturi::aja()
       matkaMittari_ += liike;   // Lisätään matkamittariin!
 
       emit nopeusIlmoitus( nopeus());
+
+      // Pysähdystiedon päivitys
+      if( nopeusMs() ==0 )
+      {
+          if( !pysahtyi_.isValid())
+          {
+              // Pysähtyi juuri nyt
+              pysahtyi_ = RatapihaIkkuna::getInstance()->skene()->simulaatioAika();
+              // Jos ollaan määräraiteella, pysäytetään juna sinne
+
+              if( reitti_.contains(aktiivinenAkseli()->kiskolla()->raide()->raidetunnusLiikennepaikalla() ) &&
+                      reitti_.value(aktiivinenAkseli()->kiskolla()->raide()->raidetunnusLiikennepaikalla() ).tapahtumaTyyppi() == ReittiTieto::Saapuu )
+              {
+                  // Saavuttu määräraiteelle!
+                  tavoiteNopeus_ = 0;
+                  haeReitti();
+                  if( veturiAutomaationTila() == AutoAktiivinen )
+                  {
+                      asetaAjoPoyta(0);
+                      veturiAutomaatio_ = AutoOn;
+                  }
+                  emit automaatioIlmoitus(0,0,jkvKuva());
+                  kirjoitaLokiin("S", aktiivinenAkseli()->kiskolla()->raide());
+              }
+              else
+              {
+                  // Tässä voisi kirjata lokiin, että juna pysähtyi
+                  kirjoitaLokiin("P", aktiivinenAkseli()->kiskolla()->raide());
+              }
+
+
+          } // pysahtyi.isValid
+      }
+      else if( pysahtyi_.isValid() )    // Liikkui, mutta pysähtyi on validi... siis juuri liikkeelle!!
+      {
+          pysahtyi_ = QDateTime();        // Ei todellakaan ole pysähdyksissä
+          kirjoitaLokiin("L", aktiivinenAkseli()->kiskolla()->raide());  // Juna lähti taas liikkeelle!
+      }
+
 }
 
 void Veturi::asetaAjoPoyta(int poyta)

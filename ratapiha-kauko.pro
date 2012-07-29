@@ -161,8 +161,6 @@ OTHER_FILES += \
     jkvkuvat/junanappi.png \
     jkvkuvat/vaihtotyonappi.png \
     junakuvat/Sr1.png \
-    junakuvat/Sm4.png \
-    junakuvat/Sm3.png \
     junakuvat/Sm2.png \
     junakuvat/Gbln.png \
     junakuvat/Eiu.png \
@@ -180,11 +178,19 @@ OTHER_FILES += \
     pic/automaatioopastin-pois.png \
     pic/automaatiokursori-pois.png \
     junakuvat/Sm3o.png \
-    junakuvat/Sm4o.png
+    junakuvat/Sm4o.png \
+    junakuvat/Sm3v.png \
+    junakuvat/Sm4v.png \
+    junakuvat/Eio.png
 
 FORMS += \
     ajopoyta.ui \
     ratapihaikkuna.ui
+
+
+
+
+
 
 
 

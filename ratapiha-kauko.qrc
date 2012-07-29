@@ -52,8 +52,6 @@
         <file>junakuvat/Eiu.png</file>
         <file>junakuvat/Gbln.png</file>
         <file>junakuvat/Sm2.png</file>
-        <file>junakuvat/Sm3.png</file>
-        <file>junakuvat/Sm4.png</file>
         <file>junakuvat/Sr1.png</file>
         <file>pic/stop.png</file>
         <file>pic/fit-best.png</file>
@@ -83,5 +81,8 @@
         <file>junakuvat/Sm4o.png</file>
         <file>junakuvat/Ei3.png</file>
         <file>junakuvat/Sm3o.png</file>
+        <file>junakuvat/Sm3v.png</file>
+        <file>junakuvat/Sm4v.png</file>
+        <file>junakuvat/Eio.png</file>
     </qresource>
 </RCC>

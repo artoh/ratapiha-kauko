@@ -21,9 +21,9 @@
 #include "ratakisko.h"
 #include "rataraide.h"
 
+
 #include <cmath>
 #include <QPainter>
-
 
 
 const int JkvOpaste::SUURIN_NOPEUS;
@@ -50,6 +50,8 @@ JkvOpaste::JkvOpaste( RataKisko *kisko, RaiteenPaa::Opaste opaste, qreal matka,
             sallittuNopeus_ = 0;
     }
     matka_ = matka - 15; // 15 metrin vara
+    if( matka_ < 0)
+        matka_ = 0;
 
     if( hidastuvuus > 0.5)
         hidastuvuus_ = hidastuvuus - 0.1;   // Vähän varaa hidastaa ettei mene pitkäksi
@@ -151,8 +153,6 @@ void JkvOpaste::asetaNopeusrajoitukseksi()
 
 void JkvOpaste::laskeJkvNopeus()
 {
-    // Lasketaan jkv-nopeus
-
     // Muutetaan nopeus m/s
     double nopeusMs = sallittuNopeus_ / 3.6;
     double jkvNopeusMs = std::sqrt((  nopeusMs * nopeusMs )  + 2 * hidastuvuus_ * matka_  );

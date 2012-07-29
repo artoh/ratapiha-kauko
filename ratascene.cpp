@@ -228,7 +228,7 @@ void RataScene::lataaVaunut()
             seuraavaVaunuNumero_ = vaunuid + 1;
 
         Vaunu* vaunu;
-        if( vaunutyyppi.startsWith('D') || vaunutyyppi.startsWith('S'))
+        if( vaunutyyppi.startsWith('D') || vaunutyyppi.startsWith('S') || vaunutyyppi.endsWith('o'))
         {
             Veturi* veturi = new Veturi(vaunutyyppi, vaunuid, kiskot_.value(etukisko,0), etusijainti, etusuunta, kiskot_.value(takakisko,0), takasijainti, takasuunta, this);
             veturilista_.append(veturi);
@@ -451,7 +451,7 @@ void RataScene::poistaKulkutieListalta(const QString &maaliraide)
 Vaunu* RataScene::lisaaVaunu(const QString &tyyppi)
 {
     Vaunu* uusi;
-    if( tyyppi.startsWith("S") || tyyppi.startsWith('D'))
+    if( tyyppi.startsWith("S") || tyyppi.startsWith('D') || tyyppi.endsWith('o'))
     {
         Veturi* uusiveturi = new Veturi(tyyppi, seuraavaVaunuNumero_, this);
         veturilista_.append(uusiveturi);
