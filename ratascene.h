@@ -71,9 +71,13 @@ public slots:
     void asetaNopeutus(int nopeutuskerroin);
     void kellonPaivitys();
 
+private slots:
+    void lahetaJunat(const QDateTime& aika);
+
 private:
     void lataaRata();
     void lataaVaunut();
+    void lahetaJunat();
 
 
     QHash<int,RataRaide*> raiteet_;  /** Raiteen avaimena raideid */

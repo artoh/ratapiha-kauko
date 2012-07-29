@@ -176,7 +176,7 @@ void Veturi::paivitaJkvTiedot()
         matka -= nopeusMs() * RatapihaIkkuna::getInstance()->skene()->nopeutusKerroin() / 5;
 
         JkvOpaste jkvopaste(kiskolla, opaste, matka, nopeusRajoitus, pysahdylaiturille,
-                            true /* Vaihtotyö sallittu */, hidastuvuus()) ;
+                            jkvTila() != JunaJkv, hidastuvuus()) ;
 
         jkvTiedot_.append( jkvopaste );
 

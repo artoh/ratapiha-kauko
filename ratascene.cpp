@@ -55,6 +55,7 @@ RataScene::RataScene(QObject *parent) :
     QTimer* valkkytimer = new QTimer(this);
     connect( valkkytimer, SIGNAL(timeout()), this, SLOT(valkytys()));
     connect( &kelloTimer_, SIGNAL(timeout()), this, SLOT(kellonPaivitys()));
+    connect( this, SIGNAL(kello(QDateTime)), this, SLOT(lahetaJunat(QDateTime)));
     valkkytimer->start(500);
 }
 
@@ -490,3 +491,35 @@ void RataScene::asetaJunaNumero(RataRaide *raide, const QString &junanumero)
     foreach(Veturi* veturi, veturilista_)
         veturi->tarkistaRaiteenJunanumero();
 }
+
+void RataScene::lahetaJunat(const QDateTime &aika)
+{
+    QTime lahtoaika = aika.time().addSecs(120);     // Junat aktivoidaan kaksi minuuttia ennen lähtöaikaa
+    QSqlQuery lahtokysely( QString("select junanro,liikennepaikka,raide from juna natural join reitti"
+                                   " where lahtee=\"%1\" and tapahtuma=\"L\" " )
+                           .arg(lahtoaika.toString()));
+    int junia = 0;
+    while( lahtokysely.next() )
+    {
+        QString liikennepaikka = lahtokysely.value(1).toString();
+        int raidenro = lahtokysely.value(2).toInt();
+        QString raidetunnus = QString("%1%2").arg(liikennepaikka).arg(raidenro,3,10,QChar('0'));
+
+        RataRaide* raide = haeRaide(raidetunnus);
+        if( raide )
+        {
+            raide->asetaJunanumero( lahtokysely.value(0).toString());
+            junia++;
+        }
+    }
+
+    if( junia )
+    {
+        // Junia on asetettu, eli laitetaan automaatiotoiminnat kehiin...
+        foreach(Veturi* veturi, veturilista_)
+            veturi->tarkistaRaiteenJunanumero();
+    }
+
+
+}
+

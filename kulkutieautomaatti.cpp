@@ -140,11 +140,34 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
 
 
         // TODO: aikataulun alkuviive
-        // Jos ollaan raiteella, josta lähtöaika (P, LE, LP)  on aikataulussa vasta edessäpäin,
-        // lisätään tarpeellinen viive
+        // Jos ollaan raiteella, josta  on aikataulussa vasta edessäpäin,
+        // lisätään tarpeellinen viive (lähtöaika - 1 minuutti )
+        int viive = 0;
+        if( kysely.isNull(3))
+        {
+            QSqlQuery aikakysely( QString("select lahtoaika, tapahtuma from aikataulu natural join juna where "
+                                          "junanro=\"%1\" and liikennepaikka=\"%2\" and raide=\"%3\" ")
+                                  .arg(junanumero).arg(lahtoraide->liikennepaikka()).arg(lahtoraide->raidetunnus()));
+            if( aikakysely.next() )
+            {
+                if( aikakysely.value(1).toString()=="S")
+                    continue;       // Saapuu ja jää tälle raiteelle, ei vahvisteta kulkutietä eteenpäin
+                else if( !aikakysely.isNull(0))
+                {
+                    QTime lahtoaika = aikakysely.value(0).toTime().addSecs(-60);
+                    viive = skene_->simulaatioAika().time().secsTo( lahtoaika );
 
-
-        int viive = kysely.value(3).toInt();
+                    if( viive < -42000)  // Jos on mennyt yli keskiyön
+                        viive += 86400;
+                    else if(viive < 0)
+                        viive = 0;
+                }
+            }
+        }
+        else
+        {
+            viive = kysely.value(3).toInt();
+        }
 
         RaideTieto::Kulkutietyyppi ktyyppi = RaideTieto::EiKulkutieta;
         QString tyyppikirjain = kysely.value(4).toString();
