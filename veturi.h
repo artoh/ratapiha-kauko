@@ -72,12 +72,10 @@ public:
     int nopeusRajoitus() const { return nopeusRajoitus_; }
 
     QString junaNumero() const { return junaNumero_; }
-    bool tarkistaRaiteenJunanumero();
+    void tarkistaRaiteenJunanumero();
     JkvTila jkvTila() const { return jkvTila_; }
     VeturiAutomaatio veturiAutomaationTila() const { return veturiAutomaatio_; }
 
-
-    bool haeReitti(const QString &reitti = QString(), Akseli* akseli = 0);
 signals:
     void nopeusIlmoitus(int nopeus);
     void automaatioIlmoitus(int ajopoyta, int tavoitenopeus, const QPixmap& jkvkuva);
@@ -90,10 +88,12 @@ public slots:
     void nayttoonKoskettu(QPoint pos);
 
 protected:
+    bool haeReitti(const QString &reitti = QString(), Akseli* akseli = 0, QTime junanLahtoaika = QTime());
     void merkitseTyyppi(const QString& tyyppi);
     void paivitaJkvTiedot();    // Päivittää jkv-tietojen luettelon
     Akseli* aktiivinenAkseli();
     void asetaReitti(const QString& reitti);
+    bool tarkistaRaiteenNumeroAkselilta(Akseli* akseli);
 
     QTimer timer_;
 
@@ -119,9 +119,12 @@ protected:
     QString junaNumero_;
     VeturiAutomaatio veturiAutomaatio_;
 
-    QList<ReittiTieto> reitti_;
+    QMap<QString,ReittiTieto> reitti_;
     QString maaraAsema_;
     QString reittitunnus_;
+
+    QDateTime pysahtyi_;
+
 
 };
 

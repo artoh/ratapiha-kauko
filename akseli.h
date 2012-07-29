@@ -48,7 +48,7 @@ public:
     RaiteenPaa::Suunta suuntaKiskolla() { return suuntaKiskolla_; }
     QChar suuntaKirjain();
 
-    bool onkoKytketty() const { return !(kytkettyAkseli_==0) ; }
+    bool onkoKytketty() const { return  kytkettyAkseli_!=0;  }
     void liiku( qreal matka);
 
     void moottoriLiike( qreal matka);

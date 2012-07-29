@@ -50,8 +50,10 @@ QPainterPath Akseli::shape() const
 void Akseli::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->setPen(Qt::red);
-    if( kytkettyAkseli_ )
+    if( onkoKytketty() )
         painter->setBrush( QBrush(QColor(255,168,88,160))); // Kytketty toiseen vaunuun
+    else
+        painter->setBrush( Qt::NoBrush);
     painter->drawEllipse(boundingRect());
 }
 

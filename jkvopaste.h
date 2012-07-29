@@ -37,7 +37,7 @@ public:
     qreal matka() const { return matka_; }
     int sn() const { return sallittuNopeus_; }
     int jkvNopeus();
-    bool pysahdyLaiturille() const { return pysahdyLaiturille_; }
+    int pysahdyLaiturille() const { return pysahdyLaiturille_; }
 
     void piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia);
 
@@ -56,7 +56,7 @@ protected:
     qreal hidastuvuus_;
     int sallittuNopeus_;
     int jkvNopeus_;
-    bool pysahdyLaiturille_;
+    int pysahdyLaiturille_;
 
 
 

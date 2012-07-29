@@ -36,7 +36,7 @@ JkvOpaste::JkvOpaste( RataKisko *kisko, RaiteenPaa::Opaste opaste, qreal matka,
       jkvNopeus_(-1), pysahdyLaiturille_(pysahdyLaiturille)
 {
     // Seis-ehdot:
-    if( pysahdyLaiturille || opaste == RaiteenPaa::SeisLevy)
+    if( pysahdyLaiturille > 0  || opaste == RaiteenPaa::SeisLevy)
         sallittuNopeus_ = 0;
     else if( vaihtotyo )
     {
@@ -129,16 +129,8 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
         painter->setBrush( QBrush(Qt::blue));
         painter->setPen( QPen(QBrush(Qt::white),1.0));
         painter->drawRect(x+110,y+15,30,30);
-        painter->setFont( QFont("Helvetica",16,QFont::Black));
+        painter->setFont( QFont("Helvetica",5,QFont::Black));
         painter->drawText(x+110,y+15,30,30, Qt::AlignCenter, QString::number(pysahdyLaiturille()) );
-        /** Pitäisiköhän näyttää pysähdysaikaa ???
-        if( pysahdysaika() > 0)
-        {
-            painter->setPen( QPen( QBrush(Qt::red),1));
-            painter->setFont( QFont("Helvetica",11,QFont::Black));
-            painter->drawText( x+110, y+47, 30, 15, Qt::AlignCenter, QString::number(pysahdysaika_)  );
-        }
-        */
 
     }
 

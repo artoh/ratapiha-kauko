@@ -239,9 +239,7 @@ void RataScene::lataaVaunut()
         vaunut_.insert( vaunuid, vaunu);
     }
 
-    // Vetureille junanumerot
-    foreach(Veturi* veturi, veturilista_)
-        veturi->tarkistaRaiteenJunanumero();
+    // Vetureille junanumerot -- tämä poistettiin ;(, pitää laittaa vetureiden tallennustaulu
 
 }
 
@@ -488,11 +486,7 @@ void RataScene::raideVarautunut(RataRaide *raide, RaiteenPaa::Suunta suunta)
 
 void RataScene::asetaJunaNumero(RataRaide *raide, const QString &junanumero)
 {
-
     raide->asetaJunanumero(junanumero);
     foreach(Veturi* veturi, veturilista_)
-    {
-        if(veturi->tarkistaRaiteenJunanumero())
-            return;
-    }
+        veturi->tarkistaRaiteenJunanumero();
 }

@@ -178,7 +178,9 @@ OTHER_FILES += \
     pic/automaatioopastin.png \
     pic/automaatiokursori.png \
     pic/automaatioopastin-pois.png \
-    pic/automaatiokursori-pois.png
+    pic/automaatiokursori-pois.png \
+    junakuvat/Sm3o.png \
+    junakuvat/Sm4o.png
 
 FORMS += \
     ajopoyta.ui \

@@ -174,8 +174,8 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
         if( !klikattuTunnus.isEmpty())
         {
             QString tunnus = QInputDialog::getText(0,"Ratapiha", tr("Syötä junanumero raiteelle %1 ").arg( klikattuTunnus.mid(1) ));
-            if( !tunnus.isEmpty())
-                komento( QString("JN %1 %2").arg(klikattuTunnus.mid(1)).arg(tunnus));
+            if( !tunnus.isNull())
+                komento( QString("JN %1 %2 ").arg(klikattuTunnus.mid(1)).arg(tunnus));
         }
     case AutomaatioOn:
         if( !klikattuTunnus.isEmpty())

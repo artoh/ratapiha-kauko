@@ -82,5 +82,6 @@
         <file>pic/automaatioopastin-pois.png</file>
         <file>junakuvat/Sm4o.png</file>
         <file>junakuvat/Ei3.png</file>
+        <file>junakuvat/Sm3o.png</file>
     </qresource>
 </RCC>
