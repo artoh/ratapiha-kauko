@@ -36,7 +36,7 @@ JkvOpaste::JkvOpaste( RataKisko *kisko, RaiteenPaa::Opaste opaste, qreal matka,
       jkvNopeus_(-1), pysahdyLaiturille_(pysahdyLaiturille)
 {
     // Seis-ehdot:
-    if( pysahdyLaiturille > 0  || opaste == RaiteenPaa::SeisLevy)
+    if( pysahdyLaiturille  || opaste == RaiteenPaa::SeisLevy)
         sallittuNopeus_ = 0;
     else if( vaihtotyo )
     {
@@ -128,11 +128,19 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
     // Sitten oikealle laiturimerkintä
     if( pysahdyLaiturille() )
     {
-        painter->setBrush( QBrush(Qt::blue));
+        if( pysahdyLaiturille() < 0)
+            painter->setBrush( QBrush(Qt::red));    // Jos saavutaan perille, punainen neliö
+        else
+            painter->setBrush( QBrush(Qt::blue));
         painter->setPen( QPen(QBrush(Qt::white),1.0));
         painter->drawRect(x+110,y+15,30,30);
-        painter->setFont( QFont("Helvetica",5,QFont::Black));
-        painter->drawText(x+110,y+15,30,30, Qt::AlignCenter, QString::number(pysahdyLaiturille()) );
+
+        if( pysahdyLaiturille() > 0)
+        {
+            painter->setFont( QFont("Helvetica",10,QFont::Black));
+            painter->drawText(x+110,y+15,30,30, Qt::AlignCenter,QString("%1:%2").arg(pysahdyLaiturille()/60)
+                              .arg(pysahdyLaiturille()%60,2,10,QChar('0'))  );
+        }
 
     }
 

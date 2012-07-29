@@ -125,8 +125,7 @@ void Veturi::paivitaJkvTiedot()
             opaste = kiskolla->opastinSijainnissa(liitosSijainti)->opaste();
 
         // Tässä välissä aikataulusta pysähdysehdot?
-        int pysahdylaiturille = 0; // TODO!!!!
-
+        int pysahdylaiturille = 0;
 
         // Pysähdytään raiteelle, jos ollaan laiturilla ja aikataulu sanoo niin
         QString raidetunnus = kiskolla->raide()->raidetunnusLiikennepaikalla();
@@ -138,36 +137,38 @@ void Veturi::paivitaJkvTiedot()
                 int pysahdysAjasta = 0; // pysähdys johtuen siitä, kuinka kauan pitää seistä
                 int pysahdysTaulusta = 0;  // pysähdys johtuen siitä, koska saa lähteä
 
-
-                if( aktiivinenAkseli()->kiskolla() == kiskolla && pysahtyi_.isValid() )
-                {
-                    // Ollaan jo tällä kiskolla, eli voidaan kuluttaa pysähdysaikaa
-                    QTime lahtoaika = pysahtyi_.time().addSecs( reitti_.value(raidetunnus).pysahtyy() );
-                    pysahdysAjasta = pysahtyi_.time().secsTo(lahtoaika);
-                    if( pysahdysAjasta  < -43200)   // keskiyön ylitys
-                        pysahdysAjasta += 86400;
-
-                }
+                if( reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Saapuu)
+                    pysahdylaiturille = -1; // Määräasemalle
                 else
                 {
-                    // Lähtöaikaa ei vielä voi määrittää...
-                    pysahdysAjasta = reitti_.value(raidetunnus).pysahtyy();
+                    if( aktiivinenAkseli()->kiskolla() == kiskolla && pysahtyi_.isValid() )
+                    {
+                        // Ollaan jo tällä kiskolla, eli voidaan kuluttaa pysähdysaikaa
+                        QTime lahtoaika = pysahtyi_.time().addSecs( reitti_.value(raidetunnus).pysahtyy() );
+                        pysahdysAjasta = pysahtyi_.time().secsTo(lahtoaika);
+                        if( pysahdysAjasta  < -43200)   // keskiyön ylitys
+                            pysahdysAjasta += 86400;
+                    }
+                    else
+                    {
+                        // Lähtöaikaa ei vielä voi määrittää...
+                        pysahdysAjasta = reitti_.value(raidetunnus).pysahtyy();
+                    }
+
+                    // Lähtöajasta
+                    if( reitti_.value(raidetunnus).lahtoAika().isValid())
+                    {
+                        pysahdysTaulusta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo( reitti_.value(raidetunnus).lahtoAika() );
+                        if( pysahdysTaulusta  < -43200)   // keskiyön ylitys
+                            pysahdysTaulusta += 86400;
+
+                    }
+
+                    // Valitaan pidempi näistä ajoista
+                    pysahdylaiturille = qMax( pysahdysAjasta, pysahdysTaulusta );
+                    if( pysahdylaiturille < 0)
+                        pysahdylaiturille = 0;
                 }
-
-                // Lähtöajasta
-                if( reitti_.value(raidetunnus).lahtoAika().isValid())
-                {
-                    pysahdysTaulusta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo( reitti_.value(raidetunnus).lahtoAika() );
-                    if( pysahdysTaulusta  < -43200)   // keskiyön ylitys
-                        pysahdysTaulusta += 86400;
-
-                }
-
-                // Valitaan pidempi näistä ajoista
-                pysahdylaiturille = qMax( pysahdysAjasta, pysahdysTaulusta );
-                if( pysahdylaiturille < 0)
-                    pysahdylaiturille = 0;
-
             }
         }
 
