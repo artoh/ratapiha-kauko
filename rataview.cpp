@@ -97,8 +97,6 @@ RataKisko* RataView::kiskoKohdalla(const QPoint &sijainti)
             else if( kiskoPos.x() > kisko->pituus())
                 tamaEtaisyys += (kiskoPos.x() - kisko->pituus()) * 2;
 
-            qDebug()  << kisko->raide()->raidetunnusLiikennepaikalla() << "..." << tamaEtaisyys;
-
             if( tamaEtaisyys < etaisyys)
             {
                 etaisyys = tamaEtaisyys;

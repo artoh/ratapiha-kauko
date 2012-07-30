@@ -222,7 +222,6 @@ void KulkuTie::vikatilaan()
     // Vikatilassa, kaikki opastimet punaiselle!
     foreach( KulkutienRaide* ktraide, elementit_)
     {
-        qDebug() << ktraide->raide()->raidetunnusLiikennepaikalla() << " OP " << ktraide->lahtoOpastinTunnus();
         if(ktraide->lahtoOpastin()->opasteKasite() != RaiteenPaa::Seis )
             ktraide->lahtoOpastin()->asetaOpaste(RaiteenPaa::Seis);
     }

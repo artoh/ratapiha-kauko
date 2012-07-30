@@ -260,7 +260,13 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     }
     // Tavalliset raidevärit
     else if( raidetieto()->akseleita() && !sivuhaara)
-        viivavari = Qt::red;
+    {
+        if( raidetieto()->akseleita() < 0 && !skene_->valkytys())
+            // Virhetila, negatiivinen määrä akseleita!!!
+            viivavari = Qt::gray;
+        else
+            viivavari = Qt::red;
+    }
     else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Vaihtokulkutie && !sivuhaara)
         viivavari = Qt::yellow;
     else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Junakulkutie && !sivuhaara)

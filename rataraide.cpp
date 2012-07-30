@@ -147,18 +147,21 @@ void RataRaide::asetaJunanumero(const QString &junanumero)
 void RataRaide::akseliSisaan(RaiteenPaa::Suunta suunta, RataRaide *raiteelta)
 {
 
+    if( akseleita() < 0)
+        return; // VIKATILA!!!
+
+    if( raiteelta )
+        junanumero_ = raiteelta->junanumero();
+
     akseleita_++;
     // Kulkutiehen liittyvät asiat...
     if( akseleita() == 1 )
     {
-        if( raiteelta )
-            junanumero_ = raiteelta->junanumero();
         if( kulkutienRaide())
             kulkutienRaide()->raideVarautuu(suunta);
 
         // Kulkutieautomaatin herättäminen
         RataIkkuna::rataSkene()->raideVarautunut(this, suunta);
-
     }
 
     paivita();

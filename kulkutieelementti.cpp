@@ -35,10 +35,8 @@ KulkutieElementti::KulkutieElementti(KulkutienMuodostaja *muodostaja, KulkutieEl
     if( vanhempi)
         taso_ = vanhempi->taso() + 1;
 
-    if( taso() > 12 )
+    if( taso() > 14 )
         return; //Liian pitkä kulkutie...
-
-    qDebug() << naapuri->naapuriRaide()->raidetunnus();
 
 
     // Se suunta, johon tutkittavaa (naapurin) raidetta pitkin kuljetaan

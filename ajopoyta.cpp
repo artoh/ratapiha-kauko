@@ -26,7 +26,7 @@ Ajopoyta::Ajopoyta(QWidget *parent) :
 
     connect( ui->ajopoyta1, SIGNAL(clicked(bool)), this, SLOT(ajopoytaYksi(bool)));
     connect( ui->ajopoyta2, SIGNAL(clicked(bool)), this, SLOT(ajopoytaKaksi(bool)));
-    connect(  ui->nopeusSaadin, SIGNAL(sliderMoved(int)), this, SLOT(asetaTavoiteNopeus(int)));
+    connect(  ui->nopeusSaadin, SIGNAL(valueChanged(int)), this, SLOT(asetaTavoiteNopeus(int)));
     connect( ui->stopNappi, SIGNAL(clicked()), this, SLOT(hataJarru()));
 
     connect( ui->etsi, SIGNAL(clicked()), this, SLOT(keskita()));

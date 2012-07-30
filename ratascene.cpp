@@ -226,9 +226,6 @@ void RataScene::lataaVaunut()
         int takakisko = nkys.value(5).toInt();
         qreal takasijainti = nkys.value(6).toDouble();
         QChar takasuunta = nkys.value(7).toString()[0];
-        qDebug() << takasuunta;
-        qDebug() << nkys.value(7).toChar();
-        qDebug() << nkys.value(7);
 
         if( vaunuid >= seuraavaVaunuNumero_)
             seuraavaVaunuNumero_ = vaunuid + 1;
