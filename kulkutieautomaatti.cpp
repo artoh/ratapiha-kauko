@@ -180,7 +180,7 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
 
         AutomaatioOpastin* aopastin = opastimet_.value(opastinTunnus,0);
         if( !aopastin)
-        {
+        {            
             aopastin = new AutomaatioOpastin( opastin, lahtoraide, suunta, lapikulku);
             opastimet_.insert(opastinTunnus, aopastin);
         }
@@ -193,6 +193,64 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
 
 
 }
+
+void KulkutieAutomaatti::lataaAutomaatit()
+{
+    // Lataa kesken jääneet automaatit
+
+    QSqlQuery kysely("select opastin,maaliraide,kulkutientyyppi,viive from automaatiotalletus");
+    while( kysely.next())
+    {
+        QString opastinTunnus = kysely.value(0).toString();
+
+        RataRaide* lahtoraide = skene_->haeRaide( opastinTunnus.mid(1) );
+        if( !lahtoraide)
+            continue;
+        RaiteenPaa* opastin = 0;
+
+        RaiteenPaa::Suunta suunta = RaiteenPaa::Virhe;
+        if( opastinTunnus.startsWith('E'))
+        {
+            opastin = lahtoraide->etelainen();
+            suunta = RaiteenPaa::Etelaan;
+        }
+        else if( opastinTunnus.startsWith('P'))
+        {
+            opastin = lahtoraide->pohjoinen();
+            suunta = RaiteenPaa::Pohjoiseen;
+        }
+        else
+            continue;
+
+        RaideTieto::Kulkutietyyppi ktyyppi = RaideTieto::EiKulkutieta;
+        QString tyyppikirjain = kysely.value(2).toString();
+        if( tyyppikirjain == "J")
+            ktyyppi = RaideTieto::Junakulkutie;
+        else if( tyyppikirjain == "U")
+            ktyyppi = RaideTieto::Vaihtokulkutie;
+        int viive = kysely.value(3).toInt();
+
+
+        AutomaatioOpastin* aopastin = opastimet_.value(opastinTunnus,0);
+        if( !aopastin)
+        {
+            bool lapikulku = opastin->automaatioTila()==RaiteenPaa::Lapikulku ||
+                    opastin->automaatioTila() == RaiteenPaa::LapikulkuAktiivinen;
+            aopastin = new AutomaatioOpastin( opastin, lahtoraide, suunta, lapikulku);
+            opastimet_.insert(opastinTunnus, aopastin);
+        }
+        // Lisätään pyyntö jonoon
+        // Pyyntö suoritetaan aikanaan ;)
+        RataRaide* maaliRaide = skene_->haeRaide( kysely.value(1).toString() );
+        if( !maaliRaide )
+            continue;
+
+        aopastin->lisaaPyynto(ktyyppi, maaliRaide, viive);
+    }
+
+
+}
+
 
 void KulkutieAutomaatti::jnHerateRaiteelle(RataRaide *raide, RaiteenPaa::Suunta suunta)
 {
@@ -263,5 +321,20 @@ bool KulkutieAutomaatti::asetaAutomaatioPaalle(const QString lahtoopastin, bool 
     }
     raide->paivitaTietokantaan();
     return true;
+}
+
+void KulkutieAutomaatti::talletaAutomaatit()
+{
+    // Tyhjennetään tallennustaulu
+    QSqlQuery tyhjennys("delete from automaatiotalletus");
+
+    // Talletetaan kaikki automaatiopyynnöt tietokantaan
+    QMapIterator<QString, AutomaatioOpastin*> i(opastimet_);
+    while( i.hasNext())
+    {
+        i.next();
+        i.value()->talletaPyynnot( i.key());
+    }
+
 }
 

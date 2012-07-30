@@ -43,6 +43,8 @@ RataScene::RataScene(QObject *parent) :
     lataaRata();
     lataaVaunut();
 
+    kulkutieautomaatti_->lataaAutomaatit();
+
     setBackgroundBrush( QBrush(Qt::lightGray));
 
     foreach( RataRaide* raide, raiteet_)
@@ -64,6 +66,9 @@ RataScene::~RataScene()
     // Päivittää vasta tässä vaiheessa vaunut tietokantaan, jottei raksuta koko ajan ;)
     foreach(Vaunu* vaunu, vaunut_)
         vaunu->paivita();
+
+    // Tallennetaan aktiiviseksi jäävät kulkutieautomaatiot
+    kulkutieautomaatti_->talletaAutomaatit();
 
     // Kirjoittaa ajan tietokantaan
     if( simulaatioAika().isValid())

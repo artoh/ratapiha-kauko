@@ -43,6 +43,9 @@ public:
     void jnHerateRaiteelle(RataRaide* raide, RaiteenPaa::Suunta suunta);
     bool asetaAutomaatioPaalle(const QString lahtoopastin, bool paalle = true);
 
+    void talletaAutomaatit();
+    void lataaAutomaatit();
+
 signals:
     
 public slots:

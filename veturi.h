@@ -43,6 +43,8 @@ public:
     Veturi(const QString& tyyppi, int vaununumero, RataScene* skene);
     Veturi(const QString &tyyppi, int vaunuNumero, RataKisko* etu_kisko, qreal etu_etaisyys, QChar etu_suunta,
           RataKisko* taka_kisko, qreal taka_etaisyys, QChar taka_suunta, RataScene* skene);
+
+    void tietojaKannasta( int matkamittari, int tavoitenopeus, int ajopoyta, const QString& junanumero, JkvTila jkvtila, VeturiAutomaatio automaatiotila );
     
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -76,6 +78,8 @@ public:
     JkvTila jkvTila() const { return jkvTila_; }
     VeturiAutomaatio veturiAutomaationTila() const { return veturiAutomaatio_; }
 
+    virtual void paivita();
+
 signals:
     void nopeusIlmoitus(int nopeus);
     void automaatioIlmoitus(int ajopoyta, int tavoitenopeus, const QPixmap& jkvkuva);
@@ -88,12 +92,13 @@ public slots:
     void nayttoonKoskettu(QPoint pos);
 
 protected:
-    bool haeReitti(const QString &reitti = QString(), Akseli* akseli = 0, QTime junanLahtoaika = QTime());
+    bool haeReitti( Akseli *akseli);
     void merkitseTyyppi(const QString& tyyppi);
     void paivitaJkvTiedot();    // Päivittää jkv-tietojen luettelon
     Akseli* aktiivinenAkseli();
     void asetaReitti(const QString& reitti);
     bool tarkistaRaiteenNumeroAkselilta(Akseli* akseli);
+    void tyhjennaReitti();
 
     QTimer timer_;
 

@@ -45,6 +45,8 @@ public:
 
     RaiteenPaa::Automaatio tila();
 
+    void talletaPyynnot(const QString &opastintunnus);
+
 protected:
     void paivitaTila();
 

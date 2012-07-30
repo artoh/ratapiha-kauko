@@ -20,6 +20,8 @@
 #include "automaatioopastin.h"
 #include "automaatiopyynto.h"
 
+#include <QSqlQuery>
+
 AutomaatioOpastin::AutomaatioOpastin(RaiteenPaa *raiteenpaa, RataRaide* lahtoRaide, RaiteenPaa::Suunta suunta, bool lapikulkutila)
     : opastin_(raiteenpaa), lahtoraide_(lahtoRaide),
       suunta_(suunta), tila_(RaiteenPaa::AutomaatioKaytossa), lapiKulkutila_(lapikulkutila)
@@ -60,6 +62,18 @@ RaiteenPaa::Automaatio AutomaatioOpastin::toimi(int sekuntiakulunut)
 RaiteenPaa::Automaatio AutomaatioOpastin::tila()
 {
     return tila_;
+}
+
+void AutomaatioOpastin::talletaPyynnot(const QString& opastintunnus)
+{
+    foreach(AutomaatioPyynto* pyynto, pyynnot_)
+    {
+        // Lisätään pyynnöt tietokantaan
+        QSqlQuery lisays( QString("insert into automaatiotalletus(opastin,maaliraide,kulkutientyyppi,viive "
+                                  "values(%1,%2,%3,%4)" )
+                          .arg(opastintunnus).arg(pyynto->maaliRaiteenTunnus()).arg(pyynto->kulkutientyyppikirjain())
+                          .arg(pyynto->viive())         );
+    }
 }
 
 void AutomaatioOpastin::paivitaTila()

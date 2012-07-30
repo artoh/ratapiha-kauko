@@ -48,7 +48,7 @@ public:
 
     qreal pituus() const { return vaununPituus_; }
 
-    void paivita();
+    virtual void paivita();
     void laskeSijainti();
 
     int vaunuNumero() const { return vaununNumero_; }

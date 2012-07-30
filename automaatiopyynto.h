@@ -39,6 +39,11 @@ public:
     /** Yrittää muodostaa kulkutien jos kaikki ehdot kunnossa */
     RaiteenPaa::Automaatio toimi();
 
+    int viive() const { return viive_; }
+    QString maaliRaiteenTunnus();
+    RataRaide::Kulkutietyyppi kulkutientyyppi() const { return kulkutienTyyppi_; }
+    QChar kulkutientyyppikirjain() const;
+
 protected:
     AutomaatioOpastin* opastin_;
     RataRaide::Kulkutietyyppi kulkutienTyyppi_;

@@ -59,4 +59,16 @@ RaiteenPaa::Automaatio AutomaatioPyynto::toimi()
     return tila();
 }
 
+QString AutomaatioPyynto::maaliRaiteenTunnus()
+{
+    return maaliRaide_->raidetunnusLiikennepaikalla();
+}
+
+QChar AutomaatioPyynto::kulkutientyyppikirjain() const
+{
+    if( kulkutientyyppi() == RataRaide::Junakulkutie)
+        return QChar('J');
+    return QChar('U');
+}
+
 
