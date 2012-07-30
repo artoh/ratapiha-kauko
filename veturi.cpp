@@ -32,6 +32,7 @@
 #include <QStaticText>
 #include <QStyleOptionGraphicsItem>
 #include <QPixmap>
+#include <QDebug>
 
 Veturi::Veturi(const QString &tyyppi, int vaununumero, RataScene *skene) :
     QObject(), Vaunu(tyyppi, vaununumero, skene),
@@ -41,7 +42,8 @@ Veturi::Veturi(const QString &tyyppi, int vaununumero, RataScene *skene) :
     junaPituus_(0.0),
     matkaMittari_(0.0),
     nopeusRajoitus_(0),
-    veturiAutomaatio_(AutoOn)
+    veturiAutomaatio_(AutoOn),
+    pysahtyiKiskolle_(0)
 {
     merkitseTyyppi(tyyppi);
 
@@ -56,7 +58,8 @@ Veturi::Veturi(const QString &tyyppi, int vaunuNumero, RataKisko *etu_kisko, qre
     junaPituus_(0.0),
     matkaMittari_(0.0),
     nopeusRajoitus_(0),
-    veturiAutomaatio_(AutoOn)
+    veturiAutomaatio_(AutoOn),
+    pysahtyiKiskolle_(0)
 {
     merkitseTyyppi(tyyppi);
 }
@@ -127,9 +130,10 @@ void Veturi::paivitaJkvTiedot()
         // Tässä välissä aikataulusta pysähdysehdot?
         int pysahdylaiturille = 0;
 
-        // Pysähdytään raiteelle, jos ollaan laiturilla ja aikataulu sanoo niin
+        // Pysähdytään laiturille tai opastimelle, jos aikataulu sanoo niin
         QString raidetunnus = kiskolla->raide()->raidetunnusLiikennepaikalla();
-        if( kiskolla->laituri() != Kisko::LaituriEi )
+        if( ( kiskolla->laituri() != Kisko::LaituriEi  && pysahtyiKiskolle_ != kiskolla ) ||
+                (  opaste != RaiteenPaa::Tyhja && ( !pysahtyiKiskolle_ || pysahtyiKiskolle_->raide() != kiskolla->raide())) )
         {
             if( reitti_.contains( raidetunnus ))
             {
@@ -145,7 +149,7 @@ void Veturi::paivitaJkvTiedot()
                     {
                         // Ollaan jo tällä kiskolla, eli voidaan kuluttaa pysähdysaikaa
                         QTime lahtoaika = pysahtyi_.time().addSecs( reitti_.value(raidetunnus).pysahtyy() );
-                        pysahdysAjasta = pysahtyi_.time().secsTo(lahtoaika);
+                        pysahdysAjasta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo(lahtoaika);
                         if( pysahdysAjasta  < -43200)   // keskiyön ylitys
                             pysahdysAjasta += 86400;
                     }
@@ -153,6 +157,7 @@ void Veturi::paivitaJkvTiedot()
                     {
                         // Lähtöaikaa ei vielä voi määrittää...
                         pysahdysAjasta = reitti_.value(raidetunnus).pysahtyy();
+
                     }
 
                     // Lähtöajasta
@@ -202,7 +207,7 @@ void Veturi::paivitaJkvTiedot()
         int edellinenSn = jkvTiedot_.at(i-1).sn();
 
         // Jos etäisyyttä on enintään 300m, yksinkertaistetaan nopeusrajoitus edelliseen
-        if( jkvTiedot_.at(i).opaste() == RaiteenPaa::Tyhja &&
+        if( jkvTiedot_.at(i).opaste() == RaiteenPaa::Tyhja && !jkvTiedot_.at(i).pysahdyLaiturille() &&
                 tamaSn != edellinenSn )
         {
             // On nopeusrajoitus, jota pitää käsitellä etäisyysehdolla
@@ -230,8 +235,8 @@ void Veturi::paivitaJkvTiedot()
         if( opaste.jkvNopeus() < jkvnopeus)
             jkvnopeus = opaste.jkvNopeus();
 
-    // Vaihtotyön sn rajoitetaan 50 km/h
-    if( jkvTila()==VaihtoJkv && jkvnopeus > 50 )
+    // Vaihtotyön sn rajoitetaan 35 km/h
+    if( jkvTila()==VaihtoJkv && jkvnopeus > 35 )
         jkvnopeus = 35;
 
     // Tarkistetaan vielä raiteen voimassaoleva nopeusrajoitus, josta voi myös
@@ -366,13 +371,11 @@ void Veturi::siirtyyRaiteelle(RataRaide *raiteelle)
 void Veturi::aja()
 {
 
+    if( !aktiivinenAkseli() ||  !aktiivinenAkseli()->kiskolla())
+        return;
+
     // Haetaan jkvnopeus, eli suurin nopeus, jolla jkv-laite sallii ajettavan
     paivitaJkvTiedot();
-
-    if( nopeus()==0 && tavoiteNopeus()==0)
-        return; // Eipä mitään jos ei tartte liikkua!
-
-
 
     qreal jkvMs = jkvNopeus() / 3.6;  // JKV-nopeus metreinä sekunnissa
     qreal tavoiteMs = tavoiteNopeus() / 3.6; // Tavoitenopeus m/s
@@ -380,10 +383,13 @@ void Veturi::aja()
 
       qreal tavoite = 0.0;
 
-      if( tavoiteMs < jkvMs  )    // JKV ei rajoita
+      if( tavoiteNopeus() < 5 )
+          tavoite = 0;
+      else if( tavoiteMs < jkvMs  )    // JKV ei rajoita
           tavoite = tavoiteMs;
       else
           tavoite = jkvMs;      // JKV rajoittaa!
+
 
 
       // Lasketaan ensin uusi nopeus.
@@ -423,7 +429,7 @@ void Veturi::aja()
       emit nopeusIlmoitus( nopeus());
 
       // Pysähdystiedon päivitys
-      if( nopeusMs() ==0 )
+      if( nopeusMs() < 3 )
       {
           if( !pysahtyi_.isValid())
           {
@@ -431,10 +437,11 @@ void Veturi::aja()
               pysahtyi_ = RatapihaIkkuna::getInstance()->skene()->simulaatioAika();
               // Jos ollaan määräraiteella, pysäytetään juna sinne
 
-              if( reitti_.contains(aktiivinenAkseli()->kiskolla()->raide()->raidetunnusLiikennepaikalla() ) &&
+              if( reitti_.count() && reitti_.contains(aktiivinenAkseli()->kiskolla()->raide()->raidetunnusLiikennepaikalla() ) &&
                       reitti_.value(aktiivinenAkseli()->kiskolla()->raide()->raidetunnusLiikennepaikalla() ).tapahtumaTyyppi() == ReittiTieto::Saapuu )
               {
                   // Saavuttu määräraiteelle!
+                  kirjoitaLokiin("S", aktiivinenAkseli()->kiskolla()->raide());
                   tavoiteNopeus_ = 0;
                   haeReitti();
                   if( veturiAutomaationTila() == AutoAktiivinen )
@@ -443,7 +450,6 @@ void Veturi::aja()
                       veturiAutomaatio_ = AutoOn;
                   }
                   emit automaatioIlmoitus(0,0,jkvKuva());
-                  kirjoitaLokiin("S", aktiivinenAkseli()->kiskolla()->raide());
               }
               else
               {
@@ -453,11 +459,13 @@ void Veturi::aja()
 
 
           } // pysahtyi.isValid
+
       }
       else if( pysahtyi_.isValid() )    // Liikkui, mutta pysähtyi on validi... siis juuri liikkeelle!!
       {
           pysahtyi_ = QDateTime();        // Ei todellakaan ole pysähdyksissä
           kirjoitaLokiin("L", aktiivinenAkseli()->kiskolla()->raide());  // Juna lähti taas liikkeelle!
+          pysahtyiKiskolle_ = aktiivinenAkseli()->kiskolla();  // On tehnyt pysähdyksen tällä kiskon pätkällä...
       }
 
 }
@@ -491,7 +499,7 @@ void Veturi::asetaTavoiteNopeus(int tavoiteNopeus)
 
 QRectF Veturi::boundingRect() const
 {
-    return QRectF( -25.0, -10.0, 60.0 + pituus(), 20.0);
+    return QRectF( -30.0, -10.0, 60.0 + pituus(), 20.0);
 }
 
 
@@ -517,7 +525,7 @@ QPixmap Veturi::jkvKuva()
         painter.drawPixmap(5,45,QPixmap( QString(":/r/junakuvat/%1.png").arg( vaununTyyppi() ) ) );
         painter.drawRect(5,220,140,20);
         painter.setFont(QFont("Helvetica",15));
-        painter.drawText(QRectF(10,225,130,15),Qt::AlignCenter, tr(" %1 km").arg( (int) matkaMittari() / 1000 ));
+        painter.drawText(QRectF(10,220,130,20),Qt::AlignCenter, tr(" %1 km").arg( (int) matkaMittari() / 1000 ));
     }
 
     int indeksi = 0;
@@ -717,7 +725,7 @@ bool Veturi::tarkistaRaiteenNumeroAkselilta(Akseli *akseli)
                         lahtoaika = reitinkysymys.value(1).toTime();
 
                     if( !reitti.isEmpty())
-                        return haeReitti(reitti, akseli);
+                        return haeReitti(reitti, akseli, lahtoaika);
                 }
             }
 
@@ -751,8 +759,8 @@ bool Veturi::haeReitti(const QString& reitti, Akseli* akseli, QTime junanLahtoai
         int raide = reittikysely.value(2).toInt();
 
         QTime lahtoaika;
-        if( reittikysely.isNull(3))
-            lahtoaika = junanLahtoaika;
+        if( !reittikysely.value(3).toInt() )
+            lahtoaika = QTime();
         else
             lahtoaika = junanLahtoaika.addSecs(reittikysely.value(3).toInt());
 

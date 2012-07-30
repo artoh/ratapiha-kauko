@@ -124,6 +124,7 @@ protected:
     QString reittitunnus_;
 
     QDateTime pysahtyi_;
+    RataKisko* pysahtyiKiskolle_;
 
 
 };

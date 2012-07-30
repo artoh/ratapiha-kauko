@@ -145,16 +145,16 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
         int viive = 0;
         if( kysely.isNull(3))
         {
-            QSqlQuery aikakysely( QString("select lahtoaika, tapahtuma from aikataulu natural join juna where "
+            QSqlQuery aikakysely( QString("select lahtee, tapahtuma, TIME_TO_SEC(lahtoaika) from aikataulu natural join juna where "
                                           "junanro=\"%1\" and liikennepaikka=\"%2\" and raide=\"%3\" ")
                                   .arg(junanumero).arg(lahtoraide->liikennepaikka()).arg(lahtoraide->raidetunnus()));
             if( aikakysely.next() )
             {
                 if( aikakysely.value(1).toString()=="S")
                     continue;       // Saapuu ja jää tälle raiteelle, ei vahvisteta kulkutietä eteenpäin
-                else if( !aikakysely.isNull(0))
+                else if( !aikakysely.isNull(0) && !aikakysely.isNull(2))
                 {
-                    QTime lahtoaika = aikakysely.value(0).toTime().addSecs(-60);
+                    QTime lahtoaika = aikakysely.value(0).toTime().addSecs( aikakysely.value(2).toInt() ).addSecs(-60);
                     viive = skene_->simulaatioAika().time().secsTo( lahtoaika );
 
                     if( viive < -42000)  // Jos on mennyt yli keskiyön
@@ -247,6 +247,9 @@ bool KulkutieAutomaatti::asetaAutomaatioPaalle(const QString lahtoopastin, bool 
         if( kysely.next())
         {
             QString maaliraide = kysely.value(1).toString();
+            if( maaliraide.isEmpty())
+                return false;   // Virheellinen automaatio!
+
             // On automaatioehto, voidaan kytkeä automaatio. Sitten vain selvitetään, onko läpikulku (musta)
             if( kysely.isNull(0) && maaliraide[ maaliraide.length()-1].isDigit() )
                 raiteenpaa->asetaAutomaationTila(RaiteenPaa::Lapikulku);

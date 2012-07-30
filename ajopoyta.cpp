@@ -24,9 +24,9 @@ Ajopoyta::Ajopoyta(QWidget *parent) :
 
     connect( ui->veturiValinta, SIGNAL( editingFinished() ), this, SLOT( valitseVeturi()));
 
-    connect( ui->ajopoyta1, SIGNAL(toggled(bool)), this, SLOT(ajopoytaYksi(bool)));
-    connect( ui->ajopoyta2, SIGNAL(toggled(bool)), this, SLOT(ajopoytaKaksi(bool)));
-    connect(  ui->nopeusSaadin, SIGNAL(valueChanged(int)), this, SLOT(asetaTavoiteNopeus(int)));
+    connect( ui->ajopoyta1, SIGNAL(clicked(bool)), this, SLOT(ajopoytaYksi(bool)));
+    connect( ui->ajopoyta2, SIGNAL(clicked(bool)), this, SLOT(ajopoytaKaksi(bool)));
+    connect(  ui->nopeusSaadin, SIGNAL(sliderMoved(int)), this, SLOT(asetaTavoiteNopeus(int)));
     connect( ui->stopNappi, SIGNAL(clicked()), this, SLOT(hataJarru()));
 
     connect( ui->etsi, SIGNAL(clicked()), this, SLOT(keskita()));
@@ -169,8 +169,7 @@ void Ajopoyta::tilaMuutos(int ajopoyta, int tavoitenopeus, const QPixmap& kuva)
 {
     ui->ajopoyta1->setChecked( ajopoyta == 1);
     ui->ajopoyta2->setChecked( ajopoyta == 2);
-    ajopoytaYksi(ajopoyta == 1);
-    ajopoytaKaksi(ajopoyta == 2);
+
     ui->nopeusSaadin->setValue(tavoitenopeus);
     if( !kuva.isNull() )
         ui->jkvTieto->setPixmap(kuva);

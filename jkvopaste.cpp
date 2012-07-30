@@ -36,7 +36,7 @@ JkvOpaste::JkvOpaste( RataKisko *kisko, RaiteenPaa::Opaste opaste, qreal matka,
       jkvNopeus_(-1), pysahdyLaiturille_(pysahdyLaiturille)
 {
     // Seis-ehdot:
-    if( pysahdyLaiturille  || opaste == RaiteenPaa::SeisLevy)
+    if( pysahdyLaiturille || opaste == RaiteenPaa::SeisLevy)
         sallittuNopeus_ = 0;
     else if( vaihtotyo )
     {
@@ -46,7 +46,7 @@ JkvOpaste::JkvOpaste( RataKisko *kisko, RaiteenPaa::Opaste opaste, qreal matka,
     else
     {
         // Seis-ehdot junakulkutiellä
-        if( opaste != RaiteenPaa::Aja && opaste != RaiteenPaa::AjaSn)
+        if( opaste == RaiteenPaa::Seis || opaste==RaiteenPaa::AjaVarovasti || opaste == RaiteenPaa::EiOpastetta)
             sallittuNopeus_ = 0;
     }
     matka_ = matka - 15; // 15 metrin vara
@@ -133,12 +133,12 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
         else
             painter->setBrush( QBrush(Qt::blue));
         painter->setPen( QPen(QBrush(Qt::white),1.0));
-        painter->drawRect(x+110,y+15,30,30);
+        painter->drawRect(x+100,y+15,30,30);
 
         if( pysahdyLaiturille() > 0)
         {
             painter->setFont( QFont("Helvetica",10,QFont::Black));
-            painter->drawText(x+110,y+15,30,30, Qt::AlignCenter,QString("%1:%2").arg(pysahdyLaiturille()/60)
+            painter->drawText(x+100,y+15,40,30, Qt::AlignCenter,QString("%1:%2").arg(pysahdyLaiturille()/60)
                               .arg(pysahdyLaiturille()%60,2,10,QChar('0'))  );
         }
 
