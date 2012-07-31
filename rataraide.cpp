@@ -189,9 +189,9 @@ void RataRaide::haeNaapurit()
     foreach( RataKisko* kisko, kiskot_)
     {
         if( kisko->etelaTyyppi()==Kisko::Paa || kisko->etelaTyyppi()==Kisko::LiikennePaikanPaa)
-            naapurit_.append(new Naapuruus(kisko, Naapuruus::Etela));
+            naapurit_.append(new Naapuruus(kisko, RaiteenPaa::Etelaan));
         if( kisko->pohjoisTyyppi()==Kisko::Paa || kisko->pohjoisTyyppi()==Kisko::LiikennePaikanPaa)
-            naapurit_.append(new Naapuruus(kisko, Naapuruus::Pohjoinen));
+            naapurit_.append(new Naapuruus(kisko, RaiteenPaa::Pohjoiseen));
     }
 
 }

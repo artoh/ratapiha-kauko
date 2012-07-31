@@ -42,7 +42,7 @@ public:
     RataRaide* raide() { return naapuruus_->naapuriRaide(); }
     RaiteenPaa* lahtoOpastin()  { return opastin_; }
     RataRaide* lahtoRaide() { return lahtoraide_; }
-    bool onkoPohjoiseen() { return naapuruus_->naapurinSuunta()==Naapuruus::Etela; }
+    bool onkoPohjoiseen() { return naapuruus_->naapurinSuunta()==RaiteenPaa::Etelaan; }
 
     void lukitseKulkutielle( KulkuTie* kulkutie);
     void laitaVarit(KulkutienMuodostaja* kulkutie);

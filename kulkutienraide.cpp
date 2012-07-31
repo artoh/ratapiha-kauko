@@ -162,9 +162,6 @@ void KulkutienRaide::raideVapautuu(RaiteenPaa::Suunta suunta)
 {
     if( kulkutie()->kulkutienTyyppi() == RataRaide::Linjasuojastus)
     {
-        // Ajon salliva opaste, perään voi tulla seuraava yksikkö
-        lahtoOpastin()->asetaOpaste(RaiteenPaa::Aja);
-        lahtoRaide()->paivita();
         kulkutie()->tarkista();
     }
     else if( kulkutie()->tila() == RataRaide::Varattu)

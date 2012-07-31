@@ -20,6 +20,7 @@
 #include "kulkutieelementti.h"
 #include "kulkutienmuodostaja.h"
 #include "kulkutie.h"
+#include "kulkutienraide.h"
 
 #include "rataikkuna.h"
 #include "ratascene.h"
@@ -40,7 +41,7 @@ KulkutieElementti::KulkutieElementti(KulkutienMuodostaja *muodostaja, KulkutieEl
 
 
     // Se suunta, johon tutkittavaa (naapurin) raidetta pitkin kuljetaan
-    if( naapuri->naapurinSuunta() == Naapuruus::Etela)
+    if( naapuri->naapurinSuunta() == RaiteenPaa::Etelaan)
         naapurinPaa_ = naapuri->naapuriRaide()->pohjoinen();
     else
         naapurinPaa_ = naapuri->naapuriRaide()->etelainen();
@@ -76,6 +77,12 @@ KulkutieElementti::KulkutieElementti(KulkutienMuodostaja *muodostaja, KulkutieEl
     }
     // 3b) Lisäehdot keskellä oleville
 
+    // Junakulkutie ei saa mennä suojastuksen läpi
+    if( naapurinPaa()->opastin()==RaiteenPaa::SuojastusOpastin && muodostaja->kulkutienTyyppi() == RaideTieto::Junakulkutie)
+    {
+        qDebug() << "Suojastusehto!!!";
+        return;
+    }
 
     // 4) Jatketaan seuraaviin
 
@@ -123,34 +130,28 @@ void KulkutieElementti::lukitseKulkutielle(KulkuTie* kulkutie)
         isi_->lukitseKulkutielle(kulkutie);
 
     // Muodostaa suojastuksen, jos tarpeen
+    // Lisää elementit suojastukselle
     if( !suojastus_.isEmpty())
     {
         KulkuTie* linjasuojastus = new KulkuTie(RaideTieto::Linjasuojastus);
 
         QString opastin;
 
-        if( naapuruus_->naapurinSuunta() == Naapuruus::Pohjoinen)
+        if( naapuruus_->naapurinSuunta() == RaiteenPaa::Pohjoiseen)
            opastin = QString( QChar('E') + naapuruus_->naapuriRaide()->raidetunnusLiikennepaikalla());
         else
             opastin = QString( QChar('P') + naapuruus_->naapuriRaide()->raidetunnusLiikennepaikalla());
 
-        naapurinPaa()->asetaOpaste(RaiteenPaa::Aja);
-
         foreach( QString suojastusraide, suojastus_)
         {
-
             linjasuojastus->lisaaElementti( suojastusraide, opastin );
 
             RaiteenPaa* tamanPaa = RataIkkuna::rataSkene()->haeRaiteenPaa(suojastusraide);
             if( tamanPaa->opastin() == RaiteenPaa::SuojastusOpastin )
             {
                 opastin = suojastusraide;
-                if( tamanPaa->opaste() == RaiteenPaa::Seis)
-                    tamanPaa->asetaOpaste( RaiteenPaa::Aja);
             }
             // Tällä raiteella on suojastusopastin, joka jatkaa suojastusta!!!
-
-
         }
         linjasuojastus->vahvistaKulkutie();
 
@@ -229,9 +230,27 @@ void KulkutieElementti::maalissaOllaan(KulkutienMuodostaja *muodostaja)
     // Junakulkutien pitää herättää suojastus
     if( muodostaja->kulkutienTyyppi() == RaideTieto::Junakulkutie && naapurinPaa()->opastin() == RaiteenPaa::SuojastusOpastin)
     {
-        if( naapurinPaa()->opaste() != RaiteenPaa::Aja)
-            if( !voikoMuodostaaSuojastuksen(naapuruus_))
-                return; // Ei onnaa suojastusvaatimuksen takia!!!
+        // Nyt pitää tarkistaa, onko seuraavalla raiteelle sopiva suojastus
+
+        QList<Naapuruus*> naapurit = naapuruus_->naapuriRaide()->naapurit();
+        foreach( Naapuruus* uusinaapuri, naapurit)
+        {
+            if( uusinaapuri->naapuriRaide() && uusinaapuri->omaSuunta() != naapuruus_->naapurinSuunta() )
+            {
+                // Tässä oikea naapuri!
+                KulkutienRaide* ktraide = uusinaapuri->naapuriRaide()->kulkutienRaide();
+                if( ktraide && ktraide->kulkutie()->kulkutienTyyppi() == RataRaide::Linjasuojastus
+                        && ktraide->suunta() != naapuruus_->naapurinSuunta())
+                {
+                        muodostaja->reittiLoytynyt(this);
+                        return;
+                }
+            }
+        }
+
+        // Suojastus ei vielä valmis
+        if( !voikoMuodostaaSuojastuksen(naapuruus_))
+            return; // Ei onnaa suojastusvaatimuksen takia!!!
     }
 
     // Jos ne täyttyvät, ilmoitetaan lyhyimmäksi
@@ -250,24 +269,24 @@ bool KulkutieElementti::voikoMuodostaaSuojastuksen(Naapuruus *naapuri)
         if( uusinaapuri->naapuriRaide() && uusinaapuri->omaSuunta() != naapuri->naapurinSuunta() )
         {
             // Tarkastetaan kelpaako raide
-            if( uusinaapuri->naapuriRaide()->akseleita() || uusinaapuri->naapuriRaide()->kulkutieTyyppi() != RaideTieto::EiKulkutieta ||
-                    uusinaapuri->omaVaihde()!=RaiteenPaa::EiVaihdetta || uusinaapuri->naapurinVaihde()!=RaiteenPaa::EiVaihdetta )
+            if( uusinaapuri->naapuriRaide()->akseleita() ||
+                    uusinaapuri->naapuriRaide()->kulkutieTyyppi() != RaideTieto::EiKulkutieta ||
+                    uusinaapuri->omaVaihde()!=RaiteenPaa::EiVaihdetta ||
+                    uusinaapuri->naapurinVaihde()!=RaiteenPaa::EiVaihdetta )
                 return false;   // Tämä suojastus ei kerta kaikkiaan kelpaa!!!!
 
             RaiteenPaa* naapurinpaa;
 
             // Se suunta, johon tutkittavaa (naapurin) raidetta pitkin kuljetaan
-            if( uusinaapuri->naapurinSuunta() == Naapuruus::Etela)
+            if( uusinaapuri->naapurinSuunta() == RaiteenPaa::Etelaan)
                 naapurinpaa = uusinaapuri->naapuriRaide()->pohjoinen();
             else
                 naapurinpaa = uusinaapuri->naapuriRaide()->etelainen();
 
-
             if( naapurinpaa->opastin() == RaiteenPaa::RaideOpastin)
                 return false;       // Raideopastin ei kelpaa suojastuksen päättäväksi opastimeksi, vaan pitää olla oikea, korkea pääopastin!
 
-            // Nyt laitetaan tämän raiteen pää+tunnus
-            if( uusinaapuri->naapurinSuunta() == Naapuruus::Etela)
+            if( uusinaapuri->naapurinSuunta() == RaiteenPaa::Etelaan)
                 suojastus_.append( QChar('P') + uusinaapuri->naapuriRaide()->raidetunnusLiikennepaikalla());
             else
                 suojastus_.append( QChar('E') + uusinaapuri->naapuriRaide()->raidetunnusLiikennepaikalla());

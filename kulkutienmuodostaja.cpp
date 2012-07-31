@@ -53,12 +53,12 @@ bool KulkutienMuodostaja::muodostaKulkutie()
             RaiteenPaa* lahtoPaa;
 
             // Jos on määritelty lähtösuunta, seurataan vain sitä
-            if( lahtoSuunta_ == RaiteenPaa::Etelaan && naapuri->omaSuunta() == Naapuruus::Pohjoinen )
+            if( lahtoSuunta_ == RaiteenPaa::Etelaan && naapuri->omaSuunta() == RaiteenPaa::Pohjoiseen )
                 continue;
-            else if( lahtoSuunta_ == RaiteenPaa::Pohjoiseen && naapuri->omaSuunta() == Naapuruus::Etela)
+            else if( lahtoSuunta_ == RaiteenPaa::Pohjoiseen && naapuri->omaSuunta() == RaiteenPaa::Etelaan)
                 continue;
 
-            if( naapuri->omaSuunta() == Naapuruus::Pohjoinen)
+            if( naapuri->omaSuunta() == RaiteenPaa::Pohjoiseen)
                 lahtoPaa = mista_->pohjoinen();
             else
                 lahtoPaa = mista_->etelainen();
@@ -79,6 +79,7 @@ bool KulkutienMuodostaja::muodostaKulkutie()
         lyhinReitti_->lukitseKulkutielle(kulkutie);
         lyhinReitti_->laitaVarit(this);
         mista_->paivita();
+        minne_->naapuritTarkistakaaKulkutiet(kulkutie);
 
         RataIkkuna::rataSkene()->kulkutieValmis(minne_->raidetunnusLiikennepaikalla(), kulkutie);
     }

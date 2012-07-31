@@ -21,8 +21,8 @@
 
 #include <QGraphicsScene>
 
-Naapuruus::Naapuruus(RataKisko *omaKisko, Ilmansuunta omasuunta)
-    : omaSuunta_(omasuunta), naapurinSuunta_(Virhe), naapurinVaihde_(RaiteenPaa::EiVaihdetta),
+Naapuruus::Naapuruus(RataKisko *omaKisko, RaiteenPaa::Suunta omasuunta)
+    : omaSuunta_(omasuunta), naapurinSuunta_(RaiteenPaa::Virhe), naapurinVaihde_(RaiteenPaa::EiVaihdetta),
       pieninNopeus_(0),
       sallittuKulkutie_(Kisko::Ensisijainen)
 {
@@ -34,7 +34,7 @@ Naapuruus::Naapuruus(RataKisko *omaKisko, Ilmansuunta omasuunta)
 
     omaraide_ = omaKisko->raide();
 
-    if( omasuunta == Etela)
+    if( omasuunta == RaiteenPaa::Etelaan)
     {
         if( omaKisko->pohjoisTyyppi()==Kisko::VaihdeVasen )
             omaVaihde_ = RaiteenPaa::Vasen;
@@ -43,7 +43,7 @@ Naapuruus::Naapuruus(RataKisko *omaKisko, Ilmansuunta omasuunta)
         else
             omaVaihde_ = RaiteenPaa::EiVaihdetta;
     }
-    else if( omasuunta == Pohjoinen)
+    else if( omasuunta == RaiteenPaa::Pohjoiseen)
     {
         if( omaKisko->etelaTyyppi()==Kisko::VaihdeVasen )
             omaVaihde_ = RaiteenPaa::Vasen;
@@ -55,7 +55,7 @@ Naapuruus::Naapuruus(RataKisko *omaKisko, Ilmansuunta omasuunta)
 
     // Haetaan naapuri
     QPointF piste;
-    if( omasuunta == Etela)
+    if( omasuunta == RaiteenPaa::Etelaan)
         piste = omaKisko->viiva().p1();
     else
         piste = omaKisko->viiva().p2();
@@ -86,19 +86,19 @@ Naapuruus::Naapuruus(RataKisko *omaKisko, Ilmansuunta omasuunta)
 
     naapuriraide_ = naapuriKisko->raide();
     if( naapuriKisko->etelainen() == piste)
-        naapurinSuunta_ = Etela;
+        naapurinSuunta_ = RaiteenPaa::Etelaan;
     else if( naapuriKisko->pohjoinen() == piste)
-        naapurinSuunta_ = Pohjoinen;
+        naapurinSuunta_ = RaiteenPaa::Pohjoiseen;
 
     // Sitten vielä pitäisi päätellä, miten naapurin mahdollisen vaihteen pitää olla
-    if( naapurinSuunta() == Etela)
+    if( naapurinSuunta() == RaiteenPaa::Etelaan)
     {
         if( naapuriKisko->pohjoisTyyppi() == Kisko::VaihdeVasen)
             naapurinVaihde_ = RaiteenPaa::Vasen;
         else if( naapuriKisko->pohjoisTyyppi() == Kisko::VaihdeOikea )
             naapurinVaihde_ = RaiteenPaa::Oikea;
     }
-    else if( naapurinSuunta() == Pohjoinen)
+    else if( naapurinSuunta() == RaiteenPaa::Pohjoiseen)
     {
         if( naapuriKisko->etelaTyyppi() == Kisko::VaihdeVasen)
             naapurinVaihde_ = RaiteenPaa::Vasen;
@@ -126,32 +126,32 @@ void Naapuruus::lukitseVaihteet()
     // Ensin oma vaihde
     if( omaVaihde() == RaiteenPaa::Vasen)
     {
-        if( omaSuunta() == Etela)
+        if( omaSuunta() ==  RaiteenPaa::Etelaan)
             omaRaide()->etelainen()->lukitseVaihde(RaiteenPaa::Vasen);
-        else if(omaSuunta() == Pohjoinen)
+        else if(omaSuunta() == RaiteenPaa::Pohjoiseen)
             omaRaide()->pohjoinen()->lukitseVaihde(RaiteenPaa::Vasen);
     }
     else if( omaVaihde() == RaiteenPaa::Oikea)
     {
-        if( omaSuunta() == Etela)
+        if( omaSuunta() == RaiteenPaa::Etelaan)
             omaRaide()->etelainen()->lukitseVaihde(RaiteenPaa::Oikea);
-        else if(omaSuunta() == Pohjoinen)
+        else if(omaSuunta() == RaiteenPaa::Pohjoiseen)
             omaRaide()->pohjoinen()->lukitseVaihde(RaiteenPaa::Oikea);
     }
 
     // Sitten naapurin vaihde
     if( naapurinVaihde() == RaiteenPaa::Vasen)
     {
-        if( naapurinSuunta() == Etela)
+        if( naapurinSuunta() == RaiteenPaa::Etelaan)
             naapuriRaide()->etelainen()->lukitseVaihde(RaiteenPaa::Vasen);
-        else if(naapurinSuunta() == Pohjoinen)
+        else if(naapurinSuunta() == RaiteenPaa::Pohjoiseen)
             naapuriRaide()->pohjoinen()->lukitseVaihde(RaiteenPaa::Vasen);
     }
     else if( naapurinVaihde() == RaiteenPaa::Oikea)
     {
-        if( naapurinSuunta() == Etela)
+        if( naapurinSuunta() == RaiteenPaa::Etelaan)
             naapuriRaide()->etelainen()->lukitseVaihde(RaiteenPaa::Oikea);
-        else if(naapurinSuunta() == Pohjoinen)
+        else if(naapurinSuunta() == RaiteenPaa::Pohjoiseen)
             naapuriRaide()->pohjoinen()->lukitseVaihde(RaiteenPaa::Oikea);
     }
 

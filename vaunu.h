@@ -43,7 +43,7 @@ public:
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-    int type() const { return UserType; }
+    int type() const { return Type; }
     QString vaununTyyppi() const { return vaununTyyppi_; }
 
     qreal pituus() const { return vaununPituus_; }

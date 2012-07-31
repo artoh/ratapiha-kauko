@@ -101,28 +101,63 @@ void KulkuTie::vahvistaKulkutie()
         elementti->raide()->paivita();
     }
     RataIkkuna::rataSkene()->kulkutieValmis(maaliRaideTunnus(), this);
+    tarkista();
 }
 
 void KulkuTie::tarkista()
 {
-    // Suojastuksen automaattinen purkautuminen
     if( kulkutienTyyppi() == RataRaide::Linjasuojastus )
     {
-        // Onko raiteilla joku...
-        if( !varattujaRaiteita() && !lahtoRaide()->akseleita()
-                && lahtoRaide()->kulkutieTyyppi() != RataRaide::Junakulkutie)
+        QSet<QString> punaisetOpastimet;
+        QSet<QString> vihreatOpastimet;
+        // Suojastuksen tarkistaminen
+        // Tarkistaa kaikki suojastuksen raiteet
+        foreach( KulkutienRaide* ktraide, elementit_)
+        {
+            if( ktraide->raide()->akseleita())
+            {
+                // On varattu raide, opastimen pitää olla punainen
+                punaisetOpastimet.insert( ktraide->lahtoOpastinTunnus() );
+            }
+        }
+
+        // Jos edelliselle raiteelle junakulkutie, niin varaudutaan junan tuloon
+        bool junaTulossa = lahtoRaide()->kulkutieTyyppi() == RataRaide::Junakulkutie;
+
+        // Jos junaa ei ole tulossa, eikä yhtään raidetta varattu, joutaa kulkutien purkaa
+        if( punaisetOpastimet.empty() && !junaTulossa)
             puraKulkutie();
         else
         {
-            if( tila() == RataRaide::Virhetila)
-                 {;}   // Virhetilaa ei muuteta!!!
-            else if( varattujaRaiteita() )
-                tila_ = RataRaide::Varattu;
-            else
-                tila_ = RataRaide::Valmis;
-            paivitaKaikki();
+            // Asetetaan opastimet alusta loppuun niin, että varatusta eteenpäin
+            // ei-punaiset ovat vihreitä
+            bool vihreaAalto = junaTulossa;
+
+            foreach( KulkutienRaide* ktraide, elementit_)
+            {
+                if( ktraide->raide()->akseleita())
+                    vihreaAalto = true; // Tästä eteenpäin tarttee vihreän aallon
+
+                if( vihreaAalto && !punaisetOpastimet.contains( ktraide->lahtoOpastinTunnus() ) )
+                    vihreatOpastimet.insert( ktraide->lahtoOpastinTunnus());
+                else
+                    punaisetOpastimet.insert( ktraide->lahtoOpastinTunnus());
+            }
+            // Opastimien asettaminen
+            foreach( QString opastintunnus, vihreatOpastimet)
+                RataIkkuna::rataSkene()->haeRaiteenPaa(opastintunnus)->asetaOpaste(RaiteenPaa::Aja);
+            foreach( QString opastintunnus, punaisetOpastimet)
+                RataIkkuna::rataSkene()->haeRaiteenPaa(opastintunnus)->asetaOpaste(RaiteenPaa::Seis);
         }
     }
+    if( tila() == RataRaide::Virhetila)
+         {;}   // Virhetilaa ei muuteta!!!
+    else if( varattujaRaiteita() )
+        tila_ = RataRaide::Varattu;
+    else
+        tila_ = RataRaide::Valmis;
+
+    paivitaKaikki();
 
 }
 
@@ -146,8 +181,9 @@ void KulkuTie::raideVarautuu(KulkutienRaide* elementti)
             if( ktraide == elementti)
                 break;  // Meni aivan oikein!!
         }
-
     }
+    else
+        tarkista();
 }
 
 int KulkuTie::varattujaRaiteita()
@@ -162,7 +198,11 @@ int KulkuTie::varattujaRaiteita()
 
 RataRaide *KulkuTie::lahtoRaide()
 {
-    return RataIkkuna::rataSkene()->haeRaide(lahtoRaideTunnus());
+    if( elementit_.empty())
+        return 0;
+
+    return elementit_.first()->lahtoRaide();
+
 }
 
 QString KulkuTie::lahtoRaideTunnus()
@@ -170,7 +210,7 @@ QString KulkuTie::lahtoRaideTunnus()
     if( elementit_.empty())
         return QString();
 
-    return elementit_.first()->raide()->raidetunnusLiikennepaikalla();
+    return elementit_.first()->lahtoOpastinTunnus().mid(1);
 }
 
 
@@ -200,7 +240,7 @@ QString KulkuTie::maaliRaideTunnusSuunnalla()
 void KulkuTie::paivitaKaikki()
 {
     if( elementit_.count())
-        ekaRaide()->raide()->paivita();
+        lahtoRaide()->paivita();
 
     foreach( KulkutienRaide* ktraide, elementit_)
     {

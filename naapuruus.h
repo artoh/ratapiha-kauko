@@ -28,13 +28,12 @@
 class Naapuruus
 {
 public:
-    enum Ilmansuunta  { Etela, Pohjoinen, Virhe };
 
-    Naapuruus(RataKisko* omaKisko, Ilmansuunta omasuunta);
+    Naapuruus(RataKisko* omaKisko, RaiteenPaa::Suunta omasuunta);
 
     RataRaide* naapuriRaide() { return naapuriraide_; }
-    Ilmansuunta omaSuunta() const { return omaSuunta_; }
-    Ilmansuunta naapurinSuunta() const { return naapurinSuunta_; }
+    RaiteenPaa::Suunta omaSuunta() const { return omaSuunta_; }
+    RaiteenPaa::Suunta naapurinSuunta() const { return naapurinSuunta_; }
 
     RataRaide* omaRaide() { return omaraide_; }
     qreal pieninNopeus() const { return pieninNopeus_; }
@@ -50,8 +49,8 @@ public:
 protected:
     RataRaide* omaraide_;
     RataRaide* naapuriraide_;
-    Ilmansuunta omaSuunta_;
-    Ilmansuunta naapurinSuunta_;
+    RaiteenPaa::Suunta omaSuunta_;
+    RaiteenPaa::Suunta naapurinSuunta_;
 
     RaiteenPaa::VaihdeKasite omaVaihde_;
     RaiteenPaa::VaihdeKasite naapurinVaihde_;

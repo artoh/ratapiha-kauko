@@ -243,6 +243,33 @@ void RataScene::lataaVaunut()
     }
 
     // Vetureille junanumerot -- tämä poistettiin ;(, pitää laittaa vetureiden tallennustaulu
+    QSqlQuery veturikysely("select vaunuid, matkamittari, tavoitenopeus, ajopoyta, junanumero, jkvtila, automaatiotila from veturi");
+    while( veturikysely.next())
+    {
+        int matkamittari = veturikysely.value(1).toInt();
+        int tavoitenopeus = veturikysely.value(2).toInt();
+        int ajopoyta = veturikysely.value(3).toInt();
+        QString junanro = veturikysely.value(4).toString();
+        Veturi::JkvTila jkvtila = Veturi::VaihtoJkv;
+        if( veturikysely.value(5).toString() == "Juna")
+            jkvtila = Veturi::JunaJkv;
+        else if( veturikysely.value(5).toString() == "Ei")
+            jkvtila = Veturi::EiJkv;
+        Veturi::VeturiAutomaatio autotila = Veturi::AutoOn;
+        if( veturikysely.value(6).toString() == "Aktiivinen")
+            autotila = Veturi::AutoAktiivinen;
+        else if( veturikysely.value(6).toString() == "Ei")
+            autotila = Veturi::AutoEi;
+        int vaunuid = veturikysely.value(0).toInt();
+
+        Vaunu* tamavaunu = vaunut_.value(vaunuid);
+        if( tamavaunu )
+        {
+            Veturi* veturi = qgraphicsitem_cast<Veturi*>(tamavaunu);
+            if( veturi )
+                veturi->tietojaKannasta(matkamittari, tavoitenopeus, ajopoyta, junanro, jkvtila, autotila);
+        }
+    }
 
 }
 

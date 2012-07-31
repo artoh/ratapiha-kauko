@@ -52,6 +52,7 @@ public:
 
     QString kulkutieto();   //* Tietokantaan talletettava kenttä
     KulkuTie* kulkutie() { return kulkutie_;  }
+    RaiteenPaa::Suunta suunta() const { return suunta_; }
 
     void puraKulkutielta();     //* Purkaa kulkutien tämän elementin osalta */
     void tarkistaNaapurinPyynnosta(KulkuTie* pyytaja=0);   //* Naapuri pyytää tarkistelemaan*/

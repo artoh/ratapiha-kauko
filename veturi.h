@@ -44,6 +44,8 @@ public:
     Veturi(const QString &tyyppi, int vaunuNumero, RataKisko* etu_kisko, qreal etu_etaisyys, QChar etu_suunta,
           RataKisko* taka_kisko, qreal taka_etaisyys, QChar taka_suunta, RataScene* skene);
 
+    int type() const { return Type; }
+
     void tietojaKannasta( int matkamittari, int tavoitenopeus, int ajopoyta, const QString& junanumero, JkvTila jkvtila, VeturiAutomaatio automaatiotila );
     
     QRectF boundingRect() const;
