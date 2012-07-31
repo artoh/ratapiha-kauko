@@ -164,7 +164,7 @@ void KulkutienRaide::raideVapautuu(RaiteenPaa::Suunta suunta)
     {
         kulkutie()->tarkista();
     }
-    else if( kulkutie()->tila() == RataRaide::Varattu)
+    else
     {
         if( (suunta == suunta_ && kulkutie()->ekaRaide() == this) || raide()==kulkutie()->maaliRaide() )
         {

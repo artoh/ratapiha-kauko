@@ -150,7 +150,7 @@ void RataRaide::akseliSisaan(RaiteenPaa::Suunta suunta, RataRaide *raiteelta)
     if( akseleita() < 0)
         return; // VIKATILA!!!
 
-    if( raiteelta )
+    if( raiteelta && !raiteelta->junanumero().isEmpty() )
         junanumero_ = raiteelta->junanumero();
 
     akseleita_++;

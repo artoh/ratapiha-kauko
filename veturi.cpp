@@ -70,13 +70,16 @@ void Veturi::tietojaKannasta(int matkamittari, int tavoitenopeus, int ajopoyta, 
 {
     matkaMittari_ = matkamittari;
     tavoiteNopeus_ = tavoitenopeus;
-    ajopoyta_ = ajopoyta;
     junaNumero_ = junanumero;
     jkvTila_ = jkvtila;
     veturiAutomaatio_ = automaatiotila;
+    ajopoyta_ = ajopoyta;
 
     if( !junanumero.isEmpty())
         haeReitti(0);
+
+    if( ajopoyta)
+        QTimer::singleShot(2000, this, SLOT(kaynnista()));
 }
 
 void Veturi::merkitseTyyppi(const QString &tyyppi)
@@ -738,8 +741,8 @@ void Veturi::paivita()
         autotila = "On";
 
     // Päivitetään tietokantaan veturin tilanne...
-    QSqlQuery(  QString("update veturi set matkamittari=%1, tavoitenopeus=%2, ajopoyta=%3, junanumero=%4,jkvtila=\"%5\", automaatiotila= \"%6\" ")
-                .arg(matkaMittari()).arg(tavoiteNopeus()).arg(ajopoyta()).arg(junanumero).arg(jkvtila).arg(autotila)            );
+    QSqlQuery(  QString("update veturi set matkamittari=%1, tavoitenopeus=%2, ajopoyta=%3, junanumero=%4,jkvtila=\"%5\", automaatiotila= \"%6\" where vaunuid=%7 ")
+                .arg(matkaMittari()).arg(tavoiteNopeus()).arg(ajopoyta()).arg(junanumero).arg(jkvtila).arg(autotila).arg(vaunuNumero())            );
 
     Vaunu::paivita();
 }
@@ -835,7 +838,7 @@ bool Veturi::haeReitti(Akseli *akseli)
             maaraAsema_ = reittikysely.value(1).toString();
 
         // Jos tämä on nykyinen raide, niin hyvä niin ;)
-        if( liikennepaikka == akseli->kiskolla()->raide()->liikennepaikka() &&
+        if( akseli && liikennepaikka == akseli->kiskolla()->raide()->liikennepaikka() &&
                 raide == akseli->kiskolla()->raide()->raidetunnus())
         {
             if( reittikysely.value(6).toString().startsWith('P'))
@@ -923,6 +926,17 @@ void Veturi::nayttoonKoskettu(QPoint pos)
             veturiAutomaatio_ = AutoEi;
             tyhjennaReitti();
         }
+    }
+}
+
+void Veturi::kaynnista()
+{
+    if( ajopoyta() )
+    {
+        timer_.start(200);
+        junaPituus_ = aktiivinenAkseli()->junanPituusKysely(0.0);
+        aja();  // JKV-tiedon asetus
+        update(boundingRect());
     }
 }
 

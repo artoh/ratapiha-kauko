@@ -106,6 +106,9 @@ void KulkuTie::vahvistaKulkutie()
 
 void KulkuTie::tarkista()
 {
+    if( tila() == RaideTieto::Virhetila )
+        return;     // Jos vikatilassa, niin vikatilassa kunnes puretaan !
+
     if( kulkutienTyyppi() == RataRaide::Linjasuojastus )
     {
         QSet<QString> punaisetOpastimet;
@@ -150,9 +153,8 @@ void KulkuTie::tarkista()
                 RataIkkuna::rataSkene()->haeRaiteenPaa(opastintunnus)->asetaOpaste(RaiteenPaa::Seis);
         }
     }
-    if( tila() == RataRaide::Virhetila)
-         {;}   // Virhetilaa ei muuteta!!!
-    else if( varattujaRaiteita() )
+
+    if( varattujaRaiteita() )
         tila_ = RataRaide::Varattu;
     else
         tila_ = RataRaide::Valmis;

@@ -92,6 +92,7 @@ public slots:
 
     void aja();
     void nayttoonKoskettu(QPoint pos);
+    void kaynnista();   /** Kutsutaan timerilla, kun asetettu ajopöytä */
 
 protected:
     bool haeReitti( Akseli *akseli);
