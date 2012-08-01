@@ -233,7 +233,7 @@ void Veturi::paivitaJkvTiedot()
                         else
                         {
                             jkvTiedot_.append( JkvOpaste(kiskolla, RaiteenPaa::Lahtolupa, 0.0,
-                                                         enimmaisNopeus(), 0, false, hidastuvuus()))
+                                                         enimmaisNopeus(), 0, false, hidastuvuus()));
                         }
                     }
 
@@ -273,23 +273,28 @@ void Veturi::paivitaJkvTiedot()
         int edellinenSn = jkvTiedot_.at(i-1).sn();
 
         // Jos etäisyyttä on enintään 300m, yksinkertaistetaan nopeusrajoitus edelliseen
-        if( jkvTiedot_.at(i).opaste() == RaiteenPaa::Tyhja && !jkvTiedot_.at(i).pysahdyLaiturille() &&
-                tamaSn != edellinenSn )
+
+        if( jkvTiedot_.at(i).opaste() == RaiteenPaa::Tyhja )
         {
-            // On nopeusrajoitus, jota pitää käsitellä etäisyysehdolla
-            if( tamaSn < edellinenSn && etaisyys < 300)
+            if( jkvTiedot_.at(i).pysahdyLaiturille())
+                jkvTiedot_[i].asetaNopeusrajoitukseksi();   // Pysähdyslaiturit näytetään AINA!
+            else if( tamaSn != edellinenSn )
             {
-                // YHDISTETÄÄN!!!
-                jkvTiedot_[i-1].asetaYhdistettySn( tamaSn );
-            }
-            else
-            {
-                // On itsenäinen nopeusrajoitus
-                // Ei kuitenkaan näytetä, jos kohta (300m) tulossa alhaisempi,
-                // tai (500m) nolla
-                if( !( (tamaSn > edellinenSn) &&
-                        (etaisyys < 300 || ( edellinenSn == 0 && etaisyys < 500)   )))
-                    jkvTiedot_[i].asetaNopeusrajoitukseksi();
+                // On nopeusrajoitus, jota pitää käsitellä etäisyysehdolla
+                if( tamaSn < edellinenSn && etaisyys < 300)
+                {
+                    // YHDISTETÄÄN!!!
+                    jkvTiedot_[i-1].asetaYhdistettySn( tamaSn );
+                }
+                else
+                {
+                    // On itsenäinen nopeusrajoitus
+                    // Ei kuitenkaan näytetä, jos kohta (300m) tulossa alhaisempi,
+                    // tai (500m) nolla
+                    if( !( (tamaSn > edellinenSn) &&
+                            (etaisyys < 300 || ( edellinenSn == 0 && etaisyys < 500)   )))
+                        jkvTiedot_[i].asetaNopeusrajoitukseksi();
+                }
             }
         }
     }
@@ -622,12 +627,10 @@ QPixmap Veturi::jkvKuva()
         return QPixmap(":/pic/jkvkuvat/jkvhajonnut.png");
 
 */
-    QPixmap kuva(150,300);
+    QPixmap kuva(150,320);
     QPainter painter(&kuva);
-
-
     painter.setBrush( QBrush(Qt::black));
-    painter.drawRect(0,0,150,300);
+    painter.drawRect(0,0,150,320);
 
     if( !ajopoyta())
     {
@@ -701,21 +704,21 @@ QPixmap Veturi::jkvKuva()
     // Ja lopuksi alaspäin valikkorivi
     if( jkvTila() == VaihtoJkv )
     {
-        painter.drawPixmap(0,270,QPixmap(":/r/jkvkuvat/eijkvnappi.png"));
+        painter.drawPixmap(0,290,QPixmap(":/r/jkvkuvat/eijkvnappi.png"));
         if( nopeus() < 1)
-            painter.drawPixmap(76,270,QPixmap(":/r/jkvkuvat/junanappi.png"));
+            painter.drawPixmap(76,290,QPixmap(":/r/jkvkuvat/junanappi.png"));
 
     }
     else if( jkvTila() == EiJkv)
     {
-        painter.drawPixmap(0,270,QPixmap(":/r/jkvkuvat/vaihtotyonappi.png"));
+        painter.drawPixmap(0,290,QPixmap(":/r/jkvkuvat/vaihtotyonappi.png"));
         if( nopeus() < 1)
-            painter.drawPixmap(76,270,QPixmap(":/r/jkvkuvat/junanappi.png"));
+            painter.drawPixmap(76,290,QPixmap(":/r/jkvkuvat/junanappi.png"));
     }
     else if( jkvTila() == JunaJkv && nopeus() < 1)
     {
-        painter.drawPixmap(0,270,QPixmap(":/r/jkvkuvat/eijkvnappi.png"));
-        painter.drawPixmap(76,270,QPixmap(":/r/jkvkuvat/vaihtotyonappi.png"));
+        painter.drawPixmap(0,290,QPixmap(":/r/jkvkuvat/eijkvnappi.png"));
+        painter.drawPixmap(76,290,QPixmap(":/r/jkvkuvat/vaihtotyonappi.png"));
 
     }
 
@@ -725,40 +728,49 @@ QPixmap Veturi::jkvKuva()
     painter.setPen(Qt::white);
     painter.drawText(QRectF(75,30,75,15),QString("%1 m").arg((int)junaPituus()),QTextOption(Qt::AlignRight));
 
-    if( ajopoyta())
-        foreach( JkvOpaste opaste, jkvTiedot_)
-        {
-            // Piirretään kaksi opastetta
-
-            if( opaste.opaste() != RaiteenPaa::Tyhja)
-            {
-                opaste.piirra(&painter, 35 + indeksi * 65, false);
-                indeksi++;
-                if( indeksi > 2)
-                    break;
-            }
-        }
-
     // Myöhästyminen
     if( myohassa())
     {
         painter.setFont(QFont("Helvetica",12,QFont::Bold));
-        painter.setPen( Qt::yellow);
-        painter.setBrush( QBrush(Qt::red));
-        painter.drawRect(45,205,100,18);
-        painter.drawText(45,205,100,18,Qt::AlignCenter, QString(" %1 min %2 s" ).arg(myohassa()/60).arg(myohassa()%60));
+
+        if( myohassa() < 15)
+        {
+            painter.setPen( Qt::yellow);
+            painter.setBrush( Qt::NoBrush);
+        }
+        else
+        {
+            painter.setPen( Qt::yellow);
+            painter.setBrush( QBrush(Qt::red));
+        }
+        painter.drawRect(10,225,130,18);
+        painter.drawText(10,225,130,18,Qt::AlignCenter, QString(" %1 min %2 s" ).arg(myohassa()/60).arg(myohassa()%60));
     }
 
     if( !ajopoyta())    // Tähän loppuu, jos ajopöytä ei ole aktiivinen
         return kuva;
 
+    foreach( JkvOpaste opaste, jkvTiedot_)
+    {
+        // Piirretään kaksi opastetta
+
+        if( opaste.opaste() != RaiteenPaa::Tyhja)
+        {
+            opaste.piirra(&painter, 35 + indeksi * 65, false);
+            indeksi++;
+            if( indeksi > 2)
+                break;
+        }
+    }
+
+
     // Nopeusrajoitus
     painter.setFont(QFont("Helvetica",14));
     painter.setBrush(Qt::NoBrush);
     painter.setPen( QPen(QBrush(Qt::red),1.0));
-    painter.drawEllipse(5,225,40,40);
+    painter.drawEllipse(5,245,40,40);
     painter.setPen( QPen(QBrush(Qt::white),1.0));
-    painter.drawText(5,225,40,40,Qt::AlignCenter, QString::number( nopeusRajoitus()));
+    painter.drawText(5,245,40,40,Qt::AlignCenter, QString::number( nopeusRajoitus()));
 
     // jkv-nopeus
     painter.setBrush(Qt::NoBrush);
@@ -769,8 +781,8 @@ QPixmap Veturi::jkvKuva()
         painter.setPen( QPen(QBrush(Qt::red),1.0));
     else
         painter.setPen( QPen(QBrush(Qt::yellow),1.0));
-    painter.drawEllipse(50,225,40,40);
-    painter.drawText(50,225,40,40,Qt::AlignCenter, QString::number(jkvNopeus()));
+    painter.drawEllipse(50,245,40,40);
+    painter.drawText(50,245,40,40,Qt::AlignCenter, QString::number(jkvNopeus()));
 
 
     if( !jkvTiedot_.empty())
@@ -784,24 +796,24 @@ QPixmap Veturi::jkvKuva()
         else
             painter.setPen(QPen(QBrush(Qt::red),1.0));
 
-        painter.drawRect(100,225,45,40);
+        painter.drawRect(100,245,45,40);
 
         painter.setPen(QPen(QBrush(Qt::white),1.0));
 
         if( vapaamatka < 3000)
         {
             painter.setFont( QFont("Helvetica",14));
-            painter.drawText(100,230,45,20,Qt::AlignCenter, QString::number(vapaamatka ));
+            painter.drawText(100,250,45,20,Qt::AlignCenter, QString::number(vapaamatka ));
             painter.setFont( QFont("Helvetica",12));
-            painter.drawStaticText(120,245,QStaticText("m"));
+            painter.drawStaticText(120,265,QStaticText("m"));
         }
         else
         {
             int km = vapaamatka / 1000;
             painter.setFont( QFont("Helvetica",14));
-            painter.drawText(100,230,45,20,Qt::AlignCenter, QString::number(km ));
+            painter.drawText(100,250,45,20,Qt::AlignCenter, QString::number(km ));
             painter.setFont( QFont("Helvetica",12));
-            painter.drawStaticText(115,245,QStaticText("km"));
+            painter.drawStaticText(115,265,QStaticText("km"));
         }
     }
 
@@ -1010,7 +1022,7 @@ void Veturi::nayttoonKoskettu(QPoint pos)
 {
 
     if( (jkvTila() == VaihtoJkv || ( jkvTila() == JunaJkv && nopeus() < 1) )
-             &&   pos.y() > 270 && pos.x() < 75)
+             &&   pos.y() > 290 && pos.x() < 75)
     {
         jkvTila_ = EiJkv;
     }
@@ -1019,11 +1031,11 @@ void Veturi::nayttoonKoskettu(QPoint pos)
         jkvTila_ = VaihtoJkv;
     }
     else if( (jkvTila() == EiJkv || jkvTila() == VaihtoJkv ) &&
-             nopeus() < 1  && pos.x() > 75 && pos.y() > 270 )
+             nopeus() < 1  && pos.x() > 75 && pos.y() > 290 )
     {
         jkvTila_ = JunaJkv;
     }
-    else if( jkvTila() == JunaJkv && pos.x() > 75 && pos.y() > 270 && nopeus()<1 )
+    else if( jkvTila() == JunaJkv && pos.x() > 75 && pos.y() > 290 && nopeus()<1 )
         jkvTila_ = VaihtoJkv;
 
     else if( pos.x() > 125 && pos.y() > 4 && pos.y() < 26)
