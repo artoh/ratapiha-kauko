@@ -19,7 +19,7 @@ void JunaNuppi::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidge
     if( QStyleOptionGraphicsItem::levelOfDetailFromTransform(painter->worldTransform()) > 0.75 )
         return;
 
-    if( veturi_->ajopoyta() || 1)
+    if( veturi_->ajopoyta() )
     {
         // Säde joka huomioi transformin
         qreal kerroin = 1 / QStyleOptionGraphicsItem::levelOfDetailFromTransform(painter->worldTransform()  );
@@ -31,32 +31,37 @@ void JunaNuppi::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidge
 
         QRadialGradient veturigrad( 0, 0, sade, 0, 0);
 
-        if( veturi_->nopeus() < 1  )
+        if( veturi_->myohassa() > 10 * 60 ||
+            (veturi_->myohassa() > 5 * 60 &&    veturi_->junaNumero().startsWith('P') ) ||
+                (veturi_->myohassa() > 3 * 60 &&
+                 (  veturi_->junaNumero().startsWith('S') || veturi_->junaNumero().startsWith('H') )))
         {
-            // Punainen jumittuneelle junalle - seisonut 15 s. yli pysähdysajan
+            // Punainen nuppi myöhässä olevalle junalle
+            // T,V 10 min / P 5 min / H,S 3 min
+            //
             veturigrad.setColorAt(1.0,QColor(117,0,0) );
             veturigrad.setColorAt(0.8,QColor(167,0,0));
             veturigrad.setColorAt(0.0,  QColor(255,0,0));
         }
-        else if( veturi_->nopeus() < 10 )
+        else if( veturi_->myohassa() > 30 )
         {
-            // Puna-keltainen pysähtyneelle junalle
+            // Puna-keltainen aikataulustaan puoli minuuttia jääneelle junalle
 
             veturigrad.setColorAt(0.0,QColor(245,255,43) );
             veturigrad.setColorAt(0.8,QColor(255,140,10));
             veturigrad.setColorAt(1.0,  QColor(255,24,0));
 
         }
-        else if( veturi_->nopeus() < 30)
+        else if( veturi_->nopeus() < 36 )
         {
-            // Keltainen nappi hitaalle veturille
+            // Keltainen nappi hitaalle/pysähtyneelle, ajoissa kulkevalle veturille
             veturigrad.setColorAt(0.0,QColor(250,255,0) );
             veturigrad.setColorAt(0.8,QColor(250,255,150));
             veturigrad.setColorAt(1.0,  QColor(170,172,111));
         }
         else
         {
-            // Vihreä nappi nopealle veturille
+            // Vihreä nappi ajoissa kulkevalle veturille
             veturigrad.setColorAt(0.0,QColor(155,255,54) );
             veturigrad.setColorAt(0.8,QColor(12,255,40));
             veturigrad.setColorAt(1.0,  QColor(6,191,132));

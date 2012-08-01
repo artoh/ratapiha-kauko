@@ -176,7 +176,7 @@ void RataRaide::akseliUlos(RaiteenPaa::Suunta suunta, RataRaide * /* raiteelle *
         if( kulkutienRaide())
             kulkutienRaide()->raideVapautuu(suunta);
 
-        junanumero_ = QString();
+        junanumero_.clear();
     }
 
     paivita();

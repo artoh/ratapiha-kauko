@@ -74,6 +74,7 @@ public:
     qreal matkaMittari() const { return matkaMittari_; }
 
     int nopeusRajoitus() const { return nopeusRajoitus_; }
+    int myohassa() const { return myohassa_; }
 
     QString junaNumero() const { return junaNumero_; }
     void tarkistaRaiteenJunanumero();
@@ -133,6 +134,8 @@ protected:
 
     QDateTime pysahtyi_;
     RataKisko* pysahtyiKiskolle_;
+
+    qreal myohassa_;    /** Montako sekuntia ollaan myöhässä aikataulusta */
 
 
 };

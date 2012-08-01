@@ -44,7 +44,8 @@ Veturi::Veturi(const QString &tyyppi, int vaununumero, RataScene *skene) :
     matkaMittari_(0.0),
     nopeusRajoitus_(0),
     veturiAutomaatio_(AutoOn),
-    pysahtyiKiskolle_(0)
+    pysahtyiKiskolle_(0),
+    myohassa_(0)
 {
     merkitseTyyppi(tyyppi);
     // Lisätään veturi myös tietokantaan.
@@ -61,7 +62,8 @@ Veturi::Veturi(const QString &tyyppi, int vaunuNumero, RataKisko *etu_kisko, qre
     matkaMittari_(0.0),
     nopeusRajoitus_(0),
     veturiAutomaatio_(AutoOn),
-    pysahtyiKiskolle_(0)
+    pysahtyiKiskolle_(0),
+    myohassa_(0)
 {
     merkitseTyyppi(tyyppi);
 }
@@ -151,6 +153,7 @@ void Veturi::paivitaJkvTiedot()
 
         // Tässä välissä aikataulusta pysähdysehdot?
         int pysahdylaiturille = 0;
+        QTime lahtoaikaPysahdyksesta;    // Aikataulun mukainen lähtöaika
 
         // Pysähdytään laiturille tai opastimelle, jos aikataulu sanoo niin
         QString raidetunnus = kiskolla->raide()->raidetunnusLiikennepaikalla();
@@ -170,10 +173,11 @@ void Veturi::paivitaJkvTiedot()
                     if( aktiivinenAkseli()->kiskolla() == kiskolla && pysahtyi_.isValid() )
                     {
                         // Ollaan jo tällä kiskolla, eli voidaan kuluttaa pysähdysaikaa
-                        QTime lahtoaika = pysahtyi_.time().addSecs( reitti_.value(raidetunnus).pysahtyy() );
-                        pysahdysAjasta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo(lahtoaika);
+                        lahtoaikaPysahdyksesta = pysahtyi_.time().addSecs( reitti_.value(raidetunnus).pysahtyy() );
+                        pysahdysAjasta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo(lahtoaikaPysahdyksesta);
                         if( pysahdysAjasta  < -43200)   // keskiyön ylitys
                             pysahdysAjasta += 86400;
+
                     }
                     else
                     {
@@ -185,9 +189,22 @@ void Veturi::paivitaJkvTiedot()
                     // Lähtöajasta
                     if( reitti_.value(raidetunnus).lahtoAika().isValid())
                     {
-                        pysahdysTaulusta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo( reitti_.value(raidetunnus).lahtoAika() );
+                        QTime lahtoaikaTaulusta = reitti_.value(raidetunnus).lahtoAika();
+                        pysahdysTaulusta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo( lahtoaikaTaulusta );
                         if( pysahdysTaulusta  < -43200)   // keskiyön ylitys
                             pysahdysTaulusta += 86400;
+
+                        // Myöhästyminen asemalla ollessa voidaan laskea siitä, kuinka paljon
+                        // pysähdysajasta laskettu lähtöaika on aikataulun mukaista
+                        // lähtöaikaa suurempi
+                        if(lahtoaikaPysahdyksesta.isValid())
+                        {
+                            int myohassa = lahtoaikaTaulusta.secsTo(lahtoaikaPysahdyksesta);
+                            if( myohassa < 1)
+                                myohassa_ = 0;
+                            else
+                                myohassa_ = myohassa;
+                        }
 
                     }
 
@@ -387,6 +404,7 @@ void Veturi::siirtyyRaiteelle(RataRaide *raiteelle)
     if( raiteelle != edellinenLokiRaide_)
         if( nopeusMs() && aktiivinenAkseli())
         {
+
             kirjoitaLokiin("R",raiteelle);
             edellinenLokiRaide_ = raiteelle;
 
@@ -420,6 +438,7 @@ void Veturi::aja()
       else
           tavoite = jkvMs;      // JKV rajoittaa!
 
+      QString raidetunnus = aktiivinenAkseli()->kiskolla()->raide()->raidetunnusLiikennepaikalla();
 
 
       // Lasketaan ensin uusi nopeus.
@@ -467,11 +486,27 @@ void Veturi::aja()
               pysahtyi_ = RatapihaIkkuna::getInstance()->skene()->simulaatioAika();
               // Jos ollaan määräraiteella, pysäytetään juna sinne
 
-              if( reitti_.count() && reitti_.contains(aktiivinenAkseli()->kiskolla()->raide()->raidetunnusLiikennepaikalla() ) &&
-                      reitti_.value(aktiivinenAkseli()->kiskolla()->raide()->raidetunnusLiikennepaikalla() ).tapahtumaTyyppi() == ReittiTieto::Saapuu )
+              if( reitti_.count() && reitti_.contains(raidetunnus ) &&
+                      reitti_.value( raidetunnus ).tapahtumaTyyppi() == ReittiTieto::Saapuu )
               {
+
+                  QString lisatieto;
+                  // Lasketaan myöhästymisaika
+                  QTime aikataulunlahto = reitti_.value(raidetunnus).lahtoAika();
+                  QTime nykyaika = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time();
+                  int myohassa = aikataulunlahto.secsTo(nykyaika);
+                  if( myohassa > 15)
+                  {
+                      myohassa_ = myohassa;
+                      // Jos juna on vähintään 15 sekuntia jäljessä aikataulustaan, on se niin
+                      // vakavaa, että kirjataan lokitietoihin!!!
+                      lisatieto = QString("M%1m%2s").arg(myohassa/60).arg(myohassa%60,2,10,QChar('0'));
+                  }
+                  else
+                      myohassa = 0;
+
                   // Saavuttu määräraiteelle!
-                  kirjoitaLokiin("S", aktiivinenAkseli()->kiskolla()->raide());
+                  kirjoitaLokiin("S", aktiivinenAkseli()->kiskolla()->raide(), lisatieto);
                   tavoiteNopeus_ = 0;
                   tyhjennaReitti();
                   if( veturiAutomaationTila() == AutoAktiivinen )
@@ -494,8 +529,26 @@ void Veturi::aja()
       else if( pysahtyi_.isValid() )    // Liikkui, mutta pysähtyi on validi... siis juuri liikkeelle!!
       {
           pysahtyi_ = QDateTime();        // Ei todellakaan ole pysähdyksissä
-          kirjoitaLokiin("L", aktiivinenAkseli()->kiskolla()->raide());  // Juna lähti taas liikkeelle!
-          pysahtyiKiskolle_ = aktiivinenAkseli()->kiskolla();  // On tehnyt pysähdyksen tällä kiskon pätkällä...
+          pysahtyiKiskolle_ = aktiivinenAkseli()->kiskolla();  // On tehnyt pysähdyksen tällä kiskon pätkällä..
+          QString lisatieto;
+          // Lasketaan myöhästymisaika
+          if( reitti_.contains(raidetunnus))
+          {
+              QTime aikataulunlahto = reitti_.value(raidetunnus).lahtoAika();
+              QTime nykyaika = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time();
+              int myohassa = aikataulunlahto.secsTo(nykyaika);
+              if( myohassa > 15)
+              {
+                  myohassa_ = myohassa;
+                  // Jos juna on vähintään 15 sekuntia jäljessä aikataulustaan, on se niin
+                  // vakavaa, että kirjataan lokitietoihin!!!
+                  lisatieto = QString("M%1m%2s").arg(myohassa/60).arg(myohassa%60,2,10,QChar('0'));
+              }
+              else
+                  myohassa = 0;
+          }
+          kirjoitaLokiin("L", aktiivinenAkseli()->kiskolla()->raide(), lisatieto);  // Juna lähti taas liikkeelle!
+
       }
 
 }
@@ -659,6 +712,15 @@ QPixmap Veturi::jkvKuva()
         }
     }
 
+    // Myöhästyminen
+    if( myohassa())
+    {
+        painter.setFont(QFont("Helvetica",12,QFont::Bold));
+        painter.setPen( Qt::yellow);
+        painter.setBrush( QBrush(Qt::red));
+        painter.drawRect(100,205,45,18);
+        painter.drawText(100,205,45,18,Qt::AlignCenter, QString(" + %1 min %2 sec" ).arg(myohassa()/60).arg(myohassa()%60));
+    }
 
     // Nopeusrajoitus
     painter.setFont(QFont("Helvetica",14));
