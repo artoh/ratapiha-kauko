@@ -22,7 +22,7 @@ VaunuKataloogi::VaunuKataloogi(QWidget *parent) :
     setMovement( Static );
 
     QStringList tyypit;
-    tyypit << "Sr1" << "Sm2" << "Sm3v" << "Sm3o" << "Sm4v" << "Sm4o" << "Dv12" << "Dr16" << "Dm12" << "Eiu" << "Ei3" << "Gbln" << "Cabb" << "Eio";
+    tyypit << "Sr1" <<  "Sr2" << "Sm2" << "Sm3v" << "Sm3o" << "Sm4v" << "Sm4o" << "Dv12" << "Dr16" << "Dm12" << "Eiu" << "Ei3" << "Gbln" << "Cabb" << "Eio";
 
     foreach( QString tyyppi, tyypit)
         new QListWidgetItem( QIcon( QString(":/r/junakuvat/%1.png").arg(tyyppi)), tyyppi, this );

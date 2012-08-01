@@ -182,11 +182,13 @@ OTHER_FILES += \
     junakuvat/Sm3v.png \
     junakuvat/Sm4v.png \
     junakuvat/Eio.png \
-    junakuvat/Ei3.png
+    junakuvat/Ei3.png \
+    junakuvat/Sr2.png
 
 FORMS += \
     ajopoyta.ui \
     ratapihaikkuna.ui
+
 
 
 

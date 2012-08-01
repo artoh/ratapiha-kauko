@@ -84,5 +84,6 @@
         <file>junakuvat/Sm3v.png</file>
         <file>junakuvat/Sm4v.png</file>
         <file>junakuvat/Eio.png</file>
+        <file>junakuvat/Sr2.png</file>
     </qresource>
 </RCC>

@@ -89,6 +89,8 @@ void Veturi::merkitseTyyppi(const QString &tyyppi)
 
     if( tyyppi == "Sr1")
         veturiTyyppi_ = Sr1;
+    else if( tyyppi == "Sr2")
+        veturiTyyppi_ = Sr2;
     else if( tyyppi == "Sm2")
         veturiTyyppi_ = Sm2;
     else if( tyyppi.startsWith("Sm3"))
@@ -101,6 +103,8 @@ void Veturi::merkitseTyyppi(const QString &tyyppi)
         veturiTyyppi_ = Dr16;
     else if( tyyppi == "Dm12")
         veturiTyyppi_ = Dr16;
+    else if( tyyppi == "Eio")
+        veturiTyyppi_ = Eio;
 
     junaNuppi_ = new JunaNuppi(this);    // Pallo pienelle skaalaukselle
 }
@@ -947,5 +951,90 @@ Vaunu::AjoPoydat Veturi::ajopoydat() const
     else if( vaununTyyppi().endsWith('v'))  // Ohjaus vain vasemmalla
         return Vaunu::AjopoytaYksi;
     return Vaunu::MolemmatAjopoydat;
+}
+
+int Veturi::enimmaisNopeus() const
+{
+
+    switch(veturiTyyppi_)
+    {
+    case Sr1: return 140;
+    case Sr2: return 180;
+    case Sm2: return 120;
+    case Sm3: return 220;
+    case Sm4: return 160;
+    case Dv12: return 80;
+    case Dr16: return 140;
+    case Dm12: return 120;
+    case Eio: return 180;
+    default:
+        return 50;
+    }
+}
+
+qreal Veturi::kiihtyvyys() const
+{
+    switch( veturiTyyppi_)
+    {
+    case Sm2: return 1.0;
+    case Sm3: return 0.7;
+    case Sm4: return 1.1;
+    case Dm12: return 0.8;
+    default:
+        // Veturivetoinen, lasketaan kuormahidastus
+        qreal hidastus = 0.0;
+        if( junaNumero().startsWith('P') ||
+                junaNumero().startsWith('S') ||
+                junaNumero().startsWith('H'))
+            hidastus = 0.0004 * junaPituus();
+        else
+            hidastus = 0.001 * junaPituus();
+        if( hidastus > 0.25)
+            hidastus = 0.25;
+
+        if( veturiTyyppi_ ==  Sr1)
+            return 0.45 - hidastus;
+        else if( veturiTyyppi_ == Sr2
+                || veturiTyyppi_ == Eio )
+            return 0.55 - hidastus;
+        else if( veturiTyyppi_ ==  Dr16)
+            return 0.35 - hidastus;
+        else
+            return 0.30 - hidastus;
+    }
+
+}
+
+qreal Veturi::hidastuvuus() const
+{
+    switch( veturiTyyppi_)
+    {
+    case Sm2: return 1.1;
+    case Sm3: return 1.05;
+    case Sm4: return 1.2;
+    case Dm12: return 0.9;
+    default:
+        // Veturivetoinen, lasketaan kuormahidastus
+        qreal hidastus = 0.0;
+        if( junaNumero().startsWith('P') ||
+                junaNumero().startsWith('S') ||
+                junaNumero().startsWith('H'))
+            hidastus = 0.0004 * junaPituus();
+        else
+            hidastus = 0.001 * junaPituus();
+        if( hidastus > 0.25)
+            hidastus = 0.25;
+
+        if( veturiTyyppi_ ==  Sr1)
+            return 0.7 - hidastus;
+        else if( veturiTyyppi_ == Sr2
+                || veturiTyyppi_ == Eio )
+            return 0.75 - hidastus;
+        else if( veturiTyyppi_ ==  Dr16)
+            return 0.7 - hidastus;
+        else
+            return 0.60 - hidastus;
+    }
+
 }
 

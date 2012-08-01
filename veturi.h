@@ -36,7 +36,7 @@ class Veturi : public QObject, public Vaunu
 public:
     enum { Type = UserType + 510 } ;
 
-    enum VeturiTyyppi { EiTyyppia = 0, Sr1, Sm2, Sm3, Sm4, Dv12, Dr16, Dm12 };
+    enum VeturiTyyppi { EiTyyppia = 0, Sr1, Sr2, Sm2, Sm3, Sm4, Dv12, Dr16, Dm12, Eio };
     enum JkvTila { EiJkv, JunaJkv, VaihtoJkv } ;
     enum VeturiAutomaatio { AutoEi, AutoOn, AutoAktiivinen } ;
 
@@ -57,9 +57,9 @@ public:
     int ajopoyta() const { return ajopoyta_; }
     int jkvNopeus() const { return jkvNopeus_; }
 
-    qreal kiihtyvyys() const { return 1.0; }
-    qreal hidastuvuus() const { return 1.0; }
-    int enimmaisNopeus() const { return 120; }
+    qreal kiihtyvyys() const;
+    qreal hidastuvuus() const;
+    int enimmaisNopeus() const;
 
     virtual AjoPoydat ajopoydat() const ;
 
