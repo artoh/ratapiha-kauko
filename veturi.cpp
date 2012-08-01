@@ -253,6 +253,8 @@ void Veturi::paivitaJkvTiedot()
 
     // Nyt on jkv-tiedot listassa. Sitten pitäisi valita pienin nopeus jkv-nopeudeksi
     int jkvnopeus = enimmaisNopeus();
+
+
     foreach( JkvOpaste opaste, jkvTiedot_)
         if( opaste.jkvNopeus() < jkvnopeus)
             jkvnopeus = opaste.jkvNopeus();
@@ -288,6 +290,12 @@ void Veturi::paivitaJkvTiedot()
         jkvNopeus_ = 50;
         return;
     }
+
+    // Muun kuin matkustajajunan (Pikajuna, Henkilöjuna, S=Pendolino)
+    // enimmäisnopeus on 100 km/h.
+    if( !junaNumero().startsWith('P') && !junaNumero().startsWith('H')
+            && !junaNumero().startsWith('S') && jkvnopeus > 100)
+        jkvnopeus = 100;
 
     // Rajoittava nopeus:
     if( nopeusrajoitus < jkvnopeus )
