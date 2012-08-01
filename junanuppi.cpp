@@ -74,10 +74,18 @@ void JunaNuppi::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidge
         painter->drawEllipse(QPointF(0.0, 0.0),(qreal)sade, (qreal) sade);
         if( !veturi_->junaNumero().isEmpty()  &&  QStyleOptionGraphicsItem::levelOfDetailFromTransform(painter->worldTransform()) > 0.01)
         {
+            QString tunnus;
+            // Henkilöjunilla merkitään alkuun TOINEN kirjain, joka siis merkitsee
+            // reittitunnusta
+            if( veturi_->junaNumero().startsWith('H'))
+                tunnus = veturi_->junaNumero().mid(1);
+            else
+                tunnus = veturi_->junaNumero();
+
             painter->setFont( QFont("Helvetica", (int) (kerroin * 10), QFont::Bold));
-            painter->drawText( QRect(-sade, -sade, sade*2, (int) (kerroin * 14)), veturi_->junaNumero().left(1), QTextOption(Qt::AlignCenter));
+            painter->drawText( QRect(-sade, -sade, sade*2, (int) (kerroin * 14)), tunnus.left(1), QTextOption(Qt::AlignCenter));
             painter->setFont( QFont("Helvetica", (int)(4 * kerroin)));
-            painter->drawText( QRect( -sade, -sade+(int)(11 * kerroin), sade*2, sade*2-(int)(kerroin*12)), veturi_->junaNumero().mid(1), QTextOption(Qt::AlignCenter));
+            painter->drawText( QRect( -sade, -sade+(int)(11 * kerroin), sade*2, sade*2-(int)(kerroin*12)), tunnus.mid(1), QTextOption(Qt::AlignCenter));
         }
     }
 

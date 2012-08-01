@@ -97,7 +97,7 @@ void Veturi::merkitseTyyppi(const QString &tyyppi)
         veturiTyyppi_ = Sm2;
     else if( tyyppi.startsWith("Sm3"))
         veturiTyyppi_ = Sm3;
-    else if( tyyppi == "Sm4")
+    else if( tyyppi.startsWith("Sm4"))
         veturiTyyppi_ = Sm4;
     else if( tyyppi.startsWith("Dv12"))
         veturiTyyppi_ = Dv12;
@@ -225,7 +225,9 @@ void Veturi::paivitaJkvTiedot()
         jkvTiedot_.append( jkvopaste );
 
         // Jos nopeus menee nollille, ollaan valmiita
-        if( !jkvopaste.sn() )
+        // Kuitenkin laiturilta näytetään eteenpäin
+        if( !jkvopaste.sn() && jkvopaste.opaste()!=RaiteenPaa::Aja
+                && jkvopaste.opaste() != RaiteenPaa::AjaSn)
             break;
 
         // Sitten siirrytään seuraavaan päähän
@@ -691,26 +693,25 @@ QPixmap Veturi::jkvKuva()
 
     }
 
-    if( !ajopoyta())    // Tähän loppuu, jos ajopöytä ei ole aktiivinen
-        return kuva;
 
     // Junan pituus
     painter.setFont(QFont("Helvetica",8));
     painter.setPen(Qt::white);
     painter.drawText(QRectF(75,30,75,15),QString("%1 m").arg((int)junaPituus()),QTextOption(Qt::AlignRight));
 
-    foreach( JkvOpaste opaste, jkvTiedot_)
-    {
-        // Piirretään kaksi opastetta
-
-        if( opaste.opaste() != RaiteenPaa::Tyhja)
+    if( ajopoyta())
+        foreach( JkvOpaste opaste, jkvTiedot_)
         {
-            opaste.piirra(&painter, 35 + indeksi * 65, false);
-            indeksi++;
-            if( indeksi > 2)
-                break;
+            // Piirretään kaksi opastetta
+
+            if( opaste.opaste() != RaiteenPaa::Tyhja)
+            {
+                opaste.piirra(&painter, 35 + indeksi * 65, false);
+                indeksi++;
+                if( indeksi > 2)
+                    break;
+            }
         }
-    }
 
     // Myöhästyminen
     if( myohassa())
@@ -718,9 +719,12 @@ QPixmap Veturi::jkvKuva()
         painter.setFont(QFont("Helvetica",12,QFont::Bold));
         painter.setPen( Qt::yellow);
         painter.setBrush( QBrush(Qt::red));
-        painter.drawRect(100,205,45,18);
-        painter.drawText(100,205,45,18,Qt::AlignCenter, QString(" + %1 min %2 sec" ).arg(myohassa()/60).arg(myohassa()%60));
+        painter.drawRect(45,205,100,18);
+        painter.drawText(45,205,100,18,Qt::AlignCenter, QString(" %1 min %2 s" ).arg(myohassa()/60).arg(myohassa()%60));
     }
+
+    if( !ajopoyta())    // Tähän loppuu, jos ajopöytä ei ole aktiivinen
+        return kuva;
 
     // Nopeusrajoitus
     painter.setFont(QFont("Helvetica",14));
@@ -894,7 +898,7 @@ bool Veturi::haeReitti(Akseli *akseli)
         int raide = reittikysely.value(2).toInt();
 
         QTime lahtoaika;
-        if( !reittikysely.value(3).toInt() || junanlahtoaika.isNull())
+        if( reittikysely.isNull(3) || junanlahtoaika.isNull())
             lahtoaika = QTime();
         else
             lahtoaika = junanlahtoaika.addSecs(reittikysely.value(3).toInt());
@@ -960,6 +964,12 @@ bool Veturi::haeReitti(Akseli *akseli)
                 jkvTila_ = JunaJkv;
             if( lahtoraiteella )
                 tavoiteNopeus_ = enimmaisNopeus();
+
+            // Merkitään pysähtymisaika alkamaan tästä, jotta
+            // viivästykset toimivat
+            pysahtyi_ = RatapihaIkkuna::getInstance()->skene()->simulaatioAika();
+            pysahtyiKiskolle_ = aktiivinenAkseli()->kiskolla();
+
             emit automaatioIlmoitus(ajopoyta(), tavoiteNopeus(), jkvKuva());
             return true;
 

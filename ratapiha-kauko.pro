@@ -183,7 +183,8 @@ OTHER_FILES += \
     junakuvat/Sm4v.png \
     junakuvat/Eio.png \
     junakuvat/Ei3.png \
-    junakuvat/Sr2.png
+    junakuvat/Sr2.png \
+    jkvkuvat/perilla.png
 
 FORMS += \
     ajopoyta.ui \

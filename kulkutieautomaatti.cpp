@@ -25,6 +25,7 @@
 #include <QRegExp>
 #include <QVariant>
 
+
 KulkutieAutomaatti::KulkutieAutomaatti(RataScene *parent) :
     QObject(parent),
     skene_(parent)

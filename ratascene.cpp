@@ -524,9 +524,10 @@ void RataScene::asetaJunaNumero(RataRaide *raide, const QString &junanumero)
 void RataScene::lahetaJunat(const QDateTime &aika)
 {
     QTime lahtoaika = aika.time().addSecs(120);     // Junat aktivoidaan kaksi minuuttia ennen lähtöaikaa
-    QSqlQuery lahtokysely( QString("select junanro,liikennepaikka,raide from juna natural join reitti"
+    QSqlQuery lahtokysely( QString("select junanro,liikennepaikka,raide from juna natural join aikataulu "
                                    " where lahtee=\"%1\" and tapahtuma=\"L\" " )
                            .arg(lahtoaika.toString()));
+
     int junia = 0;
     while( lahtokysely.next() )
     {

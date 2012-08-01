@@ -129,14 +129,17 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
     if( pysahdyLaiturille() )
     {
         if( pysahdyLaiturille() < 0)
-            painter->setBrush( QBrush(Qt::red));    // Jos saavutaan perille, punainen neliö
-        else
-            painter->setBrush( QBrush(Qt::blue));
-        painter->setPen( QPen(QBrush(Qt::white),1.0));
-        painter->drawRect(x+95,y+15,45,30);
-
-        if( pysahdyLaiturille() > 0)
         {
+            // Saavutaan perille
+            painter->drawPixmap( x+100, y+10, QPixmap(":r/jkvkuvat/perilla.png"));
+        }
+        else
+        {
+            // Laituri, jolle pysähdytään
+            painter->setBrush( QBrush(Qt::blue));
+            painter->setPen( QPen(QBrush(Qt::white),1.0));
+            painter->drawRect(x+95,y+15,45,30);
+
             painter->setFont( QFont("Helvetica",10,QFont::Black));
             painter->drawText(x+95,y+15,45,30, Qt::AlignCenter,QString("%1:%2").arg(pysahdyLaiturille()/60)
                               .arg(pysahdyLaiturille()%60,2,10,QChar('0'))  );
