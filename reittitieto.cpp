@@ -29,10 +29,10 @@ ReittiTieto::ReittiTieto(ReittiTieto::TapahtumaTyyppi tapahtumaTyyppi, QTime lah
 ReittiTieto::ReittiTieto(QString tapahtumatyyppi, QTime lahtoaika, int pysahtyySekuntia)
     : lahtoaika_(lahtoaika), pysahtyySekuntia_(pysahtyySekuntia), tapahtuma_(Pysahtyy)
 {
-    if( tapahtumatyyppi.startsWith('L'))
+    if( tapahtumatyyppi == "L")
         tapahtuma_ = Lahtee;
-    else if( tapahtumatyyppi.startsWith('S'))
+    else if( tapahtumatyyppi == "S")
         tapahtuma_ = Saapuu;
-    else if( tapahtumatyyppi.startsWith('O'))
+    else if( tapahtumatyyppi == "O")
         tapahtuma_ = Ohittaa;
 }

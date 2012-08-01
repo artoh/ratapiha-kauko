@@ -153,33 +153,39 @@ void Veturi::paivitaJkvTiedot()
 
         // Tässä välissä aikataulusta pysähdysehdot?
         int pysahdylaiturille = 0;
-        QTime lahtoaikaPysahdyksesta;    // Aikataulun mukainen lähtöaika
 
         // Pysähdytään laiturille tai opastimelle, jos aikataulu sanoo niin
         QString raidetunnus = kiskolla->raide()->raidetunnusLiikennepaikalla();
-        if( ( kiskolla->laituri() != Kisko::LaituriEi  && pysahtyiKiskolle_ != kiskolla ) ||
-                (  opaste != RaiteenPaa::Tyhja && ( !pysahtyiKiskolle_ || pysahtyiKiskolle_->raide() != kiskolla->raide())) )
+
+        if( reitti_.contains( raidetunnus ))   // Raide on mainittu aikataulussa
         {
-            if( reitti_.contains( raidetunnus ))
+            if( ( kiskolla->laituri() != Kisko::LaituriEi  && pysahtyiKiskolle_ != kiskolla ) ||
+                    (  opaste != RaiteenPaa::Tyhja && ( !pysahtyiKiskolle_ || pysahtyiKiskolle_->raide() != kiskolla->raide()))
+                    || reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Lahtee )
+                // A) Kiskolla on laituri, eikä tälle kiskolle ole vielä pysähdytty
+                // B) Ollaan opastimen edessä, eikä tälle raiteelle ole vielä pysähdytty
+                // C) Ollaan lähtölaiturissa
             {
-                // Pysähdysajan määreet
-                int pysahdysAjasta = 0; // pysähdys johtuen siitä, kuinka kauan pitää seistä
-                int pysahdysTaulusta = 0;  // pysähdys johtuen siitä, koska saa lähteä
+
+                int pysahdysAjasta = 0;
+                int pysahdysTaulusta = 0;
+                QTime lahtoaikaPysahdyksesta;    // Aikataulun mukainen lähtöaika
+
 
                 if( reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Saapuu)
-                    pysahdylaiturille = -1; // Määräasemalle
+                    pysahdylaiturille = -1;
                 else
                 {
-                    if( aktiivinenAkseli()->kiskolla() == kiskolla && pysahtyi_.isValid() )
+                    if( ( (reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Lahtee &&
+                         kiskolla->laituri() == Kisko::LaituriEi ) ||
+                            aktiivinenAkseli()->kiskolla() == kiskolla ) && pysahtyi_.isValid() )
                     {
-                        // Ollaan jo tällä kiskolla, eli voidaan kuluttaa pysähdysaikaa
                         lahtoaikaPysahdyksesta = pysahtyi_.time().addSecs( reitti_.value(raidetunnus).pysahtyy() );
                         pysahdysAjasta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo(lahtoaikaPysahdyksesta);
                         if( pysahdysAjasta  < -43200)   // keskiyön ylitys
                             pysahdysAjasta += 86400;
-
                     }
-                    else
+                    else if( reitti_.value(raidetunnus).tapahtumaTyyppi() != ReittiTieto::Lahtee )
                     {
                         // Lähtöaikaa ei vielä voi määrittää...
                         pysahdysAjasta = reitti_.value(raidetunnus).pysahtyy();
@@ -212,6 +218,25 @@ void Veturi::paivitaJkvTiedot()
                     pysahdylaiturille = qMax( pysahdysAjasta, pysahdysTaulusta );
                     if( pysahdylaiturille < 0)
                         pysahdylaiturille = 0;
+
+                    if( reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Lahtee)
+                    {
+                        // Aikataulun mukaiselle lähtöraiteelle annetaan erillinen lähtöopaste
+
+                        if( pysahdylaiturille > 0)
+                        {
+                        // Muodostetaan oma Odota lähtölupaa - opasteensa
+                            jkvTiedot_.append( JkvOpaste(kiskolla, RaiteenPaa::OdotaLahtolupaa, 0.0,
+                                                         0, pysahdylaiturille, false, hidastuvuus()) );
+                            pysahdylaiturille = 0;
+                        }
+                        else
+                        {
+                            jkvTiedot_.append( JkvOpaste(kiskolla, RaiteenPaa::Lahtolupa, 0.0,
+                                                         enimmaisNopeus(), 0, false, hidastuvuus()))
+                        }
+                    }
+
                 }
             }
         }
@@ -514,6 +539,7 @@ void Veturi::aja()
                   if( veturiAutomaationTila() == AutoAktiivinen )
                   {
                       asetaAjoPoyta(0);
+                      asetaTavoiteNopeus(0);
                       veturiAutomaatio_ = AutoOn;
                   }
                   emit automaatioIlmoitus(0,0,jkvKuva());
@@ -610,7 +636,7 @@ QPixmap Veturi::jkvKuva()
         painter.drawPixmap(5,45,QPixmap( QString(":/r/junakuvat/%1.png").arg( vaununTyyppi() ) ) );
         painter.drawRect(5,220,140,20);
         painter.setFont(QFont("Helvetica",15));
-        painter.drawText(QRectF(10,220,130,20),Qt::AlignCenter, tr(" %1 km").arg( (int) matkaMittari() / 1000 ));
+        painter.drawText(QRectF(5,220,140,20),Qt::AlignCenter, tr(" %1 km").arg( (int) matkaMittari() / 1000 ));
     }
 
     int indeksi = 0;
@@ -912,7 +938,7 @@ bool Veturi::haeReitti(Akseli *akseli)
         reitti_.insert(  raidetunnus, ReittiTieto( tapahtuma, lahtoaika, pysahtyy)  );
 
         // Jos määränpää, laitetaan tieto siitäkin...
-        if( tapahtuma.startsWith('S') )
+        if( tapahtuma == "S" )
             maaraAsema_ = reittikysely.value(1).toString();
 
         // Jos tämä on nykyinen raide, niin hyvä niin ;)
@@ -923,7 +949,7 @@ bool Veturi::haeReitti(Akseli *akseli)
                 lahtoSuunta = RaiteenPaa::Pohjoiseen;
             else if( reittikysely.value(6).toString().startsWith('E'))
                 lahtoSuunta = RaiteenPaa::Etelaan;
-            if( tapahtuma.startsWith('L'))
+            if( tapahtuma == "L")
                 lahtoraiteella = true;
 
         }

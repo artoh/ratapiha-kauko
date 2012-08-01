@@ -102,6 +102,12 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
     case RaiteenPaa::EiOpastetta:
         painter->drawPixmap(x,y,QPixmap(":/r/jkvkuvat/roEiopastetta.png"));
         break;
+    case RaiteenPaa::OdotaLahtolupaa:
+        painter->drawPixmap(x,y,QPixmap(":/r/jkvkuvat/punalippu.png"));
+        break;
+    case RaiteenPaa::Lahtolupa:
+        painter->drawPixmap(x,y,QPixmap(":/r/jkvkuvat/viherlippu.png"));
+        break;
     default:
         painter->setBrush( QBrush(Qt::white));
         painter->setPen(QPen(QBrush(Qt::red),2.0));
@@ -120,7 +126,7 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
     if( matka_ > 5.0)
         painter->drawText(x+55, y+20, 60, 20, Qt::AlignLeft, QString("%1 m").arg((int) matka_));
     // Ja nopeusrivi
-    if( sn() > 0 )
+    if( sn() > 0 && opaste() != RaiteenPaa::Lahtolupa)
     {
         painter->setFont(QFont("Helvetica",10));
         painter->drawText(x+55, y+35, 60, 100, Qt::AlignLeft, QString("%1 km/h").arg( sn()));
@@ -136,7 +142,11 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
         else
         {
             // Laituri, jolle pysähdytään
-            painter->setBrush( QBrush(Qt::blue));
+            if( opaste() == RaiteenPaa::OdotaLahtolupaa)
+                painter->setBrush( QBrush( Qt::green));
+            else
+                painter->setBrush( QBrush(Qt::blue));
+
             painter->setPen( QPen(QBrush(Qt::white),1.0));
             painter->drawRect(x+95,y+15,45,30);
 

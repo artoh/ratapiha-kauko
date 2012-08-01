@@ -86,5 +86,7 @@
         <file>junakuvat/Eio.png</file>
         <file>junakuvat/Sr2.png</file>
         <file>jkvkuvat/perilla.png</file>
+        <file>jkvkuvat/punalippu.png</file>
+        <file>jkvkuvat/viherlippu.png</file>
     </qresource>
 </RCC>
