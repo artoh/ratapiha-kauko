@@ -521,8 +521,6 @@ void Veturi::aja()
               if( reitti_.count() && reitti_.contains(raidetunnus ) &&
                       reitti_.value( raidetunnus ).tapahtumaTyyppi() == ReittiTieto::Saapuu )
               {
-
-                  QString lisatieto;
                   // Lasketaan myöhästymisaika
                   QTime aikataulunlahto = reitti_.value(raidetunnus).lahtoAika();
                   QTime nykyaika = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time();
@@ -530,15 +528,12 @@ void Veturi::aja()
                   if( myohassa > 15)
                   {
                       myohassa_ = myohassa;
-                      // Jos juna on vähintään 15 sekuntia jäljessä aikataulustaan, on se niin
-                      // vakavaa, että kirjataan lokitietoihin!!!
-                      lisatieto = QString("M%1m%2s").arg(myohassa/60).arg(myohassa%60,2,10,QChar('0'));
                   }
                   else
                       myohassa = 0;
 
                   // Saavuttu määräraiteelle!
-                  kirjoitaLokiin("S", aktiivinenAkseli()->kiskolla()->raide(), lisatieto);
+                  kirjoitaLokiin("S", aktiivinenAkseli()->kiskolla()->raide());
                   tavoiteNopeus_ = 0;
                   tyhjennaReitti();
                   if( veturiAutomaationTila() == AutoAktiivinen )
@@ -563,7 +558,6 @@ void Veturi::aja()
       {
           pysahtyi_ = QDateTime();        // Ei todellakaan ole pysähdyksissä
           pysahtyiKiskolle_ = aktiivinenAkseli()->kiskolla();  // On tehnyt pysähdyksen tällä kiskon pätkällä..
-          QString lisatieto;
           // Lasketaan myöhästymisaika
           if( reitti_.contains(raidetunnus))
           {
@@ -573,14 +567,11 @@ void Veturi::aja()
               if( myohassa > 15)
               {
                   myohassa_ = myohassa;
-                  // Jos juna on vähintään 15 sekuntia jäljessä aikataulustaan, on se niin
-                  // vakavaa, että kirjataan lokitietoihin!!!
-                  lisatieto = QString("M%1m%2s").arg(myohassa/60).arg(myohassa%60,2,10,QChar('0'));
               }
               else
                   myohassa = 0;
           }
-          kirjoitaLokiin("L", aktiivinenAkseli()->kiskolla()->raide(), lisatieto);  // Juna lähti taas liikkeelle!
+          kirjoitaLokiin("L", aktiivinenAkseli()->kiskolla()->raide());  // Juna lähti taas liikkeelle!
 
       }
 
@@ -639,7 +630,7 @@ QPixmap Veturi::jkvKuva()
         painter.drawPixmap(5,45,QPixmap( QString(":/r/junakuvat/%1.png").arg( vaununTyyppi() ) ) );
         painter.drawRect(5,220,140,20);
         painter.setFont(QFont("Helvetica",15));
-        painter.drawText(QRectF(5,220,140,20),Qt::AlignCenter, tr(" %1 km").arg( (int) matkaMittari() / 1000 ));
+        painter.drawText(QRectF(5,280,140,20),Qt::AlignCenter, tr(" %1 km").arg( (int) matkaMittari() / 1000 ));
     }
 
     int indeksi = 0;
