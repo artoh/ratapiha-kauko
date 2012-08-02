@@ -22,6 +22,7 @@
 #include "ajopoyta.h"
 
 #include "ratapihaikkuna.h"
+#include "analogclock.h"
 
 #include <QDockWidget>
 
@@ -67,5 +68,10 @@ void RataIkkuna::teeDockit()
     vaunuLuetteloDock->setWidget( luettelo);
     addDockWidget( Qt::RightDockWidgetArea, vaunuLuetteloDock);
 
+    AnalogClock* kello = new AnalogClock;
+    QDockWidget* kelloDock = new QDockWidget( tr("Kello"), this);
+    kelloDock->setWidget(kello);
+    connect(RatapihaIkkuna::getInstance(), SIGNAL(kello(QDateTime)), kello, SLOT(showSimulationTime(QDateTime)) );
+    addDockWidget( Qt::RightDockWidgetArea, kelloDock);
 }
 

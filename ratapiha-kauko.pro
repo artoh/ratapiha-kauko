@@ -46,7 +46,8 @@ HEADERS += \
     automaatiopyynto.h \
     jkvopaste.h \
     reittitieto.h \
-    junanuppi.h
+    junanuppi.h \
+    analogclock.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -91,7 +92,8 @@ SOURCES += \
     automaatiopyynto.cpp \
     jkvopaste.cpp \
     reittitieto.cpp \
-    junanuppi.cpp
+    junanuppi.cpp \
+    analogclock.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
