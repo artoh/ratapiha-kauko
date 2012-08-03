@@ -88,5 +88,7 @@
         <file>jkvkuvat/perilla.png</file>
         <file>jkvkuvat/punalippu.png</file>
         <file>jkvkuvat/viherlippu.png</file>
+        <file>pic/viesvg.png</file>
+        <file>pic/tulosta.png</file>
     </qresource>
 </RCC>

@@ -28,6 +28,7 @@
 #include <QMainWindow>
 #include <QComboBox>
 #include <QToolBar>
+#include <QAction>
 
 class AikatauluSelaaja;
 
@@ -44,16 +45,24 @@ signals:
 public slots:
     void taulunVaihto(int valintaind);
 
+    void vieSvg();
+    void tulosta();
+
 protected:
 
+    void luoAktiot();
     void luoTyokalurivi();
     void luoDockit();
+
 
     GraafinenAikatauluScene* skene_;
     AikatauluView* view_;
 
     QComboBox* taulunValintaCombo_;
     AikatauluSelaaja* selaaja_;
+
+    QAction* vieSvgAktio_;
+    QAction* tulostaAktio_;
 
 };
 

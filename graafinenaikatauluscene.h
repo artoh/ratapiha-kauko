@@ -40,6 +40,7 @@ public:
     int alkaaTunnista() const { return tuntiAlkaa_; }
     int loppuuTuntiin() const { return tuntiLoppuu_; }
     qreal maxX() const { return maxX_; }
+    qreal maxY() const { return  yKmluvusta( isoinKmluku_); }
     int ruudukonleveys() const { return ruudukonLeveys_; }
     QString tauluNimi() const { return taulunimi_ ; }
 

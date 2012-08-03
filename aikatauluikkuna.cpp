@@ -23,6 +23,12 @@
 
 #include <QSqlQuery>
 #include <QDockWidget>
+#include <QFileDialog>
+#include <QSvgGenerator>
+#include <QPainter>
+#include <QIcon>
+#include <QPrintDialog>
+#include <QPrinter>
 
 AikatauluIkkuna::AikatauluIkkuna(RatapihaIkkuna *parent) :
     QMainWindow(parent)
@@ -30,6 +36,7 @@ AikatauluIkkuna::AikatauluIkkuna(RatapihaIkkuna *parent) :
     skene_ = new GraafinenAikatauluScene;
     view_ = new AikatauluView( skene_ );
 
+    luoAktiot();
     luoTyokalurivi();
     luoDockit();
     taulunVaihto(0);
@@ -48,6 +55,45 @@ void AikatauluIkkuna::taulunVaihto(int valintaind)
     setWindowTitle( tr("Aikataulu %1").arg( skene_->tauluNimi()));
 }
 
+void AikatauluIkkuna::vieSvg()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Vie aikataulugrafiikka"),
+                                                    QString(),
+                               tr("SVG-kuva (*.svg)"));
+    if( !fileName.isEmpty())
+    {
+        QSvgGenerator svg;
+        svg.setSize( QSize( skene_->maxX(), 0 - skene_->maxY()) );
+        svg.setFileName(fileName);
+        QPainter painter(&svg);
+        skene_->render(&painter);
+    }
+
+}
+
+void AikatauluIkkuna::tulosta()
+{
+    QPrinter printer;
+    printer.setOrientation(QPrinter::Landscape);
+    QPrintDialog dialog(&printer);
+    if( dialog.exec())
+    {
+        QPainter painter(&printer);
+        skene_->render(&painter);
+    }
+}
+
+void AikatauluIkkuna::luoAktiot()
+{
+    vieSvgAktio_ = new QAction(QIcon(":/r/pic/viesvg.png"),tr("Vie svg-kuvana"), this);
+    connect( vieSvgAktio_, SIGNAL(triggered()), this, SLOT(vieSvg()));
+
+    tulostaAktio_ = new QAction( QIcon(":/r/pic/tulosta.png"), tr("Tulosta grafiikka"), this);
+    connect( tulostaAktio_, SIGNAL(triggered()), this, SLOT(tulosta()));
+
+
+}
+
 void AikatauluIkkuna::luoTyokalurivi()
 {
     QToolBar* tbar = addToolBar(tr("Aikataulu"));
@@ -63,6 +109,9 @@ void AikatauluIkkuna::luoTyokalurivi()
              this, SLOT(taulunVaihto(int)));
 
     tbar->addWidget(taulunValintaCombo_);
+
+    tbar->addAction(tulostaAktio_);
+    tbar->addAction(vieSvgAktio_);
 
 }
 
