@@ -25,9 +25,8 @@
 #include "kaukoikkuna.h"
 #include "editoriikkuna.h"
 
-// ** TILAPÄINEN **
-#include "graafinenaikatauluscene.h"
-#include <QGraphicsView>
+
+#include "aikatauluikkuna.h"
 
 #include <QMessageBox>
 #include <QPixmap>
@@ -317,8 +316,11 @@ void RatapihaIkkuna::muokkaaRataa()
 
 void RatapihaIkkuna::graafinenAikataulu()
 {
-    QGraphicsView* view = new QGraphicsView( new GraafinenAikatauluScene, 0);
-    view->show();
+    if( tila() == EiYhteytta)
+        if (yhdistaTietokantaan())
+            lukuYhteysMuodostettu();
+    AikatauluIkkuna* ikkuna = new AikatauluIkkuna(this);
+    ikkuna->show();
 }
 
 bool RatapihaIkkuna::onkoYhteydessa()
@@ -337,7 +339,7 @@ void RatapihaIkkuna::nappienHimmennykset()
 {
 
     ui->yhdistaNappi->setEnabled( tila() == EiYhteytta || tila() == LukuYhteys);
-    ui->katkaiseNappi->setEnabled( tila() == KaukoYhteys || tila() == LukuYhteys);
+    ui->katkaiseNappi->setEnabled( tila() == KaukoYhteys );
     ui->ohjausKaukoButton->setEnabled( tila() == KaukoYhteys || tila() == LukuYhteys );
 
     ui->kaynnistaPalvelinNappi->setEnabled( tila() == EiYhteytta || tila() == LukuYhteys);

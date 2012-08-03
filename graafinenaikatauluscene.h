@@ -30,9 +30,10 @@ class GraafinenAikatauluScene : public QGraphicsScene
 public:
     explicit GraafinenAikatauluScene(QObject *parent = 0);
 
-    void lataaRuudukko(int taulu);
-    void lataaAikataulut(int taulu);
 
+    int taulu() const { return taulu_; }
+    void lataaTaulu(int taulu);
+    void asetaAikavali(int mista, int mihin);
 
     qreal yKmluvusta(qreal kmluku) const;
     qreal xAjasta(QTime aika) const;
@@ -40,6 +41,7 @@ public:
     int loppuuTuntiin() const { return tuntiLoppuu_; }
     qreal maxX() const { return maxX_; }
     int ruudukonleveys() const { return ruudukonLeveys_; }
+    QString tauluNimi() const { return taulunimi_ ; }
 
     static const int JUNANRODATAKENTTA = 1;
 
@@ -50,16 +52,23 @@ public slots:
     
 
 protected:
+    void lataaRuudukko();
+    void lataaAikataulut();
+
     qreal pieninKmluku_;
     qreal isoinKmluku_;
 
     qreal maxX_;
+
+    int taulu_;
+    QString taulunimi_;
 
     int ruudukonLeveys_;
     int tuntiAlkaa_;
     int tuntiLoppuu_;
 
     QGraphicsLineItem* kelloViiva_;
+
 };
 
 #endif // GRAAFINENAIKATAULUSCENE_H

@@ -30,31 +30,42 @@
 #include <QList>
 
 GraafinenAikatauluScene::GraafinenAikatauluScene(QObject *parent) :
-    QGraphicsScene(parent),
+    QGraphicsScene(parent), taulu_(0),
      ruudukonLeveys_(7200), tuntiAlkaa_(6), tuntiLoppuu_(18)
 {
     setBackgroundBrush( QBrush(Qt::white));
-    kelloViiva_ = addLine( QLineF());
-    kelloViiva_->setPen( QPen(Qt::red));
-    kelloViiva_->setZValue(100);
-
     maxX_ = xAjasta( QTime(tuntiLoppuu_-1,59,59));
-
-
-    // TESTI !!!
-    lataaRuudukko(1);
-    lataaAikataulut(1);
 
     connect( RatapihaIkkuna::getInstance(), SIGNAL(kello(QDateTime)), this, SLOT(paivitaKelloViiva(QDateTime)) );
 
 }
 
-void GraafinenAikatauluScene::lataaRuudukko(int taulu)
+void GraafinenAikatauluScene::lataaTaulu(int taulu)
+{
+    clear();
+    kelloViiva_ = addLine( QLineF());
+
+    taulu_ = taulu;
+    lataaRuudukko();
+    lataaAikataulut();
+
+}
+
+void GraafinenAikatauluScene::asetaAikavali(int mista, int mihin)
+{
+    tuntiAlkaa_ = mista;
+    tuntiLoppuu_ = mihin;
+    maxX_ = xAjasta( QTime(tuntiLoppuu_-1,59,59));
+    lataaRuudukko();
+    lataaAikataulut();
+}
+
+void GraafinenAikatauluScene::lataaRuudukko()
 {
     // Tekee ruudukon sanotun taulun liikennepaikoilla
     // Ensin hakee isoimman ja pienimmän km-luvun
 
-    QSqlQuery isoPieniKysely( QString("select min(kmluku), max(kmluku) from taulussa natural join liikennepaikka where taulu=%1").arg(taulu)  );
+    QSqlQuery isoPieniKysely( QString("select min(kmluku), max(kmluku) from taulussa natural join liikennepaikka where taulu=%1").arg(taulu_)  );
 
     if( !isoPieniKysely.next())
         return;
@@ -90,7 +101,7 @@ void GraafinenAikatauluScene::lataaRuudukko(int taulu)
 
     // Sitten piirretään liikennepaikkojen nimet ja viivat
 
-    QSqlQuery lkpKysely( QString("select nimi, liikennepaikka, kmluku, liikenteenohjaus from taulussa natural join liikennepaikka where taulu=%1 order by kmluku").arg(taulu));
+    QSqlQuery lkpKysely( QString("select nimi, liikennepaikka, kmluku, liikenteenohjaus from taulussa natural join liikennepaikka where taulu=%1 order by kmluku").arg(taulu_));
     while( lkpKysely.next())
     {
         QString nimi = lkpKysely.value(0).toString();
@@ -120,20 +131,23 @@ void GraafinenAikatauluScene::lataaRuudukko(int taulu)
         lyhenneteksti->setPos( maxX_ + 5 , y-4);
     }
 
+    kelloViiva_->setPen( QPen(Qt::red));
+    kelloViiva_->setZValue(100);
     kelloViiva_->setLine(0,0,0,maxY);
 
     // Ylös otsikko
 
-    QSqlQuery nimikysely( QString("select taulunimi from taulu where taulu=%1").arg(taulu));
+    QSqlQuery nimikysely( QString("select taulunimi from taulu where taulu=%1").arg(taulu_));
     if( nimikysely.next())
     {
-        addSimpleText( nimikysely.value(0).toString(), QFont("Helvetica", 18 ))->setPos( -100, maxY-45 );
+        taulunimi_ = nimikysely.value(0).toString();
+        addSimpleText( taulunimi_, QFont("Helvetica", 18 ))->setPos( -100, maxY-45 );
     }
 
 
 }
 
-void GraafinenAikatauluScene::lataaAikataulut(int taulu)
+void GraafinenAikatauluScene::lataaAikataulut()
 {
 
     // Yksinkertainen sql-kysely, jolla ladataan aikataulu
@@ -142,7 +156,7 @@ void GraafinenAikatauluScene::lataaAikataulut(int taulu)
                        "where taulussa.liikennepaikka = aikataulu.liikennepaikka "
                        "and juna.reitti = aikataulu.reitti "
                        "and liikennepaikka.liikennepaikka = aikataulu.liikennepaikka "
-                       " and taulu=%1 order by junanro, aika").arg(taulu);
+                       " and taulu=%1 order by junanro, aika").arg(taulu_);
 
 
     QSqlQuery kysely( kysymys );

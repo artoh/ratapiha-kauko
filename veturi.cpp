@@ -159,9 +159,9 @@ void Veturi::paivitaJkvTiedot()
 
         if( reitti_.contains( raidetunnus ))   // Raide on mainittu aikataulussa
         {
-            if( ( kiskolla->laituri() != Kisko::LaituriEi  && pysahtyiKiskolle_ != kiskolla ) ||
+            if( ( ( kiskolla->laituri() != Kisko::LaituriEi  && pysahtyiKiskolle_ != kiskolla ) ||
                     (  opaste != RaiteenPaa::Tyhja && ( !pysahtyiKiskolle_ || pysahtyiKiskolle_->raide() != kiskolla->raide()))
-                    || reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Lahtee
+                    || reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Lahtee )
                     && reitti_.value(raidetunnus).tapahtumaTyyppi() != ReittiTieto::Ohittaa )
                 // A) Kiskolla on laituri, eikä tälle kiskolle ole vielä pysähdytty
                 // B) Ollaan opastimen edessä, eikä tälle raiteelle ole vielä pysähdytty

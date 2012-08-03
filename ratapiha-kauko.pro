@@ -49,7 +49,9 @@ HEADERS += \
     junanuppi.h \
     analogclock.h \
     graafinenaikatauluscene.h \
-    junaviiva.h
+    junaviiva.h \
+    aikatauluikkuna.h \
+    aikatauluview.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -97,7 +99,9 @@ SOURCES += \
     junanuppi.cpp \
     analogclock.cpp \
     graafinenaikatauluscene.cpp \
-    junaviiva.cpp
+    junaviiva.cpp \
+    aikatauluikkuna.cpp \
+    aikatauluview.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
