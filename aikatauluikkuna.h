@@ -24,9 +24,12 @@
 #include "ratapihaikkuna.h"
 
 
+
 #include <QMainWindow>
 #include <QComboBox>
 #include <QToolBar>
+
+class AikatauluSelaaja;
 
 class AikatauluView;
 
@@ -44,12 +47,14 @@ public slots:
 protected:
 
     void luoTyokalurivi();
+    void luoDockit();
 
     GraafinenAikatauluScene* skene_;
     AikatauluView* view_;
 
     QComboBox* taulunValintaCombo_;
-    
+    AikatauluSelaaja* selaaja_;
+
 };
 
 #endif // AIKATAULUIKKUNA_H

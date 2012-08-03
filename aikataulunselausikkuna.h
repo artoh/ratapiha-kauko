@@ -1,5 +1,5 @@
 /**************************************************************************
-**  aikatauluview.h
+**  aikataulunselausikkuna.h
 **  Copyright (c) 2012 Arto Hyvättinen 
 **
 **  This program is free software: you can redistribute it and/or modify
@@ -14,37 +14,34 @@
 **
 **  See <http://www.gnu.org/licenses/>
 **
-**  AikatauluView  3.8.2012
+**  AikataulunSelausIkkuna  3.8.2012
 **************************************************************************/
 
-#ifndef AIKATAULUVIEW_H
-#define AIKATAULUVIEW_H
+#ifndef AIKATAULUNSELAUSIKKUNA_H
+#define AIKATAULUNSELAUSIKKUNA_H
 
-#include <QGraphicsView>
+#include <QMainWindow>
+#include <QComboBox>
 
-#include "graafinenaikatauluscene.h"
+#include "aikatauluselaaja.h"
 
-class AikatauluView : public QGraphicsView
+class AikataulunSelausIkkuna : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit AikatauluView(GraafinenAikatauluScene* skene);
+    explicit AikataulunSelausIkkuna(QWidget *parent = 0);
     
 signals:
-    void junaValittu(const QString& junatunnus);
-    void asemaValittu(const QString liikennepaikka);
-
+    
 public slots:
+    void haeAsemaAikataulu(int indeksi);
+
 
 protected:
-    void wheelEvent(QWheelEvent *event);
-    void mousePressEvent(QMouseEvent *event);
+    void luoTyokalurivi();
 
-
-    /** Käytetäänkö hiiren rullaa skaalaamiseen vai vierittäimiseen */
-    bool rullaSkaalaa_;
-    
-
+    AikatauluSelaaja* selaaja_;
+    QComboBox* asemaValintaCombo_;
 };
 
-#endif // AIKATAULUVIEW_H
+#endif // AIKATAULUNSELAUSIKKUNA_H

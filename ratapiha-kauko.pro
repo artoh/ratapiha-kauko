@@ -51,7 +51,9 @@ HEADERS += \
     graafinenaikatauluscene.h \
     junaviiva.h \
     aikatauluikkuna.h \
-    aikatauluview.h
+    aikatauluview.h \
+    aikataulunselausikkuna.h \
+    aikatauluselaaja.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -101,7 +103,9 @@ SOURCES += \
     graafinenaikatauluscene.cpp \
     junaviiva.cpp \
     aikatauluikkuna.cpp \
-    aikatauluview.cpp
+    aikatauluview.cpp \
+    aikataulunselausikkuna.cpp \
+    aikatauluselaaja.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

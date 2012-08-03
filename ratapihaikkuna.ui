@@ -361,6 +361,29 @@
        </size>
       </property>
      </widget>
+     <widget class="QPushButton" name="selaaAikatauluaNappi">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>10</y>
+        <width>171</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Aikataulujen selaus</string>
+      </property>
+      <property name="icon">
+       <iconset resource="ratapiha-kauko.qrc">
+        <normaloff>:/r/pic/muokkaa.png</normaloff>:/r/pic/muokkaa.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="asetustab">
      <attribute name="title">

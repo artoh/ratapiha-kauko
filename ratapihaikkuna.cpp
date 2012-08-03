@@ -27,6 +27,7 @@
 
 
 #include "aikatauluikkuna.h"
+#include "aikataulunselausikkuna.h"
 
 #include <QMessageBox>
 #include <QPixmap>
@@ -62,6 +63,7 @@ RatapihaIkkuna::RatapihaIkkuna(QWidget *parent) :
     connect( ui->muokkaaRataaNappi, SIGNAL(clicked()), this, SLOT(muokkaaRataa()));
 
     connect( ui->graafinenaikatauluNappi, SIGNAL(clicked()), this, SLOT(graafinenAikataulu()));
+    connect( ui->selaaAikatauluaNappi, SIGNAL(clicked()), this, SLOT(selaaAikataulua()));
 
     connect( &tcpsokka_, SIGNAL(connected()), this, SLOT(yhdistettyPalvelimeen()));
     connect( &tcpsokka_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(verkkovirhe()));
@@ -320,6 +322,15 @@ void RatapihaIkkuna::graafinenAikataulu()
         if (yhdistaTietokantaan())
             lukuYhteysMuodostettu();
     AikatauluIkkuna* ikkuna = new AikatauluIkkuna(this);
+    ikkuna->show();
+}
+
+void RatapihaIkkuna::selaaAikataulua()
+{
+    if( tila() == EiYhteytta)
+        if (yhdistaTietokantaan())
+            lukuYhteysMuodostettu();
+    AikataulunSelausIkkuna* ikkuna = new AikataulunSelausIkkuna(this);
     ikkuna->show();
 }
 

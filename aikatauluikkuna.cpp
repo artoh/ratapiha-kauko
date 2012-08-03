@@ -19,8 +19,10 @@
 
 #include "aikatauluikkuna.h"
 #include "aikatauluview.h"
+#include "aikatauluselaaja.h"
 
 #include <QSqlQuery>
+#include <QDockWidget>
 
 AikatauluIkkuna::AikatauluIkkuna(RatapihaIkkuna *parent) :
     QMainWindow(parent)
@@ -29,11 +31,15 @@ AikatauluIkkuna::AikatauluIkkuna(RatapihaIkkuna *parent) :
     view_ = new AikatauluView( skene_ );
 
     luoTyokalurivi();
+    luoDockit();
     taulunVaihto(0);
 
     setCentralWidget(view_);
 
     setAttribute( Qt::WA_DeleteOnClose);
+
+    connect(view_, SIGNAL(asemaValittu(QString)), selaaja_, SLOT(haeAsemaAikataulu(QString)));
+    connect(view_, SIGNAL(junaValittu(QString)), selaaja_, SLOT(haeJunaAikataulu(QString)));
 }
 
 void AikatauluIkkuna::taulunVaihto(int valintaind)
@@ -57,5 +63,14 @@ void AikatauluIkkuna::luoTyokalurivi()
              this, SLOT(taulunVaihto(int)));
 
     tbar->addWidget(taulunValintaCombo_);
+
+}
+
+void AikatauluIkkuna::luoDockit()
+{
+    selaaja_ = new AikatauluSelaaja;
+    QDockWidget* selaajaDock = new QDockWidget( tr("Aikataulun selaus"));
+    selaajaDock->setWidget(selaaja_);
+    addDockWidget(Qt::RightDockWidgetArea, selaajaDock);
 
 }

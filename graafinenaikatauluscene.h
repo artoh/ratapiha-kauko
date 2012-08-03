@@ -44,6 +44,7 @@ public:
     QString tauluNimi() const { return taulunimi_ ; }
 
     static const int JUNANRODATAKENTTA = 1;
+    static const int ASEMANTUNNUSKENTTA = 2;
 
 signals:
     

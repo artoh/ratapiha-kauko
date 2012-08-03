@@ -18,6 +18,7 @@
 **************************************************************************/
 
 #include "aikatauluview.h"
+#include "graafinenaikatauluscene.h"
 
 #include <QWheelEvent>
 #include <QScrollBar>
@@ -25,7 +26,8 @@
 #include <cmath>
 
 AikatauluView::AikatauluView(GraafinenAikatauluScene *skene) :
-    QGraphicsView(skene)
+    QGraphicsView(skene),
+    rullaSkaalaa_(true)
 {
 }
 
@@ -52,3 +54,41 @@ void AikatauluView::wheelEvent(QWheelEvent *event)
     event->accept();
 
 }
+
+void AikatauluView::mousePressEvent(QMouseEvent *event)
+{
+
+    if( event->button() == Qt::LeftButton)
+    {
+
+        // Mitäköhän junaa oltaisiin klikattu? Tai asemaa?
+        QRect valintaApu( event->pos().x()-2, event->pos().y()-2, 4, 4);
+
+        QList<QGraphicsItem*> lista = items( valintaApu);
+        foreach(QGraphicsItem* item, lista)
+        {
+            if( item->data( GraafinenAikatauluScene::JUNANRODATAKENTTA).isValid())
+            {
+                emit junaValittu( item->data(GraafinenAikatauluScene::JUNANRODATAKENTTA).toString());
+                return;
+            }
+            else if( item->data( GraafinenAikatauluScene::ASEMANTUNNUSKENTTA).isValid())
+            {
+                emit asemaValittu( item->data(GraafinenAikatauluScene::ASEMANTUNNUSKENTTA).toString());
+                return;
+            }
+
+        }
+
+    }
+    else if( event->button() == Qt::MiddleButton)
+    {
+        rullaSkaalaa_ = !rullaSkaalaa_;
+        return;
+    }
+    QGraphicsView::mousePressEvent(event);
+}
+
+
+
+

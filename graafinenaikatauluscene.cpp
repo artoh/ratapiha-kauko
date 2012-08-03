@@ -125,6 +125,7 @@ void GraafinenAikatauluScene::lataaRuudukko()
         // Piirretään vasemmalle liikennepaikan nimi
         QGraphicsSimpleTextItem* nimiteksti = addSimpleText( nimi , QFont("Helvetica",8, leveys) );
         nimiteksti->setPos(-100.0, y-4);
+        nimiteksti->setData(ASEMANTUNNUSKENTTA, lyhenne);
 
         // ja oikealle lyhenne
         QGraphicsSimpleTextItem* lyhenneteksti = addSimpleText( lyhenne , QFont("Helvetica",8,leveys) );
@@ -215,3 +216,4 @@ qreal GraafinenAikatauluScene::xAjasta(QTime aika) const
 }
 
 const int GraafinenAikatauluScene::JUNANRODATAKENTTA;
+const int GraafinenAikatauluScene::ASEMANTUNNUSKENTTA;

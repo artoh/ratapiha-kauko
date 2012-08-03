@@ -1,5 +1,5 @@
 /**************************************************************************
-**  aikatauluview.h
+**  aikatauluselaaja.h
 **  Copyright (c) 2012 Arto Hyvättinen 
 **
 **  This program is free software: you can redistribute it and/or modify
@@ -14,37 +14,28 @@
 **
 **  See <http://www.gnu.org/licenses/>
 **
-**  AikatauluView  3.8.2012
+**  AikatauluSelaaja  4.8.2012
 **************************************************************************/
 
-#ifndef AIKATAULUVIEW_H
-#define AIKATAULUVIEW_H
+#ifndef AIKATAULUSELAAJA_H
+#define AIKATAULUSELAAJA_H
 
-#include <QGraphicsView>
+#include <QTextBrowser>
+#include <QUrl>
 
-#include "graafinenaikatauluscene.h"
-
-class AikatauluView : public QGraphicsView
+class AikatauluSelaaja : public QTextBrowser
 {
     Q_OBJECT
 public:
-    explicit AikatauluView(GraafinenAikatauluScene* skene);
-    
+    explicit AikatauluSelaaja(QWidget *parent = 0);
+
 signals:
-    void junaValittu(const QString& junatunnus);
-    void asemaValittu(const QString liikennepaikka);
-
-public slots:
-
-protected:
-    void wheelEvent(QWheelEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-
-
-    /** Käytetäänkö hiiren rullaa skaalaamiseen vai vierittäimiseen */
-    bool rullaSkaalaa_;
     
+public slots:
+    void klikattu(const QUrl& linkki);
 
+    void haeJunaAikataulu(const QString& juna);
+    void haeAsemaAikataulu(const QString& liikennepaikka);
 };
 
-#endif // AIKATAULUVIEW_H
+#endif // AIKATAULUSELAAJA_H

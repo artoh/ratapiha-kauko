@@ -101,6 +101,26 @@ void KaukoView::wheelEvent(QWheelEvent *event)
 
 void KaukoView::mousePressEvent(QMouseEvent *event)
 {
+    if( event->button() == Qt::XButton1)
+    {
+        if( tila() != JunaKulkutieAlkaa)
+            valitseTila( JunaKulkutieAlkaa);
+        else
+            valitseTila( VaihtoKulkutieAlkaa);
+        return;
+    }
+    else if( event->button() == Qt::MiddleButton)
+    {
+        valitseTila( Vierita);
+        return;
+    }
+    else if( event->button() == Qt::XButton2)
+    {
+        valitseTila( PeruKulkutie);
+        return;
+    }
+
+
     QString klikattuTunnus = raiteenPaaTunnusPisteessa( event->pos());
 
     switch( tila() )
