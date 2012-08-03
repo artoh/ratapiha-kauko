@@ -25,6 +25,10 @@
 #include "kaukoikkuna.h"
 #include "editoriikkuna.h"
 
+// ** TILAPÄINEN **
+#include "graafinenaikatauluscene.h"
+#include <QGraphicsView>
+
 #include <QMessageBox>
 #include <QPixmap>
 #include <QSqlError>
@@ -57,6 +61,8 @@ RatapihaIkkuna::RatapihaIkkuna(QWidget *parent) :
 
     connect( ui->muokkaaNakymiaNappi, SIGNAL(clicked()), this, SLOT(muokkaaNakymaa()));
     connect( ui->muokkaaRataaNappi, SIGNAL(clicked()), this, SLOT(muokkaaRataa()));
+
+    connect( ui->graafinenaikatauluNappi, SIGNAL(clicked()), this, SLOT(graafinenAikataulu()));
 
     connect( &tcpsokka_, SIGNAL(connected()), this, SLOT(yhdistettyPalvelimeen()));
     connect( &tcpsokka_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(verkkovirhe()));
@@ -307,6 +313,12 @@ void RatapihaIkkuna::muokkaaRataa()
 {
     // Näkymä 0 on rata
     muokkaaNakymaa(0);
+}
+
+void RatapihaIkkuna::graafinenAikataulu()
+{
+    QGraphicsView* view = new QGraphicsView( new GraafinenAikatauluScene, 0);
+    view->show();
 }
 
 bool RatapihaIkkuna::onkoYhteydessa()

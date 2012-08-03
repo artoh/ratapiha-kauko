@@ -79,6 +79,8 @@ public slots:
     void muokkaaNakymaa();
     void muokkaaRataa();
 
+    void graafinenAikataulu();
+
     /** Onko yhteyttä asetinlaitteelle? */
     bool onkoYhteydessa();
 
