@@ -87,6 +87,7 @@ void KaukoIkkuna::paivitaNapit(int tila)
     aukiajetunKaantoAktio_->setChecked( tila == KaukoView::AukiajetunVaihteenKaanto);
     automaatioAktio_->setChecked( tila == KaukoView::AutomaatioOn);
     automaatioPoisAktio_->setChecked( tila == KaukoView::AutomaatioEi);
+    alhpAktio_->setChecked( tila == KaukoView::AlHp);
 
 
 }
@@ -188,6 +189,11 @@ void KaukoIkkuna::luoAktiot()
     automaatioPoisAktio_->setData(KaukoView::AutomaatioEi);
     aslAktiot_->addAction(automaatioPoisAktio_);
 
+    alhpAktio_ = new QAction( QIcon(":/r/pic/alhp.png"), tr("Akselinlaskennan hätäpurku"), this);
+    alhpAktio_->setCheckable(true);
+    alhpAktio_->setData( KaukoView::AlHp);
+    aslAktiot_->addAction(alhpAktio_);
+
 }
 
 void KaukoIkkuna::luoTyoPalkki()
@@ -224,13 +230,16 @@ void KaukoIkkuna::luoTyoPalkki()
     asetinlaiteToolBar_->addAction( junanumeroAktio_);
     asetinlaiteToolBar_->addSeparator();
     asetinlaiteToolBar_->addAction( kaannaVaihdeAktio_);
-    asetinlaiteToolBar_->addAction( aukiajetunKaantoAktio_);
     asetinlaiteToolBar_->addSeparator();
     asetinlaiteToolBar_->addAction( seisAktio_);
     asetinlaiteToolBar_->addAction( ajaAktio_);
     asetinlaiteToolBar_->addSeparator();
     asetinlaiteToolBar_->addAction( automaatioAktio_);
     asetinlaiteToolBar_->addAction(automaatioPoisAktio_);
+
+    hataVaraistenToolBar_ = addToolBar("Hätävaraiset asetinlaitekomennot");
+    hataVaraistenToolBar_->addAction(aukiajetunKaantoAktio_);
+    hataVaraistenToolBar_->addAction(alhpAktio_);
 
 
 

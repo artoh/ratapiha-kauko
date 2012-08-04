@@ -31,7 +31,7 @@
 
 GraafinenAikatauluScene::GraafinenAikatauluScene(QObject *parent) :
     QGraphicsScene(parent), taulu_(0),
-     ruudukonLeveys_(7200), tuntiAlkaa_(6), tuntiLoppuu_(18)
+     ruudukonLeveys_(7200), tuntiAlkaa_(0), tuntiLoppuu_(24)
 {
     setBackgroundBrush( QBrush(Qt::white));
     maxX_ = xAjasta( QTime(tuntiLoppuu_-1,59,59));
@@ -56,6 +56,10 @@ void GraafinenAikatauluScene::asetaAikavali(int mista, int mihin)
     tuntiAlkaa_ = mista;
     tuntiLoppuu_ = mihin;
     maxX_ = xAjasta( QTime(tuntiLoppuu_-1,59,59));
+
+    clear();
+    kelloViiva_ = addLine( QLineF());
+
     lataaRuudukko();
     lataaAikataulut();
 }

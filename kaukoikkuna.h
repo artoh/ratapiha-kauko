@@ -50,6 +50,7 @@ protected:
 
     QToolBar* hallintaToolBar_;
     QToolBar* asetinlaiteToolBar_;
+    QToolBar* hataVaraistenToolBar_;
     QComboBox* nakymaValinta_;
 
     QAction* uusiIkkunaAktio_;
@@ -66,6 +67,7 @@ protected:
     QAction* ajaAktio_;
     QAction* automaatioAktio_;
     QAction* automaatioPoisAktio_;
+    QAction* alhpAktio_;
 
     QAction* junanumeroAktio_;
     QAction* aukiajetunKaantoAktio_;

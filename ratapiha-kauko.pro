@@ -202,7 +202,9 @@ OTHER_FILES += \
     jkvkuvat/punalippu.png \
     jkvkuvat/viherlippu.png \
     pic/viesvg.png \
-    pic/tulosta.png
+    pic/tulosta.png \
+    pic/alhpkursori.png \
+    pic/alhp.png
 
 FORMS += \
     ajopoyta.ui \

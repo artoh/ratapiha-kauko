@@ -28,7 +28,8 @@ public:
                      JunaNumeronSyotto,
                      AukiajetunVaihteenKaanto,
                      AutomaatioOn,
-                     AutomaatioEi} ;
+                     AutomaatioEi,
+                     AlHp} ;
     
 
 

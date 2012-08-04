@@ -434,6 +434,15 @@ QString RataScene::ASLKasky(const QString &parametrit)
         else
             return QString("VIRHE");
     }
+    else if( paramLista.first()=="ALHP" && paramLista.count() > 1) // Akselinlaskennan hätäpurku!
+    {
+
+        RataRaide* raide = haeRaide(paramLista[1]);
+        if( !raide )
+            return QString("VIRHE Ei raidetta %1 ").arg(paramLista[1]);
+        raide->alhp();
+        return QString("OK");
+    }
 
 
 

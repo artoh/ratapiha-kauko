@@ -68,6 +68,7 @@ public:
     // Näitä kutsutaan akselinlaskennalla, kun raide varautuu tai vapautuu
     void akseliSisaan(RaiteenPaa::Suunta suunta, RataRaide* raiteelta = 0);
     void akseliUlos(RaiteenPaa::Suunta suunta, RataRaide* raiteelle = 0);
+    void alhp(); /** Akselinlaskennan hätäpurku ! */
 
 
 protected:

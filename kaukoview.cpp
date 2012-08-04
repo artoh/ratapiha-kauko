@@ -71,6 +71,10 @@ void KaukoView::valitseTila(int tila)
     case AutomaatioEi :
         setCursor( QCursor( QPixmap(":/r/pic/automaatiokursori-pois.png"),9,0));
         break;
+    case AlHp :
+        setCursor( QCursor( QPixmap(":/r/pic/alhpkursori.png"),9,0));
+        break;
+
 
     }
 
@@ -204,6 +208,10 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
     case AutomaatioEi:
         if( !klikattuTunnus.isEmpty())
             komento( QString("AUEI %1").arg(klikattuTunnus) );
+        break;
+    case AlHp:
+        if( !klikattuTunnus.isEmpty())
+            komento( QString("ALHP %1").arg(klikattuTunnus.mid(1)) );
         break;
 
 

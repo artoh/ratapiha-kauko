@@ -29,6 +29,7 @@
 #include <QComboBox>
 #include <QToolBar>
 #include <QAction>
+#include <QSlider>
 
 class AikatauluSelaaja;
 
@@ -48,6 +49,8 @@ public slots:
     void vieSvg();
     void tulosta();
 
+    void vaihdaAikavali();
+
 protected:
 
     void luoAktiot();
@@ -64,6 +67,8 @@ protected:
     QAction* vieSvgAktio_;
     QAction* tulostaAktio_;
 
+    QSlider* alkaaSlider_;
+    QSlider* paattyySlider_;
 };
 
 #endif // AIKATAULUIKKUNA_H

@@ -290,10 +290,11 @@ bool KulkutieAutomaatti::asetaAutomaatioPaalle(const QString lahtoopastin, bool 
     if( !raide)
         return false;
 
+    // Käsky tyhjentää AINA aktiiviset kulkutiepyynnöt ko. opastimelle!
+    opastimet_.remove(lahtoopastin);
     if( !paalle )
     {
         // Poiskytkennässä pitäisi myös poistaa aktiiviset automaatiot, ei onnistu kuin käymällä läpi automaatiot
-        opastimet_.remove(lahtoopastin);
         raiteenpaa->asetaAutomaationTila(RaiteenPaa::EiAutomaatiota);
     }
     else
@@ -314,6 +315,7 @@ bool KulkutieAutomaatti::asetaAutomaatioPaalle(const QString lahtoopastin, bool 
                 raiteenpaa->asetaAutomaationTila(RaiteenPaa::Lapikulku);
             else
                 raiteenpaa->asetaAutomaationTila(RaiteenPaa::AutomaatioKaytossa);
+
 
         }
         else

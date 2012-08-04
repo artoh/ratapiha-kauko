@@ -90,5 +90,7 @@
         <file>jkvkuvat/viherlippu.png</file>
         <file>pic/viesvg.png</file>
         <file>pic/tulosta.png</file>
+        <file>pic/alhp.png</file>
+        <file>pic/alhpkursori.png</file>
     </qresource>
 </RCC>

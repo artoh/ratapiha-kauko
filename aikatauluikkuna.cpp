@@ -63,9 +63,10 @@ void AikatauluIkkuna::vieSvg()
     if( !fileName.isEmpty())
     {
         QSvgGenerator svg;
-        svg.setSize( QSize( skene_->maxX(), 0 - skene_->maxY()) );
+        svg.setSize( QSize( skene_->maxX(), skene_->maxY() ) );
         svg.setFileName(fileName);
         QPainter painter(&svg);
+        painter.rotate(180);
         skene_->render(&painter);
     }
 
@@ -73,14 +74,21 @@ void AikatauluIkkuna::vieSvg()
 
 void AikatauluIkkuna::tulosta()
 {
-    QPrinter printer;
-    printer.setOrientation(QPrinter::Landscape);
-    QPrintDialog dialog(&printer);
+
+    RatapihaIkkuna::getInstance()->printteri()->setOrientation(QPrinter::Landscape);
+    QPrintDialog dialog( RatapihaIkkuna::getInstance()->printteri()  );
     if( dialog.exec())
     {
-        QPainter painter(&printer);
+        QPainter painter( RatapihaIkkuna::getInstance()->printteri() );
         skene_->render(&painter);
     }
+}
+
+void AikatauluIkkuna::vaihdaAikavali()
+{
+    skene_->asetaAikavali( alkaaSlider_->value(), paattyySlider_->value() );
+    alkaaSlider_->setRange(0, paattyySlider_->value()-1);
+    paattyySlider_->setRange( alkaaSlider_->value()+1, 24);
 }
 
 void AikatauluIkkuna::luoAktiot()
@@ -109,6 +117,17 @@ void AikatauluIkkuna::luoTyokalurivi()
              this, SLOT(taulunVaihto(int)));
 
     tbar->addWidget(taulunValintaCombo_);
+
+    alkaaSlider_ = new QSlider(Qt::Horizontal, this);
+    paattyySlider_ = new QSlider (Qt::Horizontal, this);
+    alkaaSlider_->setRange(0,23);
+    alkaaSlider_->setValue(0);
+    paattyySlider_->setRange(1,24);
+    paattyySlider_->setValue(24);
+    connect( alkaaSlider_, SIGNAL(sliderMoved(int)), this, SLOT(vaihdaAikavali()));
+    connect( paattyySlider_, SIGNAL(sliderMoved(int)), this, SLOT(vaihdaAikavali()));
+    tbar->addWidget(alkaaSlider_);
+    tbar->addWidget(paattyySlider_);
 
     tbar->addAction(tulostaAktio_);
     tbar->addAction(vieSvgAktio_);

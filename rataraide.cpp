@@ -182,6 +182,15 @@ void RataRaide::akseliUlos(RaiteenPaa::Suunta suunta, RataRaide * /* raiteelle *
     paivita();
 }
 
+void RataRaide::alhp()
+{
+    // Akselinlaskennan hätävarainen purku!
+    // Käytetään, jos raide on tyhjä, vaikka asetinlaite muuta väittää
+    akseleita_ = 0;
+    junanumero_.clear();
+    paivita();
+}
+
 
 
 void RataRaide::haeNaapurit()
