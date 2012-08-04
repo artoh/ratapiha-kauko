@@ -53,7 +53,8 @@ HEADERS += \
     aikatauluikkuna.h \
     aikatauluview.h \
     aikataulunselausikkuna.h \
-    aikatauluselaaja.h
+    aikatauluselaaja.h \
+    aikataulumuokkaaja.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -105,7 +106,8 @@ SOURCES += \
     aikatauluikkuna.cpp \
     aikatauluview.cpp \
     aikataulunselausikkuna.cpp \
-    aikatauluselaaja.cpp
+    aikatauluselaaja.cpp \
+    aikataulumuokkaaja.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
@@ -204,11 +206,19 @@ OTHER_FILES += \
     pic/viesvg.png \
     pic/tulosta.png \
     pic/alhpkursori.png \
-    pic/alhp.png
+    pic/alhp.png \
+    pic/poista.png \
+    pic/peru.png \
+    pic/lisaa.png \
+    pic/hyvaksy.png
 
 FORMS += \
     ajopoyta.ui \
     ratapihaikkuna.ui
+
+
+
+
 
 
 

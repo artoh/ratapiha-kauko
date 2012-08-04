@@ -23,6 +23,9 @@
 #include <QGraphicsScene>
 #include <QDateTime>
 #include <QGraphicsLineItem>
+#include <QMap>
+
+class JunaViiva;
 
 class GraafinenAikatauluScene : public QGraphicsScene
 {
@@ -51,11 +54,17 @@ signals:
     
 public slots:
     void paivitaKelloViiva(const QDateTime& aika);
+    void valitseJuna(const QString& junatunnus = QString());
+    void paivitaJuna(const QString& junatunnus);
     
 
 protected:
     void lataaRuudukko();
     void lataaAikataulut();
+    void lataaAikatauluKysymyksesta(const QString& kysymys);
+    void paivitaKaikki();
+
+    JunaViiva* piirraLoki(const QString& junantunnus);
 
     qreal pieninKmluku_;
     qreal isoinKmluku_;
@@ -70,6 +79,10 @@ protected:
     int tuntiLoppuu_;
 
     QGraphicsLineItem* kelloViiva_;
+
+    QMap<QString, JunaViiva*> junaViivat_;
+    JunaViiva* aktiivinen_;
+    JunaViiva* lokiviiva_;
 
 };
 

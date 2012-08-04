@@ -37,8 +37,13 @@ public:
 
     void piirraViiva( QPen kyna = QPen());
     QString junanumero() const { return junanumero_; }
+    void vaihdaKyna( QPen kyna = QPen()); // Piirtää uudestaan toisella kynällä
+
+    void poistaViiva();
 
 protected:
+    QPen kynaTyypista(QChar tyyppikirjain);
+
     GraafinenAikatauluScene* skene_;
     QString junanumero_;
 

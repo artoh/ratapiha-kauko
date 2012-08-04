@@ -31,7 +31,7 @@
 #include <QAction>
 #include <QSlider>
 
-class AikatauluSelaaja;
+class AikatauluMuokkaaja;
 
 class AikatauluView;
 
@@ -62,7 +62,7 @@ protected:
     AikatauluView* view_;
 
     QComboBox* taulunValintaCombo_;
-    AikatauluSelaaja* selaaja_;
+    AikatauluMuokkaaja* aikatauluMuokkaaja_;
 
     QAction* vieSvgAktio_;
     QAction* tulostaAktio_;

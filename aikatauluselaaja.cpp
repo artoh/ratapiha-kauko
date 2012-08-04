@@ -18,12 +18,14 @@
 **************************************************************************/
 
 #include "aikatauluselaaja.h"
+#include "ratapihaikkuna.h"
 
 #include <QSqlQuery>
 #include <QTime>
 
 AikatauluSelaaja::AikatauluSelaaja(QWidget *parent) :
-    QTextBrowser(parent)
+    QTextBrowser(parent) ,
+    selattavanTyyppi_(Tyhja)
 {
     setOpenLinks(false);
     connect( this, SIGNAL(anchorClicked(QUrl)), this, SLOT(klikattu(QUrl)));
@@ -143,10 +145,21 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
     clear();
     document()->setDefaultStyleSheet(tyyli);
     setHtml(teksti);
+
+    selattavanTyyppi_ = Asema;
+    selattavanTunnus_ = liikennepaikka;
+    emit naytetaanAsema(liikennepaikka);
 }
 
 void AikatauluSelaaja::haeJunaAikataulu(const QString &juna)
 {
+    if( juna.startsWith("(LOKI)"))
+    {
+        naytaLoki( juna.mid(6));
+        return;
+    }
+
+
     QString kysymys = QString("select nimi, addtime(lahtee,lahtoaika) as aika, pysahtyy, raide, tapahtuma, aikataulu.liikennepaikka "
                               "from juna,aikataulu,liikennepaikka "
                               "where juna.junanro=\"%1\" and "
@@ -155,9 +168,6 @@ void AikatauluSelaaja::haeJunaAikataulu(const QString &juna)
 
 
     QString teksti = QString("<html><body><h1>%1</h1>").arg(juna);
-    QSqlQuery reittikysymys( QString("select reitti from juna where junanro=\"%1\"").arg(juna));
-    if( reittikysymys.next())
-        teksti.append( reittikysymys.value(0).toString() );
 
     teksti.append("<table width=100%><tr><th>Liikennepaikka</th><th>Saapuu</th><th>Lähtee</th><th>Raide</th></tr>\n");
 
@@ -215,7 +225,11 @@ void AikatauluSelaaja::haeJunaAikataulu(const QString &juna)
         teksti.append("</td></tr>\n");
     }
 
-    teksti.append("</table></body></html>");
+    teksti.append("</table>");
+
+    teksti.append(QString("<hr><a href=\"file:J(LOKI)%1\">Kulkutiedot</a>").arg(juna));
+
+    teksti.append("</body></html>");
 
     QString tyyli = " * { font-family: \"Helvetica\"; } "
             "h1  { font-size: 16px; background-color: yellow; }  "
@@ -227,6 +241,10 @@ void AikatauluSelaaja::haeJunaAikataulu(const QString &juna)
     document()->setDefaultStyleSheet(tyyli);
     setHtml(teksti);
 
+    selattavanTyyppi_ = Juna;
+    selattavanTunnus_ = juna;
+    emit naytetaanJuna(juna);
+
 }
 
 void AikatauluSelaaja::klikattu(const QUrl &linkki)
@@ -236,4 +254,66 @@ void AikatauluSelaaja::klikattu(const QUrl &linkki)
         haeJunaAikataulu(haettava.mid(1));
     else if( haettava.startsWith('A'))
         haeAsemaAikataulu(haettava.mid(1));
+}
+
+void AikatauluSelaaja::naytaLoki(const QString &junanumero)
+{
+
+    QDateTime verrokki = RatapihaIkkuna::getInstance()->simulaatioAika().addDays(-1);
+    QString aikajono = verrokki.toString(Qt::ISODate);
+    aikajono[10]=' ';
+    QString kysymys = QString("select nimi, raide, aika, ilmoitus,nopeus "
+                              "from veturiloki natural join liikennepaikka "
+                              "where junanro=\"%1\" and aika>\"%2\" ")
+            .arg(junanumero).arg(aikajono);
+
+    QString teksti = QString("<html><body><h1>Kulkutiedot junasta %1</h1>").arg(junanumero);
+    teksti.append("<table width=100%><tr><th>Liikennepaikka</th><th>Raide</th><th>Kello</th><th>Kulunut</th><th>Nopeus</th><th>Tapahtuma</th></tr>\n");
+
+    QDateTime alkuaika;
+
+    QSqlQuery kysely(kysymys);
+    int rivi = 1;
+    while( kysely.next())
+    {
+        QString liikennepaikka = kysely.value(0).toString();
+        int raide = kysely.value(1).toInt();
+        QDateTime aika = kysely.value(2).toDateTime();
+        QString ilmoitus = kysely.value(3).toString();
+        int nopeus = kysely.value(4).toInt();
+
+        if( alkuaika.isNull())
+            alkuaika = aika;
+
+        QTime kulunut = QTime(0,0).addSecs( alkuaika.secsTo(aika)   );
+
+        if( rivi++ % 2 )
+            teksti.append("<tr>");
+        else
+            teksti.append("<tr class=varjo>");
+
+        QString tapaus;
+        if( ilmoitus == "P")
+            tapaus = "Pysähtyy";
+        else if( ilmoitus == "L")
+            tapaus = "Lähtee";
+        else if( ilmoitus == "S")
+            tapaus = "Saapuu";
+
+        teksti.append( QString("<td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5 km/h</td><td>%6</td></tr>\n ")
+                       .arg(liikennepaikka).arg(raide,3,10,QChar('0')).arg( aika.time().toString() )
+                       .arg(kulunut.toString()  ).arg(nopeus).arg(tapaus) );
+    }
+
+    teksti.append("</table></body></html>");
+
+    QString tyyli = " * { font-family: \"Helvetica\"; } "
+            "h1  { font-size: 16px; background-color: yellow; }  "
+            "th { font-weight: normal; background-color: lightgray }  "
+            "tr.varjo { background-color: lightgray; } "
+            "a  { font-size: 14px; color: black; text-decoration:none;  }"
+            "td { font-size: 10px; } ";
+    clear();
+    document()->setDefaultStyleSheet(tyyli);
+    setHtml(teksti);
 }

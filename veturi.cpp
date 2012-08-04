@@ -511,7 +511,7 @@ void Veturi::aja()
       emit nopeusIlmoitus( nopeus());
 
       // Pysähdystiedon päivitys
-      if( nopeusMs() < 3 )
+      if( nopeusMs() == 0 )
       {
           if( !pysahtyi_.isValid())
           {

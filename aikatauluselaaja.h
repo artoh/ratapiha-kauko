@@ -29,13 +29,26 @@ class AikatauluSelaaja : public QTextBrowser
 public:
     explicit AikatauluSelaaja(QWidget *parent = 0);
 
+    enum Selattava { Tyhja, Juna, Asema } ;
+
+    QString tunnus() const { return selattavanTunnus_; }
+    Selattava tyyppi() const { return selattavanTyyppi_; }
+
 signals:
+    void naytetaanAsema(const QString& liikennepaikka);
+    void naytetaanJuna( const QString& junanumero);
     
 public slots:
     void klikattu(const QUrl& linkki);
 
     void haeJunaAikataulu(const QString& juna);
     void haeAsemaAikataulu(const QString& liikennepaikka);
+
+protected:
+    void naytaLoki(const QString& junanumero);
+
+    QString selattavanTunnus_;
+    Selattava selattavanTyyppi_;
 };
 
 #endif // AIKATAULUSELAAJA_H

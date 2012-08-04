@@ -92,5 +92,9 @@
         <file>pic/tulosta.png</file>
         <file>pic/alhp.png</file>
         <file>pic/alhpkursori.png</file>
+        <file>pic/lisaa.png</file>
+        <file>pic/peru.png</file>
+        <file>pic/poista.png</file>
+        <file>pic/hyvaksy.png</file>
     </qresource>
 </RCC>

@@ -20,6 +20,7 @@
 #include "aikatauluikkuna.h"
 #include "aikatauluview.h"
 #include "aikatauluselaaja.h"
+#include "aikataulumuokkaaja.h"
 
 #include <QSqlQuery>
 #include <QDockWidget>
@@ -45,8 +46,11 @@ AikatauluIkkuna::AikatauluIkkuna(RatapihaIkkuna *parent) :
 
     setAttribute( Qt::WA_DeleteOnClose);
 
-    connect(view_, SIGNAL(asemaValittu(QString)), selaaja_, SLOT(haeAsemaAikataulu(QString)));
-    connect(view_, SIGNAL(junaValittu(QString)), selaaja_, SLOT(haeJunaAikataulu(QString)));
+    connect(view_, SIGNAL(asemaValittu(QString)), aikatauluMuokkaaja_->selaaja(), SLOT(haeAsemaAikataulu(QString)));
+    connect(view_, SIGNAL(junaValittu(QString)), aikatauluMuokkaaja_->selaaja(), SLOT(haeJunaAikataulu(QString)));
+    connect( aikatauluMuokkaaja_->selaaja(), SIGNAL(naytetaanJuna(QString)), skene_, SLOT(valitseJuna(QString)));
+    connect( aikatauluMuokkaaja_->selaaja(), SIGNAL(naytetaanAsema(QString)), skene_, SLOT(valitseJuna()));
+    connect( aikatauluMuokkaaja_, SIGNAL(junaPaivitetty(QString)), skene_, SLOT(paivitaJuna(QString)));
 }
 
 void AikatauluIkkuna::taulunVaihto(int valintaind)
@@ -136,9 +140,9 @@ void AikatauluIkkuna::luoTyokalurivi()
 
 void AikatauluIkkuna::luoDockit()
 {
-    selaaja_ = new AikatauluSelaaja;
-    QDockWidget* selaajaDock = new QDockWidget( tr("Aikataulun selaus"));
-    selaajaDock->setWidget(selaaja_);
+    aikatauluMuokkaaja_ = new AikatauluMuokkaaja(this);
+    QDockWidget* selaajaDock = new QDockWidget( tr("Aikataulu"));
+    selaajaDock->setWidget(aikatauluMuokkaaja_);
     addDockWidget(Qt::RightDockWidgetArea, selaajaDock);
 
 }

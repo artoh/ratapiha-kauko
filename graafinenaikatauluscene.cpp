@@ -21,6 +21,7 @@
 #include "ratapihaikkuna.h"
 #include "junaviiva.h"
 
+
 #include <QGraphicsSimpleTextItem>
 #include <QGraphicsLineItem>
 #include <QSqlQuery>
@@ -31,7 +32,8 @@
 
 GraafinenAikatauluScene::GraafinenAikatauluScene(QObject *parent) :
     QGraphicsScene(parent), taulu_(0),
-     ruudukonLeveys_(7200), tuntiAlkaa_(0), tuntiLoppuu_(24)
+     ruudukonLeveys_(7200), tuntiAlkaa_(0), tuntiLoppuu_(24),
+    aktiivinen_(0), lokiviiva_(0)
 {
     setBackgroundBrush( QBrush(Qt::white));
     maxX_ = xAjasta( QTime(tuntiLoppuu_-1,59,59));
@@ -42,12 +44,9 @@ GraafinenAikatauluScene::GraafinenAikatauluScene(QObject *parent) :
 
 void GraafinenAikatauluScene::lataaTaulu(int taulu)
 {
-    clear();
-    kelloViiva_ = addLine( QLineF());
 
     taulu_ = taulu;
-    lataaRuudukko();
-    lataaAikataulut();
+    paivitaKaikki();
 
 }
 
@@ -57,11 +56,7 @@ void GraafinenAikatauluScene::asetaAikavali(int mista, int mihin)
     tuntiLoppuu_ = mihin;
     maxX_ = xAjasta( QTime(tuntiLoppuu_-1,59,59));
 
-    clear();
-    kelloViiva_ = addLine( QLineF());
-
-    lataaRuudukko();
-    lataaAikataulut();
+    paivitaKaikki();
 }
 
 void GraafinenAikatauluScene::lataaRuudukko()
@@ -116,7 +111,7 @@ void GraafinenAikatauluScene::lataaRuudukko()
 
         qreal y = yKmluvusta( kmluku );
         // Piirretään viiva
-        addLine(0, y, maxX_, y, QPen(Qt::darkGray));
+        addLine(0, y, maxX_, y, QPen(Qt::darkGray,0,Qt::DashLine));
 
         int leveys = -1;
         if( liikenteenohjaus)
@@ -152,9 +147,48 @@ void GraafinenAikatauluScene::lataaRuudukko()
 
 }
 
+
+void GraafinenAikatauluScene::paivitaKaikki()
+{
+    aktiivinen_ = 0;
+    QMapIterator<QString, JunaViiva*> i(junaViivat_);
+    while( i.hasNext())
+        delete i.next().value();
+    junaViivat_.clear();
+
+    clear();
+    kelloViiva_ = addLine( QLineF());
+
+    lataaRuudukko();
+    lataaAikataulut();
+
+}
+
+void GraafinenAikatauluScene::paivitaJuna(const QString &junatunnus)
+{
+    // Poistetaan yksittäinen viiva...
+    if( junaViivat_.contains(junatunnus))
+    {
+        junaViivat_.value(junatunnus)->poistaViiva();
+        delete junaViivat_.value(junatunnus);
+        junaViivat_.remove(junatunnus);
+        aktiivinen_ = false;
+    }
+
+    // haetaan se uudestaan
+    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy "
+                       "from taulussa, liikennepaikka, aikataulu, juna "
+                       "where taulussa.liikennepaikka = aikataulu.liikennepaikka "
+                       "and juna.reitti = aikataulu.reitti "
+                       "and liikennepaikka.liikennepaikka = aikataulu.liikennepaikka "
+                       " and taulu=%1 and junanro=\"%2\" order by junanro, aika").arg(taulu_).arg(junatunnus);
+
+    lataaAikatauluKysymyksesta(kysymys);
+    valitseJuna(junatunnus);
+}
+
 void GraafinenAikatauluScene::lataaAikataulut()
 {
-
     // Yksinkertainen sql-kysely, jolla ladataan aikataulu
     QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy "
                        "from taulussa, liikennepaikka, aikataulu, juna "
@@ -163,9 +197,16 @@ void GraafinenAikatauluScene::lataaAikataulut()
                        "and liikennepaikka.liikennepaikka = aikataulu.liikennepaikka "
                        " and taulu=%1 order by junanro, aika").arg(taulu_);
 
+    lataaAikatauluKysymyksesta(kysymys);
+}
+
+void GraafinenAikatauluScene::lataaAikatauluKysymyksesta(const QString &kysymys)
+{
 
     QSqlQuery kysely( kysymys );
     JunaViiva* viiva = 0;
+
+
 
     while( kysely.next())
     {
@@ -180,7 +221,7 @@ void GraafinenAikatauluScene::lataaAikataulut()
         {
             // Nyt on valmis
             viiva->piirraViiva();
-            delete viiva;
+            junaViivat_.insert( viiva->junanumero(), viiva);
             viiva = 0;
         }
 
@@ -195,7 +236,10 @@ void GraafinenAikatauluScene::lataaAikataulut()
     }
     // Piirretään viimeinen viiva
     if( viiva )
+    {
         viiva->piirraViiva();
+        junaViivat_.insert( viiva->junanumero(), viiva);
+    }
 
 
     // Nyt pitäisi olla myös viivat kohdallaan
@@ -221,3 +265,64 @@ qreal GraafinenAikatauluScene::xAjasta(QTime aika) const
 
 const int GraafinenAikatauluScene::JUNANRODATAKENTTA;
 const int GraafinenAikatauluScene::ASEMANTUNNUSKENTTA;
+
+void GraafinenAikatauluScene::valitseJuna(const QString &junatunnus)
+{
+    if( aktiivinen_)
+        aktiivinen_->piirraViiva(); // Ei enää aktiivisena
+    if( junatunnus.isEmpty())
+        aktiivinen_ = 0;
+    else
+    {
+        aktiivinen_ = junaViivat_.value(junatunnus,0);
+        if( aktiivinen_)
+        {
+            aktiivinen_->piirraViiva( QPen( Qt::magenta, 1.0) );
+            if( lokiviiva_)
+            {
+                // Siirretään lokiviiva valitulle junalle
+                lokiviiva_->poistaViiva();
+                delete lokiviiva_;
+            }
+            lokiviiva_ = piirraLoki(junatunnus);
+        }
+    }
+}
+
+JunaViiva* GraafinenAikatauluScene::piirraLoki(const QString &junantunnus)
+{
+    QDateTime verrokki = RatapihaIkkuna::getInstance()->simulaatioAika().addDays(-1);
+    QString aikajono = verrokki.toString(Qt::ISODate);
+    aikajono[10]=' ';
+
+    QString kysymys = QString("SELECT aika, tapahtuma, ilmoitus, kmluku "
+            " from juna, aikataulu, veturiloki, liikennepaikka "
+            " where juna.junanro=\"%1\" "
+            " and juna.junanro=veturiloki.junanro "
+            " and juna.reitti = aikataulu.reitti "
+            " and aikataulu.raide = veturiloki.raide "
+            " and aikataulu.liikennepaikka = veturiloki.liikennepaikka "
+            " and liikennepaikka.liikennepaikka = veturiloki.liikennepaikka "
+            "and aika > \"%2\" "
+            " order by aika ").arg(junantunnus).arg(aikajono);
+
+    JunaViiva* loki = new JunaViiva(this,QString("(LOKI)%1").arg(junantunnus));
+
+    QSqlQuery kysely(kysymys);
+    while( kysely.next())
+    {
+        QDateTime aika = kysely.value(0).toDateTime();
+        QString tapahtuma = kysely.value(1).toString();
+        QString ilmoitus = kysely.value(2).toString();
+        qreal kmluku = kysely.value(3).toDouble();
+
+        if( ilmoitus != "R"  || tapahtuma == "O")  // Ohittavasta merkitään raiteelle saapuminen, muista ei
+        {
+            loki->lisaaPaikka(kmluku, aika.time());
+        }
+    }
+    loki->piirraViiva( QPen(Qt::darkYellow, 1.0));
+    return loki;
+}
+
+

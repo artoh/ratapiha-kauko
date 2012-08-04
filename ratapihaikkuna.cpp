@@ -321,6 +321,8 @@ void RatapihaIkkuna::graafinenAikataulu()
     if( tila() == EiYhteytta)
         if (yhdistaTietokantaan())
             lukuYhteysMuodostettu();
+    if( tila() == EiYhteytta)
+        return; // Tietokantaan yhdistäminen ei onnistunut
     AikatauluIkkuna* ikkuna = new AikatauluIkkuna(this);
     ikkuna->show();
 }
@@ -342,6 +344,7 @@ bool RatapihaIkkuna::onkoYhteydessa()
 void RatapihaIkkuna::aikaMuuttunut(const QDateTime &aika)
 {
     ui->viestiLabel->setText( aika.toString("dd.MM.yyyy    HH:mm") );
+    simulaatioAika_ = aika;
     emit kello(aika);
 }
 

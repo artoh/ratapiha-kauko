@@ -54,18 +54,8 @@ void JunaViiva::lisaaPaikka(qreal kmluku, const QTime &aika)
 
 void JunaViiva::piirraViiva(QPen kyna)
 {
-    if( kyna == QPen())
-    {
-        if( junanumero().startsWith("P"))
-            kyna = QPen( Qt::red);
-        else if( junanumero().startsWith('S'))
-            kyna = QPen( Qt::darkRed);
-        else if( junanumero().startsWith('H'))
-            kyna = QPen( Qt::black);
-        else
-            kyna = QPen( Qt::blue);
-    }
-
+    if( kyna == QPen() && !junanumero().isEmpty())
+        kyna = kynaTyypista(junanumero().at(0));
 
     for( int i=1; i < pisteet_.count(); i++)
     {
@@ -97,6 +87,34 @@ void JunaViiva::piirraViiva(QPen kyna)
             viiva->setData( GraafinenAikatauluScene::JUNANRODATAKENTTA, QVariant(  junanumero() ));
             viivat_.append( viiva );
         }
+    }
+}
+
+QPen JunaViiva::kynaTyypista(QChar tyyppikirjain)
+{
+    if( tyyppikirjain == QChar('P') )
+        return QPen(Qt::red,1.0);
+    else if( tyyppikirjain == QChar('S'))
+        return QPen(Qt::darkRed,1.0);
+    else if( tyyppikirjain == QChar('H'))
+        return QPen(Qt::black,1.0);
+
+    return QPen( Qt::blue,1.0);
+}
+
+void JunaViiva::vaihdaKyna(QPen kyna)
+{
+    if( kyna == QPen() && !junanumero().isEmpty())
+        kyna = kynaTyypista(junanumero().at(0));
+    foreach( QGraphicsLineItem* viiva, viivat_)
+        viiva->setPen(kyna);
+}
+
+void JunaViiva::poistaViiva()
+{
+    foreach( QGraphicsLineItem* viiva, viivat_)
+    {
+        viiva->hide();
     }
 }
 

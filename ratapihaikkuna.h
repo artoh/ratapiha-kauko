@@ -26,6 +26,7 @@
 #include <QTcpSocket>
 #include <QSqlDatabase>
 #include <QPrinter>
+#include <QDateTime>
 
 class RataScene;
 
@@ -89,6 +90,7 @@ public slots:
     void aikaMuuttunut(const QDateTime& aika);
 
     QPrinter* printteri() { return &printteri_; }
+    QDateTime simulaatioAika() { return simulaatioAika_; }
 
 signals:
     /* Asetinlaitteelle annettuun käskyyn tullut vastaus */
@@ -119,6 +121,7 @@ private:
 
     int asiakkaita_;
     QPrinter printteri_;
+    QDateTime simulaatioAika_;
 
     static RatapihaIkkuna* instance__;
 };
