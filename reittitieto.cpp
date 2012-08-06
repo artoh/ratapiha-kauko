@@ -29,10 +29,30 @@ ReittiTieto::ReittiTieto(ReittiTieto::TapahtumaTyyppi tapahtumaTyyppi, QTime lah
 ReittiTieto::ReittiTieto(QString tapahtumatyyppi, QTime lahtoaika, int pysahtyySekuntia)
     : lahtoaika_(lahtoaika), pysahtyySekuntia_(pysahtyySekuntia), tapahtuma_(Pysahtyy)
 {
-    if( tapahtumatyyppi == "L")
-        tapahtuma_ = Lahtee;
-    else if( tapahtumatyyppi == "S")
-        tapahtuma_ = Saapuu;
-    else if( tapahtumatyyppi == "O")
-        tapahtuma_ = Ohittaa;
+    if( !tapahtumatyyppi.isEmpty())
+        tapahtuma_ = tapahtumaKirjaimesta( tapahtumatyyppi[0]);
+}
+
+QChar ReittiTieto::tapahtumaKirjain() const
+{
+    if( tapahtumaTyyppi() == Pysahtyy)
+        return QChar('P');
+    else if( tapahtumaTyyppi() == Lahtee)
+        return QChar('L');
+    else if( tapahtumaTyyppi() == Saapuu)
+        return QChar('S');
+    else if( tapahtumaTyyppi() == Ohittaa )
+        return QChar('O');
+    return QChar();
+}
+
+ReittiTieto::TapahtumaTyyppi ReittiTieto::tapahtumaKirjaimesta(const QChar &kirjain)
+{
+    if( kirjain == QChar('O'))
+        return Ohittaa;
+    else if( kirjain == QChar('L'))
+        return Lahtee;
+    else if( kirjain == QChar('S'))
+        return Saapuu;
+    return Pysahtyy;
 }

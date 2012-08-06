@@ -96,5 +96,7 @@
         <file>pic/peru.png</file>
         <file>pic/poista.png</file>
         <file>pic/hyvaksy.png</file>
+        <file>pic/kopioi.png</file>
+        <file>pic/reitit.png</file>
     </qresource>
 </RCC>

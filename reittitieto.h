@@ -42,6 +42,9 @@ public:
     QTime lahtoAika() const { return lahtoaika_; }
     int pysahtyy() const { return pysahtyySekuntia_; }
     TapahtumaTyyppi tapahtumaTyyppi() const { return tapahtuma_; }
+    QChar tapahtumaKirjain() const;
+
+    static TapahtumaTyyppi tapahtumaKirjaimesta(const QChar& kirjain);
 
 
 protected:

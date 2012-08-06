@@ -21,6 +21,7 @@
 #include "aikatauluview.h"
 #include "aikatauluselaaja.h"
 #include "aikataulumuokkaaja.h"
+#include "reittidialogi.h"
 
 #include <QSqlQuery>
 #include <QDockWidget>
@@ -103,7 +104,15 @@ void AikatauluIkkuna::luoAktiot()
     tulostaAktio_ = new QAction( QIcon(":/r/pic/tulosta.png"), tr("Tulosta grafiikka"), this);
     connect( tulostaAktio_, SIGNAL(triggered()), this, SLOT(tulosta()));
 
+    reittiAktio_ = new QAction( QIcon(":/r/pic/reitit.png"), tr("Reittien suunnittelu"),this);
+    connect( reittiAktio_, SIGNAL(triggered()), this, SLOT(reittiDialogi()));
 
+}
+
+void AikatauluIkkuna::reittiDialogi()
+{
+    ReittiDialogi* dialogi = new ReittiDialogi(this);
+    dialogi->show();
 }
 
 void AikatauluIkkuna::luoTyokalurivi()
@@ -122,6 +131,10 @@ void AikatauluIkkuna::luoTyokalurivi()
 
     tbar->addWidget(taulunValintaCombo_);
 
+    tbar->addAction(tulostaAktio_);
+    tbar->addAction(vieSvgAktio_);
+    tbar->addAction(reittiAktio_);
+
     alkaaSlider_ = new QSlider(Qt::Horizontal, this);
     paattyySlider_ = new QSlider (Qt::Horizontal, this);
     alkaaSlider_->setRange(0,23);
@@ -133,8 +146,7 @@ void AikatauluIkkuna::luoTyokalurivi()
     tbar->addWidget(alkaaSlider_);
     tbar->addWidget(paattyySlider_);
 
-    tbar->addAction(tulostaAktio_);
-    tbar->addAction(vieSvgAktio_);
+
 
 }
 

@@ -59,6 +59,8 @@ public:
     void aja();     // Poistaa opastimen SEIS-tilan
 
     static QChar suuntakirjain(Suunta suunta);
+    static Suunta suuntaKirjaimesta(QChar kirjain);
+    static Suunta suuntaKirjaimesta(const QString& kirjain);
 
 protected:
     /** Päivittää yhden kohteen*/

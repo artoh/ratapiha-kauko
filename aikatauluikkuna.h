@@ -50,6 +50,7 @@ public slots:
     void tulosta();
 
     void vaihdaAikavali();
+    void reittiDialogi();
 
 protected:
 
@@ -66,6 +67,7 @@ protected:
 
     QAction* vieSvgAktio_;
     QAction* tulostaAktio_;
+    QAction* reittiAktio_;
 
     QSlider* alkaaSlider_;
     QSlider* paattyySlider_;

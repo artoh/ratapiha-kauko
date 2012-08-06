@@ -54,7 +54,11 @@ HEADERS += \
     aikatauluview.h \
     aikataulunselausikkuna.h \
     aikatauluselaaja.h \
-    aikataulumuokkaaja.h
+    aikataulumuokkaaja.h \
+    reititmodel.h \
+    reittisuunnittelutieto.h \
+    reittidialogi.h \
+    reittidelegaatti.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -107,7 +111,11 @@ SOURCES += \
     aikatauluview.cpp \
     aikataulunselausikkuna.cpp \
     aikatauluselaaja.cpp \
-    aikataulumuokkaaja.cpp
+    aikataulumuokkaaja.cpp \
+    reititmodel.cpp \
+    reittisuunnittelutieto.cpp \
+    reittidialogi.cpp \
+    reittidelegaatti.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
@@ -210,11 +218,25 @@ OTHER_FILES += \
     pic/poista.png \
     pic/peru.png \
     pic/lisaa.png \
-    pic/hyvaksy.png
+    pic/hyvaksy.png \
+    pic/kopioi.png \
+    pic/reitit.png
 
 FORMS += \
     ajopoyta.ui \
-    ratapihaikkuna.ui
+    ratapihaikkuna.ui \
+    reittidialogi.ui
+
+
+
+
+
+
+
+
+
+
+
 
 
 

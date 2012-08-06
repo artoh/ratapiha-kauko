@@ -282,4 +282,20 @@ QChar RaiteenPaa::suuntakirjain(RaiteenPaa::Suunta suunta)
     return QChar();
 }
 
+RaiteenPaa::Suunta RaiteenPaa::suuntaKirjaimesta(QChar kirjain)
+{
+    if( kirjain == QChar('P'))
+        return Pohjoiseen;
+    else if( kirjain == QChar('E'))
+        return Etelaan;
+    else
+        return Virhe;
+}
+
+RaiteenPaa::Suunta RaiteenPaa::suuntaKirjaimesta(const QString &kirjain)
+{
+    if( kirjain.isEmpty())
+        return Virhe;
+    return suuntaKirjaimesta( kirjain[0]);
+}
 
