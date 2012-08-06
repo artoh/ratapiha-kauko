@@ -24,7 +24,7 @@
 #include "rataikkuna.h"
 #include "kaukoikkuna.h"
 #include "editoriikkuna.h"
-
+#include "reittidialogi.h"
 
 #include "aikatauluikkuna.h"
 #include "aikataulunselausikkuna.h"
@@ -64,6 +64,7 @@ RatapihaIkkuna::RatapihaIkkuna(QWidget *parent) :
 
     connect( ui->graafinenaikatauluNappi, SIGNAL(clicked()), this, SLOT(graafinenAikataulu()));
     connect( ui->selaaAikatauluaNappi, SIGNAL(clicked()), this, SLOT(selaaAikataulua()));
+    connect( ui->reittiNappi, SIGNAL, this, SLOT(muokkaaReitteja()));
 
     connect( &tcpsokka_, SIGNAL(connected()), this, SLOT(yhdistettyPalvelimeen()));
     connect( &tcpsokka_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(verkkovirhe()));
@@ -335,6 +336,17 @@ void RatapihaIkkuna::selaaAikataulua()
     AikataulunSelausIkkuna* ikkuna = new AikataulunSelausIkkuna(this);
     ikkuna->show();
 }
+
+void RatapihaIkkuna::muokkaaReitteja()
+{
+    if( tila() == EiYhteytta)
+        if (yhdistaTietokantaan())
+            lukuYhteysMuodostettu();
+    ReittiDialogi* ikkuna = new ReittiDialogi(this);
+    ikkuna->show();
+
+}
+
 
 bool RatapihaIkkuna::onkoYhteydessa()
 {

@@ -43,6 +43,10 @@ public slots:
     void tallenna();
     void poistaReitti();
 
+signals:
+    void muutettu();
+    void reittiListaaMuutettu();
+
 protected:
     void valintaVaihtuu();
 

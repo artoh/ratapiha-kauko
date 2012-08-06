@@ -49,6 +49,7 @@ public:
 
 signals:
     void muokattu(bool onko);
+    void uusiHylatty();
 
 public slots:
     void valitseReitti( const QString& reittitunnus);

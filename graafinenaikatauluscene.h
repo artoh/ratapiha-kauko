@@ -56,13 +56,14 @@ public slots:
     void paivitaKelloViiva(const QDateTime& aika);
     void valitseJuna(const QString& junatunnus = QString());
     void paivitaJuna(const QString& junatunnus);
+    void paivitaKaikki();
     
 
 protected:
     void lataaRuudukko();
     void lataaAikataulut();
     void lataaAikatauluKysymyksesta(const QString& kysymys);
-    void paivitaKaikki();
+
 
     JunaViiva* piirraLoki(const QString& junantunnus);
 

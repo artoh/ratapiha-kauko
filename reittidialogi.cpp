@@ -55,7 +55,7 @@ ReittiDialogi::ReittiDialogi(QWidget *parent) :
 
     connect( lisaaReittiNappi, SIGNAL(clicked()), this, SLOT( uusiReitti()) );
     connect( kopioiNappi, SIGNAL(clicked()), this, SLOT(kopioiReitti()));
-    connect( poistaReittiNappi, SIGNAL(clicked()), this, SLOT(kopioiReitti()));
+    connect( poistaReittiNappi, SIGNAL(clicked()), this, SLOT(poistaReitti()));
 
     connect( lisaaPysaysNappi, SIGNAL(clicked()), this, SLOT(lisaaPysays()));
     connect( poistaPysaysNappi, SIGNAL(clicked()), this, SLOT(poistaPysays()));
@@ -64,6 +64,7 @@ ReittiDialogi::ReittiDialogi(QWidget *parent) :
     connect( hylkaaNappi, SIGNAL(clicked()), reittiModel_, SLOT(peruMuokkaukset()));
 
     connect( reittiModel_, SIGNAL(muokattu(bool)), this, SLOT(reittiaMuokattu(bool)));
+    connect( reittiModel_, SIGNAL(uusiHylatty()), this, SLOT(poistaReitti()));
 
     tallennusVaroitus->setVisible(false);
 
@@ -171,6 +172,7 @@ void ReittiDialogi::tallenna()
 
     }
 
+    bool muutettuTunnusta = false;
     // Jos tunnus vaihtuu, pitää varmistaa, että tunnus kelpaa
     if( uusitunnus != reittiModel_->reittiTunnus())
     {
@@ -182,11 +184,18 @@ void ReittiDialogi::tallenna()
             QMessageBox::critical(this, tr("Reitin tallennus"),tr("Reitin tunnus %1 on jo toisen reitin käytössä").arg(uusitunnus));
             return;
         }
+        muutettuTunnusta = true;
 
     }
     // Nyt näyttää kaikki kelpaavan, eli voidaan tallentaa!
     reittiModel_->tallenna(uusitunnus);
-    uudenReitinItem_ = 0;   // Tallennettu!
+
+    if( uudenReitinItem_ || muutettuTunnusta )
+    {
+        emit reittiListaaMuutettu();
+        uudenReitinItem_ = 0;   // Tallennettu!
+    }
+    emit muutettu();
 }
 
 void ReittiDialogi::poistaReitti()
@@ -194,7 +203,7 @@ void ReittiDialogi::poistaReitti()
     int indeksi = 1;
     // Poistaa nykyisen reitin, jos sellainen on... ja valitsee listan ensimmäisen
     // Ensimmäisenä pitäisi poistaa listalta
-    if( !reittiLista->currentItem())
+    if( reittiLista->currentItem())
     {
         indeksi = reittiLista->currentRow();
         reittiLista->currentItem()->setHidden(true);
@@ -211,5 +220,6 @@ void ReittiDialogi::poistaReitti()
         haeReitti( seuraavaValittu->text());
         seuraavaValittu->setSelected(true);
     }
+    emit reittiListaaMuutettu();
 }
 

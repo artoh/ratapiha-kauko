@@ -113,6 +113,8 @@ void AikatauluIkkuna::reittiDialogi()
 {
     ReittiDialogi* dialogi = new ReittiDialogi(this);
     dialogi->show();
+    connect( dialogi, SIGNAL(muutettu()), skene_, SLOT(paivitaKaikki()) );
+    connect( dialogi, SIGNAL(reittiListaaMuutettu()), aikatauluMuokkaaja_, SLOT(lataaReitit()));
 }
 
 void AikatauluIkkuna::luoTyokalurivi()

@@ -208,6 +208,8 @@ void ReititModel::peruMuokkaukset()
         valitseReitti( reittiTunnus_);  // Valitsee nykyisen reitin!
         emit muokattu(false);
     }
+    else
+        emit uusiHylatty(); // Tämä poistetaan!
 }
 
 void ReititModel::reitistaKopio()
