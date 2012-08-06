@@ -183,7 +183,7 @@ void Veturi::paivitaJkvTiedot()
                     {
                         lahtoaikaPysahdyksesta = pysahtyi_.time().addSecs( reitti_.value(raidetunnus).pysahtyy() );
                         pysahdysAjasta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo(lahtoaikaPysahdyksesta);
-                        if( pysahdysAjasta  < -43200)   // keskiyön ylitys
+                        if( pysahdysAjasta  < -84000)   // keskiyön ylitys, varaudutaan noin puolen tunnin varaan
                             pysahdysAjasta += 86400;
                     }
                     else if( reitti_.value(raidetunnus).tapahtumaTyyppi() != ReittiTieto::Lahtee )
@@ -198,8 +198,8 @@ void Veturi::paivitaJkvTiedot()
                     {
                         QTime lahtoaikaTaulusta = reitti_.value(raidetunnus).lahtoAika();
                         pysahdysTaulusta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo( lahtoaikaTaulusta );
-                        if( pysahdysTaulusta  < -43200)   // keskiyön ylitys
-                            pysahdysTaulusta += 86400;
+                  //      if( pysahdysTaulusta  < -43200)   // keskiyön ylitys
+                  //          pysahdysTaulusta += 86400;
 
                         // Myöhästyminen asemalla ollessa voidaan laskea siitä, kuinka paljon
                         // pysähdysajasta laskettu lähtöaika on aikataulun mukaista

@@ -188,7 +188,7 @@ void ReititModel::lisaaPysahdys(const QString &liikennepaikka)
     {
         // Muuten lisätään toiseksi viimeiseksi
         beginInsertRows( QModelIndex(), tiedot_.count()-1, tiedot_.count()-1);
-        tiedot_.insert( tiedot_.count()-1, ReittiSuunnitteluTieto(liikennepaikka, 40, QTime(), 0, "P", tiedot_.at( tiedot_.count()-1 ).suunta()) );
+        tiedot_.insert( tiedot_.count()-1, ReittiSuunnitteluTieto(liikennepaikka, 0, QTime(), 40, "P", tiedot_.at( tiedot_.count()-1 ).suunta()) );
         endInsertRows();
     }
     emit muokattu(true);

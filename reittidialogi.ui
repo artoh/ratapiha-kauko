@@ -178,7 +178,11 @@
     </layout>
    </item>
    <item>
-    <widget class="QListWidget" name="liikennepaikkaLista"/>
+    <widget class="QListWidget" name="liikennepaikkaLista">
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
