@@ -64,7 +64,7 @@ RatapihaIkkuna::RatapihaIkkuna(QWidget *parent) :
 
     connect( ui->graafinenaikatauluNappi, SIGNAL(clicked()), this, SLOT(graafinenAikataulu()));
     connect( ui->selaaAikatauluaNappi, SIGNAL(clicked()), this, SLOT(selaaAikataulua()));
-    connect( ui->reittiNappi, SIGNAL, this, SLOT(muokkaaReitteja()));
+    connect( ui->reittiNappi, SIGNAL(clicked()), this, SLOT(muokkaaReitteja()));
 
     connect( &tcpsokka_, SIGNAL(connected()), this, SLOT(yhdistettyPalvelimeen()));
     connect( &tcpsokka_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(verkkovirhe()));

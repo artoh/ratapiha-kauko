@@ -41,7 +41,7 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
 
     QString kysymys = QString("select juna.junanro as Juna, addtime(lahtee,taulu.lahtoaika) as Kello, "
     "minnelkp.nimi as Minne,  addtime(lahtee, minne.lahtoaika) as Perilla, taulu.raide as Laituri, "
-    "taulu.pysahtyy as pysahtyy, taulu.tapahtuma as tapahtuma, minnelkp.liikennepaikka as lyhenne "
+    "taulu.pysahtyy as pysahtyy, taulu.tapahtuma as tapahtuma, minnelkp.liikennepaikka as lyhenne, taulu.lahtoaika "
     "from juna, aikataulu as taulu, aikataulu as minne, liikennepaikka as minnelkp "
     " where taulu.reitti = juna.reitti and taulu.reitti = minne.reitti and "
     " minnelkp.liikennepaikka = minne.liikennepaikka "
@@ -79,16 +79,16 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
         QTime saapuu;
         QTime lahtee;
 
-        if( tapahtuma == "S")
+        if( tapahtuma == "S" &&  !junaKysely.isNull(8) )
         {
             saapuu = kello;
         }
-        else if( tapahtuma == "P")
+        else if( tapahtuma == "P" &&  !junaKysely.isNull(8) )
         {
             saapuu = kello.addSecs( 0 - pysahtyySekuntia );
             lahtee = kello;
         }
-        else if( tapahtuma == "L" )
+        else if( tapahtuma == "L" &&  !junaKysely.isNull(8) )
         {
             lahtee = kello;
         }
@@ -160,7 +160,7 @@ void AikatauluSelaaja::haeJunaAikataulu(const QString &juna)
     }
 
 
-    QString kysymys = QString("select nimi, addtime(lahtee,lahtoaika) as aika, pysahtyy, raide, tapahtuma, aikataulu.liikennepaikka "
+    QString kysymys = QString("select nimi, addtime(lahtee,lahtoaika) as aika, pysahtyy, raide, tapahtuma, aikataulu.liikennepaikka, lahtoaika "
                               "from juna,aikataulu,liikennepaikka "
                               "where juna.junanro=\"%1\" and "
                               "juna.reitti = aikataulu.reitti and aikataulu.liikennepaikka=liikennepaikka.liikennepaikka "
@@ -195,7 +195,7 @@ void AikatauluSelaaja::haeJunaAikataulu(const QString &juna)
         {
             saapuu = kello;
         }
-        else if( tapahtuma == "P")
+        else if( tapahtuma == "P" && !kysely.isNull(6))
         {
             saapuu = kello.addSecs( 0 - pysahtyySekuntia );
             lahtee = kello;

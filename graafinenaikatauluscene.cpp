@@ -176,7 +176,7 @@ void GraafinenAikatauluScene::paivitaJuna(const QString &junatunnus)
     }
 
     // haetaan se uudestaan
-    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy "
+    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy, lahtoaika "
                        "from taulussa, liikennepaikka, aikataulu, juna "
                        "where taulussa.liikennepaikka = aikataulu.liikennepaikka "
                        "and juna.reitti = aikataulu.reitti "
@@ -190,7 +190,7 @@ void GraafinenAikatauluScene::paivitaJuna(const QString &junatunnus)
 void GraafinenAikatauluScene::lataaAikataulut()
 {
     // Yksinkertainen sql-kysely, jolla ladataan aikataulu
-    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy "
+    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy, lahtoaika "
                        "from taulussa, liikennepaikka, aikataulu, juna "
                        "where taulussa.liikennepaikka = aikataulu.liikennepaikka "
                        "and juna.reitti = aikataulu.reitti "
@@ -228,11 +228,15 @@ void GraafinenAikatauluScene::lataaAikatauluKysymyksesta(const QString &kysymys)
         if( !viiva )
             viiva = new JunaViiva(this, junanro);
 
-        // Lisätään piste listaan;
-        // Jos on pysähdyspaikka, lisätään sekä saapumis- että lähtöpisteet
-        if( tapahtuma == "P")
-            viiva->lisaaPaikka(kmluku, aika.addSecs(0-pysahtyySekuntia ));
-        viiva->lisaaPaikka(kmluku, aika);
+        if( !kysely.isNull(5) )
+            // Ei lisätä NULL-viivaa!
+        {
+            // Lisätään piste listaan;
+            // Jos on pysähdyspaikka, lisätään sekä saapumis- että lähtöpisteet
+            if( tapahtuma == "P")
+                viiva->lisaaPaikka(kmluku, aika.addSecs(0-pysahtyySekuntia ));
+            viiva->lisaaPaikka(kmluku, aika);
+        }
     }
     // Piirretään viimeinen viiva
     if( viiva )

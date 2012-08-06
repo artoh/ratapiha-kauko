@@ -29,6 +29,7 @@ void JunaViiva::lisaaPaikka(qreal kmluku, const QTime &aika)
     qreal x = skene_->xAjasta( aika );
     qreal y = skene_->yKmluvusta( kmluku);
 
+
     if( pisteet_.count() && pisteet_.last().x() > x )
     {
         // Ollaan menty vuorokauden ympäri, eli pitää katkaista!!!
@@ -109,6 +110,7 @@ void JunaViiva::vaihdaKyna(QPen kyna)
     foreach( QGraphicsLineItem* viiva, viivat_)
         viiva->setPen(kyna);
 }
+
 
 void JunaViiva::poistaViiva()
 {

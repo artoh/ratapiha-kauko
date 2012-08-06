@@ -39,6 +39,8 @@ public:
     QString junanumero() const { return junanumero_; }
     void vaihdaKyna( QPen kyna = QPen()); // Piirtää uudestaan toisella kynällä
 
+    QTime edellinenAika() const { return edellinenAika_; } // Ensimmäisen pisteen aika
+
     void poistaViiva();
 
 protected:
@@ -50,6 +52,7 @@ protected:
     QList<QPointF> pisteet_;
     QList<QGraphicsLineItem*> viivat_;
 
+    QTime edellinenAika_;
 
 };
 
