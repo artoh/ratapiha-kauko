@@ -158,6 +158,8 @@ bool ReititModel::setData(const QModelIndex &index, const QVariant &value, int r
         break;
     case Tapahtuma:
         tiedot_[ index.row()].asetaTapahtumatyyppi(value.toInt());
+        if( value.toInt() == ReittiSuunnitteluTieto::Ohittaa)
+            tiedot_[ index.row()].asetaPysahdyksenKesto(0); // Ohittava juna ei pysähdy
         break;
 
     }
@@ -186,7 +188,7 @@ void ReititModel::lisaaPysahdys(const QString &liikennepaikka)
     {
         // Muuten lisätään toiseksi viimeiseksi
         beginInsertRows( QModelIndex(), tiedot_.count()-1, tiedot_.count()-1);
-        tiedot_.insert( tiedot_.count()-1, ReittiSuunnitteluTieto(liikennepaikka, 0, QTime(), 0, "P", tiedot_.at( tiedot_.count()-1 ).suunta()) );
+        tiedot_.insert( tiedot_.count()-1, ReittiSuunnitteluTieto(liikennepaikka, 40, QTime(), 0, "P", tiedot_.at( tiedot_.count()-1 ).suunta()) );
         endInsertRows();
     }
     emit muokattu(true);
