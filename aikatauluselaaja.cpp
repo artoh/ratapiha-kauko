@@ -111,7 +111,7 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
             teksti.append( lahtee.toString("hh.mm"));
 
         // Näytetään vain raiteen viimeinen numero (paitsi Helsingissä kaksi)
-        if( liikennepaikka == "Hki")
+        if( liikennepaikka == "Hki" || liikennepaikka == "Psl")
             raide = raide % 100;
         else
             raide = raide % 10;
@@ -184,7 +184,7 @@ void AikatauluSelaaja::haeJunaAikataulu(const QString &juna)
         QString liikennepaikkaLyhenne = kysely.value(5).toString();
 
         // Näytetään vain raiteen viimeinen numero (paitsi Helsingissä kaksi)
-        if( liikennepaikka == "Hki")
+        if( liikennepaikka == "Hki" || liikennepaikka=="Psl")
             raide = raide % 100;
         else
             raide = raide % 10;
