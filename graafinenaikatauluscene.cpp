@@ -322,7 +322,8 @@ JunaViiva* GraafinenAikatauluScene::piirraLoki(const QString &junantunnus)
 
         if( ilmoitus != "R"  || tapahtuma == "O")  // Ohittavasta merkitään raiteelle saapuminen, muista ei
         {
-            loki->lisaaPaikka(kmluku, aika.time());
+            if( kmluku >= pieninKmluku_ && kmluku <= isoinKmluku_ )
+                loki->lisaaPaikka(kmluku, aika.time());
         }
     }
     loki->piirraViiva( QPen(Qt::darkYellow, 1.0));
