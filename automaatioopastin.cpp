@@ -69,8 +69,8 @@ void AutomaatioOpastin::talletaPyynnot(const QString& opastintunnus)
     foreach(AutomaatioPyynto* pyynto, pyynnot_)
     {
         // Lisätään pyynnöt tietokantaan
-        QSqlQuery lisays( QString("insert into automaatiotalletus(opastin,maaliraide,kulkutientyyppi,viive "
-                                  "values(%1,%2,%3,%4)" )
+        QSqlQuery lisays( QString("insert into automaatiotalletus(opastin,maaliraide,kulkutientyyppi,viive) "
+                                  "values(\"%1\",\"%2\",\"%3\",%4)" )
                           .arg(opastintunnus).arg(pyynto->maaliRaiteenTunnus()).arg(pyynto->kulkutientyyppikirjain())
                           .arg(pyynto->viive())         );
     }

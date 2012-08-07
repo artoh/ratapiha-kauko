@@ -164,6 +164,7 @@ void Veturi::paivitaJkvTiedot()
         {
             int pysahdysAjasta = 0;
             int pysahdysLahtoajasta = 0;
+            QDateTime lahtoaikaPysahdyksesta;
 
             if( reitti_.value( raidetunnus ).tapahtumaTyyppi() == ReittiTieto::Saapuu &&
                     ( opaste != RaiteenPaa::Tyhja || kiskolla->laituri() != Kisko::LaituriEi )     )
@@ -173,7 +174,30 @@ void Veturi::paivitaJkvTiedot()
             }
             else
             {
-                // Pysähdys aikataulun mukaan tehdään laiturille ja opastimen eteen
+                // Selvitetään, pysähdysajan mukainen pysähdys. Se tehdään VAIN laiturille, eli tavarajunat kulkevat
+                // vain aikataulunsa mukaisesti
+                if( kiskolla->laituri() != Kisko::LaituriEi && reitti_.value(raidetunnus).pysahtyy())
+                {
+                    if( kiskolla == aktiivinenAkseli()->kiskolla()   // Ollaan tällä kiskolla
+                            && pysahtyi_.isValid()                   // Ollaan pysähdyksissä
+                            && pysahtyiKiskolle_ != kiskolla)       // Ei vielä olla pysähdytty tälle kiskolle
+                    {
+                        // Pysähdys on jo menossa
+                        // Määritellään pysähdyksen loppuaika, ja lasketaan erotus nykyhetkestä
+                        lahtoaikaPysahdyksesta = pysahtyi_.addSecs( reitti_.value(raidetunnus).pysahtyy() );
+                        pysahdysAjasta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().secsTo( lahtoaikaPysahdyksesta );
+
+                        if( pysahdysAjasta < 0)
+                            pysahdysAjasta = 0;
+                    }
+                    else if( pysahtyiKiskolle_ != kiskolla )
+                    {
+                        // Pysähdys on vielä edessäpäin, eli tässä ilmoitetaan koko odotettavissa oleva pysähdysaika
+                        pysahdysAjasta = reitti_.value( raidetunnus).pysahtyy();
+                    }
+                }
+
+                // Pysähdys aikataulun mukaan tehdään laiturille (ja opastimen eteen)
                 if( opaste != RaiteenPaa::Tyhja || kiskolla->laituri() != Kisko::LaituriEi)
                 {
                     // Lasketaan pysähdys aikataulun mukaan
@@ -181,117 +205,61 @@ void Veturi::paivitaJkvTiedot()
                     if( aikataulunlahtoaika.isValid() )
                     {
                         // Aikataulussa on lähtöaika
-                        pysahdysLahtoajasta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo( lahtoaika );
+                        pysahdysLahtoajasta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo( aikataulunlahtoaika );
 
-                        if( pysahdysAjasta < 0)
+                        if( pysahdysLahtoajasta < 0)
                         {
                             if( pysahdysLahtoajasta < -79000)   // Keskiyön ylitys: varaudutaan kahden tunnin ylitykseen
                                 pysahdysLahtoajasta += 86400;
                             else
                                 pysahdysLahtoajasta = 0;
                         }
-                    }
-                }
-                // Aikataulun mukainen pysähdys laskettu ja muuttujassa
 
-                // Selvitetään, pysähdysajan mukainen pysähdys. Se tehdään VAIN laiturille, eli toimintoa ei voi käyttää
-                //
-                if( kiskolla->laituri() == Kisko::LaituriEi)
-
-
-
-            }
-
-        }
-
-
-        // Tässä välissä aikataulusta pysähdysehdot?
-        int pysahdylaiturille = 0;
-
-        // Pysähdytään laiturille tai opastimelle, jos aikataulu sanoo niin
-        QString raidetunnus = kiskolla->raide()->raidetunnusLiikennepaikalla();
-
-        if( reitti_.contains( raidetunnus ))   // Raide on mainittu aikataulussa
-        {
-            if( ( ( kiskolla->laituri() != Kisko::LaituriEi  && pysahtyiKiskolle_ != kiskolla ) ||
-                    (  opaste != RaiteenPaa::Tyhja && ( !pysahtyiKiskolle_ || pysahtyiKiskolle_->raide() != kiskolla->raide()))
-                    || reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Lahtee )
-                    && reitti_.value(raidetunnus).tapahtumaTyyppi() != ReittiTieto::Ohittaa )
-                // A) Kiskolla on laituri, eikä tälle kiskolle ole vielä pysähdytty
-                // B) Ollaan opastimen edessä, eikä tälle raiteelle ole vielä pysähdytty
-                // C) Ollaan lähtölaiturissa
-            {
-
-                int pysahdysAjasta = 0;
-                int pysahdysTaulusta = 0;
-                QDateTime lahtoaikaPysahdyksesta;    // Aikataulun mukainen lähtöaika
-
-
-                if( reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Saapuu)
-                    pysahdylaiturille = -1;
-                else
-                {
-                    if( ( (reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Lahtee &&
-                         kiskolla->laituri() == Kisko::LaituriEi ) ||
-                            aktiivinenAkseli()->kiskolla() == kiskolla ) && pysahtyi_.isValid() )
-                    {
-                        lahtoaikaPysahdyksesta = pysahtyi_.addSecs( reitti_.value(raidetunnus).pysahtyy() );
-                        pysahdysAjasta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().secsTo(lahtoaikaPysahdyksesta);
-                    }
-                    else if( reitti_.value(raidetunnus).tapahtumaTyyppi() != ReittiTieto::Lahtee )
-                    {
-                        // Lähtöaikaa ei vielä voi määrittää...
-                        pysahdysAjasta = reitti_.value(raidetunnus).pysahtyy();
-                    }
-
-                    // Lähtöajasta
-                    if( reitti_.value(raidetunnus).lahtoAika().isValid())
-                    {
-                        QTime lahtoaikaTaulusta = reitti_.value(raidetunnus).lahtoAika();
-                        pysahdysTaulusta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo( lahtoaikaTaulusta );
-                        if( pysahdysTaulusta  < -84000)   // keskiyön ylitys
-                            pysahdysTaulusta += 86400;
 
                         // Myöhästyminen asemalla ollessa voidaan laskea siitä, kuinka paljon
                         // pysähdysajasta laskettu lähtöaika on aikataulun mukaista
                         // lähtöaikaa suurempi
-                        if(lahtoaikaPysahdyksesta.isValid())
+                        if( lahtoaikaPysahdyksesta.isValid())
                         {
-                            int myohassa = lahtoaikaTaulusta.secsTo(lahtoaikaPysahdyksesta.time());
+                            int myohassa = aikataulunlahtoaika.secsTo(lahtoaikaPysahdyksesta.time());
                             if( myohassa < 1)
                                 myohassa_ = 0;
                             else
                                 myohassa_ = myohassa;
                         }
-
                     }
+                }
 
-                    // Valitaan pidempi näistä ajoista
-                    pysahdylaiturille = qMax( pysahdysAjasta, pysahdysTaulusta );
-                    if( pysahdylaiturille < 0)
-                        pysahdylaiturille = 0;
+                // Nyt on laskettu kaksi pysähdysaikaa, joista pidempi on voimassa
+                pysahdylaiturille = qMax( pysahdysAjasta, pysahdysLahtoajasta);
 
-                    if( reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Lahtee)
+                // Ei kuitenkaan toisteta pysähdystä sekä laiturille että opastimelle
+                if( !jkvTiedot_.empty() && jkvTiedot_.last().kisko() == kiskolla
+                        && jkvTiedot_.last().pysahdyLaiturille() == pysahdylaiturille )
+                    pysahdylaiturille = 0;
+
+                // Aikataulun mukaiselle lähtöraiteelle annetaan erillinen lähtöopaste
+                if( reitti_.value(raidetunnus).tapahtumaTyyppi() == ReittiTieto::Lahtee)
+                {
+                    if( pysahdylaiturille > 0)
                     {
-                        // Aikataulun mukaiselle lähtöraiteelle annetaan erillinen lähtöopaste
-
-                        if( pysahdylaiturille > 0)
-                        {
                         // Muodostetaan oma Odota lähtölupaa - opasteensa
-                            jkvTiedot_.append( JkvOpaste(kiskolla, RaiteenPaa::OdotaLahtolupaa, 0.0,
-                                                         0, pysahdylaiturille, false, hidastuvuus()) );
-                            pysahdylaiturille = 0;
-                        }
-                        else
-                        {
-                            jkvTiedot_.append( JkvOpaste(kiskolla, RaiteenPaa::Lahtolupa, 0.0,
-                                                         enimmaisNopeus(), 0, false, hidastuvuus()));
-                        }
+                        jkvTiedot_.append( JkvOpaste(kiskolla, RaiteenPaa::OdotaLahtolupaa, 0.0,
+                                                     0, pysahdylaiturille, false, hidastuvuus()) );
+                        pysahdylaiturille = 0;
                     }
-
+                    else
+                    {
+                        // Näytetään Lähtölupa-opaste
+                        jkvTiedot_.append( JkvOpaste(kiskolla, RaiteenPaa::Lahtolupa, 0.0,
+                                                     enimmaisNopeus(), 0, false, hidastuvuus()));
+                    }
                 }
             }
+
         }
+        // Aikataulun mukainen pysähdys selvitetty, ja muuttujassa pysahdylaiturille
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////7
 
         // Matkaa vähennetään, jotta suuri simulaationopeus ei aiheuta läpiajoa
         matka -= nopeusMs() * RatapihaIkkuna::getInstance()->skene()->nopeutusKerroin() / 5;
@@ -303,8 +271,10 @@ void Veturi::paivitaJkvTiedot()
 
         // Jos nopeus menee nollille, ollaan valmiita
         // Kuitenkin laiturilta näytetään eteenpäin
+        // siksi tarkistetaan, olisiko joku ajon salliva opaste
         if( !jkvopaste.sn() && jkvopaste.opaste()!=RaiteenPaa::Aja
-                && jkvopaste.opaste() != RaiteenPaa::AjaSn)
+                && jkvopaste.opaste() != RaiteenPaa::AjaSn && jkvopaste.opaste() != RaiteenPaa::Tyhja
+                && jkvopaste.opaste() != RaiteenPaa::NopeusRajoitus )
             break;
 
         // Sitten siirrytään seuraavaan päähän
@@ -326,11 +296,9 @@ void Veturi::paivitaJkvTiedot()
 
         // Jos etäisyyttä on enintään 300m, yksinkertaistetaan nopeusrajoitus edelliseen
 
-        if( jkvTiedot_.at(i).opaste() == RaiteenPaa::Tyhja )
+        if( jkvTiedot_.at(i).opaste() == RaiteenPaa::Tyhja && !jkvTiedot_.at(i).pysahdyLaiturille() )
         {
-            if( jkvTiedot_.at(i).pysahdyLaiturille())
-                jkvTiedot_[i].asetaNopeusrajoitukseksi();   // Pysähdyslaiturit näytetään AINA!
-            else if( tamaSn != edellinenSn )
+            if( tamaSn != edellinenSn )
             {
                 // On nopeusrajoitus, jota pitää käsitellä etäisyysehdolla
                 if( tamaSn < edellinenSn && etaisyys < 300)
@@ -364,6 +332,7 @@ void Veturi::paivitaJkvTiedot()
     if( jkvTila()==VaihtoJkv && jkvnopeus > 35 )
         jkvnopeus = 35;
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Tarkistetaan vielä raiteen voimassaoleva nopeusrajoitus, josta voi myös
     // tulla jkv-nopeus
 
@@ -371,14 +340,17 @@ void Veturi::paivitaJkvTiedot()
      QList<QPair<qreal,int> >::iterator i = nopeusRajoitukset_.begin();
      while( i != nopeusRajoitukset_.end())
      {
-         if( (*i).first + junaPituus() < matkaMittari() )
+         // Pienin nopeusrajoitus käyttöön!!
+         if( (*i).second < nopeusrajoitus )
+             nopeusrajoitus = (*i).second;
+         // Onko nopeusrajoitus jo umpeutunut
+         // Lisätään junan pituudella ja 10 metrin varalla
+
+         if( (*i).first + junaPituus() + 10 < matkaMittari() )
          {
-             // Tämä on kelvollinen !!!
-             if( (*i).second < nopeusrajoitus )
-                 nopeusrajoitus = (*i).second;
-             ++i;
+             // on umpeutunut
              // Tyhjennetään listaa loppuun
-             nopeusRajoitukset_.erase(i, nopeusRajoitukset_.end());
+             nopeusRajoitukset_.erase(i, nopeusRajoitukset_.end()); // ++i --> i
              break;
          }
          ++i;
@@ -677,21 +649,14 @@ QPixmap Veturi::jkvKuva()
     painter.drawRect(0,0,150,320);
 
     if( !ajopoyta())
-    {
-        painter.setBrush( Qt::NoBrush );
-        painter.setPen(Qt::white);
         painter.drawPixmap(5,45,QPixmap( QString(":/r/junakuvat/%1.png").arg( vaununTyyppi() ) ) );
-        painter.drawRect(5,220,140,20);
-        painter.setFont(QFont("Helvetica",15));
-        painter.drawText(QRectF(5,280,140,20),Qt::AlignCenter, tr(" %1 km").arg( (int) matkaMittari() / 1000 ));
-    }
 
-    int indeksi = 0;
+    int indeksi = 0;    // Piirretään kaikki kolme kuvaa
 
     if( jkvTila() == EiJkv )
     {
         painter.drawPixmap(0,0,QPixmap(":/r/jkvkuvat/eikaytossa.png"));
-        indeksi = 1;
+        indeksi = 1;    // Piirretään vain yksi kuva
     }
     else
     {
@@ -777,7 +742,7 @@ QPixmap Veturi::jkvKuva()
     {
         painter.setFont(QFont("Helvetica",12,QFont::Bold));
 
-        if( myohassa() < 15)
+        if( myohassa() < 60)
         {
             painter.setPen( Qt::yellow);
             painter.setBrush( Qt::NoBrush);
@@ -790,15 +755,25 @@ QPixmap Veturi::jkvKuva()
         painter.drawRect(10,225,130,18);
         painter.drawText(10,225,130,18,Qt::AlignCenter, QString(" %1 min %2 s" ).arg(myohassa()/60).arg(myohassa()%60));
     }
+    else
+    {
+        // Jos juna ei ole myöhässä, piirretään ko. kenttään matkamittari
+        painter.setBrush( QBrush(Qt::lightGray) );
+        painter.setPen(Qt::NoPen);
+        painter.drawRect(10,228,130,16);
+        painter.setPen(Qt::black);
+        painter.setFont(QFont("Helvetica",10));
+        painter.drawText(QRectF(10,227,130,14),Qt::AlignCenter, tr(" %1 km").arg( matkaMittari()/1000.0, 0, 'f', 3)  );
+    }
 
     if( !ajopoyta())    // Tähän loppuu, jos ajopöytä ei ole aktiivinen
         return kuva;
 
     foreach( JkvOpaste opaste, jkvTiedot_)
     {
-        // Piirretään kaksi opastetta
+        // Piirretään 1 - 3 opastetta
 
-        if( opaste.opaste() != RaiteenPaa::Tyhja)
+        if( opaste.opaste() != RaiteenPaa::Tyhja ||  opaste.pysahdyLaiturille())
         {
             opaste.piirra(&painter, 35 + indeksi * 65, false);
             indeksi++;

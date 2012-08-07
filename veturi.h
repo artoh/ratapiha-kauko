@@ -132,7 +132,7 @@ protected:
     QString maaraAsema_;
     QString reittitunnus_;
 
-    QDateTime pysahtyi_;
+    QDateTime pysahtyi_;        /** Aika, josta alkaen juna on ollut pysähtyneenä */
     RataKisko* pysahtyiKiskolle_;
 
     qreal myohassa_;    /** Montako sekuntia ollaan myöhässä aikataulusta */

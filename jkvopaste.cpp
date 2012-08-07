@@ -108,13 +108,16 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
     case RaiteenPaa::Lahtolupa:
         painter->drawPixmap(x,y,QPixmap(":/r/jkvkuvat/viherlippu.png"));
         break;
-    default:
+    case RaiteenPaa::NopeusRajoitus:
         painter->setBrush( QBrush(Qt::white));
         painter->setPen(QPen(QBrush(Qt::red),2.0));
         painter->drawEllipse(x,y+10,40,40);
         painter->setPen( Qt::black);
         painter->setFont(QFont("Helvetica",14));
         painter->drawText( QRectF(x,y+10,40,40),QString::number( sn() ), QTextOption(Qt::AlignCenter));
+        break;
+    default:
+        /* Tyhjä opaste on tyhjä ... */ ;
     }
     painter->setPen(Qt::white);
     // Sitten piirretään tekstirivi

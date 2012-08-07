@@ -257,7 +257,8 @@ qreal Akseli::junanPituusKysely(qreal tahanasti)
 {
     // Selvittää junan pituuden tästä loppuun päin
     // (kun kysely tulee tähän akseliin)
-    qreal junapituus = tahanasti + vaunu_->pituus();
+    // Lisätään junapituuteen myös akseleiden pituus - tästä tulee ihan pikkasen lisää, mutta tuskin haittaa.
+    qreal junapituus = tahanasti + vaunu_->pituus() + 10;
     if( toinenAkseli_ && toinenAkseli_->kytkettyAkseli_)
         return  toinenAkseli_->kytkettyAkseli_->junanPituusKysely(junapituus);
     return junapituus;  // Tämä on viimeinen vaunu
