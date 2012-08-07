@@ -151,6 +151,60 @@ void Veturi::paivitaJkvTiedot()
         if( kiskolla->opastinSijainnissa(liitosSijainti))
             opaste = kiskolla->opastinSijainnissa(liitosSijainti)->opaste();
 
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Ehdot junan pysähtymiselle aikataulun mukaisesti
+
+        int pysahdylaiturille = 0;      // Kuinka monta sekuntia pysähdystä on jäljellä?
+                                        // -1 tarkoittaa, että ollaan saavuttu määräasemalle
+
+        QString raidetunnus = kiskolla->raide()->raidetunnusLiikennepaikalla();
+
+        if( reitti_.contains( raidetunnus ))  // Tämä raide on mainittu aikataulussa
+        {
+            int pysahdysAjasta = 0;
+            int pysahdysLahtoajasta = 0;
+
+            if( reitti_.value( raidetunnus ).tapahtumaTyyppi() == ReittiTieto::Saapuu &&
+                    ( opaste != RaiteenPaa::Tyhja || kiskolla->laituri() != Kisko::LaituriEi )     )
+            {
+                // Saavuttu määräasemalle (joko laituriin tai opastimen eteen
+                pysahdylaiturille = -1;
+            }
+            else
+            {
+                // Pysähdys aikataulun mukaan tehdään laiturille ja opastimen eteen
+                if( opaste != RaiteenPaa::Tyhja || kiskolla->laituri() != Kisko::LaituriEi)
+                {
+                    // Lasketaan pysähdys aikataulun mukaan
+                    QTime aikataulunlahtoaika = reitti_.value( raidetunnus).lahtoAika();
+                    if( aikataulunlahtoaika.isValid() )
+                    {
+                        // Aikataulussa on lähtöaika
+                        pysahdysLahtoajasta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time().secsTo( lahtoaika );
+
+                        if( pysahdysAjasta < 0)
+                        {
+                            if( pysahdysLahtoajasta < -79000)   // Keskiyön ylitys: varaudutaan kahden tunnin ylitykseen
+                                pysahdysLahtoajasta += 86400;
+                            else
+                                pysahdysLahtoajasta = 0;
+                        }
+                    }
+                }
+                // Aikataulun mukainen pysähdys laskettu ja muuttujassa
+
+                // Selvitetään, pysähdysajan mukainen pysähdys. Se tehdään VAIN laiturille, eli toimintoa ei voi käyttää
+                //
+                if( kiskolla->laituri() == Kisko::LaituriEi)
+
+
+
+            }
+
+        }
+
+
         // Tässä välissä aikataulusta pysähdysehdot?
         int pysahdylaiturille = 0;
 

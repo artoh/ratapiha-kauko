@@ -138,6 +138,7 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
             "th { font-weight: normal; background-color: lightgray }  "
             "tr.varjo { background-color: lightgray; } "
             "td.lahtee { font-size: 14px; font-weight: bold; } "
+            "td.saapuu { font-size: 14px; } "
             "td.minne { font-size: 14px; font-weight: bold; } "
             "td.raide { font-size: 14px; } "
             "td.tunti { background-color: darkgray; font-size:14px; } "
@@ -287,6 +288,7 @@ void AikatauluSelaaja::naytaLoki(const QString &junanumero)
 
         QTime kulunut = QTime(0,0).addSecs( alkuaika.secsTo(aika)   );
 
+
         if( rivi++ % 2 )
             teksti.append("<tr>");
         else
@@ -294,13 +296,15 @@ void AikatauluSelaaja::naytaLoki(const QString &junanumero)
 
         QString tapaus;
         if( ilmoitus == "P")
-            tapaus = "Pysähtyy";
+            tapaus = "<td class=saapuu>Pysähtyy</td>";
         else if( ilmoitus == "L")
-            tapaus = "Lähtee";
+            tapaus = "<td>Lähtee</td>";
         else if( ilmoitus == "S")
-            tapaus = "Saapuu";
+            tapaus = "<td class=saapuu>Saapuu</saapuu>";
+        else
+            tapaus = "<td> </td>";
 
-        teksti.append( QString("<td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5 km/h</td><td>%6</td></tr>\n ")
+        teksti.append( QString("<td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5 km/h</td>%6</tr>\n ")
                        .arg(liikennepaikka).arg(raide,3,10,QChar('0')).arg( aika.time().toString() )
                        .arg(kulunut.toString()  ).arg(nopeus).arg(tapaus) );
     }
@@ -312,7 +316,8 @@ void AikatauluSelaaja::naytaLoki(const QString &junanumero)
             "th { font-weight: normal; background-color: lightgray }  "
             "tr.varjo { background-color: lightgray; } "
             "a  { font-size: 14px; color: black; text-decoration:none;  }"
-            "td { font-size: 10px; } ";
+            "td { font-size: 10px; } "
+            "td.saapuu { background-color: red; } ";
     clear();
     document()->setDefaultStyleSheet(tyyli);
     setHtml(teksti);

@@ -287,6 +287,7 @@ void GraafinenAikatauluScene::valitseJuna(const QString &junatunnus)
                 // Siirretään lokiviiva valitulle junalle
                 lokiviiva_->poistaViiva();
                 delete lokiviiva_;
+                lokiviiva_ = 0;
             }
             lokiviiva_ = piirraLoki(junatunnus);
         }
