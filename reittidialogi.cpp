@@ -30,7 +30,7 @@ GNU General Public License for more details.
 
 
 ReittiDialogi::ReittiDialogi(QWidget *parent) :
-    QDialog(parent),
+    QWidget(0),
     uudenReitinItem_(0)
 {
     setupUi(this);

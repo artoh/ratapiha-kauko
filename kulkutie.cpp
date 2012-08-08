@@ -173,7 +173,7 @@ void KulkuTie::raideVarautuu(KulkutienRaide* elementti)
         // Kaikkien ennen tätä pitää olla varattuja!
         foreach( KulkutienRaide* ktraide, elementit_)
         {
-            if( !ktraide->raide()->akseleita())
+            if( !ktraide->raide()->akseleita() && ktraide->raide()->pituus() > 200 )
             {
                 // Ei ole varattu oikein
                 vikatilaan();

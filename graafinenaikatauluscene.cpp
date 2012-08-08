@@ -64,12 +64,12 @@ void GraafinenAikatauluScene::lataaRuudukko()
     // Tekee ruudukon sanotun taulun liikennepaikoilla
     // Ensin hakee isoimman ja pienimmän km-luvun
 
-    QSqlQuery isoPieniKysely( QString("select min(kmluku), max(kmluku) from taulussa natural join liikennepaikka where taulu=%1").arg(taulu_)  );
+    QSqlQuery isoPieniKysely( QString("select min(kmluku), max(kmluku), min(valekm), max(valekm) from taulussa natural join liikennepaikka where taulu=%1").arg(taulu_)  );
 
     if( !isoPieniKysely.next())
         return;
-    pieninKmluku_ = isoPieniKysely.value(0).toDouble();
-    isoinKmluku_ = isoPieniKysely.value(1).toDouble();
+    pieninKmluku_ = qMin( isoPieniKysely.value(0).toDouble() , isoPieniKysely.value(2).toDouble() );
+    isoinKmluku_ = qMax( isoPieniKysely.value(1).toDouble(), isoPieniKysely.value(3).toDouble() );
 
     qreal maxY = yKmluvusta( isoinKmluku_);
     // Piirretään ensin aikaviivat
@@ -100,12 +100,16 @@ void GraafinenAikatauluScene::lataaRuudukko()
 
     // Sitten piirretään liikennepaikkojen nimet ja viivat
 
-    QSqlQuery lkpKysely( QString("select nimi, liikennepaikka, kmluku, liikenteenohjaus from taulussa natural join liikennepaikka where taulu=%1 order by kmluku").arg(taulu_));
+    QSqlQuery lkpKysely( QString("select nimi, liikennepaikka, kmluku, liikenteenohjaus, valekm from taulussa natural join liikennepaikka where taulu=%1 order by kmluku").arg(taulu_));
     while( lkpKysely.next())
     {
         QString nimi = lkpKysely.value(0).toString();
         QString lyhenne = lkpKysely.value(1).toString();
-        qreal kmluku = lkpKysely.value(2).toDouble();
+        qreal kmluku;
+        if( lkpKysely.isNull(4) )
+            kmluku = lkpKysely.value(2).toDouble(); // Käytetään liikennepaikan km-lukua
+        else
+            kmluku = lkpKysely.value(4).toDouble(); // Käytetään "valekm"-lukua, jos mennään eri laskutapojen mukaan
         bool liikenteenohjaus = lkpKysely.value(3).toBool();
 
 
@@ -176,7 +180,7 @@ void GraafinenAikatauluScene::paivitaJuna(const QString &junatunnus)
     }
 
     // haetaan se uudestaan
-    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy, lahtoaika "
+    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy, lahtoaika, valekm "
                        "from taulussa, liikennepaikka, aikataulu, juna "
                        "where taulussa.liikennepaikka = aikataulu.liikennepaikka "
                        "and juna.reitti = aikataulu.reitti "
@@ -190,7 +194,7 @@ void GraafinenAikatauluScene::paivitaJuna(const QString &junatunnus)
 void GraafinenAikatauluScene::lataaAikataulut()
 {
     // Yksinkertainen sql-kysely, jolla ladataan aikataulu
-    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy, lahtoaika "
+    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy, lahtoaika, valekm "
                        "from taulussa, liikennepaikka, aikataulu, juna "
                        "where taulussa.liikennepaikka = aikataulu.liikennepaikka "
                        "and juna.reitti = aikataulu.reitti "
@@ -212,7 +216,11 @@ void GraafinenAikatauluScene::lataaAikatauluKysymyksesta(const QString &kysymys)
     {
         QTime aika = kysely.value(0).toTime();
         QString junanro = kysely.value(1).toString();
-        qreal kmluku = kysely.value(2).toDouble();
+        qreal kmluku;
+        if( kysely.isNull(6))
+            kmluku = kysely.value(2).toDouble();
+        else
+            kmluku = kysely.value(6).toDouble();  // Käytetään valekm-lukemia...
         QString tapahtuma = kysely.value(3).toString();
         int pysahtyySekuntia = kysely.value(4).toInt();
 

@@ -232,7 +232,7 @@ QString KaukoView::raiteenPaaTunnusPisteessa(QPoint piste)
     foreach( QGraphicsItem* item, lista)
     {
         KaukoKisko* kisko = qgraphicsitem_cast<KaukoKisko*>(item);
-        if( item )
+        if( kisko )
         {
             // Lasketaan etäisyydellä että saadaan paras kisko
             QPointF kiskoPos = kisko->mapFromScene( mapToScene(piste) ) ;

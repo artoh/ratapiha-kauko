@@ -24,7 +24,7 @@ GNU General Public License for more details.
 
 class ReititModel;
 
-class ReittiDialogi : public QDialog, private Ui::ReittiDialogi
+class ReittiDialogi : public QWidget, private Ui::ReittiDialogi
 {
     Q_OBJECT
 
