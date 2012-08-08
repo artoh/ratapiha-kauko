@@ -167,6 +167,7 @@ void GraafinenAikatauluScene::paivitaKaikki()
     while( i.hasNext())
         delete i.next().value();
     junaViivat_.clear();
+    lokiviiva_ = 0;
 
     clear();
     kelloViiva_ = addLine( QLineF());
