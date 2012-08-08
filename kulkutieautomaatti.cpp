@@ -158,9 +158,9 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
                     QTime lahtoaika = aikakysely.value(0).toTime().addSecs( aikakysely.value(2).toInt() ).addSecs(-60);
                     viive = skene_->simulaatioAika().time().secsTo( lahtoaika );
 
-                    if( viive < -42000)  // Jos on mennyt yli keskiyön
+                    if( viive < -85200)  // Jos on mennyt yli keskiyön
                         viive += 86400;
-                    else if(viive < 0)
+                    else if(viive < 0 || viive > 1800)  // Viive enintään 30 minuuttia!
                         viive = 0;
                 }
             }

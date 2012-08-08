@@ -546,7 +546,7 @@ void RataScene::lahetaJunat(const QDateTime &aika)
         QString raidetunnus = QString("%1%2").arg(liikennepaikka).arg(raidenro,3,10,QChar('0'));
 
         RataRaide* raide = haeRaide(raidetunnus);
-        if( raide )
+        if( raide && raide->akseleita())
         {
             raide->asetaJunanumero( lahtokysely.value(0).toString());
             junia++;
