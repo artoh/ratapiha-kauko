@@ -96,7 +96,7 @@ QPen JunaViiva::kynaTyypista(QChar tyyppikirjain)
     if( tyyppikirjain == QChar('P') )
         return QPen(Qt::red,1.0);
     else if( tyyppikirjain == QChar('S'))
-        return QPen(Qt::darkRed,1.0);
+        return QPen(Qt::red,2.0);
     else if( tyyppikirjain == QChar('H'))
         return QPen(Qt::black,1.0);
 
@@ -116,7 +116,8 @@ void JunaViiva::poistaViiva()
 {
     foreach( QGraphicsLineItem* viiva, viivat_)
     {
-        viiva->hide();
+        if( viiva )
+            viiva->hide();
     }
 }
 

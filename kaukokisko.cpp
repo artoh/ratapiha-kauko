@@ -353,8 +353,9 @@ QBrush KaukoKisko::laatikonBrushPaalle(RaiteenPaa *paa)
 
     if( paa->opastinSeis())
         return( QBrush(Qt::blue));
-    else if( paa->automaatioTila() == RaiteenPaa::AutomaatioKaytossa ||
+    else if( ( paa->automaatioTila() == RaiteenPaa::AutomaatioKaytossa ||
              (paa->automaatioTila() == RaiteenPaa::AutomaatioAktiivinen && skene_->valkytys()))
+             && paa->opaste() != RaiteenPaa::AjaVarovasti )
         return ( QBrush( Qt::yellow));
     else if( paa->automaatioTila() == RaiteenPaa::AutomaatioViive)
     {

@@ -64,12 +64,20 @@ void GraafinenAikatauluScene::lataaRuudukko()
     // Tekee ruudukon sanotun taulun liikennepaikoilla
     // Ensin hakee isoimman ja pienimmän km-luvun
 
-    QSqlQuery isoPieniKysely( QString("select min(kmluku), max(kmluku), min(valekm), max(valekm) from taulussa natural join liikennepaikka where taulu=%1").arg(taulu_)  );
+    QSqlQuery isoPieniKysely( QString("select min(kmluku), max(kmluku), max(valekm) from taulussa natural join liikennepaikka where taulu=%1").arg(taulu_)  );
 
     if( !isoPieniKysely.next())
         return;
-    pieninKmluku_ = qMin( isoPieniKysely.value(0).toDouble() , isoPieniKysely.value(2).toDouble() );
-    isoinKmluku_ = qMax( isoPieniKysely.value(1).toDouble(), isoPieniKysely.value(3).toDouble() );
+    // Pienin km-luku: joko oikea tai valeluku..
+    if( isoPieniKysely.isNull(2))
+        pieninKmluku_ = isoPieniKysely.value(0).toDouble();
+    else
+        pieninKmluku_ = qMin( isoPieniKysely.value(0).toDouble() , isoPieniKysely.value(2).toDouble() );
+
+    if( isoPieniKysely.isNull(4))
+        isoinKmluku_ = isoPieniKysely.value(1).toDouble();
+    else
+        isoinKmluku_ = qMax( isoPieniKysely.value(1).toDouble(), isoPieniKysely.value(3).toDouble() );
 
     qreal maxY = yKmluvusta( isoinKmluku_);
     // Piirretään ensin aikaviivat
