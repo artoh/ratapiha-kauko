@@ -129,7 +129,10 @@ void KulkuTie::tarkista()
         }
 
         // Jos edelliselle raiteelle junakulkutie, niin varaudutaan junan tuloon
-        bool junaTulossa = lahtoRaide()->kulkutieTyyppi() == RataRaide::Junakulkutie;
+        // Myös jos edellisellä raiteella on juna, koska silloin voi olla
+        // syynä purkautunut kulkutie!
+        bool junaTulossa = lahtoRaide()->kulkutieTyyppi() == RataRaide::Junakulkutie ||
+                lahtoRaide()->akseleita();
 
         // Jos junaa ei ole tulossa, eikä yhtään raidetta varattu, joutaa kulkutien purkaa
         if( punaisetOpastimet.empty() && !junaTulossa)
@@ -206,10 +209,10 @@ void KulkuTie::raideVapautuu(KulkutienRaide *elementti)
         {
             if( ktraide == elementti)
                 ennenNykyista = false;
-            if( ennenNykyista && !ktraide->onkoKaytetty() && ktraide->raide()->pituus() > 200)
+            if( ennenNykyista && !ktraide->onkoKaytetty() && ktraide->raide()->pituus() > 300)
             {
-                vikatilaan();
-                qDebug() << "Vikatila: Väärä vapautuminen " << elementti->kulkutieto();
+              //   vikatilaan();
+                qDebug() << "Vikatila: Väärä vapautuminen " << elementti->raide()->raidetunnusLiikennepaikalla();
                 return;
             }
             if(  !ktraide->onkoKaytetty() )

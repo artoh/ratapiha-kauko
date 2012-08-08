@@ -80,7 +80,6 @@ KulkutieElementti::KulkutieElementti(KulkutienMuodostaja *muodostaja, KulkutieEl
     // Junakulkutie ei saa mennä suojastuksen läpi
     if( naapurinPaa()->opastin()==RaiteenPaa::SuojastusOpastin && muodostaja->kulkutienTyyppi() == RaideTieto::Junakulkutie)
     {
-        qDebug() << "Suojastusehto!!!";
         return;
     }
 

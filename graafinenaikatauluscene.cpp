@@ -64,7 +64,7 @@ void GraafinenAikatauluScene::lataaRuudukko()
     // Tekee ruudukon sanotun taulun liikennepaikoilla
     // Ensin hakee isoimman ja pienimmän km-luvun
 
-    QSqlQuery isoPieniKysely( QString("select min(kmluku), max(kmluku), max(valekm) from taulussa natural join liikennepaikka where taulu=%1").arg(taulu_)  );
+    QSqlQuery isoPieniKysely( QString("select min(kmluku), max(kmluku), min(valekm), max(valekm) from taulussa natural join liikennepaikka where taulu=%1").arg(taulu_)  );
 
     if( !isoPieniKysely.next())
         return;

@@ -177,7 +177,7 @@ void KulkutienRaide::raideVapautuu(RaiteenPaa::Suunta suunta)
 
     elementtiKaytetty_ = true;
     if( kulkutie()->kulkutienTyyppi() == RataRaide::Junakulkutie &&
-                suunta != suunta_)
+            suunta != suunta_ && raide() != kulkutie()->maaliRaide() )
     {
         kulkutie()->vikatilaan();   // Vikatilaan, jos väärästä suunnasta!!!
         qDebug() << "VIKATILA Väärä suunta vapautumisessa " << raide()->raidetunnusLiikennepaikalla();
