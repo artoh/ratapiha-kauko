@@ -24,14 +24,17 @@
 #include "raidetieto.h"
 
 #include <QList>
+#include <QObject>
 
 class KulkutienRaide;
 class KulkutieElementti;
 class RataRaide;
 
 /** Tieto aktiivisesta kulkutiestä */
-class KulkuTie
+class KulkuTie : public QObject
 {
+    Q_OBJECT
+
 public:
 
     KulkuTie(RaideTieto::Kulkutietyyppi kulkutientyyppi);
@@ -40,15 +43,16 @@ public:
     RaideTieto::Kulkutietyyppi kulkutienTyyppi() const { return kulkutienTyyppi_; }
 
     KulkutienRaide* lisaaElementti(KulkutieElementti* elementti);
-    KulkutienRaide* lisaaElementti(RataRaide* raide, RaiteenPaa::Suunta suunta, const QString& lahtoOpastin, int moneskoraide);
+    KulkutienRaide* lisaaElementti(RataRaide* raide, RaiteenPaa::Suunta suunta, const QString& lahtoOpastin, int moneskoraide, bool onkokaytetty);
     KulkutienRaide* lisaaElementti(const QString& raidesuunnalla, const QString& lahtoopastin);
 
-    void puraKulkutie();    // Purkaa kulkutien
+
     void poistaElementti(KulkutienRaide* elementti);    // Elementti itse kutsuu tätä purkautuessaan!
     void vahvistaKulkutie();    // Vahvistaa (suojastus)kulkutien
     void tarkista(); // Tätä kutsutaan joiden varautumisten yms jälkeen
 
     void raideVarautuu(KulkutienRaide* elementti);  // Elementti kutsuu varautuessaan
+    void raideVapautuu(KulkutienRaide* elementti);  // Elementti kutsuu kun on varautunut
 
     int varattujaRaiteita();
 
@@ -61,8 +65,15 @@ public:
     void paivitaKaikki();
     KulkutienRaide* ekaRaide();
 
+
+
     RaideTieto::KulkutieTila tila() const { return tila_; }
     void vikatilaan();  // Kutsutaan, kun jossain elementissa havaitaan vika!
+
+public slots:
+
+   void puraKulkutie();    // Purkaa kulkutien
+   void puraKulkutieViiveella(int sekuntia);
 
 protected:
     RaideTieto::Kulkutietyyppi kulkutienTyyppi_;

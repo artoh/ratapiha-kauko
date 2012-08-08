@@ -34,7 +34,8 @@ public:
     KulkutienRaide( RataRaide* raide=0, RaiteenPaa::Suunta suunta=RaiteenPaa::Virhe,
                     QString lahtoOpastin=QString(),
                     int moneskoraide = 0,
-                    KulkuTie* kulkutie = 0);
+                    KulkuTie* kulkutie = 0,
+                    bool elementtikaytetty = false );
 
     KulkutienRaide(KulkutieElementti *elementti, KulkuTie* kulkutie);
 
@@ -60,6 +61,8 @@ public:
     void raideVarautuu(RaiteenPaa::Suunta suunta);
     void raideVapautuu(RaiteenPaa::Suunta suunta);
 
+    bool onkoKaytetty()  { return elementtiKaytetty_; }
+
 protected:
     RataRaide* raide_;
     RaiteenPaa::Suunta suunta_;
@@ -68,6 +71,8 @@ protected:
     int moneskoRaide_;
 
     KulkuTie* kulkutie_;
+
+    bool elementtiKaytetty_;    /** Jos elementti on vapautunut ja varautunut */
 
 };
 

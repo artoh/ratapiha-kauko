@@ -27,15 +27,17 @@
 
 #include <QDebug>
 
-KulkutienRaide::KulkutienRaide(RataRaide *raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide, KulkuTie *kulkutie)
+KulkutienRaide::KulkutienRaide(RataRaide *raide, RaiteenPaa::Suunta suunta, QString lahtoOpastin, int moneskoraide, KulkuTie *kulkutie, bool elementtikaytetty)
     : raide_(raide), suunta_(suunta), lahtoOpastinTunnus_(lahtoOpastin),
-      moneskoRaide_(moneskoraide), kulkutie_(kulkutie)
+      moneskoRaide_(moneskoraide), kulkutie_(kulkutie),
+      elementtiKaytetty_(elementtikaytetty)
+
 {
 }
 
 
 KulkutienRaide::KulkutienRaide(KulkutieElementti* elementti, KulkuTie *kulkutie)
-    : kulkutie_(kulkutie)
+    : kulkutie_(kulkutie), elementtiKaytetty_(false)
 {
     raide_ = elementti->raide();
 
@@ -95,6 +97,7 @@ QString KulkutienRaide::kulkutieto()
     else if( kulkutie()->kulkutienTyyppi() == RataRaide::Linjasuojastus)
         kulkutiekirjain = QChar('S');
 
+
     QChar tilateksti;
     switch( kulkutie()->tila())
     {
@@ -102,7 +105,10 @@ QString KulkutienRaide::kulkutieto()
         tilateksti = QChar('-');
         break;
     case RaideTieto::Varattu:
-        tilateksti = QChar('+');
+        if( onkoKaytetty() )
+            tilateksti = QChar('x');
+        else
+            tilateksti = QChar('+');
         break;
     default:
         tilateksti = QChar('!');
@@ -149,7 +155,7 @@ void KulkutienRaide::raideVarautuu(RaiteenPaa::Suunta suunta)
     }
 
     // Tarkastetaan, ollaanko tultu oikeasta suunnasta!!
-    if( suunta != suunta_)
+    if( suunta != suunta_ && kulkutie()->kulkutienTyyppi() != RataRaide::Vaihtokulkutie )
     {
         kulkutie()->vikatilaan();
         qDebug() << "Vikatila: Suunta " << raide()->raidetunnusLiikennepaikalla() << " " << kulkutieto();
@@ -160,26 +166,25 @@ void KulkutienRaide::raideVarautuu(RaiteenPaa::Suunta suunta)
 
 void KulkutienRaide::raideVapautuu(RaiteenPaa::Suunta suunta)
 {
-    if( kulkutie()->kulkutienTyyppi() == RataRaide::Linjasuojastus)
+
+    // Opastin punaiselle jos vaihtokulkutie
+    if( lahtoOpastin() && lahtoOpastin()->opasteKasite() != RaiteenPaa::Seis
+            && kulkutie()->kulkutienTyyppi() == RataRaide::Vaihtokulkutie )
     {
-        kulkutie()->tarkista();
+        lahtoOpastin()->asetaOpaste(RaiteenPaa::Seis);
+        lahtoRaide()->paivita();
+    }
+
+    elementtiKaytetty_ = true;
+    if( kulkutie()->kulkutienTyyppi() == RataRaide::Junakulkutie &&
+                suunta != suunta_)
+    {
+        kulkutie()->vikatilaan();   // Vikatilaan, jos väärästä suunnasta!!!
+        qDebug() << "VIKATILA Väärä suunta vapautumisessa " << raide()->raidetunnusLiikennepaikalla();
     }
     else
     {
-        if( (suunta == suunta_ && (kulkutie()->ekaRaide() == this  || raide()->pituus() < 200 ) ) || raide()==kulkutie()->maaliRaide() )
-        {
-            // Jos vapautuva raide on kulkutien ensimmäinen, niin kaikki on hyvin ja voi purkautua
-            // Myös maaliraide purkautuu aina, mihin suuntaan tahansa
-            // (pitäisi itse asiassa purkautua aikaviiveellä vaikkei olisi tyhjä)
-            puraKulkutielta();
-        }
-        else
-        {
-            // Muuten ollaan vikatilassa!!!
-            kulkutie()->vikatilaan();
-            qDebug() << "Vikatila: Purkautuminen " << raide()->raidetunnusLiikennepaikalla() << " " << kulkutieto();
-
-        }
+        kulkutie()->raideVapautuu(this);
     }
 
 }

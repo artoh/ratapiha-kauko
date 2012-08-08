@@ -29,7 +29,7 @@ GNU General Public License for more details.
 #include <QMessageBox>
 
 
-ReittiDialogi::ReittiDialogi(QWidget *parent) :
+ReittiDialogi::ReittiDialogi(QWidget* /*parent*/) :
     QWidget(0),
     uudenReitinItem_(0)
 {

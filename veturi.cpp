@@ -188,7 +188,7 @@ void Veturi::paivitaJkvTiedot()
                         pysahdysAjasta = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().secsTo( lahtoaikaPysahdyksesta );
 
 
-                        if( pysahdysAjasta < 0)
+                        if( pysahdysAjasta < 0 || pysahdysAjasta > 1800 )
                             pysahdysAjasta = 0;
                     }
                     else if( pysahtyiKiskolle_ != kiskolla )
@@ -211,8 +211,10 @@ void Veturi::paivitaJkvTiedot()
 
                         if( pysahdysLahtoajasta < 0)
                         {
-                            if( pysahdysLahtoajasta < -79000)   // Keskiyön ylitys: varaudutaan kahden tunnin ylitykseen
+                            if( pysahdysLahtoajasta < -84600)   // Keskiyön ylitys: varaudutaan puolen tunnin
                                 pysahdysLahtoajasta += 86400;
+                            else if( pysahdysAjasta > 1800 )  // Samoin tähän suuntaan...
+                                pysahdysLahtoajasta = 0;
                             else
                                 pysahdysLahtoajasta = 0;
                         }
@@ -716,8 +718,7 @@ QPixmap Veturi::jkvKuva()
     else if( jkvTila() == EiJkv)
     {
         painter.drawPixmap(0,290,QPixmap(":/r/jkvkuvat/vaihtotyonappi.png"));
-        if( nopeus() < 1)
-            painter.drawPixmap(76,290,QPixmap(":/r/jkvkuvat/junanappi.png"));
+        painter.drawPixmap(76,290,QPixmap(":/r/jkvkuvat/junanappi.png"));
     }
     else if( jkvTila() == JunaJkv && nopeus() < 1)
     {
@@ -1045,7 +1046,7 @@ void Veturi::nayttoonKoskettu(QPoint pos)
         jkvTila_ = VaihtoJkv;
     }
     else if( (jkvTila() == EiJkv || jkvTila() == VaihtoJkv ) &&
-             nopeus() < 1  && pos.x() > 75 && pos.y() > 290 )
+             pos.x() > 75 && pos.y() > 290 )
     {
         jkvTila_ = JunaJkv;
     }

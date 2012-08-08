@@ -24,11 +24,13 @@
 
 #include "ratascene.h"
 #include "rataikkuna.h"
+#include "ratapihaikkuna.h"
 
 #include <QMutableListIterator>
 #include <QDebug>
 
 KulkuTie::KulkuTie(RaideTieto::Kulkutietyyppi kulkutientyyppi) :
+    QObject(RatapihaIkkuna::getInstance() ),
     kulkutienTyyppi_( kulkutientyyppi ), tila_(RaideTieto::Valmis)
 {
 }
@@ -46,10 +48,10 @@ KulkutienRaide* KulkuTie::lisaaElementti(KulkutieElementti *elementti)
     return ktraide;
 }
 
-KulkutienRaide *KulkuTie::lisaaElementti(RataRaide *raide, RaiteenPaa::Suunta suunta, const QString& lahtoOpastin, int moneskoraide )
+KulkutienRaide *KulkuTie::lisaaElementti(RataRaide *raide, RaiteenPaa::Suunta suunta, const QString& lahtoOpastin, int moneskoraide, bool onkokaytetty )
 {
 
-    KulkutienRaide* ktraide = new KulkutienRaide(raide, suunta, lahtoOpastin, moneskoraide, this);
+    KulkutienRaide* ktraide = new KulkutienRaide(raide, suunta, lahtoOpastin, moneskoraide, this, onkokaytetty);
     lisaaListaan(ktraide);
 
     return ktraide;
@@ -81,6 +83,8 @@ void KulkuTie::puraKulkutie()
         ktraide->puraKulkutielta();
     }
     elementit_.clear(); // Poistetaan pointterit
+
+    deleteLater();
 
 }
 
@@ -156,6 +160,8 @@ void KulkuTie::tarkista()
 
     if( varattujaRaiteita() )
         tila_ = RataRaide::Varattu;
+    else if( tila() == RataRaide::Varattu && kulkutienTyyppi()==RataRaide::Vaihtokulkutie)
+        puraKulkutieViiveella(5);   // Puretaan vaihtokulkutie aina, kun on tyhjentynyt
     else
         tila_ = RataRaide::Valmis;
 
@@ -168,12 +174,12 @@ void KulkuTie::raideVarautuu(KulkutienRaide* elementti)
     if( tila_ == RataRaide::Valmis)
         tila_ = RataRaide::Varattu;
 
-    if( kulkutienTyyppi() != RataRaide::Linjasuojastus)
+    if( kulkutienTyyppi() == RataRaide::Junakulkutie )
     {
-        // Kaikkien ennen tätä pitää olla varattuja!
+        // Kaikkien ennen tätä pitää olla varattuja tai käytettyjä
         foreach( KulkutienRaide* ktraide, elementit_)
         {
-            if( !ktraide->raide()->akseleita() && ktraide->raide()->pituus() > 200 )
+            if( !ktraide->raide()->akseleita() &&  !ktraide->onkoKaytetty() && ktraide->raide()->pituus() > 200 )
             {
                 // Ei ole varattu oikein
                 vikatilaan();
@@ -187,6 +193,53 @@ void KulkuTie::raideVarautuu(KulkutienRaide* elementti)
     else
         tarkista();
 }
+
+void KulkuTie::raideVapautuu(KulkutienRaide *elementti)
+{
+    // Edellisten raiteiden pitäisi olla käytettyjä
+
+    if( kulkutienTyyppi() == RataRaide::Junakulkutie)
+    {
+        bool ennenNykyista = true;
+        int kayttamattomia = 0;
+        foreach(KulkutienRaide* ktraide, elementit_)
+        {
+            if( ktraide == elementti)
+                ennenNykyista = false;
+            if( ennenNykyista && !ktraide->onkoKaytetty() && ktraide->raide()->pituus() > 200)
+            {
+                vikatilaan();
+                qDebug() << "Vikatila: Väärä vapautuminen " << elementti->kulkutieto();
+                return;
+            }
+            if(  !ktraide->onkoKaytetty() )
+                kayttamattomia++;
+        }
+        // Jos kaikki on käytetty, kulkutie puretaan
+        if( kayttamattomia == 0 && !varattujaRaiteita())
+            puraKulkutieViiveella(5);  // Juna maaliraiteella!
+        else if( kayttamattomia == 1 && varattujaRaiteita()==1 && tila()==RataRaide::Varattu )
+            puraKulkutieViiveella(60);  // Juna maaliraiteella - puretaan 60 sek. kuluttua
+    }
+    else if( kulkutienTyyppi() == RataRaide::Vaihtokulkutie)
+    {
+        // Samanlaiset ehdot käyttämättömille
+        int kayttamattomia = 0;
+        foreach(KulkutienRaide* ktraide, elementit_)
+        {
+            if(  !ktraide->onkoKaytetty() && !ktraide->raide()->akseleita() )
+                kayttamattomia++;
+        }
+        // Jos kaikki on käytetty, kulkutie puretaan 5 s. viiveellä
+        if( kayttamattomia == 1 && varattujaRaiteita()==1 && tila()==RataRaide::Varattu )
+            puraKulkutieViiveella(30);  // Juna maaliraiteella - puretaan 30 sek. kuluttua
+    }
+    tarkista();
+
+}
+
+
+
 
 int KulkuTie::varattujaRaiteita()
 {
@@ -255,6 +308,13 @@ KulkutienRaide *KulkuTie::ekaRaide()
     if( elementit_.empty())
         return 0;
     return elementit_.first();
+}
+
+void KulkuTie::puraKulkutieViiveella(int sekuntia)
+{
+    QTimer::singleShot( sekuntia * 1000 / RataIkkuna::rataSkene()->nopeutusKerroin(),
+                        this, SLOT(puraKulkutie()));
+
 }
 
 void KulkuTie::vikatilaan()

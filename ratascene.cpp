@@ -156,7 +156,8 @@ void RataScene::lataaRata()
                     kulkutiet_.insert(kulkutiedot.value(1).mid(1), kulkutie);
                 }
 
-                KulkutienRaide* ktraide = kulkutie->lisaaElementti(praide, kulkutiensuunta, kulkutiedot[2], monesko );
+                bool onkokaytetty = ( kulkutietila[2] == 'x');
+                KulkutienRaide* ktraide = kulkutie->lisaaElementti(praide, kulkutiensuunta, kulkutiedot[2], monesko, onkokaytetty );
                 praide->lukitseKulkutielle(ktraide);
             }
 
