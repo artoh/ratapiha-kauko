@@ -145,7 +145,7 @@ QWidget * ReittiDelegaatti::createEditor(QWidget *parent, const QStyleOptionView
     {
         QComboBox* editori = new QComboBox(parent);
         editori->addItem(tr("Pohjoiseen"), RaiteenPaa::Pohjoiseen);
-        editori->addItem(tr("Etelaan"), RaiteenPaa::Etelaan);
+        editori->addItem(tr("Etelään"), RaiteenPaa::Etelaan);
         connect( editori, SIGNAL(currentIndexChanged(int)), this, SLOT(commitAndCloseEditor()));
         return editori;
     }
