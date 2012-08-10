@@ -33,7 +33,7 @@
 GraafinenAikatauluScene::GraafinenAikatauluScene(QObject *parent) :
     QGraphicsScene(parent), taulu_(0),
      ruudukonLeveys_(7200), tuntiAlkaa_(0), tuntiLoppuu_(24),
-    aktiivinen_(0), lokiviiva_(0)
+    aktiivinen_(0), lokiviiva_(0), suuntaehto_(RaiteenPaa::Virhe)
 {
     setBackgroundBrush( QBrush(Qt::white));
     maxX_ = xAjasta( QTime(tuntiLoppuu_-1,59,59));
@@ -177,6 +177,17 @@ void GraafinenAikatauluScene::paivitaKaikki()
 
 }
 
+void GraafinenAikatauluScene::asetaSuuntaEhto(int suunta)
+{
+    if( suunta == RaiteenPaa::Pohjoiseen)
+        suuntaehto_ = RaiteenPaa::Pohjoiseen;
+    else if( suunta == RaiteenPaa::Etelaan)
+        suuntaehto_ = RaiteenPaa::Etelaan;
+    else
+        suuntaehto_ = RaiteenPaa::Virhe;
+    paivitaKaikki();
+}
+
 void GraafinenAikatauluScene::paivitaJuna(const QString &junatunnus)
 {
     // Poistetaan yksittäinen viiva...
@@ -187,6 +198,7 @@ void GraafinenAikatauluScene::paivitaJuna(const QString &junatunnus)
         junaViivat_.remove(junatunnus);
         aktiivinen_ = false;
     }
+
 
     // haetaan se uudestaan
     QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy, lahtoaika, valekm "
@@ -201,14 +213,20 @@ void GraafinenAikatauluScene::paivitaJuna(const QString &junatunnus)
 }
 
 void GraafinenAikatauluScene::lataaAikataulut()
-{
+{     
+    QString suuntaehto;
+    if( suuntaehto_ == RaiteenPaa::Pohjoiseen)
+        suuntaehto = " and suunta = \"P\" ";
+    else if( suuntaehto_ == RaiteenPaa::Etelaan )
+        suuntaehto = " and suunta = \"E\" ";
+
     // Yksinkertainen sql-kysely, jolla ladataan aikataulu
     QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy, lahtoaika, valekm "
                        "from taulussa, liikennepaikka, aikataulu, juna "
                        "where taulussa.liikennepaikka = aikataulu.liikennepaikka "
                        "and juna.reitti = aikataulu.reitti "
                        "and liikennepaikka.liikennepaikka = aikataulu.liikennepaikka "
-                       " and taulu=%1 order by junanro, aika").arg(taulu_);
+                       " and taulu=%1 %2 order by junanro, aika").arg(taulu_).arg(suuntaehto);
 
     lataaAikatauluKysymyksesta(kysymys);
 }

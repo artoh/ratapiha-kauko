@@ -49,6 +49,8 @@ public slots:
     void vieSvg();
     void tulosta();
 
+    void asetaSuunta();
+
     void vaihdaAikavali();
     void reittiDialogi();
 
@@ -68,6 +70,8 @@ protected:
     QAction* vieSvgAktio_;
     QAction* tulostaAktio_;
     QAction* reittiAktio_;
+    QAction* pohjoiseenAktio_;
+    QAction* etelaanAktio_;
 
     QSlider* alkaaSlider_;
     QSlider* paattyySlider_;

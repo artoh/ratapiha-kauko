@@ -89,6 +89,16 @@ void AikatauluIkkuna::tulosta()
     }
 }
 
+void AikatauluIkkuna::asetaSuunta()
+{
+    if( pohjoiseenAktio_->isChecked() )
+        skene_->asetaSuuntaEhto(RaiteenPaa::Pohjoiseen);
+    else if( etelaanAktio_->isChecked())
+        skene_->asetaSuuntaEhto(RaiteenPaa::Etelaan);
+    else
+        skene_->asetaSuuntaEhto(RaiteenPaa::Virhe);
+}
+
 void AikatauluIkkuna::vaihdaAikavali()
 {
     skene_->asetaAikavali( alkaaSlider_->value(), paattyySlider_->value() );
@@ -106,6 +116,15 @@ void AikatauluIkkuna::luoAktiot()
 
     reittiAktio_ = new QAction( QIcon(":/r/pic/reitit.png"), tr("Reittien suunnittelu"),this);
     connect( reittiAktio_, SIGNAL(triggered()), this, SLOT(reittiDialogi()));
+
+    pohjoiseenAktio_ = new QAction(tr("P"), this);
+    pohjoiseenAktio_->setCheckable(true);
+    connect( pohjoiseenAktio_, SIGNAL(changed()), this, SLOT(asetaSuunta()));
+
+    etelaanAktio_ = new QAction( tr("E"), this);
+    etelaanAktio_->setCheckable(true);
+    connect( etelaanAktio_, SIGNAL(changed()), this, SLOT(asetaSuunta()));
+
 
 }
 
@@ -136,6 +155,11 @@ void AikatauluIkkuna::luoTyokalurivi()
     tbar->addAction(tulostaAktio_);
     tbar->addAction(vieSvgAktio_);
     tbar->addAction(reittiAktio_);
+
+    tbar->addSeparator();
+    tbar->addAction(etelaanAktio_);
+    tbar->addAction(pohjoiseenAktio_);
+    tbar->addSeparator();
 
     alkaaSlider_ = new QSlider(Qt::Horizontal, this);
     paattyySlider_ = new QSlider (Qt::Horizontal, this);

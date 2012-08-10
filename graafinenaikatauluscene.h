@@ -25,6 +25,8 @@
 #include <QGraphicsLineItem>
 #include <QMap>
 
+#include "raiteenpaa.h"
+
 class JunaViiva;
 
 class GraafinenAikatauluScene : public QGraphicsScene
@@ -57,6 +59,7 @@ public slots:
     void valitseJuna(const QString& junatunnus = QString());
     void paivitaJuna(const QString& junatunnus);
     void paivitaKaikki();
+    void asetaSuuntaEhto(int suunta);
     
 
 protected:
@@ -84,6 +87,7 @@ protected:
     QMap<QString, JunaViiva*> junaViivat_;
     JunaViiva* aktiivinen_;
     JunaViiva* lokiviiva_;
+    RaiteenPaa::Suunta suuntaehto_;
 
 };
 
