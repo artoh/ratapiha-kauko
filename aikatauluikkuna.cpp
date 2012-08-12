@@ -80,11 +80,12 @@ void AikatauluIkkuna::vieSvg()
 void AikatauluIkkuna::tulosta()
 {
 
-    RatapihaIkkuna::getInstance()->printteri()->setOrientation(QPrinter::Landscape);
-    QPrintDialog dialog( RatapihaIkkuna::getInstance()->printteri()  );
+    QPrinter printteri;
+    printteri.setOrientation(QPrinter::Landscape);
+    QPrintDialog dialog( &printteri  );
     if( dialog.exec())
     {
-        QPainter painter( RatapihaIkkuna::getInstance()->printteri() );
+        QPainter painter( &printteri );
         skene_->render(&painter);
     }
 }

@@ -90,7 +90,6 @@ public slots:
 
     void aikaMuuttunut(const QDateTime& aika);
 
-    QPrinter* printteri() { return &printteri_; }
     QDateTime simulaatioAika() { return simulaatioAika_; }
 
 signals:
@@ -121,7 +120,6 @@ private:
     RataScene* ratascene_;
 
     int asiakkaita_;
-    QPrinter printteri_;
     QDateTime simulaatioAika_;
 
     static RatapihaIkkuna* instance__;
