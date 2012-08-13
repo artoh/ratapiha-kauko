@@ -96,6 +96,10 @@ void GraafinenAikatauluScene::lataaRuudukko()
         {
             x = xAjasta( QTime( tunti, minuutti, 0));
             addLine( x, 0, x, maxY, QPen(Qt::lightGray) );
+
+            addSimpleText( QString::number(minuutti/10), QFont("Helvetica",5)  )->setPos( x-5, 5);
+            addSimpleText( QString::number(minuutti/10), QFont("Helvetica",5)  )->setPos( x-5, maxY - 15);
+
             x = xAjasta( QTime( tunti, minuutti+5, 0));
             addLine( x, 0, x, maxY, QPen(Qt::lightGray,0, Qt::DashLine) );
         }
