@@ -54,6 +54,7 @@ public:
     int vaunuNumero() const { return vaununNumero_; }
     virtual AjoPoydat ajopoydat() const { return EiAjopoytaa; }
     virtual void siirtyyRaiteelle(RataRaide* raiteelle);  // Veturilokia varten!
+    virtual void akseliKytketty() {;} // Junan pysäyttämistä varten...
 
 protected:
     void luoVaunu(RataScene* skene); // Yhteiset luontitoimet

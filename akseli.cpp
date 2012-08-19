@@ -223,6 +223,26 @@ void Akseli::liiku(qreal matka)
         laskeSijainti();
     }
 
+    // Lopuksi kytkeydytään yhteen jos ajettu yhteen.
+    if( !kytkettyAkseli_ )
+    {
+        QList<QGraphicsItem*> tormaajat = collidingItems();
+        foreach( QGraphicsItem* item, tormaajat)
+        {
+            Akseli* akseli = dynamic_cast<Akseli*>(item);
+            // Yhteen kytkeytyminen
+            if( akseli )
+            {
+                    // Kytketään vaunut yhteen
+                    kytkettyAkseli_ = akseli;
+                    akseli->kytkettyAkseli_ = this;
+                    update(boundingRect());
+                    // Sitten voitaisiin pysäyttää veturi jos ajettu yhteen
+                    vaunu_->akseliKytketty();
+            }
+        }
+    }
+
 }
 
 
@@ -239,6 +259,15 @@ void Akseli::moottoriLiike(qreal matka)
 
 void Akseli::kytkinLiike(qreal matka)
 {
+    if( kytkettyAkseli_)
+    {
+        qreal etaisyys = QLineF( pos(), kytkettyAkseli_->pos()).length();
+        // ellei olla vielä ihan yhdessä, ei kuitenkaan liikuta
+        matka-=etaisyys;
+        if( matka < 0)
+            return;
+    }
+
     liiku(matka);
     if( toinenAkseli_)
         toinenAkseli_->vaunuLiike( 0 - matka);

@@ -151,6 +151,9 @@ void Veturi::paivitaJkvTiedot()
         if( kiskolla->opastinSijainnissa(liitosSijainti))
             opaste = kiskolla->opastinSijainnissa(liitosSijainti)->opaste();
 
+        if( opaste == RaiteenPaa::AjaVarovasti && nopeusRajoitus > 20)
+            nopeusRajoitus = 20;    // Vaihtotyöalueella max. nopeusrajoitus 20 km/h
+
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  Ehdot junan pysähtymiselle aikataulun mukaisesti
@@ -335,6 +338,9 @@ void Veturi::paivitaJkvTiedot()
     // Vaihtotyön sn rajoitetaan 35 km/h
     if( jkvTila()==VaihtoJkv && jkvnopeus > 35 )
         jkvnopeus = 35;
+    // Jos ollaan vaihtokulkutiellä, niin max nopeus 20 km/h
+    if( jkvTila()==VaihtoJkv &&  aktiivinenAkseli()->kiskolla()->raide()->kulkutieTyyppi() == RataRaide::Vaihtokulkutie && jkvnopeus > 20)
+        jkvnopeus = 20;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Tarkistetaan vielä raiteen voimassaoleva nopeusrajoitus, josta voi myös
@@ -473,8 +479,9 @@ void Veturi::siirtyyRaiteelle(RataRaide *raiteelle)
             // Lisätään nopeusrajoitus valvontaa varten. Tämä saattaa tuottaa pienoisia
             // virheitä kun juna vaihtaa suuntaa ;)
             // Matkamittarin lukema + pituus (eli rajoitus voimassa) ja rajoitus
+            int nopeusrajoitus = aktiivinenAkseli()->kiskolla()->sn();
             nopeusRajoitukset_.prepend( qMakePair( matkaMittari_ + aktiivinenAkseli()->kiskolla()->pituus(),
-                                                   aktiivinenAkseli()->kiskolla()->sn()));
+                                                   nopeusrajoitus ));
         }
 }
 
@@ -877,6 +884,22 @@ void Veturi::paivita()
 
     Vaunu::paivita();
 }
+
+void Veturi::akseliKytketty()
+{
+    // Kun ajetaan yhteen edessä olevan vaunun kanssa, pysäytetään kyseinen veturi.
+    asetaTavoiteNopeus(0);
+    if( nopeus() < 10 )     // Vähäisessä nopeudessa törmäys pysäyttää tyystin ;)
+        metriaSekunnissa_ = 0;
+
+    if( veturiAutomaationTila() == AutoAktiivinen )
+    {
+        asetaAjoPoyta(0);
+        veturiAutomaatio_ = AutoOn;
+    }
+    emit automaatioIlmoitus(ajopoyta() ,tavoiteNopeus(),jkvKuva());
+}
+
 
 bool Veturi::tarkistaRaiteenNumeroAkselilta(Akseli *akseli)
 {

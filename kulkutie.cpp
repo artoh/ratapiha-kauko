@@ -182,7 +182,8 @@ void KulkuTie::raideVarautuu(KulkutienRaide* elementti)
         // Kaikkien ennen tätä pitää olla varattuja tai käytettyjä
         foreach( KulkutienRaide* ktraide, elementit_)
         {
-            if( !ktraide->raide()->akseleita() &&  !ktraide->onkoKaytetty() && ktraide->raide()->pituus() > 200 )
+            if( !ktraide->raide()->akseleita() &&  !ktraide->onkoKaytetty() && ktraide->raide()->pituus() > 100 &&
+                    elementti->raide()->pituus() > 100 )
             {
                 // Ei ole varattu oikein
                 vikatilaan();
@@ -193,6 +194,8 @@ void KulkuTie::raideVarautuu(KulkutienRaide* elementti)
                 break;  // Meni aivan oikein!!
         }
     }
+    else if( kulkutienTyyppi()==RataRaide::Vaihtokulkutie && elementti->raide() == maaliRaide() )
+        puraKulkutieViiveella(60);  // Jos vaihtoyksikkö saapuuu maaliraiteelleen, käynnistetään heti kulkutien purku viiveellä
     else
         tarkista();
 }
@@ -209,7 +212,7 @@ void KulkuTie::raideVapautuu(KulkutienRaide *elementti)
         {
             if( ktraide == elementti)
                 ennenNykyista = false;
-            if( ennenNykyista && !ktraide->onkoKaytetty() && ktraide->raide()->pituus() > 300)
+            if( ennenNykyista && !ktraide->onkoKaytetty() && ktraide->raide()->pituus() > 100 && elementti->raide()->pituus() > 100)
             {
               //   vikatilaan();
                 qDebug() << "Vikatila: Väärä vapautuminen " << elementti->raide()->raidetunnusLiikennepaikalla();
@@ -226,17 +229,13 @@ void KulkuTie::raideVapautuu(KulkutienRaide *elementti)
     }
     else if( kulkutienTyyppi() == RataRaide::Vaihtokulkutie)
     {
-        // Samanlaiset ehdot käyttämättömille
-        int kayttamattomia = 0;
-        foreach(KulkutienRaide* ktraide, elementit_)
-        {
-            if(  !ktraide->onkoKaytetty() && !ktraide->raide()->akseleita() )
-                kayttamattomia++;
-        }
-        // Jos kaikki on käytetty, kulkutie puretaan 5 s. viiveellä
-        if( kayttamattomia == 1 && varattujaRaiteita()==1 && tila()==RataRaide::Varattu )
-            puraKulkutieViiveella(30);  // Juna maaliraiteella - puretaan 30 sek. kuluttua
+        // Vaihtokulkutie purkautuu lyhyemmällä viiveellä, jos sen jälkeen, kun jokin raide on varautunut,
+        // on ainoastaan maaliraide varautuneena.
+
+        if( varattujaRaiteita() == 1 && maaliRaide()->akseleita() )
+            puraKulkutieViiveella(30);
     }
+
     tarkista();
 
 }

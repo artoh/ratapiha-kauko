@@ -82,6 +82,7 @@ public:
     VeturiAutomaatio veturiAutomaationTila() const { return veturiAutomaatio_; }
 
     virtual void paivita();
+    virtual void akseliKytketty();  /** Veturi pysäytetään, jos kytketty suoraan edessä olevaan - tähän voi keksiä lisäehtoja*/
 
 signals:
     void nopeusIlmoitus(int nopeus);
