@@ -39,10 +39,15 @@ AikatauluMuokkaaja::AikatauluMuokkaaja(QWidget *parent) :
     reittiCombo_->setMaxVisibleItems(25);
     lataaReitit();
 
+    vaunumaaraSpin_ = new QSpinBox(this);
+    vaunumaaraSpin_->setRange(0,50);
+    vaunumaaraSpin_->setSuffix(tr(" vaunua"));
+
     QVBoxLayout* leiskaVasen = new QVBoxLayout();
     leiskaVasen->addWidget(tunnusEdit_);
     leiskaVasen->addWidget(aikaEdit_);
     leiskaVasen->addWidget(reittiCombo_);
+    leiskaVasen->addWidget(vaunumaaraSpin_);
 
     lisaaNappi_ = new QPushButton(QIcon(":/r/pic/lisaa.png"),QString());
     poistaNappi_ = new QPushButton(QIcon(":/r/pic/poista.png"), QString());
@@ -69,6 +74,7 @@ AikatauluMuokkaaja::AikatauluMuokkaaja(QWidget *parent) :
     connect( aikaEdit_, SIGNAL(timeChanged(QTime)) , this, SLOT(katsoKelpaako()));
     connect( tunnusEdit_, SIGNAL(textChanged(QString)), this, SLOT(katsoKelpaako()));
     connect( reittiCombo_, SIGNAL(currentIndexChanged(QString)), this, SLOT(katsoKelpaako()));
+    connect( vaunumaaraSpin_, SIGNAL(valueChanged(int)), this, SLOT(katsoKelpaako()));
     connect( this, SIGNAL(junaPaivitetty(QString)), selaaja_, SLOT(haeJunaAikataulu(QString)));
 
 
@@ -85,7 +91,7 @@ AikatauluMuokkaaja::AikatauluMuokkaaja(QWidget *parent) :
 void AikatauluMuokkaaja::valittuJuna(const QString &tunnus)
 {
     // Junan lähtöaika tulee editoitavaksi
-    QSqlQuery lahtoaikakysely( QString("select lahtee, reitti from juna where junanro=\"%1\"").arg(tunnus));
+    QSqlQuery lahtoaikakysely( QString("select lahtee, reitti, vaunuja from juna where junanro=\"%1\"").arg(tunnus));
     if( lahtoaikakysely.next())
     {
         tunnusEdit_->setText( tunnus );
@@ -95,6 +101,7 @@ void AikatauluMuokkaaja::valittuJuna(const QString &tunnus)
         junaTunnus_ = tunnus;
 
         reittiCombo_->setCurrentIndex( reittiCombo_->findText( lahtoaikakysely.value(1).toString()));
+        vaunumaaraSpin_->setValue( lahtoaikakysely.value(2).toInt());
 
         poistaNappi_->setEnabled(true);
         valmisNappi_->setEnabled(false);
@@ -131,12 +138,18 @@ void AikatauluMuokkaaja::eiValittuaJunaa()
 
 void AikatauluMuokkaaja::muokkausValmis()
 {
+    QString vaunutext;
+    if( vaunumaaraSpin_->value())
+        vaunutext = QString::number( vaunumaaraSpin_->value());
+    else
+        vaunutext = QString("NULL");
+
     if( junaTunnus_.isEmpty())
     {
         QSqlQuery lisays;
 
-        if( lisays.exec( QString("insert into juna(junanro, reitti, lahtee) values(\"%1\",\"%2\",\"%3\") " )
-                          .arg(tunnusEdit_->text()).arg( reittiCombo_->currentText() ).arg( aikaEdit_->time().toString() )))
+        if( lisays.exec( QString("insert into juna(junanro, reitti, lahtee, vaunuja) values(\"%1\",\"%2\",\"%3\",%4) " )
+                          .arg(tunnusEdit_->text()).arg( reittiCombo_->currentText() ).arg( aikaEdit_->time().toString() ).arg(vaunutext)))
         {
             junaTunnus_ = tunnusEdit_->text();
             emit junaPaivitetty( junaTunnus_);
@@ -149,9 +162,9 @@ void AikatauluMuokkaaja::muokkausValmis()
     {
         // Update !!!
         QSqlQuery paivitys;
-        if( paivitys.exec( QString("update juna set junanro=\"%1\", reitti=\"%2\", lahtee=\"%3\" where junanro=\"%4\" ")
+        if( paivitys.exec( QString("update juna set junanro=\"%1\", reitti=\"%2\", lahtee=\"%3\", vaunuja=%5 where junanro=\"%4\" ")
                          .arg(tunnusEdit_->text()).arg( reittiCombo_->currentText() ).arg( aikaEdit_->time().toString() )
-                         .arg(junaTunnus_ )))
+                         .arg(junaTunnus_ ).arg( vaunutext )  ))
         {
             emit junaPaivitetty(junaTunnus_);
             if( junaTunnus_ != tunnusEdit_->text())

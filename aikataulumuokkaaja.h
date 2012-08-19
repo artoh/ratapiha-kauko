@@ -28,6 +28,7 @@ GNU General Public License for more details.
 #include <QLineEdit>
 #include <QComboBox>
 #include <QPushButton>
+#include <QSpinBox>
 
 class AikatauluMuokkaaja : public QWidget
 {
@@ -59,6 +60,7 @@ protected:
     QTimeEdit* aikaEdit_;
     QComboBox* reittiCombo_;
     AikatauluSelaaja* selaaja_;
+    QSpinBox* vaunumaaraSpin_;
 
     QPushButton* lisaaNappi_;
     QPushButton* poistaNappi_;

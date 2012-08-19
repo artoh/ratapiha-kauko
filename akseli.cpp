@@ -200,12 +200,12 @@ void Akseli::liiku(qreal matka)
         // Raiteen vaihtaminen?
         if( kiskolla()->raide() != uusiKisko->raide())
         {
+            vaunu_->siirtyyRaiteelle(uusiKisko->raide());   // Lokia varten
             kiskolla()->raide()->akseliUlos(RaiteenPaa::Pohjoiseen, uusiKisko->raide());
             if( kiskolla()->pohjoinen() == uusiKisko->etelainen())
                 uusiKisko->raide()->akseliSisaan(RaiteenPaa::Pohjoiseen, kiskolla()->raide());
             else
                 uusiKisko->raide()->akseliSisaan(RaiteenPaa::Etelaan, kiskolla()->raide());
-            vaunu_->siirtyyRaiteelle(uusiKisko->raide());   // Lokia varten
         }
 
         qreal jaannosMatka = 0;
@@ -221,33 +221,39 @@ void Akseli::liiku(qreal matka)
     {
         sijaintiKiskolla_ = uusiSijainti;
         laskeSijainti();
-    }
 
-    // Lopuksi kytkeydytään yhteen jos ajettu yhteen.
-    if( !kytkettyAkseli_ )
-    {
-        QList<QGraphicsItem*> tormaajat = collidingItems();
-        foreach( QGraphicsItem* item, tormaajat)
+        // Lopuksi kytkeydytään yhteen jos ajettu yhteen.
+        // Huom! Tämä vain ajettaessa kohti, eli positiiviseen suuntaan!
+        if( !kytkettyAkseli_ && matka > 0.0 )
         {
-            Akseli* akseli = dynamic_cast<Akseli*>(item);
-            // Yhteen kytkeytyminen
-            if( akseli )
+            QList<QGraphicsItem*> tormaajat = collidingItems();
+            foreach( QGraphicsItem* item, tormaajat)
             {
+                Akseli* akseli = dynamic_cast<Akseli*>(item);
+                // Yhteen kytkeytyminen
+                if( akseli && !kytkettyAkseli_ && !akseli->kytkettyAkseli_
+                        && toinenAkseli_ != akseli->toinenAkseli_ &&
+                         QLineF( pos(), akseli->pos()).length() < 3.2 )
+                {
                     // Kytketään vaunut yhteen
                     kytkettyAkseli_ = akseli;
                     akseli->kytkettyAkseli_ = this;
                     update(boundingRect());
                     // Sitten voitaisiin pysäyttää veturi jos ajettu yhteen
                     vaunu_->akseliKytketty();
+                }
             }
         }
+        // Yhteen kytkeytyminen..
     }
+
 
 }
 
 
 void Akseli::moottoriLiike(qreal matka)
 {
+
     liiku(matka);
     if( kytkettyAkseli_)
         kytkettyAkseli_->kytkinLiike( 0 - matka);
@@ -259,15 +265,6 @@ void Akseli::moottoriLiike(qreal matka)
 
 void Akseli::kytkinLiike(qreal matka)
 {
-    if( kytkettyAkseli_)
-    {
-        qreal etaisyys = QLineF( pos(), kytkettyAkseli_->pos()).length();
-        // ellei olla vielä ihan yhdessä, ei kuitenkaan liikuta
-        matka-=etaisyys;
-        if( matka < 0)
-            return;
-    }
-
     liiku(matka);
     if( toinenAkseli_)
         toinenAkseli_->vaunuLiike( 0 - matka);
@@ -277,9 +274,36 @@ void Akseli::kytkinLiike(qreal matka)
 void Akseli::vaunuLiike(qreal matka)
 {
     liiku(matka);
+
+    // Turvafunktio, jolla liikutaan lisää, ellei pysynyt yhdessä
+    qreal etaisyys = QLineF( pos(), toinenAkseli_->pos()).length();
+    if( etaisyys > vaunu_->pituus()+1)
+        liiku(-1);  // Ylimääräinen liike jos vaunu hajonnut...
+
     if( kytkettyAkseli_)
         kytkettyAkseli_->kytkinLiike( 0 - matka);
     vaunu_->laskeSijainti();
+}
+
+void Akseli::irrota()
+{
+    if( kytkettyAkseli_)
+    {
+        kytkettyAkseli_->kytkettyAkseli_ = 0;
+        kytkettyAkseli_ = 0;
+        update(boundingRect());
+    }
+
+}
+
+void Akseli::irrotaLiiatVaunut(int vaunuja)
+{
+    if( vaunuja < 2)    // Nyt ollaan viimeisessä vaunussa!
+        toinenAkseli_->irrota();
+    else
+        if( toinenAkseli_->kytkettyAkseli_)
+            toinenAkseli_->kytkettyAkseli_->irrotaLiiatVaunut( vaunuja - 1);
+
 }
 
 qreal Akseli::junanPituusKysely(qreal tahanasti)

@@ -55,6 +55,9 @@ public:
     void kytkinLiike( qreal matka);
     void vaunuLiike( qreal matka);
 
+    void irrota();
+    void irrotaLiiatVaunut(int vaunuja);    /** Irrottaa TAAKSEPÄIN jos enempi vaunuja */
+
     qreal junanPituusKysely(qreal tahanasti);
 
 private:

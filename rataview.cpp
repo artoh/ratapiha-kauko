@@ -74,8 +74,19 @@ void RataView::wheelEvent(QWheelEvent *event)
 
 void RataView::mousePressEvent(QMouseEvent *event)
 {
-
-    QGraphicsView::mousePressEvent(event);
+    if( event->button() == Qt::XButton1 )
+    {
+        // X-napilla napilla toistaiseksi irrotetaan vaunuja
+        QList<QGraphicsItem*> lista = items(event->pos());
+        foreach( QGraphicsItem* item, lista)
+        {
+            Akseli* akseli = qgraphicsitem_cast<Akseli*>(item);
+            if( akseli )
+                akseli->irrota();
+        }
+    }
+    else
+        QGraphicsView::mousePressEvent(event);
 
 }
 

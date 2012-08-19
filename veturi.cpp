@@ -151,8 +151,8 @@ void Veturi::paivitaJkvTiedot()
         if( kiskolla->opastinSijainnissa(liitosSijainti))
             opaste = kiskolla->opastinSijainnissa(liitosSijainti)->opaste();
 
-        if( opaste == RaiteenPaa::AjaVarovasti && nopeusRajoitus > 20)
-            nopeusRajoitus = 20;    // Vaihtotyöalueella max. nopeusrajoitus 20 km/h
+        if( opaste == RaiteenPaa::AjaVarovasti && nopeusRajoitus > 35)
+            nopeusRajoitus = 35;    // Vaihtotyöalueella max. nopeusrajoitus 35 km/h
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -335,12 +335,12 @@ void Veturi::paivitaJkvTiedot()
         if( opaste.jkvNopeus() < jkvnopeus)
             jkvnopeus = opaste.jkvNopeus();
 
-    // Vaihtotyön sn rajoitetaan 35 km/h
-    if( jkvTila()==VaihtoJkv && jkvnopeus > 35 )
-        jkvnopeus = 35;
-    // Jos ollaan vaihtokulkutiellä, niin max nopeus 20 km/h
+    // Vaihtotyön sn rajoitetaan 50 km/h
+    if( jkvTila()==VaihtoJkv && jkvnopeus > 50 )
+        jkvnopeus = 50;
+    // Jos ollaan vaihtokulkutiellä, niin max nopeus 35 km/h
     if( jkvTila()==VaihtoJkv &&  aktiivinenAkseli()->kiskolla()->raide()->kulkutieTyyppi() == RataRaide::Vaihtokulkutie && jkvnopeus > 20)
-        jkvnopeus = 20;
+        jkvnopeus = 35;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Tarkistetaan vielä raiteen voimassaoleva nopeusrajoitus, josta voi myös
@@ -480,6 +480,7 @@ void Veturi::siirtyyRaiteelle(RataRaide *raiteelle)
             // virheitä kun juna vaihtaa suuntaa ;)
             // Matkamittarin lukema + pituus (eli rajoitus voimassa) ja rajoitus
             int nopeusrajoitus = aktiivinenAkseli()->kiskolla()->sn();
+
             nopeusRajoitukset_.prepend( qMakePair( matkaMittari_ + aktiivinenAkseli()->kiskolla()->pituus(),
                                                    nopeusrajoitus ));
         }
@@ -536,6 +537,24 @@ void Veturi::aja()
       qreal liike = metriaSekunnissa_ * RataIkkuna::rataSkene()->nopeutusKerroin() / 5;
         // Tarvittava liike kerrotaan ohjelman nopeuttamisen kertoimella, ja sitten jaetaan
         // päivitysvälillä 1/5 s.
+
+
+      // Liittämisen varmistaminen, hidastetaan kun ollaan vaihtotöissä lähellä toista junaa
+      if( jkvTila() == VaihtoJkv && liike > 2.0)
+      {
+          QRectF varoalue;
+          if( ajopoyta() == 1 )
+              varoalue = QRectF(-40.0, -10.0, 40.0, 20.0 );
+          else
+              varoalue = QRectF(pituus()-20.0, -10.0, 40, 20.0 );
+          QList<QGraphicsItem*> lista = scene()->items( mapToScene(varoalue) );
+          foreach( QGraphicsItem* item, lista)
+          {
+              if( dynamic_cast<Vaunu*>(item) && item != this)
+                  liike = 2.0;
+          }
+      }
+
 
       if( ajopoyta_ == 1)
           etuAkseli_->moottoriLiike( liike );
@@ -889,7 +908,7 @@ void Veturi::akseliKytketty()
 {
     // Kun ajetaan yhteen edessä olevan vaunun kanssa, pysäytetään kyseinen veturi.
     asetaTavoiteNopeus(0);
-    if( nopeus() < 10 )     // Vähäisessä nopeudessa törmäys pysäyttää tyystin ;)
+    if( nopeus() < 21 )     // Vähäisessä nopeudessa törmäys pysäyttää tyystin ;)
         metriaSekunnissa_ = 0;
 
     if( veturiAutomaationTila() == AutoAktiivinen )
@@ -905,6 +924,17 @@ bool Veturi::tarkistaRaiteenNumeroAkselilta(Akseli *akseli)
 {
     if( akseli && akseli->kiskolla())
     {
+        // Lisäehtona on se, että akseli ei saa olla irroitettu
+        // ts. akselin edessä ei saa olla vaunua
+        QList<QGraphicsItem*> tormaajat = akseli->collidingItems();
+        foreach( QGraphicsItem* item, tormaajat)
+        {
+            Akseli* tormaysakseli = dynamic_cast<Akseli*>(item);
+            if( tormaysakseli )
+                return false;
+        }
+
+
         // Tarkastetaan junanumero tältä raiteelta
         QString junatunnus = akseli->kiskolla()->raide()->junanumero();
         if( junatunnus != junaNumero())
@@ -934,7 +964,7 @@ void Veturi::tyhjennaReitti()
 bool Veturi::haeReitti(Akseli *akseli)
 {
     // Haetaan reitti kyseessä olevalle junalle
-    QSqlQuery reitinkysymys( QString("select reitti, lahtee from juna where junanro =\"%1\" ").arg( junaNumero() ));
+    QSqlQuery reitinkysymys( QString("select reitti, lahtee, vaunuja from juna where junanro =\"%1\" ").arg( junaNumero() ));
     if( !reitinkysymys.next())
         return false;
 
@@ -956,8 +986,9 @@ bool Veturi::haeReitti(Akseli *akseli)
         return false;
 
 
+    int vaunumaara = reitinkysymys.value(2).toInt();    // Kuinka monta vaunua enintään junaan kuuluu? Käytetään pätkimään vaunujonoj
+                                                        // etenkin vaihtotyössä
     // Tyhjentää reittitiedot
-
     tyhjennaReitti();
 
     // Haetaan reitti
@@ -1040,6 +1071,11 @@ bool Veturi::haeReitti(Akseli *akseli)
                 jkvTila_ = JunaJkv;
             if( lahtoraiteella )
                 tavoiteNopeus_ = enimmaisNopeus();
+
+            // Jos vaunumäärää on rajoitettu (esimerkiksi vaihtotyössä irrotetaan pois pitkästä jonosta)
+            // tehdään tarvittava irroitus
+            if( vaunumaara )
+                aktiivinenAkseli()->irrotaLiiatVaunut(vaunumaara);
 
             // Merkitään pysähtymisaika alkamaan tästä, jotta
             // viivästykset toimivat
