@@ -544,9 +544,9 @@ void Veturi::aja()
       {
           QRectF varoalue;
           if( ajopoyta() == 1 )
-              varoalue = QRectF(-40.0, -10.0, 40.0, 20.0 );
+              varoalue = QRectF(-40.0, -5.0, 40.0, 10.0 );
           else
-              varoalue = QRectF(pituus()-20.0, -10.0, 40, 20.0 );
+              varoalue = QRectF(pituus()-20.0, -5.0, 40, 10.0 );
           QList<QGraphicsItem*> lista = scene()->items( mapToScene(varoalue) );
           foreach( QGraphicsItem* item, lista)
           {
