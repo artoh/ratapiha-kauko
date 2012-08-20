@@ -134,6 +134,8 @@ bool RaiteenPaa::aukiajonKaanto()
 void RaiteenPaa::asetaPaanTyyppi(PaanTyyppi tyyppi)
 {
     paanTyyppi_ = tyyppi;
+    if( tyyppi == Vaihde || tyyppi == RaideRisteys )
+        vaihdeTila_ = Vasen;
 }
 
 void RaiteenPaa::asetaRaiteenSulku(bool onko)

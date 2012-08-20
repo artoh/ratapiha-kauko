@@ -100,7 +100,9 @@ void EditoriKisko::tarkistaPaanTyypit()
         {
             if( raidePointteri()->pohjoinen()->paanTyyppi() !=RaiteenPaa::RaideRisteys &&
                     raidePointteri()->pohjoinen()->paanTyyppi() != RaiteenPaa::Vaihde )
+            {
                 raidePointteri()->pohjoinen()->asetaPaanTyyppi(RaiteenPaa::Vaihde);
+            }
         }
         else if( pohjoisTyyppi() == Kisko::RaidePuskuri)
             raidePointteri()->pohjoinen()->asetaPaanTyyppi(RaiteenPaa::RaidePuskuri);
