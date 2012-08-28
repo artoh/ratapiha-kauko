@@ -17,7 +17,7 @@ public:
     RaiteenPaa(const QString& tila = QString());
     void paivitaTila(const QString& tila);
 
-    enum Opaste { Pimea, Seis, Aja, AjaSn, AjaVarovasti, EiOpastetta, Tyhja, SeisLevy, NopeusRajoitus, OdotaLahtolupaa, Lahtolupa };
+    enum Opaste { Pimea, Seis, Aja, AjaSn, AjaVarovasti, EiOpastetta, Tyhja, SeisLevy, NopeusRajoitus, OdotaLahtolupaa, Lahtolupa, OpastinPuuttuu };
     enum OpastinTyyppi { EiOpastinta, PaaOpastin, SuojastusOpastin, RaideOpastin };
     enum PaanTyyppi { Suora, Vaihde, RaideRisteys, RaidePuskuri } ;
 

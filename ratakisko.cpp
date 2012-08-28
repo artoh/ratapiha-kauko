@@ -35,9 +35,9 @@ RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, int kiskoid, const Q
 
 
     // Opastimien laittamiset
-        RaiteenPaa::Opaste esiopastinkasiteEtela = RaiteenPaa::Tyhja;
+        RaiteenPaa::Opaste esiopastinkasiteEtela = RaiteenPaa::OpastinPuuttuu;
         if( kiskodata.contains("EoE"))
-            esiopastinkasiteEtela = RaiteenPaa::Seis;
+            esiopastinkasiteEtela = RaiteenPaa::Tyhja;
 
         if( etelaTyyppi() == Paa || etelaTyyppi() == LiikennePaikanPaa )
         {
@@ -45,7 +45,7 @@ RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, int kiskoid, const Q
                 opastinEtelaan_ = new Opastin(this, raide->etelainen(), esiopastinkasiteEtela,
                                               QString("E%1").arg(raide->raidetunnus(),3,10,QChar('0')));
         }
-        else if( esiopastinkasiteEtela != RaiteenPaa::Tyhja)
+        else if( esiopastinkasiteEtela != RaiteenPaa::OpastinPuuttuu)
             opastinEtelaan_ = new Opastin(this, 0, esiopastinkasiteEtela);
 
         if( opastinEtelaan_)
@@ -56,7 +56,7 @@ RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, int kiskoid, const Q
         }
 
         // Sama pohjoiseen
-        RaiteenPaa::Opaste esiopastinkasitePohjoinen = RaiteenPaa::Tyhja;
+        RaiteenPaa::Opaste esiopastinkasitePohjoinen = RaiteenPaa::OpastinPuuttuu;
         if( kiskodata.contains("EoP"))
             esiopastinkasitePohjoinen= RaiteenPaa::Tyhja;
 
@@ -66,7 +66,7 @@ RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, int kiskoid, const Q
                 opastinPohjoiseen_ = new Opastin(this, raide->pohjoinen(), esiopastinkasitePohjoinen,
                                                  QString("P%1").arg(raide->raidetunnus(),3,10,QChar('0')));
         }
-        else if( esiopastinkasitePohjoinen != RaiteenPaa::Tyhja)
+        else if( esiopastinkasitePohjoinen != RaiteenPaa::OpastinPuuttuu)
             opastinPohjoiseen_ = new Opastin(this, 0, esiopastinkasiteEtela);
 
         if( opastinPohjoiseen_)
