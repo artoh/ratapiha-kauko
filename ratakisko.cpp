@@ -37,7 +37,7 @@ RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, int kiskoid, const Q
     // Opastimien laittamiset
         RaiteenPaa::Opaste esiopastinkasiteEtela = RaiteenPaa::OpastinPuuttuu;
         if( kiskodata.contains("EoE"))
-            esiopastinkasiteEtela = RaiteenPaa::Tyhja;
+            esiopastinkasiteEtela = RaiteenPaa::Seis;
 
         if( etelaTyyppi() == Paa || etelaTyyppi() == LiikennePaikanPaa )
         {
@@ -58,7 +58,7 @@ RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, int kiskoid, const Q
         // Sama pohjoiseen
         RaiteenPaa::Opaste esiopastinkasitePohjoinen = RaiteenPaa::OpastinPuuttuu;
         if( kiskodata.contains("EoP"))
-            esiopastinkasitePohjoinen= RaiteenPaa::Tyhja;
+            esiopastinkasitePohjoinen= RaiteenPaa::Seis;
 
         if( pohjoisTyyppi() == Paa || pohjoisTyyppi() == LiikennePaikanPaa )
         {
@@ -67,7 +67,7 @@ RataKisko::RataKisko(RataRaide *raide, const QLineF &viiva, int kiskoid, const Q
                                                  QString("P%1").arg(raide->raidetunnus(),3,10,QChar('0')));
         }
         else if( esiopastinkasitePohjoinen != RaiteenPaa::OpastinPuuttuu)
-            opastinPohjoiseen_ = new Opastin(this, 0, esiopastinkasiteEtela);
+            opastinPohjoiseen_ = new Opastin(this, 0, esiopastinkasitePohjoinen);
 
         if( opastinPohjoiseen_)
         {
