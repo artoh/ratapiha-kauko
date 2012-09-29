@@ -435,13 +435,17 @@ void Veturi::kirjoitaLokiin(const QString &ilmoitustyyppi, RataRaide *raide, con
     aika[10] = QChar(' ');
 
     QString liikennepaikka, raidetunnus, lisatietoa;
-    QString junanumero = "NULL";
+
+    QString junanumero;
+    if( junaNumero().isEmpty() )
+        junanumero = "NULL";
+    else
+        junanumero = QString("\"%1\"").arg( junaNumero() );
+
     if( raide )
     {
         liikennepaikka = QString("\"%1\"").arg(raide->liikennepaikka());
         raidetunnus = QString::number(raide->raidetunnus());
-        if( !raide->junanumero().isEmpty())
-            junanumero = QString("\"%1\"").arg(raide->junanumero());
     }
     else
     {

@@ -393,7 +393,8 @@ void RatapihaIkkuna::lukuYhteysMuodostettu()
 void RatapihaIkkuna::muokkaaNakymaa(int nakyma)
 {
     if( !tietokanta_.isOpen())
-        yhdistaTietokantaan();
+        if(!yhdistaTietokantaan())
+            return;
 
     EditoriIkkuna* ikkuna = new EditoriIkkuna(nakyma, this);
     ikkuna->show();
