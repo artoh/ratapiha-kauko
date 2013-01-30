@@ -171,7 +171,8 @@ void KulkutieElementti::laitaVarit(KulkutienMuodostaja *kulkutie)
         // Aja vai AjaSn?
         int nopeus = naapuruus_->pieninNopeus();
 
-        if( nopeus < 40 || nopeus < naapuruus_->naapuriRaide()->suurinNopeus()  )
+        if( nopeus < 40 || nopeus < naapuruus_->omaRaide()->suurinNopeus()
+                || nopeus < naapuruus_->naapuriRaide()->suurinNopeus() )
             // AJA SN EHDOT: nopeus alle 40 km/h tai poikkeava (hitaampi) raide
         {
             if( opastin_->opasteKasite() != RaiteenPaa::AjaSn)
