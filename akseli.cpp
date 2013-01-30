@@ -59,9 +59,19 @@ void Akseli::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
 void Akseli::sijoitaKiskolle( RataKisko *kiskolle, qreal sijainti, RaiteenPaa::Suunta suunta)
 {
+
+
     kiskolla_ = kiskolle;
     sijaintiKiskolla_ = sijainti;
     suuntaKiskolla_ = suunta;
+
+    if(!kiskolle)
+    {
+        // Ei kiskolla !
+        setPos(0,0);
+        setVisible(false);
+        return;
+    }
 
     laskeSijainti();
 

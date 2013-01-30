@@ -22,6 +22,7 @@
 
 #include "ratascene.h"
 #include "rataikkuna.h"
+#include "rataraide.h"
 
 #include <QSqlQuery>
 
@@ -117,6 +118,26 @@ void Vaunu::laskeSijainti()
     QLineF suunta( etuAkseli_->pos(), takaAkseli_->pos());
     setRotation( 0.0 - suunta.angle());
     update( boundingRect());
+}
+
+void Vaunu::poista()
+{
+
+    etuAkseli_->irrota();
+    takaAkseli_->irrota();
+
+    if(etuAkseli_->kiskolla())
+        etuAkseli_->kiskolla()->raide()->akseliUlos(RaiteenPaa::Virhe,0);
+
+    if(takaAkseli_->kiskolla())
+        takaAkseli_->kiskolla()->raide()->akseliUlos(RaiteenPaa::Virhe,0);
+
+    etuAkseli_->sijoitaKiskolle(0,0,RaiteenPaa::Virhe);
+    takaAkseli_->sijoitaKiskolle(0,0,RaiteenPaa::Virhe);
+
+    laskeSijainti();
+    hide();
+
 }
 
 void Vaunu::siirtyyRaiteelle(RataRaide* /* raiteelle */)

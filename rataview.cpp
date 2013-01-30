@@ -32,6 +32,7 @@
 
 #include <cmath>
 #include <QDebug>
+#include <QPointF>
 
 RataView::RataView(RataScene *skene) :
     QGraphicsView(skene), rullaSkaalaa_(true), tila_(Vierita)
@@ -83,6 +84,21 @@ void RataView::mousePressEvent(QMouseEvent *event)
             Akseli* akseli = qgraphicsitem_cast<Akseli*>(item);
             if( akseli )
                 akseli->irrota();
+        }
+    }
+    else if(event->button() == Qt::XButton2)
+    {
+        // Vaunun poistaminen X2-napilla
+        QList<QGraphicsItem*> lista = items(event->pos());
+        foreach( QGraphicsItem* item, lista)
+        {
+            Vaunu* vaunu = dynamic_cast<Vaunu*>(item);
+            if( vaunu )
+            {
+                qreal x = vaunu->mapFromScene( mapToScene(event->pos()) ).x();
+                if( x > 0 && x < vaunu->pituus())
+                    vaunu->poista();
+            }
         }
     }
     else

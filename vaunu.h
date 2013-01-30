@@ -51,6 +51,8 @@ public:
     virtual void paivita();
     void laskeSijainti();
 
+    void poista();  // Vaunun poistaminen asettaa nollasijainnin
+
     int vaunuNumero() const { return vaununNumero_; }
     virtual AjoPoydat ajopoydat() const { return EiAjopoytaa; }
     virtual void siirtyyRaiteelle(RataRaide* raiteelle);  // Veturilokia varten!

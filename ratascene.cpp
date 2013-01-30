@@ -213,7 +213,7 @@ void RataScene::lataaRata()
 void RataScene::lataaVaunut()
 {
     QSqlQuery nkys("select vaunuid, vaunutyyppi, etu_kisko, etu_sijainti, etu_suunta, "
-                   "taka_kisko, taka_sijainti, taka_suunta from vaunu");
+                   "taka_kisko, taka_sijainti, taka_suunta from vaunu where etu_kisko > 0 ");
 
     while( nkys.next())
     {
