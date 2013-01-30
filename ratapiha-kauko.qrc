@@ -98,5 +98,7 @@
         <file>pic/hyvaksy.png</file>
         <file>pic/kopioi.png</file>
         <file>pic/reitit.png</file>
+        <file>pic/eiaikoja.png</file>
+        <file>pic/kellolla.png</file>
     </qresource>
 </RCC>

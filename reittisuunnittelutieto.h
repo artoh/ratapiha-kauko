@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #include "reittitieto.h"
 #include "raiteenpaa.h"
 
+
 class ReittiSuunnitteluTieto : public ReittiTieto
 {
 public:
@@ -33,6 +34,7 @@ public:
     QString liikennepaikka() const { return liikennepaikka_; }
     int raide() const { return raide_; }
     RaiteenPaa::Suunta suunta() const { return suunta_; }
+    QTime lokiaika() const { return lokiaika_; }
 
     void asetaLiikennepaikka(const QString& liikennepaikka) { liikennepaikka_ = liikennepaikka; }
     void asetaRaide(int raide) { raide_ = raide; }
@@ -40,6 +42,8 @@ public:
     void asetaLahtoaika(const QTime& aika)  { lahtoaika_ = aika; }
     void asetaPysahdyksenKesto(int sekuntia)  { pysahtyySekuntia_ = sekuntia; }
     void asetaTapahtumatyyppi( TapahtumaTyyppi tyyppi ) { tapahtuma_ = tyyppi; }
+    void asetaLokiaika(const QTime& aika) { lokiaika_ = aika ; }
+    void asetaAikaLokista();    /** Asettaa aikataulunmukaisen ajan viimeisen toteutuneen junan mukaan */
 
     void asetaSuunta(int suunta);
     void asetaTapahtumatyyppi(int tyyppi);
@@ -50,6 +54,7 @@ protected:
     QString liikennepaikka_;
     int raide_;
     RaiteenPaa::Suunta suunta_;
+    QTime lokiaika_;    // Edellisen juna toteunut lähtöaika
 
 };
 

@@ -32,7 +32,7 @@ class ReititModel : public QAbstractTableModel
 public:
     explicit ReititModel(QObject *parent = 0);
 
-    enum { Liikennepaikka = 0, Raide = 1, Aika = 2, Pysahtyy = 3, Tapahtuma = 4, Suunta = 5 } ;
+    enum { Liikennepaikka = 0, Raide = 1, Aika = 2, Pysahtyy = 4, Tapahtuma = 5, Suunta = 6, Lokiaika = 3 } ;
 
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
@@ -59,6 +59,11 @@ public slots:
     void poistaRivi(int rivi);
     void reitistaKopio();
     void tallenna( const QString& uusitunnus);
+
+    void ajatKellosta();
+    void nollaaAjat();
+
+    void haeLokiaika(); /** Hakee viimeisimmän ajetun junan toteutuneen aikataulun */
 
 
 protected:

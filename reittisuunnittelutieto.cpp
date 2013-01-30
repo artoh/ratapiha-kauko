@@ -35,6 +35,11 @@ ReittiSuunnitteluTieto::ReittiSuunnitteluTieto(const QString &liikennepaikka, in
 
 }
 
+void ReittiSuunnitteluTieto::asetaAikaLokista()
+{
+    asetaLahtoaika( QTime( lokiaika().hour(), lokiaika().minute()) );
+}
+
 void ReittiSuunnitteluTieto::lisaaTietokantaan(const QString &reitti)
 {
     QString aikateksti;

@@ -66,6 +66,9 @@ ReittiDialogi::ReittiDialogi(QWidget* /*parent*/) :
     connect( reittiModel_, SIGNAL(muokattu(bool)), this, SLOT(reittiaMuokattu(bool)));
     connect( reittiModel_, SIGNAL(uusiHylatty()), this, SLOT(poistaReitti()));
 
+    connect( kellostaNappi, SIGNAL(clicked()), reittiModel_, SLOT(ajatKellosta()) );
+    connect( pyyhiajatNappi, SIGNAL(clicked()), reittiModel_, SLOT(nollaaAjat()) );
+
     tallennusVaroitus->setVisible(false);
 
 }

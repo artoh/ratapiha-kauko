@@ -20,6 +20,8 @@ GNU General Public License for more details.
 #include "reititmodel.h"
 
 #include <QSqlQuery>
+#include <QDebug>
+#include <QBrush>
 
 
 ReititModel::ReititModel(QObject *parent) :
@@ -43,6 +45,7 @@ QVariant ReititModel::headerData(int section, Qt::Orientation orientation, int r
         case Pysahtyy : return tr("Pysähdysaika");
         case Tapahtuma : return tr("Tapahtuma");
         case Suunta: return tr("Suunta");
+        case Lokiaika : return tr("Toteutunut");
         }
     }
     return QVariant();
@@ -70,13 +73,14 @@ QVariant ReititModel::data(const QModelIndex &index, int role) const
         case Pysahtyy:
             return tiedot_.at( index.row()).pysahtyy();
         case Tapahtuma:
-        {
             return (int) tiedot_.at( index.row()).tapahtumaTyyppi();
-        }
         case Suunta:
             return (int) tiedot_.at( index.row()).suunta();
+        case Lokiaika:
+            return tiedot_.at( index.row()).lokiaika();
         }
     }
+
     return QVariant();
 }
 
@@ -89,7 +93,7 @@ void ReititModel::valitseReitti(const QString &reittitunnus)
 
     QSqlQuery kysely(  QString("select liikennepaikka, raide, lahtoaika, pysahtyy, tapahtuma, suunta "
                                "from aikataulu natural join liikennepaikka where reitti=\"%1\" "
-                               "order by kmluku, lahtoaika ").arg(reittitunnus));
+                               "order by lahtoaika, kmluku ").arg(reittitunnus));
     while( kysely.next())
     {
         QString liikennepaikka = kysely.value(0).toString();
@@ -102,8 +106,51 @@ void ReititModel::valitseReitti(const QString &reittitunnus)
         tiedot_.append( ReittiSuunnitteluTieto(liikennepaikka, raide, lahtoaika, pysahtyy, tapahtumaKirjain, suunta)  );
     }
 
+    // Haetaan lopuksi lokiajat
+    haeLokiaika();
 
     endResetModel();
+}
+
+void ReititModel::haeLokiaika()
+{
+    QSqlQuery kysely( QString("select junanro, aika from veturiloki natural join juna "
+                       "where ilmoitus=\"S\" and reitti=\"%1\" order by aika desc ").arg(reittiTunnus()));
+    if( kysely.next())
+    {
+        QString junanro = kysely.value(0).toString();
+        QDateTime saapumisaika = kysely.value(1).toDateTime();
+        QDateTime vrk = saapumisaika.addDays(-1);
+
+        QString kysymys = QString("select aika, ilmoitus, liikennepaikka, raide from veturiloki "
+                                      "where junanro=\"%1\" and aika > \"%2\" order by aika ").arg(junanro).arg(vrk.toString(Qt::ISODate));
+        QSqlQuery lokikysely(kysymys);
+
+        QDateTime lahti;
+
+        while( lokikysely.next())
+        {
+            // Ensimmäinen lokissa oleva lähtöaika tulkitaan junan lähtöajaksi
+            if( lokikysely.value(1).toString() == "L" && !lahti.isValid() )
+                lahti = lokikysely.value(0).toDateTime();
+
+            // Sitten merkitään lokissa olevat raiteet lokiajoiksi
+            for(int i=0; i < tiedot_.count(); i++)
+            {
+                if( tiedot_[i].liikennepaikka() == lokikysely.value(2).toString() && tiedot_[i].raide() == lokikysely.value(3).toInt())
+                {
+                    // On kyse tästä raiteesta. Voidaan laittaa aivan välittömästi talteen, koska lähtöaika korvaisi kyllä tämän
+                    QDateTime aika = lokikysely.value(0).toDateTime();
+                    int sekunnit = lahti.secsTo(aika);
+                    QTime lokiaika = QTime(0,0).addSecs(sekunnit);
+                    tiedot_[i].asetaLokiaika(lokiaika);
+                }
+            }
+
+        }
+
+    }
+
 }
 
 void ReititModel::uusiReitti()
@@ -123,7 +170,7 @@ int ReititModel::rowCount(const QModelIndex &parent) const
 
 int ReititModel::columnCount(const QModelIndex &parent) const
 {
-    return parent.isValid() ? 0 : 6 ;
+    return parent.isValid() ? 0 : 7 ;
 }
 
 Qt::ItemFlags ReititModel::flags(const QModelIndex &index) const
@@ -229,6 +276,29 @@ void ReititModel::tallenna(const QString &uusitunnus)
     foreach( ReittiSuunnitteluTieto tieto, tiedot_)
         tieto.lisaaTietokantaan(reittiTunnus());
     emit muokattu(false);
+}
+
+void ReititModel::ajatKellosta()
+{
+    beginResetModel();
+    for( int i = 0; i < tiedot_.count(); i++)
+        tiedot_[i].asetaAikaLokista();
+    endResetModel();
+    emit muokattu(true);
+}
+
+void ReititModel::nollaaAjat()
+{
+    beginResetModel();
+    for( int i = 0; i < tiedot_.count(); i++)
+    {
+        if( tiedot_[i].tapahtumaTyyppi() == ReittiTieto::Lahtee)
+            tiedot_[i].asetaLahtoaika(QTime(0,0));
+        else
+            tiedot_[i].asetaLahtoaika(QTime());
+    }
+    endResetModel();
+    emit muokattu(true);
 }
 
 

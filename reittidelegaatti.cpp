@@ -78,8 +78,11 @@ void ReittiDelegaatti::paint(QPainter *painter, const QStyleOptionViewItem &opti
     }
     else if( index.column() == ReititModel::Pysahtyy)
     {
-        QTime pysaysaika = QTime(0,0).addSecs( index.model()->data(index, Qt::DisplayRole).toInt() );
-        teksti = tr("%1 min").arg(pysaysaika.toString("m.ss"));
+        if( index.model()->data(index, Qt::DisplayRole).toInt() )
+        {
+            QTime pysaysaika = QTime(0,0).addSecs( index.model()->data(index, Qt::DisplayRole).toInt() );
+            teksti = tr("%1 min").arg(pysaysaika.toString("m.ss"));
+        }
     }
     else if( index.column() == ReititModel::Tapahtuma)
     {
@@ -101,6 +104,14 @@ void ReittiDelegaatti::paint(QPainter *painter, const QStyleOptionViewItem &opti
             teksti = "Pohjoiseen";
         else if( suunta == RaiteenPaa::Etelaan)
             teksti = "Etelään";
+    }
+    else if( index.column() == ReititModel::Lokiaika)
+    {
+        QTime aika = index.model()->data(index, Qt::DisplayRole).toTime();
+        if( aika.isValid())
+            teksti = aika.toString("hh:mm:ss");
+        else
+            teksti = "?";
     }
 
     drawDisplay( painter, optioni, optioni.rect, teksti);
