@@ -200,7 +200,7 @@ void GraafinenAikatauluScene::paivitaJuna(const QString &junatunnus)
         junaViivat_.value(junatunnus)->poistaViiva();
         delete junaViivat_.value(junatunnus);
         junaViivat_.remove(junatunnus);
-        aktiivinen_ = false;
+        aktiivinen_ = 0;
     }
 
 

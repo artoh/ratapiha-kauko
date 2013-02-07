@@ -58,7 +58,8 @@ HEADERS += \
     reititmodel.h \
     reittisuunnittelutieto.h \
     reittidialogi.h \
-    reittidelegaatti.h
+    reittidelegaatti.h \
+    liikennepaikkadialogi.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -115,7 +116,8 @@ SOURCES += \
     reititmodel.cpp \
     reittisuunnittelutieto.cpp \
     reittidialogi.cpp \
-    reittidelegaatti.cpp
+    reittidelegaatti.cpp \
+    liikennepaikkadialogi.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
@@ -225,7 +227,8 @@ OTHER_FILES += \
 FORMS += \
     ajopoyta.ui \
     ratapihaikkuna.ui \
-    reittidialogi.ui
+    reittidialogi.ui \
+    liikennepaikkadialogi.ui
 
 
 
