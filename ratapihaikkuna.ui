@@ -39,7 +39,7 @@
      <enum>QTabWidget::Triangular</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="kaukoTab">
      <attribute name="title">
@@ -327,6 +327,29 @@
       </property>
       <property name="text">
        <string>Muokkaa rataa</string>
+      </property>
+      <property name="icon">
+       <iconset resource="ratapiha-kauko.qrc">
+        <normaloff>:/r/pic/muokkaa.png</normaloff>:/r/pic/muokkaa.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="liikennepaikatNappi">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>90</y>
+        <width>171</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Liikennepaikat</string>
       </property>
       <property name="icon">
        <iconset resource="ratapiha-kauko.qrc">
