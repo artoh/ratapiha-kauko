@@ -28,6 +28,7 @@
 
 #include "aikatauluikkuna.h"
 #include "aikataulunselausikkuna.h"
+#include "liikennepaikkadialogi.h"
 
 #include <QMessageBox>
 #include <QPixmap>
@@ -61,6 +62,7 @@ RatapihaIkkuna::RatapihaIkkuna(QWidget *parent) :
 
     connect( ui->muokkaaNakymiaNappi, SIGNAL(clicked()), this, SLOT(muokkaaNakymaa()));
     connect( ui->muokkaaRataaNappi, SIGNAL(clicked()), this, SLOT(muokkaaRataa()));
+    connect( ui->liikennepaikatNappi, SIGNAL(clicked()), this, SLOT(muokkaaLiikennepaikat())  );
 
     connect( ui->graafinenaikatauluNappi, SIGNAL(clicked()), this, SLOT(graafinenAikataulu()));
     connect( ui->selaaAikatauluaNappi, SIGNAL(clicked()), this, SLOT(selaaAikataulua()));
@@ -315,6 +317,19 @@ void RatapihaIkkuna::muokkaaRataa()
 {
     // Näkymä 0 on rata
     muokkaaNakymaa(0);
+}
+
+void RatapihaIkkuna::muokkaaLiikennepaikat()
+{
+    // Tietokantaan yhdistäminen
+    if( tila() == EiYhteytta)
+        if (yhdistaTietokantaan())
+            lukuYhteysMuodostettu();
+    if( tila() == EiYhteytta)
+        return; // Tietokantaan yhdistäminen ei onnistunut
+
+    LiikennepaikkaDialogi* dlg = new LiikennepaikkaDialogi(this);
+    dlg->show();
 }
 
 void RatapihaIkkuna::graafinenAikataulu()

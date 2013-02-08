@@ -22,7 +22,10 @@
   <property name="modal">
    <bool>false</bool>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_3">
+  <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,3">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
    <item>
     <widget class="QListWidget" name="liikennepaikkaLista">
      <property name="sortingEnabled">
@@ -112,7 +115,7 @@
          <item row="3" column="1">
           <widget class="QLineEdit" name="sijaintiEdit">
            <property name="inputMask">
-            <string>P 00:00:00 °,  I 00:00:00 ° ; </string>
+            <string>00°00′00″ P, 00°00′00″ I ; </string>
            </property>
           </widget>
          </item>

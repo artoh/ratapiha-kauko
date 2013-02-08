@@ -80,6 +80,7 @@ public slots:
 
     void muokkaaNakymaa();
     void muokkaaRataa();
+    void muokkaaLiikennepaikat();
 
     void graafinenAikataulu();
     void selaaAikataulua();
