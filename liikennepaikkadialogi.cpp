@@ -5,9 +5,11 @@
 #include <QListWidgetItem>
 #include <QRegExp>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QDebug>
 
 LiikennepaikkaDialogi::LiikennepaikkaDialogi(QWidget *parent) :
-    QDialog(parent),
+    QWidget(parent),
     ui(new Ui::LiikennepaikkaDialogi),
     uusiLiikennepaikka_(false)
 {
@@ -110,6 +112,8 @@ void LiikennepaikkaDialogi::tallenna()
 {
     // Tallentaa muutetun taikka uuden liikennepaikan. Ensin tarkistetaan ehdot.
     QString virheet;
+    QString sijaintiP("NULL");
+    QString sijaintiI("NULL");
 
     if( ui->lyhenneEdit->text().length() < 2 )
         virheet.append( tr("Liikennepaikan tunnus (lyhenne) puuttuu tai liian lyhyt\n"));
@@ -118,12 +122,16 @@ void LiikennepaikkaDialogi::tallenna()
     if( ui->sijaintiEdit->text().contains(QRegExp("[0-9]")) )
     {
         QRegExp sijainnintarkastaja("[5-7][0-9].[0-5][0-9].[0-5][0-9].*[2-3][0-9].[0-5][0-9].[0-5][0-9].*");
+        // Sijainnin paree olla Suomessa tai sitten ihan lähellä !
         if( !sijainnintarkastaja.exactMatch(ui->sijaintiEdit->text()))
-        {
             virheet.append("Sijaintikoordinaatit eivät kelpaa.\n");
-            virheet.append(ui->sijaintiEdit->text());
+        else
+        {
+            // Kelvollinen sijainti
+            QString st = ui->sijaintiEdit->text();
+            sijaintiP = QString("\"%1:%2:%3\"").arg( st.left(2)).arg(st.mid(3,2)).arg(st.mid(6,2));
+            sijaintiI = QString("\"%1:%2:%3\"").arg( st.mid(13,2)).arg(st.mid(16,2)).arg(st.mid(19,2));
         }
-
     }
 
     if( !virheet.isEmpty())
@@ -131,5 +139,68 @@ void LiikennepaikkaDialogi::tallenna()
         QMessageBox::critical(this, tr("Liikennepaikan tiedot virheelliset"), virheet );
         return;
     }
+
+    // Nyt kyllä kelpaa, siis tallentamaan
+
+    // Tehdään muutama string... Tässä yksi pilkku liikaa lopussa
+    QString henkiloliikenne;
+    if( ui->taajamajunaCheck->isChecked())
+        henkiloliikenne.append("H,");
+    if(ui->pikajunaCheck->isChecked())
+        henkiloliikenne.append("P,");
+    if( ui->pendolinoCheck->isChecked())
+        henkiloliikenne.append("S,");
+
+    QString liikenteenohjaus;
+    if( ui->liikenteenohjausCheck->isChecked())
+        liikenteenohjaus = "1";
+    else
+        liikenteenohjaus = "2";
+
+    if( uusiLiikennepaikka_)
+    {
+        // insert ...
+        QString kysymys = QString("insert into liikennepaikka(liikennepaikka,nimi,kmluku,sijainti_p,sijainti_i,henkiloliikenne,liikenteenohjaus) "
+                                 "values(\"%1\",\"%2\",%3,%4,%5,\"%6\",%7)").arg(ui->lyhenneEdit->text())
+                                                                .arg(ui->nimiEdit->text())
+                                                                .arg(ui->kmSpin->value())
+                .arg(sijaintiP).arg(sijaintiI).arg(henkiloliikenne.left(henkiloliikenne.length()-1)).arg(liikenteenohjaus);
+
+        qDebug() << kysymys;
+
+
+        QSqlQuery kysely(kysymys);
+        if( kysely.lastError().isValid() )
+        {
+            QMessageBox::critical(this,"Virhe tallettamisessa",kysely.lastError().databaseText());
+        }
+        else
+        {
+            // lisätään myös listaan, aktiiviseksi
+            QListWidgetItem* item = new QListWidgetItem(ui->nimiEdit->text(), ui->liikennepaikkaLista);
+            item->setData(Qt::UserRole,  ui->lyhenneEdit->text() );
+            ui->liikennepaikkaLista->setCurrentItem(item);
+            uusiLiikennepaikka_ = false;
+        }
+    }
+    else
+    {
+        // update
+        QString kysymys = QString("update liikennepaikka set nimi=\"%2\", kmluku=%3, sijainti_p=%4, sijainti_i=%5, "
+                                  "henkiloliikenne=\"%6\", liikenteenohjaus=%7 where liikennepaikka=\"%1\" limit 1")
+                                .arg(ui->lyhenneEdit->text()).arg(ui->nimiEdit->text()).arg(ui->kmSpin->value())
+                .arg(sijaintiP).arg(sijaintiI).arg(henkiloliikenne.left(henkiloliikenne.length()-1)).arg(liikenteenohjaus);
+
+        qDebug() << kysymys;
+
+
+        QSqlQuery kysely(kysymys);
+        if( kysely.lastError().isValid() )
+        {
+            QMessageBox::critical(this,"Virhe tallettamisessa",kysely.lastError().databaseText());
+        }
+
+    }
+
 
 }

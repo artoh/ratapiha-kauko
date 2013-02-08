@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>LiikennepaikkaDialogi</class>
- <widget class="QDialog" name="LiikennepaikkaDialogi">
+ <widget class="QWidget" name="LiikennepaikkaDialogi">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -9,18 +9,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>633</width>
-    <height>190</height>
+    <width>639</width>
+    <height>203</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Liikennepaikat</string>
   </property>
-  <property name="sizeGripEnabled">
-   <bool>true</bool>
-  </property>
-  <property name="modal">
-   <bool>false</bool>
+  <property name="windowIcon">
+   <iconset resource="ratapiha-kauko.qrc">
+    <normaloff>:/r/pic/varojunaa.png</normaloff>:/r/pic/varojunaa.png</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,3">
    <property name="sizeConstraint">
@@ -63,6 +67,9 @@
              <weight>75</weight>
              <bold>true</bold>
             </font>
+           </property>
+           <property name="maxLength">
+            <number>5</number>
            </property>
           </widget>
          </item>
@@ -216,7 +223,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="ratapiha-kauko.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>suljeNappi</sender>
@@ -241,11 +250,27 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>302</x>
-     <y>162</y>
+     <x>260</x>
+     <y>178</y>
     </hint>
     <hint type="destinationlabel">
      <x>396</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uusiNappi</sender>
+   <signal>clicked()</signal>
+   <receiver>lyhenneEdit</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>230</x>
+     <y>160</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>350</x>
      <y>21</y>
     </hint>
    </hints>

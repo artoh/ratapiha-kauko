@@ -328,7 +328,7 @@ void RatapihaIkkuna::muokkaaLiikennepaikat()
     if( tila() == EiYhteytta)
         return; // Tietokantaan yhdistäminen ei onnistunut
 
-    LiikennepaikkaDialogi* dlg = new LiikennepaikkaDialogi(this);
+    LiikennepaikkaDialogi* dlg = new LiikennepaikkaDialogi(0);
     dlg->show();
 }
 

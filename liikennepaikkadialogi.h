@@ -1,7 +1,7 @@
 #ifndef LIIKENNEPAIKKADIALOGI_H
 #define LIIKENNEPAIKKADIALOGI_H
 
-#include <QDialog>
+#include <QWidget>
 
 class QListWidgetItem;
 
@@ -9,7 +9,7 @@ namespace Ui {
 class LiikennepaikkaDialogi;
 }
 
-class LiikennepaikkaDialogi : public QDialog
+class LiikennepaikkaDialogi : public QWidget
 {
     Q_OBJECT
     
