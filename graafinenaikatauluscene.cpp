@@ -205,7 +205,7 @@ void GraafinenAikatauluScene::paivitaJuna(const QString &junatunnus)
 
 
     // haetaan se uudestaan
-    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy, lahtoaika, valekm "
+    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, addtime(lahtee,saapumisaika) as saapuu, lahtoaika, valekm "
                        "from taulussa, liikennepaikka, aikataulu, juna "
                        "where taulussa.liikennepaikka = aikataulu.liikennepaikka "
                        "and juna.reitti = aikataulu.reitti "
@@ -225,12 +225,12 @@ void GraafinenAikatauluScene::lataaAikataulut()
         suuntaehto = " and suunta = \"E\" ";
 
     // Yksinkertainen sql-kysely, jolla ladataan aikataulu
-    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, pysahtyy, lahtoaika, valekm "
+    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, addtime(lahtee, saapumisaika) as saapuu, lahtoaika, saapumisaika, valekm "
                        "from taulussa, liikennepaikka, aikataulu, juna "
                        "where taulussa.liikennepaikka = aikataulu.liikennepaikka "
                        "and juna.reitti = aikataulu.reitti "
                        "and liikennepaikka.liikennepaikka = aikataulu.liikennepaikka "
-                       " and taulu=%1 %2 order by junanro, aika").arg(taulu_).arg(suuntaehto);
+                       " and taulu=%1 %2 order by junanro, EiNulAikaa(aika,saapuu)").arg(taulu_).arg(suuntaehto);
 
     lataaAikatauluKysymyksesta(kysymys);
 }
@@ -245,15 +245,16 @@ void GraafinenAikatauluScene::lataaAikatauluKysymyksesta(const QString &kysymys)
 
     while( kysely.next())
     {
-        QTime aika = kysely.value(0).toTime();
+        QTime lahtee = kysely.value(0).toTime();
         QString junanro = kysely.value(1).toString();
         qreal kmluku;
-        if( kysely.isNull(6))
+        if( kysely.isNull(7))
             kmluku = kysely.value(2).toDouble();
         else
-            kmluku = kysely.value(6).toDouble();  // Käytetään valekm-lukemia...
+            kmluku = kysely.value(7).toDouble();  // Käytetään valekm-lukemia...
+
         QString tapahtuma = kysely.value(3).toString();
-        int pysahtyySekuntia = kysely.value(4).toInt();
+        QTime saapuu = kysely.value(4).toTime();
 
         // Piirretään viiva, jos valmista
         if( viiva && junanro != viiva->junanumero() )
@@ -267,14 +268,13 @@ void GraafinenAikatauluScene::lataaAikatauluKysymyksesta(const QString &kysymys)
         if( !viiva )
             viiva = new JunaViiva(this, junanro);
 
-        if( !kysely.isNull(5) )
-            // Ei lisätä NULL-viivaa!
+        if( kmluku >= pieninKmluku_ && kmluku <= isoinKmluku_ )
         {
-            // Lisätään piste listaan;
-            // Jos on pysähdyspaikka, lisätään sekä saapumis- että lähtöpisteet
-            if( tapahtuma == "P")
-                viiva->lisaaPaikka(kmluku, aika.addSecs(0-pysahtyySekuntia ));
-            viiva->lisaaPaikka(kmluku, aika);
+            if( saapuu.isValid() && !kysely.value(6).isNull() && tapahtuma != "L")
+                viiva->lisaaPaikka(kmluku, saapuu );
+
+            if( lahtee.isValid() && !kysely.value(5).isNull() && ( tapahtuma == "L" || tapahtuma == "P")  )
+                viiva->lisaaPaikka(kmluku, lahtee);
         }
     }
     // Piirretään viimeinen viiva

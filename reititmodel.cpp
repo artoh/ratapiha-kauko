@@ -198,7 +198,7 @@ Qt::ItemFlags ReititModel::flags(const QModelIndex &index) const
     Qt::ItemFlags liput = QAbstractTableModel::flags(index);
     if( index.isValid())
     {
-        if( index.column() != 0)
+        if( index.column() != 0 && index.column() != LokiLahtoaika && index.column() != LokiSaapuiAika)
             liput |= Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     }
     return liput;
@@ -214,9 +214,7 @@ bool ReititModel::setData(const QModelIndex &index, const QVariant &value, int r
     case Raide:
         tiedot_[ index.row()].asetaRaide( value.toInt());
         break;
-    case LahtoAika:
-        tiedot_[ index.row()].asetaLahtoaika( value.toTime());
-        break;
+
     case Pysahtyy:
         tiedot_[ index.row()].asetaPysahdyksenKesto( value.toInt());
         break;
@@ -229,10 +227,51 @@ bool ReititModel::setData(const QModelIndex &index, const QVariant &value, int r
             tiedot_[ index.row()].asetaPysahdyksenKesto(0); // Ohittava juna ei pysähdy
         break;
 
+    // Saapumisaika ja lähtöaika vaikuttavat kaikkiin kellonaikoihin niistä eteenpäin.
+    case SaapumisAika:
+        {
+            QTime edellinen = tiedot_[index.row()].saapumisAika();
+            int muutos = edellinen.secsTo( value.toTime() );
+            if( edellinen > QTime(0,0))
+                muutaAjat( edellinen, muutos, index.row(), true);
+
+            tiedot_[index.row()].asetaSaapumisaika( value.toTime());
+        }
+        break;
+
+    case LahtoAika:
+        {
+            QTime edellinen = tiedot_[index.row()].lahtoAika();
+            int muutos = edellinen.secsTo( value.toTime() );
+            if( edellinen > QTime(0,0))
+                muutaAjat( edellinen, muutos, index.row(), false);
+
+            tiedot_[index.row()].asetaLahtoaika( value.toTime());
+        }
+        break;
     }
     emit dataChanged(index,index);
     emit muokattu(true);
     return true;
+}
+
+void ReititModel::muutaAjat(QTime vanhaAika, int muutos, int rivi, bool muutaLahto)
+{
+    // Käy kaikki lähtö/paluuajat läpi, ja muuttaa ne
+    // Ei kuitenkaan muutettua riviä, paitsi lähtöaika, jos tarpeen
+
+    beginResetModel();
+    for( int i = 0; i < tiedot_.count(); i++)
+    {
+        if( i != rivi && tiedot_[i].saapumisAika() > vanhaAika)
+            tiedot_[i].asetaSaapumisaika( tiedot_[i].saapumisAika().addSecs(muutos));
+
+        if( (i == rivi && muutaLahto && tiedot_[i].lahtoAika() > QTime(0,0)  ) || tiedot_[i].lahtoAika() > vanhaAika)
+            tiedot_[i].asetaLahtoaika( tiedot_[i].lahtoAika().addSecs(muutos));
+
+    }
+
+    endResetModel();
 }
 
 void ReititModel::lisaaPysahdys(const QString &liikennepaikka)

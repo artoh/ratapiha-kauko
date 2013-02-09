@@ -30,7 +30,7 @@ void JunaViiva::lisaaPaikka(qreal kmluku, const QTime &aika)
     qreal y = skene_->yKmluvusta( kmluku);
 
 
-    if( pisteet_.count() && pisteet_.last().x() > x )
+    if( pisteet_.count() && pisteet_.last().x() > x  )
     {
         // Ollaan menty vuorokauden ympäri, eli pitää katkaista!!!
         qreal laskentax = x + skene_->ruudukonleveys();

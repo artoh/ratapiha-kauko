@@ -70,6 +70,8 @@ protected:
     QList<ReittiSuunnitteluTieto> tiedot_;
     QString reittiTunnus_;
     QMap<QString, QString> liikennepaikat_; // Tätä käytetään liikennepaikkojen nimien näyttämiseen
+
+    void muutaAjat(QTime vanhaAika, int muutos, int rivi, bool muutaLahto);
 };
 
 #endif // REITITMODEL_H

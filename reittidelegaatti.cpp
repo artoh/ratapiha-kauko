@@ -120,7 +120,7 @@ void ReittiDelegaatti::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 QWidget * ReittiDelegaatti::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if( index.column() == ReititModel::LahtoAika)
+    if( index.column() == ReititModel::LahtoAika || index.column() == ReititModel::SaapumisAika)
     {
         QTimeEdit* editori = new QTimeEdit(parent);
         editori->setDisplayFormat("hh:mm");
@@ -184,7 +184,7 @@ void ReittiDelegaatti::commitAndCloseEditor()
 
 void ReittiDelegaatti::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    if( index.column() == ReititModel::LahtoAika)
+    if( index.column() == ReititModel::LahtoAika || index.column() == ReititModel::SaapumisAika)
     {
         QTimeEdit* editori = qobject_cast<QTimeEdit*>(editor);
         editori->setTime( index.model()->data(index).toTime() );
@@ -205,7 +205,7 @@ void ReittiDelegaatti::setEditorData(QWidget *editor, const QModelIndex &index) 
 
 void ReittiDelegaatti::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    if( index.column() == ReititModel::LahtoAika)
+    if( index.column() == ReititModel::LahtoAika || index.column() == ReititModel::SaapumisAika)
     {
         QTimeEdit* editori = qobject_cast<QTimeEdit*>(editor);
         model->setData( index, editori->time());
