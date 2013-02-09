@@ -40,13 +40,14 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
     // Seuraavaksi yksinkertainen sqlkysymys, joka kertoo asemalta kulkevat junat
 
     QString kysymys = QString("select juna.junanro as Juna, addtime(lahtee,taulu.lahtoaika) as Kello, "
-    "minnelkp.nimi as Minne,  addtime(lahtee, minne.lahtoaika) as Perilla, taulu.raide as Laituri, "
-    "taulu.pysahtyy as pysahtyy, taulu.tapahtuma as tapahtuma, minnelkp.liikennepaikka as lyhenne, taulu.lahtoaika "
+    "minnelkp.nimi as Minne,  addtime(lahtee, minne.saapumisaika) as Perilla, taulu.raide as Laituri, "
+    "taulu.pysahtyy as pysahtyy, taulu.tapahtuma as tapahtuma, minnelkp.liikennepaikka as lyhenne, taulu.lahtoaika, "
+                              "addtime(lahtee,taulu.saapumisaika) as Saapuminen "
     "from juna, aikataulu as taulu, aikataulu as minne, liikennepaikka as minnelkp "
     " where taulu.reitti = juna.reitti and taulu.reitti = minne.reitti and "
     " minnelkp.liikennepaikka = minne.liikennepaikka "
     " and minne.tapahtuma=\"S\" and taulu.tapahtuma != \"O\" "
-    " and taulu.liikennepaikka=\"%1\" order by kello ").arg( liikennepaikka );
+                              " and taulu.liikennepaikka=\"%1\" order by EiNulAikaa(Kello,Saapuminen) ").arg( liikennepaikka );
 
 
     QSqlQuery asemaKysely( QString("select nimi from liikennepaikka where liikennepaikka=\"%1\"").arg(liikennepaikka));
@@ -68,30 +69,19 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
     {
         rivi++;
         QString juna = junaKysely.value(0).toString();
-        QTime kello = junaKysely.value(1).toTime();
+        QTime lahtee = junaKysely.value(1).toTime();
         QString minne = junaKysely.value(2).toString();
         QTime perilla = junaKysely.value(3).toTime();
         int raide = junaKysely.value(4).toInt();
-        int pysahtyySekuntia = junaKysely.value(5).toInt();
+
         QString tapahtuma = junaKysely.value(6).toString();
         QString minnelyhenne = junaKysely.value(7).toString();
 
-        QTime saapuu;
-        QTime lahtee;
+        QTime saapuu = junaKysely.value(9).toTime();
 
-        if( tapahtuma == "S" &&  !junaKysely.isNull(8) )
-        {
-            saapuu = kello;
-        }
-        else if( tapahtuma == "P" &&  !junaKysely.isNull(8) )
-        {
-            saapuu = kello.addSecs( 0 - pysahtyySekuntia );
-            lahtee = kello;
-        }
-        else if( tapahtuma == "L" &&  !junaKysely.isNull(8) )
-        {
-            lahtee = kello;
-        }
+        QTime kello = lahtee;
+        if( !kello.isValid())
+            kello = saapuu;
 
         if( tunti != kello.hour())
         {
@@ -161,11 +151,11 @@ void AikatauluSelaaja::haeJunaAikataulu(const QString &juna)
     }
 
 
-    QString kysymys = QString("select nimi, addtime(lahtee,lahtoaika) as aika, pysahtyy, raide, tapahtuma, aikataulu.liikennepaikka, lahtoaika "
+    QString kysymys = QString("select nimi, addtime(lahtee,lahtoaika) as aika, raide, tapahtuma, aikataulu.liikennepaikka, addtime(lahtee,saapumisaika) as saapunee "
                               "from juna,aikataulu,liikennepaikka "
                               "where juna.junanro=\"%1\" and "
                               "juna.reitti = aikataulu.reitti and aikataulu.liikennepaikka=liikennepaikka.liikennepaikka "
-                              "order by aika").arg(juna);
+                              "order by saapunee,aika").arg(juna);
 
 
     QString teksti = QString("<html><body><h1>%1</h1>").arg(juna);
@@ -178,11 +168,12 @@ void AikatauluSelaaja::haeJunaAikataulu(const QString &juna)
     {
         rivi++;
         QString liikennepaikka = kysely.value(0).toString();
-        QTime kello = kysely.value(1).toTime();
-        int pysahtyySekuntia = kysely.value(2).toInt();
-        int raide = kysely.value(3).toInt();
-        QString tapahtuma = kysely.value(4).toString();
-        QString liikennepaikkaLyhenne = kysely.value(5).toString();
+        QTime lahtee = kysely.value(1).toTime();
+
+        int raide = kysely.value(2).toInt();
+        QString tapahtuma = kysely.value(3).toString();
+        QString liikennepaikkaLyhenne = kysely.value(4).toString();
+        QTime saapuu = kysely.value(5).toTime();
 
         // Näytetään vain raiteen viimeinen numero (paitsi Helsingissä kaksi)
         if( liikennepaikkaLyhenne == "Hki" || liikennepaikkaLyhenne =="Psl")
@@ -190,36 +181,22 @@ void AikatauluSelaaja::haeJunaAikataulu(const QString &juna)
         else
             raide = raide % 10;
 
-        QTime saapuu;
-        QTime lahtee;
-        if( tapahtuma == "S")
-        {
-            saapuu = kello;
-        }
-        else if( tapahtuma == "P" && !kysely.isNull(6))
-        {
-            saapuu = kello.addSecs( 0 - pysahtyySekuntia );
-            lahtee = kello;
-        }
-        else if( tapahtuma == "L"  || tapahtuma == "O")
-        {
-            lahtee = kello;
-        }
         if( rivi % 2 )
             teksti.append("<tr>");
         else
             teksti.append("<tr class=varjo>");
 
         teksti.append( QString("<td><a href=\"file:A%1\">%2</td><td>").arg(liikennepaikkaLyhenne).arg(liikennepaikka));
-        if( saapuu.isValid())
-            teksti.append( saapuu.toString("hh.mm"));
-        teksti.append("</td><td>");
         if( tapahtuma == "O") // Ohitusaika sulkeisiin!
             teksti.append("(");
-        if( lahtee.isValid())
-            teksti.append( lahtee.toString("hh.mm"));
+        if( saapuu.isValid())
+            teksti.append( saapuu.toString("hh.mm"));
         if( tapahtuma == "O")
             teksti.append(")");
+
+        teksti.append("</td><td>");
+        if( lahtee.isValid())
+            teksti.append( lahtee.toString("hh.mm"));
         teksti.append( "</td><td>" );
         if( tapahtuma != "O")
             teksti.append( QString::number(raide));
