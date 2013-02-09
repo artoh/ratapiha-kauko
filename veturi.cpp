@@ -996,7 +996,7 @@ bool Veturi::haeReitti(Akseli *akseli)
     tyhjennaReitti();
 
     // Haetaan reitti
-    QSqlQuery reittikysely( QString("select liikennepaikka, nimi, raide, TIME_TO_SEC(lahtoaika), pysahtyy, tapahtuma, suunta "
+    QSqlQuery reittikysely( QString("select liikennepaikka, nimi, raide, TIME_TO_SEC(lahtoaika), pysahtyy, tapahtuma, suunta, TIME_TO_SEC(saapumisaika) "
                                     " from aikataulu natural join liikennepaikka "
                                     " where reitti=\"%1\" ").arg(reitti));
 
@@ -1014,13 +1014,19 @@ bool Veturi::haeReitti(Akseli *akseli)
         else
             lahtoaika = junanlahtoaika.addSecs(reittikysely.value(3).toInt());
 
+        QTime saapumisaika;
+        if( reittikysely.isNull(7) || junanlahtoaika.isNull())
+            saapumisaika = QTime();
+        else
+            saapumisaika = junanlahtoaika.addSecs( reittikysely.value(7).toInt());
+
         int pysahtyy = reittikysely.value(4).toInt();
         QString tapahtuma = reittikysely.value(5).toString();
 
         QString raidetunnus = QString("%1%2").arg(liikennepaikka).arg(raide,3,10,QChar('0'));
 
         // Laitetaan reitin kohteet taulukkoon
-        reitti_.insert(  raidetunnus, ReittiTieto( tapahtuma, lahtoaika, pysahtyy)  );
+        reitti_.insert(  raidetunnus, ReittiTieto( tapahtuma, saapumisaika, lahtoaika, pysahtyy)  );
 
         // Jos määränpää, laitetaan tieto siitäkin...
         if( tapahtuma == "S" )

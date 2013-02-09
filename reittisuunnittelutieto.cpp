@@ -28,8 +28,8 @@ ReittiSuunnitteluTieto::ReittiSuunnitteluTieto() :
 }
 
 
-ReittiSuunnitteluTieto::ReittiSuunnitteluTieto(const QString &liikennepaikka, int raide, const QTime &lahtoaika, int pysahtyy, const QString& tapahtuma, RaiteenPaa::Suunta suunta)
-    : ReittiTieto(tapahtuma, lahtoaika, pysahtyy),
+ReittiSuunnitteluTieto::ReittiSuunnitteluTieto(const QString &liikennepaikka, int raide, const QTime &saapumisaika, const QTime &lahtoaika, int pysahtyy, const QString& tapahtuma, RaiteenPaa::Suunta suunta)
+    : ReittiTieto(tapahtuma, saapumisaika, lahtoaika, pysahtyy),
       liikennepaikka_(liikennepaikka), raide_(raide), suunta_(suunta)
 {
 
@@ -37,7 +37,11 @@ ReittiSuunnitteluTieto::ReittiSuunnitteluTieto(const QString &liikennepaikka, in
 
 void ReittiSuunnitteluTieto::asetaAikaLokista()
 {
-    asetaLahtoaika( QTime( lokiaika().hour(), lokiaika().minute()) );
+    if( lahtiLokiaika().isValid() && tapahtumaTyyppi()==Pysahtyy )
+        asetaLahtoaika( QTime( lahtiLokiaika().hour(), lahtiLokiaika().minute()) );
+
+    if( saapuiLokiaika().isValid())
+        asetaSaapumisaika( QTime(saapuiLokiaika().hour(), saapuiLokiaika().minute()));
 }
 
 void ReittiSuunnitteluTieto::lisaaTietokantaan(const QString &reitti)
@@ -48,10 +52,18 @@ void ReittiSuunnitteluTieto::lisaaTietokantaan(const QString &reitti)
     else
         aikateksti = QString("\"%1\"").arg(lahtoAika().toString());
 
-    QSqlQuery lisays(  QString(" insert into aikataulu(liikennepaikka, raide, lahtoaika, tapahtuma, suunta, reitti, pysahtyy)"
-                               " values(\"%1\", %2, %3, \"%4\", \"%5\", \"%6\", \"%7\") " )
+
+    QString saapuuAikateksti;
+    if( saapumisAika().isNull())
+        saapuuAikateksti = "NULL";
+    else
+        saapuuAikateksti = QString("\"%1\"").arg(saapumisAika().toString());
+
+
+    QSqlQuery lisays(  QString(" insert into aikataulu(liikennepaikka, raide, saapumisaika, lahtoaika, tapahtuma, suunta, reitti, pysahtyy)"
+                               " values(\"%1\", %2, %8, %3, \"%4\", \"%5\", \"%6\", \"%7\") " )
                        .arg( liikennepaikka() ).arg( raide()).arg( aikateksti ).arg( tapahtumaKirjain() )
-                       .arg(  RaiteenPaa::suuntakirjain( suunta() )).arg(reitti).arg( pysahtyy() )  );
+                       .arg(  RaiteenPaa::suuntakirjain( suunta() )).arg(reitti).arg( pysahtyy() ).arg( saapuuAikateksti )  );
 
 }
 

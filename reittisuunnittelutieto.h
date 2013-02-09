@@ -28,21 +28,24 @@ class ReittiSuunnitteluTieto : public ReittiTieto
 {
 public:
     ReittiSuunnitteluTieto();
-    ReittiSuunnitteluTieto(const QString& liikennepaikka, int raide, const QTime& lahtoaika, int pysahtyy,
+    ReittiSuunnitteluTieto(const QString& liikennepaikka, int raide, const QTime& saapumisaika, const QTime& lahtoaika, int pysahtyy,
                            const QString& tapahtuma, RaiteenPaa::Suunta suunta);
 
     QString liikennepaikka() const { return liikennepaikka_; }
     int raide() const { return raide_; }
     RaiteenPaa::Suunta suunta() const { return suunta_; }
-    QTime lokiaika() const { return lokiaika_; }
+    QTime lahtiLokiaika() const { return lahtenytaika_; }
+    QTime saapuiLokiaika() const { return saapunutaika_; }
 
     void asetaLiikennepaikka(const QString& liikennepaikka) { liikennepaikka_ = liikennepaikka; }
     void asetaRaide(int raide) { raide_ = raide; }
     void asetaSuunta( RaiteenPaa::Suunta suunta) { suunta_ = suunta; }
+    void asetaSaapumisaika(const QTime& aika) { saapumisaika_ = aika; }
     void asetaLahtoaika(const QTime& aika)  { lahtoaika_ = aika; }
     void asetaPysahdyksenKesto(int sekuntia)  { pysahtyySekuntia_ = sekuntia; }
     void asetaTapahtumatyyppi( TapahtumaTyyppi tyyppi ) { tapahtuma_ = tyyppi; }
-    void asetaLokiaika(const QTime& aika) { lokiaika_ = aika ; }
+    void asetaLahtiLokiaika(const QTime& aika) { lahtenytaika_ = aika ; }
+    void asetaSaapuiLokiaika(const QTime& aika) { saapunutaika_ = aika ; }
     void asetaAikaLokista();    /** Asettaa aikataulunmukaisen ajan viimeisen toteutuneen junan mukaan */
 
     void asetaSuunta(int suunta);
@@ -54,7 +57,8 @@ protected:
     QString liikennepaikka_;
     int raide_;
     RaiteenPaa::Suunta suunta_;
-    QTime lokiaika_;    // Edellisen juna toteunut lähtöaika
+    QTime lahtenytaika_;    // Edellisen juna toteunut lähtöaika
+    QTime saapunutaika_; // Edellisen junan toteutunut saapumisaika
 
 };
 

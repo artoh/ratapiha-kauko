@@ -61,7 +61,7 @@ void ReittiDelegaatti::paint(QPainter *painter, const QStyleOptionViewItem &opti
         }
 
     }
-    else if( index.column() == ReititModel::Aika )
+    else if( index.column() == ReititModel::LahtoAika || index.column() == ReititModel::SaapumisAika )
     {
         QTime aika = index.model()->data(index, Qt::DisplayRole).toTime();
         if( aika.isNull())
@@ -105,13 +105,12 @@ void ReittiDelegaatti::paint(QPainter *painter, const QStyleOptionViewItem &opti
         else if( suunta == RaiteenPaa::Etelaan)
             teksti = "Etelään";
     }
-    else if( index.column() == ReititModel::Lokiaika)
+    else if( index.column() == ReititModel::LokiLahtoaika || index.column() == ReititModel::LokiSaapuiAika)
     {
         QTime aika = index.model()->data(index, Qt::DisplayRole).toTime();
         if( aika.isValid())
             teksti = aika.toString("hh:mm:ss");
-        else
-            teksti = "?";
+
     }
 
     drawDisplay( painter, optioni, optioni.rect, teksti);
@@ -121,7 +120,7 @@ void ReittiDelegaatti::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 QWidget * ReittiDelegaatti::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if( index.column() == ReititModel::Aika)
+    if( index.column() == ReititModel::LahtoAika)
     {
         QTimeEdit* editori = new QTimeEdit(parent);
         editori->setDisplayFormat("hh:mm");
@@ -185,7 +184,7 @@ void ReittiDelegaatti::commitAndCloseEditor()
 
 void ReittiDelegaatti::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    if( index.column() == ReititModel::Aika)
+    if( index.column() == ReititModel::LahtoAika)
     {
         QTimeEdit* editori = qobject_cast<QTimeEdit*>(editor);
         editori->setTime( index.model()->data(index).toTime() );
@@ -206,7 +205,7 @@ void ReittiDelegaatti::setEditorData(QWidget *editor, const QModelIndex &index) 
 
 void ReittiDelegaatti::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    if( index.column() == ReititModel::Aika)
+    if( index.column() == ReititModel::LahtoAika)
     {
         QTimeEdit* editori = qobject_cast<QTimeEdit*>(editor);
         model->setData( index, editori->time());

@@ -32,7 +32,7 @@ class ReititModel : public QAbstractTableModel
 public:
     explicit ReititModel(QObject *parent = 0);
 
-    enum { Liikennepaikka = 0, Raide = 1, Aika = 2, Pysahtyy = 4, Tapahtuma = 5, Suunta = 6, Lokiaika = 3 } ;
+    enum { Liikennepaikka = 0, Raide = 1, SaapumisAika=2, LahtoAika = 3, Pysahtyy = 6, Tapahtuma = 7, Suunta = 8, LokiLahtoaika = 5, LokiSaapuiAika=4 } ;
 
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;

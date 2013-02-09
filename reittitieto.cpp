@@ -20,14 +20,14 @@
 #include "reittitieto.h"
 
 
-ReittiTieto::ReittiTieto(ReittiTieto::TapahtumaTyyppi tapahtumaTyyppi, QTime lahtoAika, int pysahtyySekuntia)
-    : lahtoaika_(lahtoAika), pysahtyySekuntia_(pysahtyySekuntia), tapahtuma_(tapahtumaTyyppi)
+ReittiTieto::ReittiTieto(ReittiTieto::TapahtumaTyyppi tapahtumaTyyppi, QTime saapumisAika, QTime lahtoAika, int pysahtyySekuntia)
+    :  saapumisaika_(saapumisAika), lahtoaika_(lahtoAika), pysahtyySekuntia_(pysahtyySekuntia), tapahtuma_(tapahtumaTyyppi)
 {
     ;
 }
 
-ReittiTieto::ReittiTieto(QString tapahtumatyyppi, QTime lahtoaika, int pysahtyySekuntia)
-    : lahtoaika_(lahtoaika), pysahtyySekuntia_(pysahtyySekuntia), tapahtuma_(Pysahtyy)
+ReittiTieto::ReittiTieto(QString tapahtumatyyppi, QTime saapumisaika, QTime lahtoaika, int pysahtyySekuntia)
+    : saapumisaika_(saapumisaika), lahtoaika_(lahtoaika), pysahtyySekuntia_(pysahtyySekuntia), tapahtuma_(Pysahtyy)
 {
     if( !tapahtumatyyppi.isEmpty())
         tapahtuma_ = tapahtumaKirjaimesta( tapahtumatyyppi[0]);

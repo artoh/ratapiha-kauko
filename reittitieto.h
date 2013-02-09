@@ -34,11 +34,12 @@ class ReittiTieto
 public:
     enum TapahtumaTyyppi { Lahtee, Saapuu, Pysahtyy, Ohittaa } ;
 
-    ReittiTieto( TapahtumaTyyppi tapahtumaTyyppi = Pysahtyy,
+    ReittiTieto(TapahtumaTyyppi tapahtumaTyyppi = Pysahtyy, QTime saapumisAika=QTime(),
                  QTime lahtoAika=QTime(), int pysahtyySekuntia=0);
 
-    ReittiTieto( QString tapahtumatyyppi, QTime lahtoaika, int pysahtyySekuntia);
+    ReittiTieto( QString tapahtumatyyppi, QTime saapumisaika, QTime lahtoaika, int pysahtyySekuntia);
 
+    QTime saapumisAika() const { return saapumisaika_; }
     QTime lahtoAika() const { return lahtoaika_; }
     int pysahtyy() const { return pysahtyySekuntia_; }
     TapahtumaTyyppi tapahtumaTyyppi() const { return tapahtuma_; }
@@ -48,6 +49,7 @@ public:
 
 
 protected:
+    QTime saapumisaika_;
     QTime lahtoaika_;
     int pysahtyySekuntia_;
     TapahtumaTyyppi tapahtuma_;
