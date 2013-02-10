@@ -205,12 +205,12 @@ void GraafinenAikatauluScene::paivitaJuna(const QString &junatunnus)
 
 
     // haetaan se uudestaan
-    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, addtime(lahtee,saapumisaika) as saapuu, lahtoaika, valekm "
+    QString kysymys = QString("select addtime(lahtee, lahtoaika) as aika, junanro, kmluku, tapahtuma, addtime(lahtee,saapumisaika) as saapuu, lahtoaika, saapumisaika, valekm "
                        "from taulussa, liikennepaikka, aikataulu, juna "
                        "where taulussa.liikennepaikka = aikataulu.liikennepaikka "
                        "and juna.reitti = aikataulu.reitti "
                        "and liikennepaikka.liikennepaikka = aikataulu.liikennepaikka "
-                       " and taulu=%1 and junanro=\"%2\" order by junanro, aika").arg(taulu_).arg(junatunnus);
+                       " and taulu=%1 and junanro=\"%2\" order by junanro, EiNulAikaa(aika,saapuu)").arg(taulu_).arg(junatunnus);
 
     lataaAikatauluKysymyksesta(kysymys);
     valitseJuna(junatunnus);

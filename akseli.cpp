@@ -32,6 +32,7 @@ Akseli::Akseli(Vaunu *vaunu) :
     vaunu_(vaunu), toinenAkseli_(0), kytkettyAkseli_(0),
     kiskolla_(0), sijaintiKiskolla_(0), suuntaKiskolla_(RaiteenPaa::Virhe)
 {
+    setZValue(200); // debug: jotta nähdään missä akseli on...
 }
 
 
