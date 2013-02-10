@@ -113,7 +113,7 @@ void Opastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
         // Eo vihreä
         if(     naytaEsiopastus && (
                 esiOpastin() == RaiteenPaa::Aja ||
-                esiOpastin() == RaiteenPaa::AjaVarovasti ) )
+                esiOpastin() == RaiteenPaa::AjaSn ) )
         {
             if( valkkytila__)
                piirraVari(painter,2.0, 16.0, 1.6, 0, 255, 0, 50, 255, 50);
@@ -136,7 +136,7 @@ void Opastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
         }
 
         // ESIOPASTIN keltainen
-        if( naytaEsiopastus && ( esiOpastin() == RaiteenPaa::Seis || esiOpastin() == RaiteenPaa::AjaVarovasti))
+        if( naytaEsiopastus && ( esiOpastin() == RaiteenPaa::Seis || esiOpastin() == RaiteenPaa::AjaSn))
         {
             if( valkkytila__)
                piirraVari(painter,2.0, 28.0, 1.6, 255, 255, 0, 255, 255, 50);

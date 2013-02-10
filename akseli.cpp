@@ -287,9 +287,9 @@ void Akseli::vaunuLiike(qreal matka)
     liiku(matka);
 
     // Turvafunktio, jolla liikutaan lisää, ellei pysynyt yhdessä
-    qreal etaisyys = QLineF( pos(), toinenAkseli_->pos()).length();
-    if( etaisyys > vaunu_->pituus()+1)
-        liiku(-1);  // Ylimääräinen liike jos vaunu hajonnut...
+    // qreal etaisyys = QLineF( pos(), toinenAkseli_->pos()).length();
+    // if( etaisyys > vaunu_->pituus()+1)
+    //    liiku(-1);  // Ylimääräinen liike jos vaunu hajonnut...
 
     if( kytkettyAkseli_)
         kytkettyAkseli_->kytkinLiike( 0 - matka);
