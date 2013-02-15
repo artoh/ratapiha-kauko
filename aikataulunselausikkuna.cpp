@@ -40,6 +40,7 @@ AikataulunSelausIkkuna::AikataulunSelausIkkuna(QWidget *parent) :
 void AikataulunSelausIkkuna::haeAsemaAikataulu(int indeksi)
 {
     selaaja_->haeAsemaAikataulu( asemaValintaCombo_->itemData(indeksi).toString() );
+    setWindowTitle( tr("Aikataulu: %1").arg( asemaValintaCombo_->currentText() ));
 }
 
 
