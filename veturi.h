@@ -38,7 +38,7 @@ public:
 
     enum VeturiTyyppi { EiTyyppia = 0, Sr1, Sr2, Sm2, Sm3, Sm4, Dv12, Dr16, Dm12, Eio };
     enum JkvTila { EiJkv, JunaJkv, VaihtoJkv } ;
-    enum VeturiAutomaatio { AutoEi, AutoOn, AutoAktiivinen } ;
+    enum VeturiAutomaatio { AutoEi, AutoOn, AutoAktiivinen, AutoVaihtotyo } ;
 
     Veturi(const QString& tyyppi, int vaununumero, RataScene* skene);
     Veturi(const QString &tyyppi, int vaunuNumero, RataKisko* etu_kisko, qreal etu_etaisyys, QChar etu_suunta,
@@ -104,6 +104,8 @@ protected:
     void asetaReitti(const QString& reitti);
     bool tarkistaRaiteenNumeroAkselilta(Akseli* akseli);
     void tyhjennaReitti();
+
+    void asetaVaihtotyoAutomaatio(Akseli* akseli);
 
     QTimer timer_;
 

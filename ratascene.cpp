@@ -553,12 +553,27 @@ void RataScene::lahetaJunat(const QDateTime &aika)
         }
     }
 
-    if( junia )
+    // Tehdään ajastetut vaihtokulkutiet
+    QSqlQuery vaihtokysely( QString("select raiteelta,raiteelle from vaihtotyoautomaatio "
+                                   " where aika=\"%1\"  " )
+                           .arg(aika.time().toString()));
+    while( vaihtokysely.next())
     {
-        // Junia on asetettu, eli laitetaan automaatiotoiminnat kehiin...
-        foreach(Veturi* veturi, veturilista_)
-            veturi->tarkistaRaiteenJunanumero();
+        RataRaide* mista = raideTunnukset_.value(vaihtokysely.value(0).toString());
+        RataRaide* minne = raideTunnukset_.value(vaihtokysely.value(1).toString());
+
+        if( mista && minne)
+        {
+            KulkutienMuodostaja ktie(RataRaide::Vaihtokulkutie, mista, minne);
+            ktie.muodostaKulkutie();
+        }
     }
+
+
+   // Laitetaan automaatiotoiminnat kehiin...
+   // Sekä automaationumeroita että vaihtotyöautomaatio
+    foreach(Veturi* veturi, veturilista_)
+        veturi->tarkistaRaiteenJunanumero();
 
 
 }

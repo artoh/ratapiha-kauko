@@ -600,6 +600,17 @@ void Veturi::aja()
                   kirjoitaLokiin("P", aktiivinenAkseli()->kiskolla()->raide());
               }
 
+              // Automaattinen vaihtotyö päättyy, kun vaihtotyöyksikkö pysähtyy
+              // ** AUTOMAATTINEN VAIHTOTYÖ *
+              if( veturiAutomaationTila() == AutoVaihtotyo )
+              {
+                  asetaAjoPoyta(0);
+                  asetaTavoiteNopeus(0);
+                  veturiAutomaatio_ = AutoOn;
+                  emit automaatioIlmoitus(0,0,jkvKuva());
+              }
+              // ** AUTOMAATTINEN VAIHTOTYÖ **
+
 
           } // pysahtyi.isValid
 
@@ -731,6 +742,10 @@ QPixmap Veturi::jkvKuva()
             painter.setPen(Qt::black);
             painter.setBrush( QBrush(Qt::red));
             break;
+    case AutoVaihtotyo:
+        painter.setPen(Qt::black);
+        painter.setBrush( QBrush(Qt::yellow));
+        break;
     }
     painter.drawRect(125,5,20,20);
     painter.setFont(QFont("Helvetica",5));
@@ -951,8 +966,55 @@ bool Veturi::tarkistaRaiteenNumeroAkselilta(Akseli *akseli)
                 haeReitti( akseli);
 
         } // Junatunnus muuttuu
+
+        //*** LISÄTTY TOIMINNALLISUUS
+        // Automaattinen vaihtotyö: Jos automaatiot käynnissä, ja junan eteen syttyy valkoinen valo,
+        // niin juna ampaisee iloisesti liikkeelle ja suorittaa vaihtotyön ihan itse ja yllättäen ;)
+        if( veturiAutomaationTila() == AutoOn && !nopeus() )
+        {
+            // Etelään ??
+            if( akseli->suuntaKiskolla() == RaiteenPaa::Etelaan )
+            {
+                if( akseli->kiskolla()->raide()->etelainen()->opaste() == RaiteenPaa::AjaVarovasti)
+                {
+                    asetaVaihtotyoAutomaatio(akseli);
+                    return true;
+                }
+            }
+            else if( akseli->suuntaKiskolla() == RaiteenPaa::Pohjoiseen)
+            {
+                if( akseli->kiskolla()->raide()->pohjoinen()->opaste() == RaiteenPaa::AjaVarovasti)
+                {
+                    asetaVaihtotyoAutomaatio(akseli);
+                    return true;
+                }
+            }
+        }
+        // *** Vaihtotyöautomaatio
+
+
+
     } // Löytyy akseli, jolta asettaa tunnus
     return false; // Ei aktivoitu junaa!
+}
+
+void Veturi::asetaVaihtotyoAutomaatio(Akseli *akseli)
+{
+    // Käynnistää automaattisen vaihtotyön.
+
+    veturiAutomaatio_ = AutoVaihtotyo;
+    jkvTila_ = VaihtoJkv;
+
+    if( etuAkseli_ == akseli)
+        asetaAjoPoyta(1);
+    else
+        asetaAjoPoyta(2);
+
+
+    asetaTavoiteNopeus(35);
+
+
+    emit automaatioIlmoitus(ajopoyta(), tavoiteNopeus(), jkvKuva());
 }
 
 void Veturi::tyhjennaReitti()
