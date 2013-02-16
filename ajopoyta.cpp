@@ -123,11 +123,9 @@ void Ajopoyta::ajopoytaYksi(bool onko)
 {
     if( onko )
     {
-        ui->ajopoyta2->setChecked(false);
         if( veturi_)
         {
             veturi_->asetaAjoPoyta(1);
-            ui->nopeusSaadin->setEnabled(true);
         }
     }
     else
@@ -135,8 +133,11 @@ void Ajopoyta::ajopoytaYksi(bool onko)
         if( veturi_)
             veturi_->asetaAjoPoyta(0);
         ui->jkvTieto->clear();
-        ui->nopeusSaadin->setEnabled(false);
     }
+
+    ui->ajopoyta1->setChecked( veturi_->ajopoyta() == 1 );
+    ui->ajopoyta2->setChecked( veturi_->ajopoyta() == 2 );
+    ui->nopeusSaadin->setEnabled(veturi_->ajopoyta());
 
 }
 
@@ -145,11 +146,9 @@ void Ajopoyta::ajopoytaKaksi(bool onko)
 
     if( onko )
     {
-        ui->ajopoyta1->setChecked(false);
         if( veturi_)
         {
             veturi_->asetaAjoPoyta(2);
-            ui->nopeusSaadin->setEnabled(true);
         }
     }
     else
@@ -157,11 +156,14 @@ void Ajopoyta::ajopoytaKaksi(bool onko)
         if( veturi_)
         {
             veturi_->asetaAjoPoyta(0);
-            ui->nopeusSaadin->setEnabled(false);
         }
             ui->jkvTieto->clear();
-        ui->nopeusSaadin->setEnabled(false);
     }
+
+    ui->ajopoyta1->setChecked( veturi_->ajopoyta() == 1 );
+    ui->ajopoyta2->setChecked( veturi_->ajopoyta() == 2 );
+    ui->nopeusSaadin->setEnabled(veturi_->ajopoyta());
+
 
 }
 

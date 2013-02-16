@@ -314,8 +314,14 @@ KulkutienRaide *KulkuTie::ekaRaide()
 
 void KulkuTie::puraKulkutieViiveella(int sekuntia)
 {
-    QTimer::singleShot( sekuntia * 1000 / RataIkkuna::rataSkene()->nopeutusKerroin(),
-                        this, SLOT(puraKulkutie()));
+    int nopeutuskerroin = RataIkkuna::rataSkene()->nopeutusKerroin();
+    if( nopeutuskerroin )  // Ehtolause estämään nollalla jakamisen
+    {
+        QTimer::singleShot( sekuntia * 1000 / nopeutuskerroin,
+                            this, SLOT(puraKulkutie()));
+    }
+    else
+        puraKulkutie();     // Jos simulaatio on pysäytetty, puretaan kulkutie välittömästi käskystä
 
 }
 

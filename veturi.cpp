@@ -492,6 +492,9 @@ void Veturi::siirtyyRaiteelle(RataRaide *raiteelle)
 
 void Veturi::aja()
 {
+    if( !RatapihaIkkuna::getInstance()->skene()->nopeutusKerroin() )
+        return; // Jos simulaatio on pysäytetty, ei ajeta
+
 
     if( !aktiivinenAkseli() ||  !aktiivinenAkseli()->kiskolla())
         return;
@@ -644,6 +647,16 @@ void Veturi::asetaAjoPoyta(int poyta)
 {
     if( (poyta == 1 && ajopoydat() == AjopoytaKaksi) || (poyta==2 && ajopoydat() == AjopoytaYksi))
         return; // Ei ole toivottua ajopöytää!!!
+
+    if( poyta )
+    {
+        if( etuAkseli_->onkoKytketty())
+            if( etuAkseli_->kytkettyAkseli()->ajopoytaKysely())
+                return; // Toinen ajopöytä kytketty edempänä tässä junassa
+        if( takaAkseli_->onkoKytketty())
+            if( takaAkseli_->kytkettyAkseli()->ajopoytaKysely() )
+                return; // Toinen ajopöytä kytketty taaempana tässä junassa
+    }
 
     if( !nopeusMs())
     {

@@ -22,6 +22,7 @@
 #include "ratakisko.h"
 #include "rataraide.h"
 #include "vaunu.h"
+#include "veturi.h"
 
 #include <QPainter>
 #include <QBrush>
@@ -326,4 +327,19 @@ qreal Akseli::junanPituusKysely(qreal tahanasti)
     if( toinenAkseli_ && toinenAkseli_->kytkettyAkseli_)
         return  toinenAkseli_->kytkettyAkseli_->junanPituusKysely(junapituus);
     return junapituus;  // Tämä on viimeinen vaunu
+}
+
+bool Akseli::ajopoytaKysely()
+{
+    Veturi* veturi = dynamic_cast<Veturi*>(vaunu_);
+    if( veturi )
+    {
+        if( veturi->ajopoyta() )
+            return true;
+    }
+
+    // Ellei tässä veturissa ole ajopöytää, kysellään toista akselia eteenpäin
+    if( toinenAkseli_->kytkettyAkseli_)
+        return toinenAkseli_->kytkettyAkseli_->ajopoytaKysely();
+    return false;   // Ei löydy aktiivista ajopöytää
 }

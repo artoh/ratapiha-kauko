@@ -266,6 +266,9 @@ void KulkutieAutomaatti::jnHerateRaiteelle(RataRaide *raide, RaiteenPaa::Suunta 
 void KulkutieAutomaatti::teeTyot()
 {
     int sekuntiaKulunut = skene_->nopeutusKerroin();
+    if(!sekuntiaKulunut)
+        return;     // Automaatio ei toimi, jos simulaatio pysäytetty!
+
     QMutableMapIterator<QString,AutomaatioOpastin*> i(opastimet_);
 
     while( i.hasNext())

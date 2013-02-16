@@ -284,7 +284,8 @@ void RataScene::asetaNopeutus(int nopeutuskerroin)
 {
     nopeutusKerroin_ = nopeutuskerroin;
     kelloTimer_.stop();
-    kelloTimer_.start(1000 / nopeutuskerroin);
+    if( nopeutuskerroin )   // Jos pysäytetään simulaatio ...
+        kelloTimer_.start(1000 / nopeutuskerroin);
 }
 
 

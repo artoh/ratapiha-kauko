@@ -59,6 +59,9 @@ public:
     void irrotaLiiatVaunut(int vaunuja);    /** Irrottaa TAAKSEPÄIN jos enempi vaunuja */
 
     qreal junanPituusKysely(qreal tahanasti);
+    bool ajopoytaKysely();  /** Selvittää, onko junassa aktiivista ajopöytää */
+
+    Akseli* kytkettyAkseli() { return kytkettyAkseli_; }
 
 private:
 
