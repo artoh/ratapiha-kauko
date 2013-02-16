@@ -100,5 +100,7 @@
         <file>pic/reitit.png</file>
         <file>pic/eiaikoja.png</file>
         <file>pic/kellolla.png</file>
+        <file>jkvkuvat/ajaVaratulle.png</file>
+        <file>jkvkuvat/varattuRaide.png</file>
     </qresource>
 </RCC>

@@ -24,6 +24,8 @@
 #include "rataraide.h"
 #include "junanuppi.h"
 #include "kulkutieautomaatti.h"
+#include "kulkutie.h"
+#include "kulkutienraide.h"
 
 #include <QPainter>
 #include <QFont>
@@ -141,9 +143,20 @@ void Veturi::paivitaJkvTiedot()
 
         RaiteenPaa::Opaste opaste=RaiteenPaa::Tyhja;
         int nopeusRajoitus = 0;
+
         if( seuraavaKisko)
         {
             nopeusRajoitus = seuraavaKisko->sn();
+
+            // Varatun raiteen kulkutien viimeisellä raiteella sn 20
+            if( seuraavaKisko->raide()->kulkutieTyyppi() == RataRaide::Varattukulkutie&&
+                    seuraavaKisko->raide()->kulkutienRaide()->kulkutie()->maaliRaide() ==
+                    seuraavaKisko->raide() )
+            {
+                opaste = RaiteenPaa::VarattuRaide;
+                if( nopeusRajoitus > 20 )
+                    nopeusRajoitus = 20;
+            }
         }
         else
             opaste = RaiteenPaa::SeisLevy;
@@ -341,6 +354,13 @@ void Veturi::paivitaJkvTiedot()
     // Jos ollaan vaihtokulkutiellä, niin max nopeus 35 km/h
     if( jkvTila()==VaihtoJkv &&  aktiivinenAkseli()->kiskolla()->raide()->kulkutieTyyppi() == RataRaide::Vaihtokulkutie && jkvnopeus > 20)
         jkvnopeus = 35;
+    // Varatun raiteen kulkutien viimeisellä raiteella sn 20
+    if(  aktiivinenAkseli()->kiskolla()->raide()->kulkutieTyyppi() == RataRaide::Varattukulkutie &&
+            aktiivinenAkseli()->kiskolla()->raide()->kulkutienRaide()->kulkutie()->maaliRaide() ==
+            aktiivinenAkseli()->kiskolla()->raide()
+         && jkvnopeus > 20)
+        jkvnopeus = 20;
+
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Tarkistetaan vielä raiteen voimassaoleva nopeusrajoitus, josta voi myös
@@ -829,7 +849,7 @@ QPixmap Veturi::jkvKuva()
 
         if( opaste.opaste() != RaiteenPaa::Tyhja ||  opaste.pysahdyLaiturille())
         {
-            opaste.piirra(&painter, 35 + indeksi * 65, false);
+            opaste.piirra(&painter, 35 + indeksi * 65, opaste.matka() > 3600  );  // Käytetään esiopastinkuvia yli 3,6 km matkalla
             indeksi++;
             if( indeksi > 2)
                 break;

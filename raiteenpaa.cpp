@@ -56,6 +56,8 @@ QString RaiteenPaa::tilaTieto() const
         tila.append("AjaVarovasti "); break;
     case EiOpastetta:
         tila.append("EiOpastetta "); break;
+    case AjaVaratulle:
+        tila.append("AjaVaratulle "); break;
     default:
         break;
     }
@@ -195,6 +197,10 @@ void RaiteenPaa::paivitysTehtava(const QString &lause)
     else if( lause == "EiOpastetta")
     {
         opaste_ = EiOpastetta;
+    }
+    else if( lause == "AjaVaratulle")
+    {
+        opaste_ = AjaVaratulle;
     }
     else if( lause.startsWith("Sp"))
     {

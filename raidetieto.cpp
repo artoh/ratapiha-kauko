@@ -27,6 +27,8 @@ void RaideTieto::paivita(int akseleita, const QString &junanumero, const QString
         kulkutietyyppi_ = Vaihtokulkutie;
     else if(kulkutietila.startsWith('S'))
         kulkutietyyppi_ = Linjasuojastus;
+    else if(kulkutietila.startsWith('V'))
+        kulkutietyyppi_ = Varattukulkutie;
     else
         kulkutietyyppi_ = EiKulkutieta;
 

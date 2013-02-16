@@ -222,7 +222,9 @@ OTHER_FILES += \
     pic/lisaa.png \
     pic/hyvaksy.png \
     pic/kopioi.png \
-    pic/reitit.png
+    pic/reitit.png \
+    jkvkuvat/ajaVaratulle.png \
+    jkvkuvat/varattuRaide.png
 
 FORMS += \
     ajopoyta.ui \

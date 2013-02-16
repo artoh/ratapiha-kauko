@@ -96,7 +96,8 @@ QString KulkutienRaide::kulkutieto()
         kulkutiekirjain = QChar('U');
     else if( kulkutie()->kulkutienTyyppi() == RataRaide::Linjasuojastus)
         kulkutiekirjain = QChar('S');
-
+    else if( kulkutie()->kulkutienTyyppi() == RataRaide::Varattukulkutie)
+        kulkutiekirjain = QChar('V');
 
     QChar tilateksti;
     switch( kulkutie()->tila())

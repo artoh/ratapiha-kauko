@@ -15,7 +15,7 @@ class RaideTieto
 {
 public:
 
-    enum Kulkutietyyppi { EiKulkutieta, Junakulkutie, Vaihtokulkutie, Linjasuojastus } ;
+    enum Kulkutietyyppi { EiKulkutieta, Junakulkutie, Vaihtokulkutie, Linjasuojastus, Varattukulkutie } ;
     enum KulkutieTila { Valmis, Varattu, Virhetila } ;
 
     RaideTieto();

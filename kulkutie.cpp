@@ -177,7 +177,7 @@ void KulkuTie::raideVarautuu(KulkutienRaide* elementti)
     if( tila_ == RataRaide::Valmis)
         tila_ = RataRaide::Varattu;
 
-    if( kulkutienTyyppi() == RataRaide::Junakulkutie )
+    if( kulkutienTyyppi() == RataRaide::Junakulkutie || kulkutienTyyppi() == RataRaide::Varattukulkutie )
     {
         // Kaikkien ennen tätä pitää olla varattuja tai käytettyjä
         foreach( KulkutienRaide* ktraide, elementit_)
@@ -204,7 +204,7 @@ void KulkuTie::raideVapautuu(KulkutienRaide *elementti)
 {
     // Edellisten raiteiden pitäisi olla käytettyjä
 
-    if( kulkutienTyyppi() == RataRaide::Junakulkutie)
+    if( kulkutienTyyppi() == RataRaide::Junakulkutie || kulkutienTyyppi() == RataRaide::Varattukulkutie)
     {
         bool ennenNykyista = true;
         int kayttamattomia = 0;

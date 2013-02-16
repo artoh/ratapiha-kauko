@@ -47,6 +47,11 @@ bool KulkutienMuodostaja::muodostaKulkutie()
     QList<Naapuruus*> naapurit = mista_->naapurit();
     QList<KulkutieElementti*> elementit;
 
+    // Raiteelta, jonne on junakulkutie varatulle raiteelle, ei saa muodostaa kulkutietä
+    if( mista_->kulkutieTyyppi() == RataRaide::Varattukulkutie )
+        return false;
+
+
     foreach( Naapuruus* naapuri, naapurit)
         if( naapuri->naapuriRaide())
         {
@@ -64,7 +69,7 @@ bool KulkutienMuodostaja::muodostaKulkutie()
                 lahtoPaa = mista_->etelainen();
 
             // Pitää olla sopiva aloittava opastin!
-            if( ( kulkutienTyyppi() == RataRaide::Junakulkutie && ( lahtoPaa->opastin() == RaiteenPaa::PaaOpastin ||
+            if( ( ( kulkutienTyyppi() == RataRaide::Junakulkutie || kulkutienTyyppi() == RataRaide::Varattukulkutie ) && ( lahtoPaa->opastin() == RaiteenPaa::PaaOpastin ||
                     lahtoPaa->opastin() == RaiteenPaa::RaideOpastin) ) ||
                     ( kulkutienTyyppi() == RataRaide::Vaihtokulkutie && lahtoPaa->opastin() != RaiteenPaa::EiOpastinta) )
                 elementit.append(new KulkutieElementti(this, 0, naapuri, lahtoPaa, mista_));

@@ -20,6 +20,7 @@
 #include "kulkutieautomaatti.h"
 #include "rataraide.h"
 #include "ratascene.h"
+#include "kulkutienmuodostaja.h"
 
 #include <QSqlQuery>
 #include <QRegExp>
@@ -139,8 +140,51 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
         if( !maaliRaide)
             continue;
 
+        RaideTieto::Kulkutietyyppi ktyyppi = RaideTieto::EiKulkutieta;
+        QString tyyppikirjain = kysely.value(4).toString();
 
-        // TODO: aikataulun alkuviive
+        //  Heti muodostettavat kulkutiet, joita ei yritetä uudelleen
+        //
+        if( tyyppikirjain == "j")
+        {
+            // Tyyppikirjain j tarkoittaa junakulkutietä, jota yritetään vain yhden kerran, ja sitten siirrytään
+            // kokeilemaan seuraavaa. Tällä voidaan toteuttaa kohtausautomatiikkaa.
+            // Ei mahdollista viiveen käyttämistä !
+
+            KulkutienMuodostaja ktie(RataRaide::Junakulkutie, lahtoraide ,maaliRaide, suunta);
+            if( ktie.muodostaKulkutie())
+                return;
+            else
+                continue;
+        }
+        else if( tyyppikirjain == "u")
+        {
+            // Tyyppikirjain u tarkoittaa vaihtokulkutietä, jota yritetään vain yhden kerran, ja sitten siirrytään
+            // kokeilemaan seuraavaa. Tällä voidaan toteuttaa kohtausautomatiikkaa.
+            // Ei mahdollista viiveen käyttämistä !
+
+            KulkutienMuodostaja ktie(RataRaide::Vaihtokulkutie, lahtoraide ,maaliRaide, suunta);
+            if( ktie.muodostaKulkutie())
+                return;
+            else
+                continue;
+        }
+        else if( tyyppikirjain == "v")
+        {
+            // Tyyppikirjain v tarkoittaa varatun raiteen junakulkutietä, jota yritetään vain yhden kerran, ja sitten siirrytään
+            // kokeilemaan seuraavaa. Tällä voidaan toteuttaa kohtausautomatiikkaa.
+            // Ei mahdollista viiveen käyttämistä !
+
+            KulkutienMuodostaja ktie(RataRaide::Varattukulkutie, lahtoraide ,maaliRaide, suunta);
+            if( ktie.muodostaKulkutie())
+                return;
+            else
+                continue;
+        }
+
+
+
+        // Aikataulun alkuviive
         // Jos ollaan raiteella, josta  on aikataulussa vasta edessäpäin,
         // lisätään tarpeellinen viive (lähtöaika - 1 minuutti )
         int viive = 0;
@@ -170,12 +214,13 @@ void KulkutieAutomaatti::saapuiRaiteelle(const QString &herateraide, const QStri
             viive = kysely.value(3).toInt();
         }
 
-        RaideTieto::Kulkutietyyppi ktyyppi = RaideTieto::EiKulkutieta;
-        QString tyyppikirjain = kysely.value(4).toString();
+
         if( tyyppikirjain == "J")
             ktyyppi = RaideTieto::Junakulkutie;
         else if( tyyppikirjain == "U")
             ktyyppi = RaideTieto::Vaihtokulkutie;
+        else if( tyyppikirjain == "V")
+            ktyyppi = RaideTieto::Varattukulkutie;
         else
             continue;   // Tyyppi virheellinen!
 

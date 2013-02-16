@@ -166,12 +166,18 @@ void KulkutieElementti::laitaVarit(KulkutienMuodostaja *kulkutie)
         if( opastin_->opaste() != RaiteenPaa::AjaVarovasti)
             opastin_->asetaOpaste( RaiteenPaa::AjaVarovasti);
     }
+    else if( kulkutie->kulkutienTyyppi() == RataRaide::Varattukulkutie)
+    {
+        if( opastin_->opaste() != RaiteenPaa::AjaVaratulle)
+            opastin_->asetaOpaste( RaiteenPaa::AjaVaratulle);
+
+    }
     else if( kulkutie->kulkutienTyyppi() == RataRaide::Junakulkutie)
     {
         // Aja vai AjaSn?
         int nopeus = naapuruus_->pieninNopeus();
 
-        if( nopeus < 40 || nopeus < naapuruus_->omaRaide()->suurinNopeus()
+        if( nopeus < 40  /* || nopeus < naapuruus_->omaRaide()->suurinNopeus() */
                 || nopeus < naapuruus_->naapuriRaide()->suurinNopeus() )
             // AJA SN EHDOT: nopeus alle 40 km/h tai poikkeava (hitaampi) raide
         {
@@ -204,11 +210,21 @@ bool KulkutieElementti::tarkistaKulkutieEhdot(KulkutienMuodostaja *muodostaja)
         if( naapuruus_->naapuriRaide()->akseleita())
             return false;
 
-    if( naapuruus_->sallittuKulkutie() == Kisko::VainVaihto && muodostaja->kulkutienTyyppi() == RaideTieto::Junakulkutie)
+    // Varattu junakulkutie saa olla varattu vain maaliraiteella - jonka pitää olla varattu
+    if( muodostaja->kulkutienTyyppi() == RataRaide::Varattukulkutie)
+    {
+        if( naapuruus_->naapuriRaide()->akseleita() && naapuruus_->naapuriRaide() != muodostaja->minne() )
+            return false;   // Välissä oleva raide on varattu
+        else if( !naapuruus_->naapuriRaide()->akseleita() && naapuruus_->naapuriRaide() == muodostaja->minne() )
+            return false;   // Maaliraide ei ole varattu
+
+    }
+
+    if( naapuruus_->sallittuKulkutie() == Kisko::VainVaihto && ( muodostaja->kulkutienTyyppi() == RaideTieto::Junakulkutie || muodostaja->kulkutienTyyppi() == RataRaide::Varattukulkutie ))
         return false; // Tätä kautta ei voi muodostaa junakulkutietä
 
     // Jos kulkutie on määritelty toissijaiseksi, lisätään pituus tuplana!!!
-    if( naapuruus_->sallittuKulkutie() == Kisko::Toissijainen && muodostaja->kulkutienTyyppi() == RaideTieto::Junakulkutie)
+    if( naapuruus_->sallittuKulkutie() == Kisko::Toissijainen && ( muodostaja->kulkutienTyyppi() == RaideTieto::Junakulkutie || muodostaja->kulkutienTyyppi() == RataRaide::Varattukulkutie ))
         pituus_ += naapuruus_->naapuriRaide()->pituus();
 
     // Aukiajetun vaihteen kautta EI sallita kulkuteitä!
@@ -225,6 +241,10 @@ void KulkutieElementti::maalissaOllaan(KulkutienMuodostaja *muodostaja)
     // Pitää olla päättävä opastin!
 
     if( naapurinPaa()->opastin() == RaiteenPaa::EiOpastinta && naapurinPaa()->paanTyyppi() != RaiteenPaa::RaidePuskuri )
+        return;
+
+    // Varatun kulkutien päättävän opasteen pitää olla Seis
+    if( (naapurinPaa()->opaste() != RaiteenPaa::Seis && naapurinPaa()->paanTyyppi() != RaiteenPaa::RaidePuskuri) && muodostaja->kulkutienTyyppi() == RaideTieto::Varattukulkutie   )
         return;
 
     // Junakulkutien pitää herättää suojastus

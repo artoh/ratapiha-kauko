@@ -89,6 +89,9 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
         else
             painter->drawPixmap(x,y,QPixmap(":/r/jkvkuvat/poAjaSn.png"));
         break;
+    case RaiteenPaa::AjaVaratulle:
+        painter->drawPixmap(x,y,QPixmap(":/r/jkvkuvat/ajaVaratulle.png"));
+        break;
     case RaiteenPaa::SeisLevy:
         painter->setBrush( QBrush(Qt::white));
         painter->setPen(QPen(QBrush(Qt::red),2.0));
@@ -107,6 +110,9 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
         break;
     case RaiteenPaa::Lahtolupa:
         painter->drawPixmap(x,y,QPixmap(":/r/jkvkuvat/viherlippu.png"));
+        break;
+    case RaiteenPaa::VarattuRaide:
+        painter->drawPixmap(x,y,QPixmap(":/r/jkvkuvat/varattuRaide.png"));
         break;
     case RaiteenPaa::NopeusRajoitus:
         painter->setBrush( QBrush(Qt::white));

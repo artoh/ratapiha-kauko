@@ -98,7 +98,7 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
             switch( raidetieto()->etelainen()->opaste())
             {
                 case RaiteenPaa::Seis: vari = Qt::red; break;
-                case RaiteenPaa::Aja: case RaiteenPaa::AjaSn: vari = Qt::green; break;
+                case RaiteenPaa::Aja: case RaiteenPaa::AjaSn: case RaiteenPaa::AjaVaratulle:  vari = Qt::green; break;
                 case RaiteenPaa::AjaVarovasti : vari = Qt::yellow; break;
                 case RaiteenPaa::EiOpastetta: vari = Qt::magenta; break;
             default:
@@ -150,7 +150,7 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
             switch( raidetieto()->pohjoinen()->opaste())
             {
                 case RaiteenPaa::Seis: vari = Qt::red; break;
-                case RaiteenPaa::Aja: case RaiteenPaa::AjaSn: vari = Qt::green; break;
+                case RaiteenPaa::Aja: case RaiteenPaa::AjaSn: case RaiteenPaa::AjaVaratulle:  vari = Qt::green; break;
                 case RaiteenPaa::AjaVarovasti : vari = Qt::yellow; break;
                 case RaiteenPaa::EiOpastetta: vari = Qt::magenta; break;
             default:
@@ -247,7 +247,8 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
         else if( raidetieto()->akseleita())
             viivavari = Qt::red;
         else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Junakulkutie ||
-                 raidetieto()->kulkutieTyyppi() == RaideTieto::Linjasuojastus)
+                 raidetieto()->kulkutieTyyppi() == RaideTieto::Linjasuojastus ||
+                 raidetieto()->kulkutieTyyppi() == RaideTieto::Varattukulkutie )
             viivavari = Qt::green;
         else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Vaihtokulkutie)
             viivavari = Qt::yellow;
@@ -269,7 +270,8 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     }
     else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Vaihtokulkutie && !sivuhaara)
         viivavari = Qt::yellow;
-    else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Junakulkutie && !sivuhaara)
+    else if( ( raidetieto()->kulkutieTyyppi() == RaideTieto::Junakulkutie ||
+               raidetieto()->kulkutieTyyppi() == RaideTieto::Varattukulkutie) && !sivuhaara)
         viivavari = Qt::green;
     else if( raidetieto()->kulkutieTyyppi() == RaideTieto::Linjasuojastus )
         viivavari = Qt::green;

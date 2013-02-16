@@ -90,21 +90,21 @@ void Opastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
         bool naytaEsiopastus = false;
 
         // VIHREÄ
-        if( raiteenpaa()->opaste() == RaiteenPaa::Aja ||
-                raiteenpaa()->opaste() == RaiteenPaa::AjaSn )
+        if( opaste() == RaiteenPaa::Aja ||
+                opaste() == RaiteenPaa::AjaSn || opaste() == RaiteenPaa::AjaVaratulle )
         {
             piirraVari(painter,2.0, 2.0, 1.6, 0, 255, 0, 50, 255, 50);
             naytaEsiopastus = true;
         }
 
         // PUNAINEN
-        if(raiteenpaa()->opaste()==RaiteenPaa::Seis )
+        if( opaste()==RaiteenPaa::Seis )
         {
             piirraVari(painter, 2.0, 6.0, 1.6, 255, 0, 0, 255, 50, 50);
         }
 
         // KELTAINEN
-        if(  raiteenpaa()->opaste() == RaiteenPaa::AjaSn )
+        if(  opaste() == RaiteenPaa::AjaSn ||opaste() == RaiteenPaa::AjaVaratulle)
         {
                piirraVari(painter,2.0, 10.0, 1.6, 255, 255, 0, 255, 255, 50);
         }
@@ -123,16 +123,17 @@ void Opastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
 
 
         // VALKOINEN - Aja varovasti
-        if( raiteenpaa()->opaste() == RaiteenPaa::AjaVarovasti)
+        if( opaste() == RaiteenPaa::AjaVarovasti)
         {
                piirraVari(painter,2.0, 20.0, 1.6, 255, 255, 255, 225, 225, 225);
         }
 
 
         // SININEN -Ei opastetta
-        if( raiteenpaa()->opaste() == RaiteenPaa::EiOpastetta )
+        if( opaste() == RaiteenPaa::EiOpastetta || opaste() == RaiteenPaa::AjaVaratulle)
         {
-               piirraVari(painter,2.0, 24.0, 1.6, 0, 0, 255, 50, 50, 225);
+               piirraVari(painter,2.0, 24.0, 1.6, 31, 244, 255, 50, 50, 225);
+               naytaEsiopastus = false; // Ei näytetä esiopastetta myöskään kytkentäopasteella
         }
 
         // ESIOPASTIN keltainen
@@ -155,7 +156,7 @@ void Opastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
         piirraPimea(painter,2.0,2.0,1.6);
 
         if(esiOpastin() == RaiteenPaa::Aja ||
-                esiOpastin() == RaiteenPaa::AjaVarovasti )
+                esiOpastin() == RaiteenPaa::AjaSn || esiOpastin() == RaiteenPaa::AjaVaratulle )
         {
             if( valkkytila__)
                piirraVari(painter,2.0, 2.0, 1.6, 0, 255, 0, 50, 255, 50);
@@ -164,7 +165,7 @@ void Opastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
         }
 
 
-        if(esiOpastin() == RaiteenPaa::Seis || esiOpastin() == RaiteenPaa::AjaVarovasti)
+        if((esiOpastin() == RaiteenPaa::Seis || esiOpastin() == RaiteenPaa::AjaSn || esiOpastin() == RaiteenPaa::AjaVaratulle ) )
         {
             if( valkkytila__)
                piirraVari(painter,2.0, 14.0, 1.6, 255, 255, 0, 255, 255, 50);
@@ -208,21 +209,21 @@ void Opastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
         bool naytaEsiopastus = false;
 
         // VIHREÄ
-        if(raiteenpaa()->opaste() == RaiteenPaa::Aja ||
-                raiteenpaa()->opaste() == RaiteenPaa::AjaSn)
+        if(opaste() == RaiteenPaa::Aja ||
+                opaste() == RaiteenPaa::AjaSn || opaste() == RaiteenPaa::AjaVaratulle)
         {
             piirraVari(painter,1.5, 2.0, 1.4, 0, 255, 0, 50, 255, 50);
             naytaEsiopastus = true;
         }
 
         // PUNAINEN
-        if(raiteenpaa()->opaste()==RaiteenPaa::Seis )
+        if(opaste()==RaiteenPaa::Seis )
         {
             piirraVari(painter, 1.5, 6.0, 1.4, 255, 0, 0, 255, 50, 50);
         }
 
         // KELTAINEN
-        if(  raiteenpaa()->opaste() == RaiteenPaa::AjaSn )
+        if(  opaste() == RaiteenPaa::AjaSn || opaste() == RaiteenPaa::AjaVaratulle )
         {
                piirraVari(painter,1.5, 10.0, 1.4, 255, 255, 0, 255, 255, 50);
         }
@@ -231,7 +232,7 @@ void Opastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
         // Eo vihreä
         if(     naytaEsiopastus && (
                 esiOpastin() == RaiteenPaa::Aja ||
-                esiOpastin() == RaiteenPaa::AjaVarovasti ) )
+                esiOpastin() == RaiteenPaa::AjaSn || esiOpastin() == RaiteenPaa::AjaVaratulle) )
         {
             if( valkkytila__)
                piirraVari(painter,6.5, 1.5, 1.4, 0, 255, 0, 50, 255, 50);
@@ -241,20 +242,21 @@ void Opastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
 
 
         // VALKOINEN - Aja varovasti
-        if( raiteenpaa()->opaste() == RaiteenPaa::AjaVarovasti )
+        if( opaste() == RaiteenPaa::AjaVarovasti )
         {
                piirraVari(painter,6.5, 4.5, 1.4, 255, 255, 255, 225, 225, 225);
         }
 
 
         // SININEN - Ei opastetta
-        if(  raiteenpaa()->opaste() == RaiteenPaa::EiOpastetta )
+        if(  opaste() == RaiteenPaa::EiOpastetta || opaste() == RaiteenPaa::AjaVaratulle)
         {
-               piirraVari(painter,6.5, 7.5, 1.4, 0, 0, 255, 50, 50, 225);
+               piirraVari(painter,6.5, 7.5, 1.4, 31, 244, 255, 50, 50, 225);
+               naytaEsiopastus = false;
         }
 
         // ESIOPASTIN keltainen
-        if( naytaEsiopastus && ( esiOpastin() == RaiteenPaa::Seis || esiOpastin() == RaiteenPaa::AjaVarovasti))
+        if( naytaEsiopastus && ( esiOpastin() == RaiteenPaa::Seis || esiOpastin() == RaiteenPaa::AjaSn || esiOpastin() == RaiteenPaa::AjaVaratulle))
         {
             if( valkkytila__)
                piirraVari(painter,6.5, 10.5, 1.4, 255, 255, 0, 255, 255, 50);

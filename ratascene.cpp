@@ -151,6 +151,8 @@ void RataScene::lataaRata()
                         ktyyppi = RataRaide::Vaihtokulkutie;
                     else if( kulkutietila[0] == 'S')
                         ktyyppi = RataRaide::Linjasuojastus;
+                    else if( kulkutietila[0] == 'V')
+                        ktyyppi = RataRaide::Varattukulkutie;
 
                     kulkutie = new KulkuTie(ktyyppi);
                     kulkutiet_.insert(kulkutiedot.value(1).mid(1), kulkutie);
@@ -299,7 +301,8 @@ QString RataScene::ASLKasky(const QString &parametrit)
 
     // UK raide raide -- vaihtokulkutie
     // JK raide raide -- junakulkutie
-    if( (paramLista.first() == "UK" || paramLista.first() == "JK" ) && paramLista.count() > 2)
+    // VT raide raide -- varatun raiteen junakulkutie
+    if( (paramLista.first() == "UK" || paramLista.first() == "JK" || paramLista.first() == "VT" ) && paramLista.count() > 2)
     {
         RataRaide* mista = raideTunnukset_.value(paramLista[1],0);
         RataRaide* minne = raideTunnukset_.value(paramLista[2],0);
@@ -318,6 +321,12 @@ QString RataScene::ASLKasky(const QString &parametrit)
         else if( paramLista.first() == "JK")
         {
             KulkutienMuodostaja ktie(RataRaide::Junakulkutie, mista, minne);
+            if(ktie.muodostaKulkutie())
+                return QString("OK");
+        }
+        else if( paramLista.first() == "VT")
+        {
+            KulkutienMuodostaja ktie(RataRaide::Varattukulkutie, mista, minne);
             if(ktie.muodostaKulkutie())
                 return QString("OK");
         }
