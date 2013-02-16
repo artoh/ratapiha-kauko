@@ -51,9 +51,9 @@ public:
 
     bool aktiivinen(PaanSuunta paassa, RataKisko* toinenKisko = 0);
 
-    void esiopastinIlmoitus( RaiteenPaa::Opaste opaste, Opastin* opastimelta);
+    void esiopastinIlmoitus(Opastin* opastimelta);
 
-    void esiopastinHaku( RaiteenPaa::Opaste opaste, QPointF naapurilta, qreal metria);
+    void esiopastinHaku(Opastin *opastin, QPointF naapurilta, qreal metria);
     void kerroOpastimet();
 
     RataKisko* haeAktiivinenNaapuri( QPointF sijainnista);

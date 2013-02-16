@@ -45,7 +45,7 @@ public:
     bool onkoPohjoiseen() { return naapuruus_->naapurinSuunta()==RaiteenPaa::Etelaan; }
 
     void lukitseKulkutielle( KulkuTie* kulkutie);
-    void laitaVarit(KulkutienMuodostaja* kulkutie);
+    void laitaVarit(KulkutienMuodostaja* kulkutie, RaiteenPaa::Opaste lapsenOpaste = RaiteenPaa::Tyhja);
 
     int taso() const { return taso_; }  //* Monesko elementti alusta lukien
 

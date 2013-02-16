@@ -158,41 +158,87 @@ void KulkutieElementti::lukitseKulkutielle(KulkuTie* kulkutie)
 
 }
 
-void KulkutieElementti::laitaVarit(KulkutienMuodostaja *kulkutie)
+void KulkutieElementti::laitaVarit(KulkutienMuodostaja *kulkutie, RaiteenPaa::Opaste lapsenOpaste)
 {
+
+    RaiteenPaa::Opaste opaste = RaiteenPaa::Tyhja;
 
     if( kulkutie->kulkutienTyyppi() == RataRaide::Vaihtokulkutie)
     {
-        if( opastin_->opaste() != RaiteenPaa::AjaVarovasti)
-            opastin_->asetaOpaste( RaiteenPaa::AjaVarovasti);
+        opaste = RaiteenPaa::AjaVarovasti;
     }
     else if( kulkutie->kulkutienTyyppi() == RataRaide::Varattukulkutie)
     {
-        if( opastin_->opaste() != RaiteenPaa::AjaVaratulle)
-            opastin_->asetaOpaste( RaiteenPaa::AjaVaratulle);
-
+        opaste = RaiteenPaa::AjaVaratulle;
     }
     else if( kulkutie->kulkutienTyyppi() == RataRaide::Junakulkutie)
     {
         // Aja vai AjaSn?
-        int nopeus = naapuruus_->pieninNopeus();
+        // AjaSn tulee, jos mennään poikkeavalle raiteelle
+        opaste = RaiteenPaa::Aja;
 
-        if( nopeus < 40  /* || nopeus < naapuruus_->omaRaide()->suurinNopeus() */
-                || nopeus < naapuruus_->naapuriRaide()->suurinNopeus() )
-            // AJA SN EHDOT: nopeus alle 40 km/h tai poikkeava (hitaampi) raide
+        if( naapuruus_->naapurinVaihde() != RaiteenPaa::EiVaihdetta ||
+            naapuruus_->omaVaihde() != RaiteenPaa::EiVaihdetta )
         {
-            if( opastin_->opasteKasite() != RaiteenPaa::AjaSn)
-                opastin_->asetaOpaste( RaiteenPaa::AjaSn);
+            // Tutkitaan vaihteen vaihtoehdot, onko hitain tai yhtä suuri
+
+            QList<Naapuruus*> naapurit = naapuruus_->omaRaide()->naapurit();
+            foreach(Naapuruus* toinen, naapurit)
+            {
+                if( toinen != naapuruus_ &&
+                   toinen->omaSuunta() == naapuruus_->omaSuunta())
+                {
+                    // Nyt löydettiin vaihdenaapuri! Tässä pitäisi siis olla
+                    // pienempi nopeus, jotta saadaan vihreä
+
+                    if( toinen->pieninNopeus() >= naapuruus_->pieninNopeus() )
+                        opaste = RaiteenPaa::AjaSn;
+                }
+            }
+
+            QList<Naapuruus*> toisennaapurit = naapuruus_->naapuriRaide()->naapurit();
+            foreach(Naapuruus* viekku, toisennaapurit)
+            {
+                if( viekku->naapuriRaide() != naapuruus_->omaRaide() &&
+                   viekku->omaSuunta() == naapuruus_->naapurinSuunta())
+                {
+                    // Nyt löydettiin vaihdenaapuri! Tässä pitäisi siis olla
+                    // pienempi nopeus, jotta saadaan vihreä
+
+                    if( viekku->pieninNopeus() >= naapuruus_->pieninNopeus() )
+                        opaste = RaiteenPaa::AjaSn;
+                }
+            }
+
+
         }
-        else if( opastin_->opasteKasite() == RaiteenPaa::Seis)
-            opastin_->asetaOpaste( RaiteenPaa::Aja);
+
     }
+
+
+    // Jos on myös lapsella opaste, määritellään rajoittavampi
+    if( opaste == RaiteenPaa::Aja && lapsenOpaste != RaiteenPaa::Aja
+            && lapsenOpaste != RaiteenPaa::Tyhja)
+        opaste = lapsenOpaste;
+
+    if( isi_)
+    {
+        if( isi_->opastin_ == opastin_)
+        {
+            isi_->laitaVarit( kulkutie, opaste);
+        }
+        else
+        {
+            opastin_->asetaOpaste( opaste);
+            isi_->laitaVarit(kulkutie);
+        }
+    }
+    else
+        opastin_->asetaOpaste(opaste);
 
     // Päivitetään ja viedään tietokantaankin
     naapuruus_->naapuriRaide()->paivita();
 
-    if( isi_)
-            isi_->laitaVarit(kulkutie);
 }
 
 

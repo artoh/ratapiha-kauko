@@ -40,8 +40,9 @@ public:
     int type() const { return Type; }
 
     void asetaEsiOpastin( RaiteenPaa::Opaste opaste);
+    void asetaEsiOpastin( Opastin* opastin, qreal etaisyys);
 
-    RaiteenPaa::Opaste esiOpastin() const  { return esiopastinkasite_; }
+    RaiteenPaa::Opaste esiOpaste() const  { return esiopastinkasite_; }
     OpastinTyyppi opastintyyppi() const { return opastintyyppi_; }
 
     RaiteenPaa::Opaste opaste();
@@ -60,6 +61,7 @@ protected:
     OpastinTyyppi opastintyyppi_;
 
     static bool valkkytila__;
+    qreal esiopastinEtaisyys_;
 
     void piirraVari( QPainter* painter, qreal x, qreal y, qreal sade, int r, int g, int b, int r2, int g2, int b2, bool himmea=false);
     void piirraPimea( QPainter* painter, qreal x, qreal y, qreal sade);

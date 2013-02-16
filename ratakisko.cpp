@@ -214,20 +214,20 @@ bool RataKisko::aktiivinen(Kisko::PaanSuunta paassa, RataKisko *toinenKisko)
 
 }
 
-void RataKisko::esiopastinIlmoitus(RaiteenPaa::Opaste opaste, Opastin *opastimelta)
+void RataKisko::esiopastinIlmoitus( Opastin *opastimelta)
 {
     // Oma opastin ilmoittaa opastinkäsitteen muutoksesta
     if( opastimelta == opastinPohjoiseen_)
     {
         RataKisko* seuraava = haeAktiivinenNaapuri( etelainen());
         if( seuraava )
-            seuraava->esiopastinHaku(opaste, etelainen(), pituus());
+            seuraava->esiopastinHaku(opastimelta, etelainen(), pituus());
     }
     else
     {
         RataKisko* seuraava = haeAktiivinenNaapuri( pohjoinen());
         if( seuraava )
-            seuraava->esiopastinHaku(opaste, pohjoinen(), pituus());
+            seuraava->esiopastinHaku(opastimelta, pohjoinen(), pituus());
     }
 
 
@@ -263,34 +263,43 @@ Opastin *RataKisko::opastinSijainnissa(QPointF sijainnissa)
     return 0;
 }
 
-void RataKisko::esiopastinHaku(RaiteenPaa::Opaste opaste, QPointF naapurilta, qreal metria)
+void RataKisko::esiopastinHaku(Opastin* opastin, QPointF naapurilta, qreal metria)
 {
     qreal yhteensa = metria + pituus();
     if( yhteensa > 5000)
         return;
 
+    Opastin* yhdistettavaOpastin = opastin;
+
 
     if( naapurilta == pohjoinen())
     {
-        if( opastinPohjoiseen_ )    // On itsellään...
-            opastinPohjoiseen_->asetaEsiOpastin(opaste);
-        else
+        if( opastinPohjoiseen_ )    // On itsellään..
         {
-            RataKisko* seuraava = haeAktiivinenNaapuri( etelainen());
-            if( seuraava )
-                seuraava->esiopastinHaku(opaste, etelainen(), yhteensa);
+            opastinPohjoiseen_->asetaEsiOpastin(yhdistettavaOpastin, yhteensa);
+            if(opastinPohjoiseen_->opastintyyppi() != Opastin::Esiopastin )
+                return;     // Pääopastin tai raideopastin
+            // Muuten jatketaan eteenpäin, jottei jää turhaan keltaista vilkkua
+            yhdistettavaOpastin = opastinPohjoiseen_;
         }
+        RataKisko* seuraava = haeAktiivinenNaapuri( etelainen());
+        if( seuraava )
+            seuraava->esiopastinHaku(yhdistettavaOpastin, etelainen(), yhteensa);
     }
     else if( naapurilta == etelainen())
     {
         if( opastinEtelaan_ )    // On itsellään...
-            opastinEtelaan_->asetaEsiOpastin(opaste);
-        else
         {
-            RataKisko* seuraava = haeAktiivinenNaapuri( pohjoinen());
-            if( seuraava )
-                seuraava->esiopastinHaku(opaste, pohjoinen(), yhteensa);
+            opastinEtelaan_->asetaEsiOpastin(yhdistettavaOpastin, yhteensa);
+            if(opastinEtelaan_->opastintyyppi() != Opastin::Esiopastin )
+                return;     // Pääopastin tai raideopastin
+            // Muuten jatketaan eteenpäin, jottei jää turhaan keltaista vilkkua
+            yhdistettavaOpastin = opastinEtelaan_;
         }
+        RataKisko* seuraava = haeAktiivinenNaapuri( pohjoinen());
+        if( seuraava )
+            seuraava->esiopastinHaku(yhdistettavaOpastin, pohjoinen(), yhteensa);
+
     }
 
 }
@@ -298,9 +307,9 @@ void RataKisko::esiopastinHaku(RaiteenPaa::Opaste opaste, QPointF naapurilta, qr
 void RataKisko::kerroOpastimet()
 {
     if( opastinPohjoiseen_)
-        esiopastinIlmoitus(opastinPohjoiseen_->opaste(), opastinPohjoiseen_);
+        esiopastinIlmoitus( opastinPohjoiseen_);
     if( opastinEtelaan_)
-        esiopastinIlmoitus(opastinEtelaan_->opaste(), opastinEtelaan_);
+        esiopastinIlmoitus( opastinEtelaan_);
 
 }
 
