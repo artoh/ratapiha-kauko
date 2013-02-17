@@ -59,7 +59,9 @@ HEADERS += \
     reittisuunnittelutieto.h \
     reittidialogi.h \
     reittidelegaatti.h \
-    liikennepaikkadialogi.h
+    liikennepaikkadialogi.h \
+    aikataulumonitori.h \
+    monitoritietue.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -117,7 +119,9 @@ SOURCES += \
     reittisuunnittelutieto.cpp \
     reittidialogi.cpp \
     reittidelegaatti.cpp \
-    liikennepaikkadialogi.cpp
+    liikennepaikkadialogi.cpp \
+    aikataulumonitori.cpp \
+    monitoritietue.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

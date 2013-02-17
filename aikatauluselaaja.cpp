@@ -125,7 +125,7 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
 
     QString tyyli = " * { font-family: \"Helvetica\"; } "
             "h1  { font-size: 16px; background-color: yellow; }  "
-            "th { font-weight: normal; background-color: lightgray }  "
+            "th { font-weight: normal; background-color: lightgray; }  "
             "tr.varjo { background-color: lightgray; } "
             "td.lahtee { font-size: 14px; font-weight: bold; } "
             "td.saapuu { font-size: 14px; } "

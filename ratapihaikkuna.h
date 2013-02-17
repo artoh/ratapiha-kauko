@@ -85,6 +85,7 @@ public slots:
     void graafinenAikataulu();
     void selaaAikataulua();
     void muokkaaReitteja();
+    void aikatauluMonitori();
 
     /** Onko yhteyttä asetinlaitteelle? */
     bool onkoYhteydessa();

@@ -29,6 +29,7 @@
 #include "aikatauluikkuna.h"
 #include "aikataulunselausikkuna.h"
 #include "liikennepaikkadialogi.h"
+#include "aikataulumonitori.h"
 
 #include <QMessageBox>
 #include <QPixmap>
@@ -67,6 +68,7 @@ RatapihaIkkuna::RatapihaIkkuna(QWidget *parent) :
     connect( ui->graafinenaikatauluNappi, SIGNAL(clicked()), this, SLOT(graafinenAikataulu()));
     connect( ui->selaaAikatauluaNappi, SIGNAL(clicked()), this, SLOT(selaaAikataulua()));
     connect( ui->reittiNappi, SIGNAL(clicked()), this, SLOT(muokkaaReitteja()));
+    connect( ui->monitoriNappi, SIGNAL(clicked()), this, SLOT(aikatauluMonitori()));
 
     connect( &tcpsokka_, SIGNAL(connected()), this, SLOT(yhdistettyPalvelimeen()));
     connect( &tcpsokka_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(verkkovirhe()));
@@ -362,6 +364,12 @@ void RatapihaIkkuna::muokkaaReitteja()
 
 }
 
+void RatapihaIkkuna::aikatauluMonitori()
+{
+    AikatauluMonitori* ikkuna = new AikatauluMonitori(this);
+    ikkuna->show();
+}
+
 
 bool RatapihaIkkuna::onkoYhteydessa()
 {
@@ -391,6 +399,7 @@ void RatapihaIkkuna::nappienHimmennykset()
     ui->rataButton->setEnabled( tila() == PaikallinenPalvelin );
 
     ui->muokkaaRataaNappi->setEnabled( tila()==EiYhteytta || tila()==LukuYhteys);
+    ui->monitoriNappi->setEnabled( tila() == KaukoYhteys || tila()==PaikallinenPalvelin);
 
     if( tila()==EiYhteytta || tila()==LukuYhteys)
         ui->viestiLabel->setText("Ratapiha");
