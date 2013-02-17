@@ -16,6 +16,7 @@
 #include <QScrollBar>
 #include <cmath>
 #include <QInputDialog>
+#include <QMessageBox>
 
 KaukoView::KaukoView(KaukoScene* skene) :
     QGraphicsView(skene)
@@ -73,6 +74,12 @@ void KaukoView::valitseTila(int tila)
         break;
     case AlHp :
         setCursor( QCursor( QPixmap(":/r/pic/alhpkursori.png"),9,0));
+        break;
+    case VarattuKulkutieAlkaa:
+         setCursor( QCursor( QPixmap(":/r/pic/varattukulkutiekursori.png"),9,0));
+         break;
+    case VarattuKulkutiePaattyy :
+        setCursor( QCursor( QPixmap(":/r/pic/varattukulkutieloppukursori.png"),11,0));
         break;
 
 
@@ -161,6 +168,28 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
         }
         break;
 
+    case VarattuKulkutieAlkaa :
+            if( !klikattuTunnus.isEmpty() )
+            {
+                alkaaRaiteesta_ = klikattuTunnus;
+                valitseTila( VarattuKulkutiePaattyy);
+            }
+        break;
+
+    case VarattuKulkutiePaattyy:
+        if( !klikattuTunnus.isEmpty())
+        {
+            if( QMessageBox::question(this, tr("Kriittinen komento"),
+                                      tr("Vahvista junakulkutien muodostamispyyntö raiteelta %1 varatulle raiteeelle %2")
+                                      .arg(alkaaRaiteesta_.mid(1)).arg(klikattuTunnus.mid(1)),
+                                      QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok )
+            {
+                komento( QString("VT %1 %2").arg(alkaaRaiteesta_.mid(1)).arg(klikattuTunnus.mid(1))   ) ;
+                valitseTila( Vierita );
+            }
+        }
+        break;
+
     case PeruKulkutie:
         if( !klikattuTunnus.isEmpty())
             komento( QString("KPER %1").arg(klikattuTunnus.mid(1)) );
@@ -179,7 +208,13 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
     case AukiajetunVaihteenKaanto:
         if( !klikattuTunnus.isEmpty())
         {
-            komento( QString("VAP %1").arg(klikattuTunnus.mid(1)) );
+            if( QMessageBox::question(this, tr("Kriittinen komento"),
+                                      tr("Vahvista aukiajetun vaihteen %1 kääntäminen")
+                                      .arg(klikattuTunnus.mid(1)),
+                                      QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok )
+            {
+                komento( QString("VAP %1").arg(klikattuTunnus.mid(1)) );
+            }
         }
         break;
 
@@ -211,7 +246,15 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
         break;
     case AlHp:
         if( !klikattuTunnus.isEmpty())
-            komento( QString("ALHP %1").arg(klikattuTunnus.mid(1)) );
+        {
+            if( QMessageBox::question(this, tr("Kriittinen komento"),
+                                      tr("Vahvista akselinlaskennan hätävarainen purku raiteelle %1")
+                                      .arg(klikattuTunnus.mid(1)),
+                                      QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok )
+            {
+                komento( QString("ALHP %1").arg(klikattuTunnus.mid(1)) );
+            }
+        }
         break;
 
 

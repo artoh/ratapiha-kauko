@@ -61,6 +61,7 @@ protected:
     QAction* vieritaAktio_;
     QAction* kulkutieAktio_;
     QAction* vaihtoKulkutieAktio_;
+    QAction* varattuKulkutieAktio_;
     QAction* puraKulkutieAktio_;
     QAction* kaannaVaihdeAktio_;
     QAction* seisAktio_;

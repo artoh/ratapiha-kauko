@@ -88,6 +88,7 @@ void KaukoIkkuna::paivitaNapit(int tila)
     automaatioAktio_->setChecked( tila == KaukoView::AutomaatioOn);
     automaatioPoisAktio_->setChecked( tila == KaukoView::AutomaatioEi);
     alhpAktio_->setChecked( tila == KaukoView::AlHp);
+    varattuKulkutieAktio_->setChecked(tila == KaukoView::VarattuKulkutieAlkaa || tila == KaukoView::VarattuKulkutiePaattyy);
 
 
 }
@@ -140,6 +141,13 @@ void KaukoIkkuna::luoAktiot()
     vaihtoKulkutieAktio_->setCheckable(true);
     vaihtoKulkutieAktio_->setToolTip(tr("Muodosta vaihtokulkutie"));
     aslAktiot_->addAction(vaihtoKulkutieAktio_);
+
+    varattuKulkutieAktio_ = new QAction( tr("Junakulkutie varatulle raiteelle"), this);
+    varattuKulkutieAktio_->setData(KaukoView::VarattuKulkutieAlkaa);
+    varattuKulkutieAktio_->setIcon(QIcon(":/r/pic/kulkutieVaratulle.png"));
+    varattuKulkutieAktio_->setCheckable(true);
+    varattuKulkutieAktio_->setToolTip(tr("Muodosta junakulkutie varatulle raiteelle"));
+    aslAktiot_->addAction(varattuKulkutieAktio_);
 
     puraKulkutieAktio_ = new QAction( tr("Peru kulkutie"),this);
     puraKulkutieAktio_->setIcon( QIcon(":/r/pic/kulkutienpurku.png"));
@@ -238,8 +246,11 @@ void KaukoIkkuna::luoTyoPalkki()
     asetinlaiteToolBar_->addAction(automaatioPoisAktio_);
 
     hataVaraistenToolBar_ = addToolBar("Hätävaraiset asetinlaitekomennot");
+    hataVaraistenToolBar_->addAction(varattuKulkutieAktio_);
+    hataVaraistenToolBar_->addSeparator();
     hataVaraistenToolBar_->addAction(aukiajetunKaantoAktio_);
     hataVaraistenToolBar_->addAction(alhpAktio_);
+
 
 
 

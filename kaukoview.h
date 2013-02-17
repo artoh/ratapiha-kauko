@@ -29,7 +29,9 @@ public:
                      AukiajetunVaihteenKaanto,
                      AutomaatioOn,
                      AutomaatioEi,
-                     AlHp} ;
+                     AlHp,
+                     VarattuKulkutieAlkaa,
+                     VarattuKulkutiePaattyy} ;
     
 
 

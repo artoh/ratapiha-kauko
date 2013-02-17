@@ -102,5 +102,8 @@
         <file>pic/kellolla.png</file>
         <file>jkvkuvat/ajaVaratulle.png</file>
         <file>jkvkuvat/varattuRaide.png</file>
+        <file>pic/kulkutieVaratulle.png</file>
+        <file>pic/varattukulkutiekursori.png</file>
+        <file>pic/varattukulkutieloppukursori.png</file>
     </qresource>
 </RCC>
