@@ -155,7 +155,9 @@ void AikatauluMonitori::haeAsema(int indeksi)
         QString minne = junakysely.value(2).toString();
         int laituri = junakysely.value(3).toInt();
 
-        tietueet_.append( MonitoriTietue(aika,juna,minne,laituri) );
+        // Vain lähtevät matkustajajunat monitoriin!
+        if( juna.startsWith('H') || juna.startsWith('P') || juna.startsWith('S'))
+            tietueet_.append( MonitoriTietue(aika,juna,minne,laituri) );
 
         qDebug() << aika << juna << minne << laituri << "\n";
     }

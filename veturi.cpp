@@ -397,9 +397,9 @@ void Veturi::paivitaJkvTiedot()
     }
 
     // Muun kuin matkustajajunan (Pikajuna, Henkilöjuna, S=Pendolino)
-    // enimmäisnopeus on 100 km/h.
+    // enimmäisnopeus on 100 km/h. ( M - nopea siirto, Muu )
     if( !junaNumero().startsWith('P') && !junaNumero().startsWith('H')
-            && !junaNumero().startsWith('S') && jkvnopeus > 100)
+            && !junaNumero().startsWith('S') && !junaNumero().startsWith('M')  && jkvnopeus > 100)
         jkvnopeus = 100;
 
     // Rajoittava nopeus:
@@ -1170,7 +1170,7 @@ bool Veturi::haeReitti(Akseli *akseli)
             // Yhteiset toimet:
             veturiAutomaatio_ = AutoAktiivinen;
             reittitunnus_ = reitti;
-            if( junaNumero().startsWith("V"))
+            if( junaNumero().startsWith("V") || junaNumero().startsWith('X'))
                 jkvTila_ = VaihtoJkv;
             else
                 jkvTila_ = JunaJkv;

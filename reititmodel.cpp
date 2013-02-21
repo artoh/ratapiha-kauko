@@ -280,7 +280,7 @@ void ReititModel::lisaaPysahdys(const QString &liikennepaikka)
     if( !tiedot_.count())
     {
         beginInsertRows( QModelIndex(),0,0);
-        tiedot_.append( ReittiSuunnitteluTieto( liikennepaikka, 0,QTime(0,0), QTime(0,0), 0, "L", RaiteenPaa::Pohjoiseen) );
+        tiedot_.append( ReittiSuunnitteluTieto( liikennepaikka, 0,QTime(), QTime(0,0), 0, "L", RaiteenPaa::Pohjoiseen) );
         endInsertRows();
     }
     else if( tiedot_.count() == 1)
