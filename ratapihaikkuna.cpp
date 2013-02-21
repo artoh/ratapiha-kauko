@@ -30,6 +30,7 @@
 #include "aikataulunselausikkuna.h"
 #include "liikennepaikkadialogi.h"
 #include "aikataulumonitori.h"
+#include "junalistaikkuna.h"
 
 #include <QMessageBox>
 #include <QPixmap>
@@ -69,6 +70,7 @@ RatapihaIkkuna::RatapihaIkkuna(QWidget *parent) :
     connect( ui->selaaAikatauluaNappi, SIGNAL(clicked()), this, SLOT(selaaAikataulua()));
     connect( ui->reittiNappi, SIGNAL(clicked()), this, SLOT(muokkaaReitteja()));
     connect( ui->monitoriNappi, SIGNAL(clicked()), this, SLOT(aikatauluMonitori()));
+    connect( ui->junaIkkunaNappi, SIGNAL(clicked()), this, SLOT(junaIkkuna()));
 
     connect( &tcpsokka_, SIGNAL(connected()), this, SLOT(yhdistettyPalvelimeen()));
     connect( &tcpsokka_, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(verkkovirhe()));
@@ -342,6 +344,17 @@ void RatapihaIkkuna::graafinenAikataulu()
     if( tila() == EiYhteytta)
         return; // Tietokantaan yhdistäminen ei onnistunut
     AikatauluIkkuna* ikkuna = new AikatauluIkkuna(this);
+    ikkuna->show();
+}
+
+void RatapihaIkkuna::junaIkkuna()
+{
+    if( tila() == EiYhteytta)
+        if (yhdistaTietokantaan())
+            lukuYhteysMuodostettu();
+    if( tila() == EiYhteytta)
+        return; // Tietokantaan yhdistäminen ei onnistunut
+    JunalistaIkkuna* ikkuna = new JunalistaIkkuna(this);
     ikkuna->show();
 }
 

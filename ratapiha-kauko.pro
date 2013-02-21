@@ -61,7 +61,9 @@ HEADERS += \
     reittidelegaatti.h \
     liikennepaikkadialogi.h \
     aikataulumonitori.h \
-    monitoritietue.h
+    monitoritietue.h \
+    junalistaikkuna.h \
+    junataulumodel.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -121,7 +123,9 @@ SOURCES += \
     reittidelegaatti.cpp \
     liikennepaikkadialogi.cpp \
     aikataulumonitori.cpp \
-    monitoritietue.cpp
+    monitoritietue.cpp \
+    junalistaikkuna.cpp \
+    junataulumodel.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc

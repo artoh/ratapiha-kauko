@@ -462,6 +462,29 @@
        </size>
       </property>
      </widget>
+     <widget class="QPushButton" name="junaIkkunaNappi">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>100</y>
+        <width>171</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Junat</string>
+      </property>
+      <property name="icon">
+       <iconset resource="ratapiha-kauko.qrc">
+        <normaloff>:/r/pic/varojunaa.png</normaloff>:/r/pic/varojunaa.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="asetustab">
      <attribute name="title">

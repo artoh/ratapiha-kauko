@@ -97,7 +97,7 @@ void AikatauluMuokkaaja::valittuJuna(const QString &tunnus)
         tunnusEdit_->setText( tunnus );
 
         aikaEdit_->setTime( lahtoaikakysely.value(0).toTime() );
-        aikaEdit_->setStyleSheet( QString()); // Kelpo eli musta junatunnus
+        aikaEdit_->setStyleSheet( "color: black;"); // Kelpo eli musta junatunnus
         junaTunnus_ = tunnus;
 
         reittiCombo_->setCurrentIndex( reittiCombo_->findText( lahtoaikakysely.value(1).toString()));
@@ -182,7 +182,7 @@ void AikatauluMuokkaaja::muokkausValmis()
 void AikatauluMuokkaaja::katsoKelpaako()
 {
     // Muokkaus kelpaa, jos uusi junan tunnus on kelpo, ts. vähintään 3 merkkiä pitkä ja uudella junalla ei ole käytössä
-    if( junaTunnus_.isEmpty() || junaTunnus_ != tunnusEdit_->text() )
+    if( junaTunnus_.isEmpty() && junaTunnus_ != tunnusEdit_->text() )
     {
         QSqlQuery onkojo( QString("select junanro from juna where junanro=\"%1\"").arg( tunnusEdit_->text() ));
         if( onkojo.next() || tunnusEdit_->text().length() < 3)
@@ -194,7 +194,7 @@ void AikatauluMuokkaaja::katsoKelpaako()
             return;
         }
     }
-    tunnusEdit_->setStyleSheet( QString());
+    tunnusEdit_->setStyleSheet( "color: black; ");
     valmisNappi_->setEnabled(true);
     peruNappi_->setEnabled(true);
 }
