@@ -310,10 +310,28 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     if( naytaJunaNumero() && !raidetieto()->junanumero().isEmpty())
     {
         // Junanumerolätkän piirtäminen
+        QChar tunnuskirjain = raidetieto()->junanumero()[0];
+        QString junatunnus = raidetieto()->junanumero().mid(1);
+
         painter->setBrush(QBrush(Qt::white));
-        painter->setPen( Qt::black);
+
+        // Junatunnus eri väreillä
+        if( tunnuskirjain == 'S')
+            painter->setPen( Qt::darkGreen);
+        else if( tunnuskirjain == 'P')
+            painter->setPen( Qt::red);
+        else if( tunnuskirjain == 'H')
+            painter->setPen( Qt::black);
+        else if( tunnuskirjain == 'T')
+            painter->setPen(Qt::darkBlue);
+        else
+        {
+            painter->setPen( Qt::darkGray);
+            junatunnus = raidetieto()->junanumero();
+        }
+
         painter->drawRect(QRectF( pituus() / 2 - 14.0 , -4.0 , 28.0 , 8.0  ));
-        painter->drawText(QRectF( pituus() / 2 - 14.0 , -4.0 , 28.0 , 8.0 ),  raidetieto()->junanumero() , QTextOption(Qt::AlignCenter));
+        painter->drawText(QRectF( pituus() / 2 - 14.0 , -4.0 , 28.0 , 8.0 ),  junatunnus , QTextOption(Qt::AlignCenter));
 
     }
 
