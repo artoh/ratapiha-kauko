@@ -62,6 +62,7 @@ public:
     bool ajopoytaKysely();  /** Selvittää, onko junassa aktiivista ajopöytää */
 
     Akseli* kytkettyAkseli() { return kytkettyAkseli_; }
+    Vaunu* vaunu() { return vaunu_; }
 
 private:
 

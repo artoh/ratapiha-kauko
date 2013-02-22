@@ -26,6 +26,9 @@
 
 #include <QSqlQuery>
 
+#include <cstdlib>
+#include <ctime>
+
 Vaunu::Vaunu(const QString &tyyppi, int vaunuNumero, RataScene *skene) :
     vaununTyyppi_(tyyppi), vaununNumero_(vaunuNumero)
 {
@@ -143,6 +146,40 @@ void Vaunu::poista()
 void Vaunu::siirtyyRaiteelle(RataRaide* /* raiteelle */)
 {
     ;   // Ei mitään!
+}
+
+void Vaunu::tormays(int nopeudella)
+{
+    std::srand( std::time(0) );
+
+    // Jos nopeus yli 5 km/h, suistuu kiskoilta
+    if( nopeudella > 5)
+    {
+        // Törmäys "etenee" muihin vaunuihin
+        Akseli* naapuri = etuakseli()->kytkettyAkseli();
+        etuAkseli_->irrota();
+        if( naapuri )
+            naapuri->vaunu()->tormays(nopeudella / 2);
+
+        naapuri = takaakseli()->kytkettyAkseli();
+        takaAkseli_->irrota();
+        if( naapuri )
+            naapuri->vaunu()->tormays(nopeudella / 2);
+
+
+
+        etuAkseli_->sijoitaKiskolle(0,0,RaiteenPaa::Virhe);
+        takaAkseli_->sijoitaKiskolle(0,0,RaiteenPaa::Virhe);
+
+        // Ja vaunut sinkoilevat ties minne ja aiheuttavat lisää vaaraa :(
+
+        rotate( nopeudella * (-10 + std::rand() % 20 ));
+        moveBy( nopeudella * ( -10 + std::rand() % 20 ) / 10,
+                nopeudella * ( -10 + std::rand() % 20 ) / 10 );
+    }
+
+    // Muuten ei käy mitenkään ;)
+
 }
 
 void Vaunu::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)

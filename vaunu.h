@@ -58,6 +58,11 @@ public:
     virtual void siirtyyRaiteelle(RataRaide* raiteelle);  // Veturilokia varten!
     virtual void akseliKytketty() {;} // Junan pysäyttämistä varten...
 
+    virtual void tormays(int nopeudella);
+
+    Akseli* etuakseli() const { return etuAkseli_; }
+    Akseli* takaakseli() const { return takaAkseli_; }
+
 protected:
     void luoVaunu(RataScene* skene); // Yhteiset luontitoimet
 

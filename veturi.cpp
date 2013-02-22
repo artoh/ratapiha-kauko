@@ -566,8 +566,8 @@ void Veturi::aja()
         // päivitysvälillä 1/5 s.
 
 
-      // Liittämisen varmistaminen, hidastetaan kun ollaan vaihtotöissä lähellä toista junaa
-      if( jkvTila() == VaihtoJkv && liike > 2.0)
+      // Liittämisen varmistaminen, hidastetaan kun ollaan lähellä toista junaa (Onnistuu, kun nopeus max. 35 km/h -- muuten kolari!!! )
+      if( liike > 2.0 && nopeus() < 36 )
       {
           QRectF varoalue;
           if( ajopoyta() == 1 )
@@ -581,6 +581,39 @@ void Veturi::aja()
                   liike = 2.0;
           }
       }
+
+      // Törmäystilanne: Jos juna osuu toiseen, tulee molemmille törmäys !!
+      // Vaunut sinkoilevat ties minne!!!
+      if( nopeus() > 5)
+      {
+          QRectF tormaysalue(3.0, 2.0, pituus()-6.0, 6.0);
+          QList<QGraphicsItem*> lista = scene()->items( mapToScene(tormaysalue) );
+          foreach( QGraphicsItem* item, lista)
+          {
+              bool tormatty = false;
+              if( item != this )
+                  if(  Vaunu* vaunu = dynamic_cast<Vaunu*>(item) )
+                  {
+                      if( vaunu->etuakseli() != etuAkseli_->kytkettyAkseli() &&
+                              vaunu->takaakseli() != etuAkseli_->kytkettyAkseli() &&
+                              vaunu->etuakseli() != takaAkseli_->kytkettyAkseli() &&
+                              vaunu->takaakseli() != takaAkseli_->kytkettyAkseli() )
+                      {
+                        vaunu->tormays(nopeus());
+                        tormatty = true;
+                      }
+                  }
+
+              if(tormatty)
+              {
+                kirjoitaLokiin("T", aktiivinenAkseli()->kiskolla()->raide());  // Törmäysilmoitus!!!
+                tormays( nopeus() );
+                return;
+              }
+
+          }
+      }
+
 
 
       if( ajopoyta_ == 1)
@@ -708,12 +741,10 @@ QRectF Veturi::boundingRect() const
 
 QPixmap Veturi::jkvKuva()
 {
-
-    /*    // Jos veturi suistunut, tulee virhekuva!
-    if( veturi_->onkoSuistunut())
+    if( aktiivinenAkseli() && !aktiivinenAkseli()->kiskolla() )
         return QPixmap(":/pic/jkvkuvat/jkvhajonnut.png");
 
-*/
+
     QPixmap kuva(150,320);
     QPainter painter(&kuva);
     painter.setBrush( QBrush(Qt::black));
@@ -958,9 +989,16 @@ void Veturi::paivita()
 
 void Veturi::akseliKytketty()
 {
+    // Jos kytketään suurella nopeudella, törmätään
+    if( nopeus() > 36 )
+    {
+        tormays( nopeus() );
+        return;
+    }
+
     // Kun ajetaan yhteen edessä olevan vaunun kanssa, pysäytetään kyseinen veturi.
     asetaTavoiteNopeus(0);
-    if( nopeus() < 21 )     // Vähäisessä nopeudessa törmäys pysäyttää tyystin ;)
+    if( nopeus() < 10 )     // Vähäisessä nopeudessa törmäys pysäyttää tyystin ;)
         metriaSekunnissa_ = 0;
 
     if( veturiAutomaationTila() == AutoAktiivinen )
@@ -1075,11 +1113,22 @@ bool Veturi::haeReitti(Akseli *akseli)
                 // Lähtöajaksi nykyinen aika
                 junanlahtoaika = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time();
             else
+            {
                 // Ladataan tietokannasta, joten lähtöaika ei validi
                 junanlahtoaika = QTime();
+            }
     }
     else
+    {
         junanlahtoaika = reitinkysymys.value(1).toTime();
+        // Lähtöajan pitää olla kelvollinen, jottei aktivoi perässä tulevia junia.
+        if( akseli )
+        {
+            QTime simulaatioaika = RatapihaIkkuna::getInstance()->skene()->simulaatioAika().time();
+            if( simulaatioaika.addSecs(120) != junanlahtoaika)
+                return false; // Ei kelpaa!
+        }
+    }
 
     if( reitti.isEmpty())
         return false;

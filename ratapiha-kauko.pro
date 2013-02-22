@@ -235,7 +235,8 @@ OTHER_FILES += \
     jkvkuvat/varattuRaide.png \
     pic/kulkutieVaratulle.png \
     pic/varattukulkutieloppukursori.png \
-    pic/varattukulkutiekursori.png
+    pic/varattukulkutiekursori.png \
+    jkvkuvat/jkvhajonnut.png
 
 FORMS += \
     ajopoyta.ui \

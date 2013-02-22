@@ -105,5 +105,6 @@
         <file>pic/kulkutieVaratulle.png</file>
         <file>pic/varattukulkutiekursori.png</file>
         <file>pic/varattukulkutieloppukursori.png</file>
+        <file>jkvkuvat/jkvhajonnut.png</file>
     </qresource>
 </RCC>

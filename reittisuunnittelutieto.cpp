@@ -40,7 +40,7 @@ void ReittiSuunnitteluTieto::asetaAikaLokista()
     if( lahtiLokiaika().isValid() && tapahtumaTyyppi()==Pysahtyy )
         asetaLahtoaika( QTime( lahtiLokiaika().hour(), lahtiLokiaika().minute()) );
 
-    if( saapuiLokiaika().isValid())
+    if( saapuiLokiaika().isValid() && tapahtumaTyyppi()!=Lahtee)
         asetaSaapumisaika( QTime(saapuiLokiaika().hour(), saapuiLokiaika().minute()));
 }
 
@@ -82,10 +82,10 @@ void ReittiSuunnitteluTieto::asetaTapahtumatyyppi(int tyyppi)
     case Pysahtyy:
         asetaTapahtumatyyppi(Pysahtyy); break;
     case Lahtee:
-        asetaTapahtumatyyppi(Lahtee); break;
+        asetaTapahtumatyyppi(Lahtee); saapumisaika_= QTime();  break;
     case Ohittaa:
-        asetaTapahtumatyyppi(Ohittaa); break;
+        asetaTapahtumatyyppi(Ohittaa); lahtoaika_ = QTime();  break;
     case Saapuu:
-        asetaTapahtumatyyppi(Saapuu); break;
+        asetaTapahtumatyyppi(Saapuu); lahtoaika_ = QTime(); break;
     }
 }
