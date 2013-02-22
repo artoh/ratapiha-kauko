@@ -29,6 +29,7 @@ KaukoIkkuna::KaukoIkkuna(RatapihaIkkuna *parent) :
 
     luoAktiot();
     luoTyoPalkki();
+    luoTelakka();
 
     aikaLabel_ = new QLabel("Tervetuloa!");
     statusBar()->addPermanentWidget(aikaLabel_);
@@ -89,6 +90,7 @@ void KaukoIkkuna::paivitaNapit(int tila)
     automaatioPoisAktio_->setChecked( tila == KaukoView::AutomaatioEi);
     alhpAktio_->setChecked( tila == KaukoView::AlHp);
     varattuKulkutieAktio_->setChecked(tila == KaukoView::VarattuKulkutieAlkaa || tila == KaukoView::VarattuKulkutiePaattyy);
+    automaatioMuokkausAktio_->setChecked( tila == KaukoView::AutomaatioMuokkaus);
 
 
 }
@@ -104,6 +106,12 @@ void KaukoIkkuna::yhteysAsettimeen(bool onkoYhteytta)
 void KaukoIkkuna::paivitaKello(const QDateTime &aika)
 {
     aikaLabel_->setText( aika.toString("dd.MM.yyyy HH:mm"));
+}
+
+void KaukoIkkuna::muokkaaAutomaatiota(const QString &opastin)
+{
+    autoMuokkausDock_->setVisible(true);
+    autoMuokkain_->valitseOpastin(opastin);
 }
 
 void KaukoIkkuna::luoAktiot()
@@ -202,6 +210,23 @@ void KaukoIkkuna::luoAktiot()
     alhpAktio_->setData( KaukoView::AlHp);
     aslAktiot_->addAction(alhpAktio_);
 
+    automaatioMuokkausAktio_ = new QAction( QIcon(":/r/pic/automaatiomuokkaus.png"), tr("Muokkaa opastimen kulkutieautomaatiosääntöjä"), this);
+    automaatioMuokkausAktio_->setCheckable(true);
+    automaatioMuokkausAktio_->setData( KaukoView::AutomaatioMuokkaus);
+    aslAktiot_->addAction(automaatioMuokkausAktio_);
+
+
+}
+
+void KaukoIkkuna::luoTelakka()
+{
+    autoMuokkain_ = new AutomaatioMuokkain(this);
+    autoMuokkausDock_ = new QDockWidget( tr("Kulkutieautomaatioiden muokkaus"));
+    autoMuokkausDock_->setWidget(autoMuokkain_);
+    addDockWidget(Qt::RightDockWidgetArea, autoMuokkausDock_);
+
+    autoMuokkausDock_->setVisible(false);
+    connect( view_, SIGNAL(automaatioMuokkausOpastin(QString)), this, SLOT(muokkaaAutomaatiota(QString)) );
 }
 
 void KaukoIkkuna::luoTyoPalkki()
@@ -244,14 +269,13 @@ void KaukoIkkuna::luoTyoPalkki()
     asetinlaiteToolBar_->addSeparator();
     asetinlaiteToolBar_->addAction( automaatioAktio_);
     asetinlaiteToolBar_->addAction(automaatioPoisAktio_);
+    asetinlaiteToolBar_->addAction(automaatioMuokkausAktio_);
 
     hataVaraistenToolBar_ = addToolBar("Hätävaraiset asetinlaitekomennot");
     hataVaraistenToolBar_->addAction(varattuKulkutieAktio_);
     hataVaraistenToolBar_->addSeparator();
     hataVaraistenToolBar_->addAction(aukiajetunKaantoAktio_);
     hataVaraistenToolBar_->addAction(alhpAktio_);
-
-
 
 
 

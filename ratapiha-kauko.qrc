@@ -106,5 +106,8 @@
         <file>pic/varattukulkutiekursori.png</file>
         <file>pic/varattukulkutieloppukursori.png</file>
         <file>jkvkuvat/jkvhajonnut.png</file>
+        <file>pic/automaatiomuokkaus-kasi.png</file>
+        <file>pic/automaatiomuokkaus-kursori.png</file>
+        <file>pic/automaatiomuokkaus.png</file>
     </qresource>
 </RCC>

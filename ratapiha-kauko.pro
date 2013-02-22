@@ -63,7 +63,8 @@ HEADERS += \
     aikataulumonitori.h \
     monitoritietue.h \
     junalistaikkuna.h \
-    junataulumodel.h
+    junataulumodel.h \
+    automaatiomuokkain.h
 
 SOURCES += \
     kaukoikkuna.cpp \
@@ -125,7 +126,8 @@ SOURCES += \
     aikataulumonitori.cpp \
     monitoritietue.cpp \
     junalistaikkuna.cpp \
-    junataulumodel.cpp
+    junataulumodel.cpp \
+    automaatiomuokkain.cpp
 
 RESOURCES += \
     ratapiha-kauko.qrc
@@ -236,13 +238,17 @@ OTHER_FILES += \
     pic/kulkutieVaratulle.png \
     pic/varattukulkutieloppukursori.png \
     pic/varattukulkutiekursori.png \
-    jkvkuvat/jkvhajonnut.png
+    jkvkuvat/jkvhajonnut.png \
+    pic/automaatiomuokkaus-kasi.png \
+    pic/automaatiomuokkaus-kursori.png \
+    pic/automaatiomuokkaus.png
 
 FORMS += \
     ajopoyta.ui \
     ratapihaikkuna.ui \
     reittidialogi.ui \
-    liikennepaikkadialogi.ui
+    liikennepaikkadialogi.ui \
+    automaatiomuokkain.ui
 
 
 

@@ -81,6 +81,10 @@ void KaukoView::valitseTila(int tila)
     case VarattuKulkutiePaattyy :
         setCursor( QCursor( QPixmap(":/r/pic/varattukulkutieloppukursori.png"),11,0));
         break;
+    case AutomaatioMuokkaus :
+        setCursor( QCursor( QPixmap(":/r/pic/automaatiomuokkaus-kursori.png"),11,0));
+        break;
+
 
 
     }
@@ -255,6 +259,9 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
                 komento( QString("ALHP %1").arg(klikattuTunnus.mid(1)) );
             }
         }
+        break;
+    case AutomaatioMuokkaus :
+        emit automaatioMuokkausOpastin(klikattuTunnus);
         break;
 
 

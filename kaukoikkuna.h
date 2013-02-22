@@ -10,6 +10,7 @@
 
 #include "kaukoscene.h"
 #include "kaukoview.h"
+#include "automaatiomuokkain.h"
 
 #include <QMainWindow>
 #include <QComboBox>
@@ -18,6 +19,7 @@
 #include <QActionGroup>
 #include <QLineEdit>
 #include <QLabel>
+#include <QDockWidget>
 
 class RatapihaIkkuna;
 
@@ -42,10 +44,12 @@ public slots:
     void yhteysAsettimeen(bool onkoYhteytta);
 
     void paivitaKello(const QDateTime& aika);
+    void muokkaaAutomaatiota(const QString& opastin);
 
 protected:
     void luoTyoPalkki();
     void luoAktiot();
+    void luoTelakka();
 
 
     QToolBar* hallintaToolBar_;
@@ -73,6 +77,8 @@ protected:
     QAction* junanumeroAktio_;
     QAction* aukiajetunKaantoAktio_;
 
+    QAction* automaatioMuokkausAktio_;
+
     QLineEdit* kaskyLine_;
 
     KaukoScene* skene_;
@@ -81,6 +87,9 @@ protected:
     RatapihaIkkuna* rpIkkuna_;
 
     QLabel *aikaLabel_;
+
+    QDockWidget* autoMuokkausDock_;
+    AutomaatioMuokkain* autoMuokkain_;
 
 };
 
