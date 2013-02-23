@@ -59,6 +59,9 @@ public:
     virtual void akseliKytketty() {;} // Junan pysäyttämistä varten...
 
     virtual void tormays(int nopeudella);
+    /** Suistuu raiteelta
+        arg suunta -1 vasen, 0 eteen, 1 oikea*/
+    virtual void suistuu(int matka, int suunta=0);
 
     Akseli* etuakseli() const { return etuAkseli_; }
     Akseli* takaakseli() const { return takaAkseli_; }

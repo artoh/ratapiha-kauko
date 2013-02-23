@@ -64,6 +64,8 @@ public:
     Akseli* kytkettyAkseli() { return kytkettyAkseli_; }
     Vaunu* vaunu() { return vaunu_; }
 
+    void raidepuskintaPain();
+
 private:
 
     void laskeSijainti();

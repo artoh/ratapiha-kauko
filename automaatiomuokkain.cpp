@@ -1,10 +1,12 @@
 #include "automaatiomuokkain.h"
 #include "ui_automaatiomuokkain.h"
+#include "ratapihaikkuna.h"
 
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 #include <QSqlRecord>
 #include <QRegExp>
+
 
 #include <QDebug>
 
@@ -34,6 +36,10 @@ AutomaatioMuokkain::AutomaatioMuokkain(QWidget *parent) :
     connect( ui->maaliNappi, SIGNAL(clicked()), this, SIGNAL(valitseMaaliraide()) );
     connect( ui->herateNappi, SIGNAL(clicked()), this, SIGNAL(valitseHerateraide()) );
     connect( ui->ehtoEdit, SIGNAL( textChanged(QString) ), this, SLOT(tarkistaEhto()) );
+
+    connect( ui->opastinNappi, SIGNAL(clicked(bool)), this, SLOT(kytkeAutomaatio(bool)));
+    connect( ui->poistaNappi, SIGNAL(clicked()), this, SLOT(poista()));
+    connect( ui->valmisNappi, SIGNAL(clicked()), this, SLOT(tallenna()));
 }
 
 AutomaatioMuokkain::~AutomaatioMuokkain()
@@ -44,7 +50,6 @@ AutomaatioMuokkain::~AutomaatioMuokkain()
 void AutomaatioMuokkain::valitseOpastin(const QString& opastin)
 {
     QString paatila = raiteenpaatila(opastin);
-    qDebug() << paatila;
 
     if( paatila.contains("Auto") || paatila.contains("Läpikulku"))
     {
@@ -85,6 +90,9 @@ void AutomaatioMuokkain::valitseOpastin(const QString& opastin)
                               "where opastin =\"%1\"").arg(opastin);
 
     opastimenModel_->setQuery(kysymys);
+
+    ui->opastinNappi->setEnabled( opastimenModel_->rowCount() > 0 );
+
     ui->automaatioLista->resizeColumnsToContents();
 
     ui->automaatioLista->setColumnHidden(0, true);
@@ -95,7 +103,7 @@ void AutomaatioMuokkain::valitseOpastin(const QString& opastin)
     opastimenModel_->setHeaderData(5, Qt::Horizontal, tr("Viive"));
     opastimenModel_->setHeaderData(6, Qt::Horizontal, tr("Tyyppi"));
 
-    ui->automaatioLista->selectRow(0);
+    ui->automaatioLista->selectRow( opastimenModel_->rowCount() - 1 );
     saantoValittu();
 }
 
@@ -138,7 +146,7 @@ void AutomaatioMuokkain::saantoValittu(bool tyhjenna)
     QString kysymys = QString("select kulkutieautomaatio_id, opastin,"
                               "maaliraide, jnehto, prioriteetti, viive,"
                               "kulkutientyyppi from kulkutieautomaatio "
-                              "where herateraide =\"%1\"").arg( tietue.value(1).toString() );
+                              "where herateraide =\"%1\" order by prioriteetti").arg( tietue.value(1).toString() );
 
     heratteenModel_->setQuery(kysymys);
     ui->heratteenLista->resizeColumnsToContents();
@@ -188,6 +196,91 @@ void AutomaatioMuokkain::asetaMaaliraide(const QString &raiteenpaa)
     if( tarkastus.contains("Po") || tarkastus.contains("So")
             || tarkastus.contains("Ro") || tarkastus.contains("RP"))
         ui->maaliNappi->setText(raiteenpaa.mid(1));
+}
+
+void AutomaatioMuokkain::kytkeAutomaatio(bool paalle)
+{
+    if( paalle )
+        RatapihaIkkuna::getInstance()->aslKasky(QString("AUON %1").arg(opastin_));
+    else
+        RatapihaIkkuna::getInstance()->aslKasky(QString("AUEI %1").arg(opastin_));
+
+}
+
+void AutomaatioMuokkain::poista()
+{
+    qDebug() << QString("delete from kulkutieautomaatio where kulkutieautomaatio_id=%1").arg(muokattavaSaanto_);
+    if( muokattavaSaanto_)
+    {
+        QString poistokysely = QString("delete from kulkutieautomaatio where kulkutieautomaatio_id=%1").arg(muokattavaSaanto_);
+        kytkeAutomaatio( ui->opastinNappi->isChecked());    // Kytkee pois, jos ainoa sääntö poistettiin
+        valitseOpastin(opastin_);
+    }
+
+}
+
+void AutomaatioMuokkain::tallenna()
+{
+    // Ensin kelpoisuus
+    QRegExp ehtotesti(ui->ehtoEdit->text());
+
+    if( ui->herateNappi->text().isEmpty() ||
+            ui->maaliNappi->text().isEmpty() ||
+            !ehtotesti.isValid())
+    {
+        return; // Virheellinen !!!
+    }
+
+    QString jnehto;
+    QString viive;
+    QString tyyppikirjain;
+
+    if( ui->ehtoEdit->text().isEmpty())
+        jnehto = "NULL";
+    else
+        jnehto = QString("\"%1\"").arg(ui->ehtoEdit->text());
+
+    if( ui->aikatauluViiveCheck->isChecked())
+        viive = "NULL";
+    else
+        viive = QString::number( ui->viiveSpin->value());
+
+    if( ui->tyyppiCombo->currentIndex() == 0 && !ui->kerranCheck->isChecked() )
+        tyyppikirjain = "J";
+    else if( ui->tyyppiCombo->currentIndex() == 0 && ui->kerranCheck->isChecked() )
+        tyyppikirjain = "j";
+    else if( ui->tyyppiCombo->currentIndex() == 1 && !ui->kerranCheck->isChecked() )
+        tyyppikirjain = "U";
+    else if( ui->tyyppiCombo->currentIndex() == 1 && ui->kerranCheck->isChecked() )
+        tyyppikirjain = "u";
+    else if( ui->tyyppiCombo->currentIndex() == 2 && !ui->kerranCheck->isChecked() )
+        tyyppikirjain = "V";
+    else if( ui->tyyppiCombo->currentIndex() == 2 && ui->kerranCheck->isChecked() )
+        tyyppikirjain = "v";
+
+
+    QString kysymys;
+    if( muokattavaSaanto_)
+    {
+        // Update
+        kysymys = QString("update kulkutieautomaatio set herateraide=\"%1\", maaliraide=\"%2\", jnehto=%3, "
+                                  "prioriteetti=%4, viive=%5, kulkutientyyppi=\"%6\" where kulkutieautomaatio_id=%7 ")
+                .arg(ui->herateNappi->text()).arg(ui->maaliNappi->text())
+                .arg(jnehto).arg(ui->prioriteettiSpin->value()).arg(viive).arg(tyyppikirjain).arg(muokattavaSaanto_);
+
+    }
+    else
+    {
+        // Insert
+        kysymys = QString("insert into kulkutieautomaatio(herateraide, opastin, maaliraide, jnehto, prioriteetti, viive, kulkutientyyppi) "
+                          "values(\"%1\", \"%7\", \"%2\", %3, %4, %5, \"%6\")")
+                .arg(ui->herateNappi->text()).arg(ui->maaliNappi->text())
+                .arg(jnehto).arg(ui->prioriteettiSpin->value()).arg(viive).arg(tyyppikirjain).arg(opastin_);
+    }
+    QSqlQuery kysely(kysymys);
+
+    valitseOpastin(opastin_);
+        qDebug() << kysymys;
 }
 
 

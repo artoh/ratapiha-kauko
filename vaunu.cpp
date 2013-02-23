@@ -117,6 +117,9 @@ void Vaunu::paivita()
 
 void Vaunu::laskeSijainti()
 {
+    if( !etuakseli()->kiskolla())
+        return; // Ei voi laskea sijaintia !!!
+
     setPos( etuAkseli_->pos());
     QLineF suunta( etuAkseli_->pos(), takaAkseli_->pos());
     setRotation( 0.0 - suunta.angle());
@@ -138,8 +141,8 @@ void Vaunu::poista()
     etuAkseli_->sijoitaKiskolle(0,0,RaiteenPaa::Virhe);
     takaAkseli_->sijoitaKiskolle(0,0,RaiteenPaa::Virhe);
 
-    laskeSijainti();
     hide();
+    setPos(0,-1200);    // Sijoitetaan pois rataverkolta !
 
 }
 
@@ -179,6 +182,19 @@ void Vaunu::tormays(int nopeudella)
     }
 
     // Muuten ei käy mitenkään ;)
+
+}
+
+void Vaunu::suistuu(int matka, int suunta)
+{
+    // Suistuva vaunu irtoaa, ja siirtyy vaunun mitan verran pois,
+    etuAkseli_->irrota();
+    takaAkseli_->irrota();
+    etuAkseli_->sijoitaKiskolle(0,0,RaiteenPaa::Virhe);
+    takaAkseli_->sijoitaKiskolle(0,0,RaiteenPaa::Virhe);
+
+    moveBy( matka, suunta * ( std::rand() % 10 + 3)  );
+    rotate( -15 + std::rand() % 20 );
 
 }
 

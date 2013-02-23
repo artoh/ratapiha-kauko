@@ -164,7 +164,10 @@ void Akseli::liiku(qreal matka)
         // Mennään etelänpuoleiselle kiskolle
         RataKisko* uusiKisko = kiskolla()->haeAktiivinenNaapuri( kiskolla()->etelainen());
         if( !uusiKisko)
+        {
+            vaunu_->suistuu( matka, 0);
             return; // Törmäys raidepuskimeen??
+        }
 
         if( uusiKisko->etelainen() == kiskolla()->etelainen())
         {
@@ -200,7 +203,10 @@ void Akseli::liiku(qreal matka)
 
          RataKisko* uusiKisko=kiskolla()->haeAktiivinenNaapuri( kiskolla()->pohjoinen());
         if( !uusiKisko)
-            return;
+        {
+            vaunu_->suistuu(0 - matka,0);
+            return;  // Raidepuskimeen!
+        }
         if( uusiKisko->pohjoinen() == kiskolla()->pohjoinen())
         {
             vaihdaSuunta();

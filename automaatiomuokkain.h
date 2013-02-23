@@ -27,6 +27,11 @@ public slots:
     void asetaHerateraide(const QString& raiteenpaa);
     void asetaMaaliraide(const QString& raiteenpaa);
 
+    void kytkeAutomaatio(bool paalle);
+
+    void poista();
+    void tallenna();
+
 signals:
     void valitseMaaliraide();
     void valitseHerateraide();
