@@ -146,7 +146,7 @@ void AutomaatioMuokkain::saantoValittu(bool tyhjenna)
     QString kysymys = QString("select kulkutieautomaatio_id, opastin,"
                               "maaliraide, jnehto, prioriteetti, viive,"
                               "kulkutientyyppi from kulkutieautomaatio "
-                              "where herateraide =\"%1\" order by prioriteetti").arg( tietue.value(1).toString() );
+                              "where herateraide =\"%1\" order by prioriteetti desc").arg( tietue.value(1).toString() );
 
     heratteenModel_->setQuery(kysymys);
     ui->heratteenLista->resizeColumnsToContents();
@@ -209,10 +209,9 @@ void AutomaatioMuokkain::kytkeAutomaatio(bool paalle)
 
 void AutomaatioMuokkain::poista()
 {
-    qDebug() << QString("delete from kulkutieautomaatio where kulkutieautomaatio_id=%1").arg(muokattavaSaanto_);
     if( muokattavaSaanto_)
     {
-        QString poistokysely = QString("delete from kulkutieautomaatio where kulkutieautomaatio_id=%1").arg(muokattavaSaanto_);
+        QSqlQuery poistokysely(  QString("delete from kulkutieautomaatio where kulkutieautomaatio_id=%1").arg(muokattavaSaanto_) );
         kytkeAutomaatio( ui->opastinNappi->isChecked());    // Kytkee pois, jos ainoa sääntö poistettiin
         valitseOpastin(opastin_);
     }
