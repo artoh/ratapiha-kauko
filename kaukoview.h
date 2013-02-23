@@ -32,7 +32,9 @@ public:
                      AlHp,
                      VarattuKulkutieAlkaa,
                      VarattuKulkutiePaattyy,
-                     AutomaatioMuokkaus } ;
+                     AutomaatioMuokkaus,
+                     AutomaatioHerate,
+                     AutomaatioMaali } ;
     
 
 
@@ -41,9 +43,14 @@ public:
 signals:
     void tilaVaihtunut(int tila);
     void automaatioMuokkausOpastin(const QString& opastin);
+    void automaatioHerate( const QString& raiteenpaa);
+    void automaatioMaali(const QString& raiteenpaa);
     
 public slots:
     void valitseTila( int tila);
+
+    void valitseAutomaatioHerate();
+    void valitseAutomaatioMaali();
 
 protected:
 

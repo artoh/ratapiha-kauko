@@ -40,6 +40,13 @@ KaukoIkkuna::KaukoIkkuna(RatapihaIkkuna *parent) :
     connect( view_, SIGNAL(tilaVaihtunut(int)), this, SLOT(paivitaNapit(int)));
     connect( rpIkkuna_, SIGNAL(yhdistetty(bool)), this, SLOT(yhteysAsettimeen(bool)));
 
+    connect( autoMuokkain_, SIGNAL(valitseHerateraide()), view_, SLOT(valitseAutomaatioHerate()) );
+    connect( autoMuokkain_, SIGNAL(valitseMaaliraide()), view_, SLOT(valitseAutomaatioMaali()) );
+
+    connect( view_, SIGNAL(automaatioHerate(QString)), autoMuokkain_, SLOT(asetaHerateraide(QString)) );
+    connect( view_, SIGNAL(automaatioMaali(QString)), autoMuokkain_, SLOT(asetaMaaliraide(QString)));
+
+
     yhteysAsettimeen( rpIkkuna_->onkoYhteydessa());
     nakymanVaihto(0);
 

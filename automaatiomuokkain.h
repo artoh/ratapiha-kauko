@@ -19,8 +19,20 @@ public:
     
 public slots:
     void valitseOpastin(const QString& opastin);
-    void saantoValittu();
+    void saantoValittu(bool tyhjenna = false);
     void aikatauluRaide();
+    void uusiSaanto();
+    void tarkistaEhto();
+
+    void asetaHerateraide(const QString& raiteenpaa);
+    void asetaMaaliraide(const QString& raiteenpaa);
+
+signals:
+    void valitseMaaliraide();
+    void valitseHerateraide();
+
+protected:
+    QString raiteenpaatila(const QString& raiteenpaa);
 
 private:
     Ui::AutomaatioMuokkain *ui;
@@ -30,6 +42,7 @@ private:
     QSqlQueryModel* heratteenModel_;
 
     int muokattavaSaanto_;
+    QString opastin_;
 };
 
 #endif // AUTOMAATIOMUOKKAIN_H

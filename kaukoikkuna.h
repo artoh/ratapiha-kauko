@@ -46,6 +46,7 @@ public slots:
     void paivitaKello(const QDateTime& aika);
     void muokkaaAutomaatiota(const QString& opastin);
 
+
 protected:
     void luoTyoPalkki();
     void luoAktiot();

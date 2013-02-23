@@ -17,12 +17,26 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="opastinKuva">
+      <widget class="QToolButton" name="opastinNappi">
        <property name="text">
-        <string/>
+        <string>...</string>
        </property>
-       <property name="pixmap">
-        <pixmap resource="ratapiha-kauko.qrc">:/r/pic/automaatioopastin.png</pixmap>
+       <property name="icon">
+        <iconset resource="ratapiha-kauko.qrc">
+         <normaloff>:/r/pic/po-aja.png</normaloff>
+         <normalon>:/r/pic/automaatioopastin.png</normalon>:/r/pic/po-aja.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -246,29 +260,6 @@
     <widget class="QTableView" name="heratteenLista"/>
    </item>
   </layout>
-  <zorder>opastinKuva</zorder>
-  <zorder>opastinLabel</zorder>
-  <zorder>automaatioLista</zorder>
-  <zorder>herateLabel</zorder>
-  <zorder>herateNappi</zorder>
-  <zorder>maaliLabel</zorder>
-  <zorder>maaliNappi</zorder>
-  <zorder>ehtoLabel</zorder>
-  <zorder>ehtoEdit</zorder>
-  <zorder>priorLabel</zorder>
-  <zorder>prioriteettiSpin</zorder>
-  <zorder>viiveLabel</zorder>
-  <zorder>viiveSpin</zorder>
-  <zorder>aikatauluViiveCheck</zorder>
-  <zorder>tyyppiLabel</zorder>
-  <zorder>tyyppiCombo</zorder>
-  <zorder>kerranCheck</zorder>
-  <zorder>heratteenLista</zorder>
-  <zorder>lisaaNappi</zorder>
-  <zorder>poistaNappi</zorder>
-  <zorder>valmisNappi</zorder>
-  <zorder>verticalSpacer</zorder>
-  <zorder>lisaaNappi</zorder>
  </widget>
  <resources>
   <include location="ratapiha-kauko.qrc"/>

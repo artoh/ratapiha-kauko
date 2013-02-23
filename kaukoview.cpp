@@ -84,11 +84,23 @@ void KaukoView::valitseTila(int tila)
     case AutomaatioMuokkaus :
         setCursor( QCursor( QPixmap(":/r/pic/automaatiomuokkaus-kursori.png"),11,0));
         break;
-
+    case AutomaatioHerate : case AutomaatioMaali :
+        setCursor( QCursor( QPixmap(":/r/pic/automaatiomuokkaus-kasi.png"),11,0));
+        break;
 
 
     }
 
+}
+
+void KaukoView::valitseAutomaatioHerate()
+{
+    valitseTila( AutomaatioHerate);
+}
+
+void KaukoView::valitseAutomaatioMaali()
+{
+    valitseTila( AutomaatioMaali) ;
 }
 
 
@@ -262,6 +274,14 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
         break;
     case AutomaatioMuokkaus :
         emit automaatioMuokkausOpastin(klikattuTunnus);
+        break;
+    case AutomaatioHerate :
+        emit automaatioHerate(klikattuTunnus);
+        valitseTila(AutomaatioMuokkaus);
+        break;
+    case AutomaatioMaali :
+        emit automaatioMaali(klikattuTunnus);
+        valitseTila(AutomaatioMuokkaus);
         break;
 
 
