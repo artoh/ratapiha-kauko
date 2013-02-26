@@ -241,7 +241,8 @@ OTHER_FILES += \
     jkvkuvat/jkvhajonnut.png \
     pic/automaatiomuokkaus-kasi.png \
     pic/automaatiomuokkaus-kursori.png \
-    pic/automaatiomuokkaus.png
+    pic/automaatiomuokkaus.png \
+    pic/refresh.png
 
 FORMS += \
     ajopoyta.ui \

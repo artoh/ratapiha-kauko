@@ -109,5 +109,6 @@
         <file>pic/automaatiomuokkaus-kasi.png</file>
         <file>pic/automaatiomuokkaus-kursori.png</file>
         <file>pic/automaatiomuokkaus.png</file>
+        <file>pic/refresh.png</file>
     </qresource>
 </RCC>

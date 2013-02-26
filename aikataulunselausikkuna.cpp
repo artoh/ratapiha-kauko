@@ -43,6 +43,13 @@ void AikataulunSelausIkkuna::haeAsemaAikataulu(int indeksi)
     setWindowTitle( tr("Aikataulu: %1").arg( asemaValintaCombo_->currentText() ));
 }
 
+void AikataulunSelausIkkuna::suodatus()
+{
+    selaaja_->asetaFiltteri(saapuvatSuodinAktio_->isChecked(), lahtevatSuodinAktio_->isChecked(),
+                            etelaanSuodinAktio_->isChecked(), pohjoiseenSuodinAktio_->isChecked(),
+                            lahijunaSuodinAktio_->isChecked(), kaukojunaSuodinAktio_->isChecked(), muujunaSuodinAktio_->isChecked());
+}
+
 
 void AikataulunSelausIkkuna::luoTyokalurivi()
 {
@@ -58,6 +65,59 @@ void AikataulunSelausIkkuna::luoTyokalurivi()
     connect( asemaValintaCombo_, SIGNAL(currentIndexChanged(int)),
              this, SLOT(haeAsemaAikataulu(int)));
 
+
+    refreshAktio_ = new QAction(QIcon(":/r/pic/refresh.png"),tr("Lataa uudelleen"),this);
+    connect(refreshAktio_, SIGNAL(triggered()), selaaja_, SLOT(paivita()));
+
+    saapuvatSuodinAktio_ = new QAction(tr("Saapuvat"),this);
+    saapuvatSuodinAktio_->setCheckable(true);
+    saapuvatSuodinAktio_->setChecked(true);
+
+    lahtevatSuodinAktio_ = new QAction( tr("Lähtevät"), this );
+    lahtevatSuodinAktio_->setCheckable(true);
+    lahtevatSuodinAktio_->setChecked(true);
+
+    etelaanSuodinAktio_ = new QAction( tr("Etelään"), this);
+    etelaanSuodinAktio_->setCheckable(true);
+    etelaanSuodinAktio_->setChecked(true);
+
+    pohjoiseenSuodinAktio_ = new QAction( tr("Pohjoiseen"), this);
+    pohjoiseenSuodinAktio_->setCheckable(true);
+    pohjoiseenSuodinAktio_->setChecked(true);
+
+    lahijunaSuodinAktio_ = new QAction("H", this);
+    lahijunaSuodinAktio_->setCheckable(true);
+    lahijunaSuodinAktio_->setChecked(true);
+
+    kaukojunaSuodinAktio_ = new QAction("PS", this);
+    kaukojunaSuodinAktio_->setCheckable(true);
+    kaukojunaSuodinAktio_->setChecked(true);
+
+    muujunaSuodinAktio_ = new QAction("TMX", this);
+    muujunaSuodinAktio_->setCheckable(true);
+    muujunaSuodinAktio_->setChecked(true);
+
+    connect( saapuvatSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
+    connect( lahtevatSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
+    connect( etelaanSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
+    connect( pohjoiseenSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
+    connect( lahijunaSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
+    connect( kaukojunaSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
+    connect( muujunaSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
+
+
     tbar->addWidget(asemaValintaCombo_);
+    tbar->addSeparator();
+    tbar->addAction(refreshAktio_);
+    tbar->addSeparator();
+    tbar->addAction(saapuvatSuodinAktio_);
+    tbar->addAction(lahtevatSuodinAktio_);
+    tbar->addSeparator();
+    tbar->addAction(etelaanSuodinAktio_);
+    tbar->addAction(pohjoiseenSuodinAktio_);
+    tbar->addSeparator();
+    tbar->addAction(lahijunaSuodinAktio_);
+    tbar->addAction(kaukojunaSuodinAktio_);
+    tbar->addAction(muujunaSuodinAktio_);
 
 }

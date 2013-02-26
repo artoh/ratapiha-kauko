@@ -22,6 +22,8 @@
 
 #include <QMainWindow>
 #include <QComboBox>
+#include <QAction>
+
 
 #include "aikatauluselaaja.h"
 
@@ -35,6 +37,7 @@ signals:
     
 public slots:
     void haeAsemaAikataulu(int indeksi);
+    void suodatus();
 
 
 protected:
@@ -42,6 +45,15 @@ protected:
 
     AikatauluSelaaja* selaaja_;
     QComboBox* asemaValintaCombo_;
+
+    QAction* refreshAktio_;
+    QAction* lahtevatSuodinAktio_;
+    QAction* saapuvatSuodinAktio_;
+    QAction* pohjoiseenSuodinAktio_;
+    QAction* etelaanSuodinAktio_;
+    QAction* lahijunaSuodinAktio_;
+    QAction* kaukojunaSuodinAktio_;
+    QAction* muujunaSuodinAktio_;
 };
 
 #endif // AIKATAULUNSELAUSIKKUNA_H

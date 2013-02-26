@@ -25,7 +25,14 @@
 
 AikatauluSelaaja::AikatauluSelaaja(QWidget *parent) :
     QTextBrowser(parent) ,
-    selattavanTyyppi_(Tyhja)
+    selattavanTyyppi_(Tyhja),
+    lahtevat_(true),
+    saapuvat_(true),
+    etelaan_(true),
+    pohjoiseen_(true),
+    lahijunat_(true),
+    kaukojunat_(true),
+    muutjunat_(true)
 {
     setOpenLinks(false);
     connect( this, SIGNAL(anchorClicked(QUrl)), this, SLOT(klikattu(QUrl)));
@@ -42,7 +49,7 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
     QString kysymys = QString("select juna.junanro as Juna, addtime(lahtee,taulu.lahtoaika) as Kello, "
     "minnelkp.nimi as Minne,  addtime(lahtee, minne.saapumisaika) as Perilla, taulu.raide as Laituri, "
     "taulu.pysahtyy as pysahtyy, taulu.tapahtuma as tapahtuma, minnelkp.liikennepaikka as lyhenne, taulu.lahtoaika, "
-                              "addtime(lahtee,taulu.saapumisaika) as Saapuminen "
+                              "addtime(lahtee,taulu.saapumisaika) as Saapuminen, taulu.suunta "
     "from juna, aikataulu as taulu, aikataulu as minne, liikennepaikka as minnelkp "
     " where taulu.reitti = juna.reitti and taulu.reitti = minne.reitti and "
     " minnelkp.liikennepaikka = minne.liikennepaikka "
@@ -67,14 +74,33 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
     QSqlQuery junaKysely( kysymys );
     while( junaKysely.next())
     {
-        rivi++;
         QString juna = junaKysely.value(0).toString();
+        QString tapahtuma = junaKysely.value(6).toString();
+        QString suuntakirjain = junaKysely.value(10).toString();
+
+        // Filtteröinti
+        if( !saapuvat_ && tapahtuma == "S" )
+            continue;
+        else if( !lahtevat_ && tapahtuma == "L")
+            continue;
+        else if( !etelaan_ && suuntakirjain == "E" )
+            continue;
+        else if( !pohjoiseen_ && suuntakirjain == "P")
+            continue;
+        else if( !lahijunat_ && juna.startsWith('H'))
+            continue;
+        else if( !kaukojunat_ && ( juna.startsWith('P') || juna.startsWith('S')  ) )
+            continue;
+        else if( !muutjunat_ && ( juna.startsWith('M') || juna.startsWith('X') || juna.startsWith('T')  ) )
+            continue;
+
+        rivi++;
         QTime lahtee = junaKysely.value(1).toTime();
         QString minne = junaKysely.value(2).toString();
         QTime perilla = junaKysely.value(3).toTime();
         int raide = junaKysely.value(4).toInt();
 
-        QString tapahtuma = junaKysely.value(6).toString();
+
         QString minnelyhenne = junaKysely.value(7).toString();
 
         QTime saapuu = junaKysely.value(9).toTime();
@@ -140,6 +166,29 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
     selattavanTyyppi_ = Asema;
     selattavanTunnus_ = liikennepaikka;
     emit naytetaanAsema(liikennepaikka);
+}
+
+void AikatauluSelaaja::asetaFiltteri(bool saapuvat, bool lahtevat, bool etelaan, bool pohjoiseen, bool lahi, bool kauko, bool muut)
+{
+    saapuvat_ = saapuvat;
+    lahtevat_ = lahtevat;
+    etelaan_ = etelaan;
+    pohjoiseen_ = pohjoiseen;
+
+    lahijunat_ = lahi;
+    kaukojunat_ = kauko;
+    muutjunat_ = muut;
+
+    if( selattavanTyyppi_ == Asema )
+        paivita();
+}
+
+void AikatauluSelaaja::paivita()
+{
+    if( selattavanTyyppi_ == Asema )
+        haeAsemaAikataulu(selattavanTunnus_);
+    else
+        haeJunaAikataulu(selattavanTunnus_);
 }
 
 void AikatauluSelaaja::haeJunaAikataulu(const QString &juna)
