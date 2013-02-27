@@ -34,7 +34,7 @@ QVariant JunaTauluModel::data(const QModelIndex &index, int role) const
 
     if( role == Qt::TextAlignmentRole)
         return int( Qt::AlignLeft | Qt::AlignVCenter);
-    else if( role == Qt::DisplayRole)
+    else if( role == Qt::DisplayRole || role == Qt::UserRole)
     {
         QSqlRecord tietue = model_.record(index.row());
 
@@ -43,7 +43,7 @@ QVariant JunaTauluModel::data(const QModelIndex &index, int role) const
         case JunaNro:
         {
             QString jnro = tietue.value(0).toString();
-            if( jnro.startsWith('H') || jnro.startsWith('T') || jnro.startsWith('P') || jnro.startsWith('S'))
+            if( (jnro.startsWith('H') || jnro.startsWith('T') || jnro.startsWith('P') || jnro.startsWith('S') ) && role == Qt::DisplayRole )
                 return jnro.mid(1);
             else
                 return jnro;

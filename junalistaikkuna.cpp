@@ -31,6 +31,8 @@ JunalistaIkkuna::JunalistaIkkuna(QWidget *parent) :
     taulu_->setSelectionMode(QAbstractItemView::SingleSelection);
     taulu_->setSelectionBehavior(QAbstractItemView::SelectRows);
 
+    proxy_->setFilterRole( Qt::UserRole );
+
     setCentralWidget(taulu_);
 
     muokkaaja_ = new AikatauluMuokkaaja(this);
@@ -49,10 +51,11 @@ JunalistaIkkuna::JunalistaIkkuna(QWidget *parent) :
     QAction* refreshAktio = new QAction(QIcon(":/r/pic/refresh.png"), tr("Päivitä"), this);
     connect(refreshAktio, SIGNAL(triggered()), model_, SLOT(paivita()) );
 
-    QComboBox* suodatusTyyppiCombo = new QComboBox(this);
-    suodatusTyyppiCombo->addItem(tr("Junanumero"), JunaTauluModel::JunaNro);
-    suodatusTyyppiCombo->addItem(tr("Lähtöasema"), JunaTauluModel::Mista);
-    suodatusTyyppiCombo->addItem(tr("Määräasema"), JunaTauluModel::Minne);
+    suodatusTyyppiCombo_ = new QComboBox(this);
+    suodatusTyyppiCombo_->addItem(tr("Junanumero"), JunaTauluModel::JunaNro);
+    suodatusTyyppiCombo_->addItem(tr("Reitti"), JunaTauluModel::Reitti);
+    suodatusTyyppiCombo_->addItem(tr("Lähtöasema"), JunaTauluModel::Mista);
+    suodatusTyyppiCombo_->addItem(tr("Määräasema"), JunaTauluModel::Minne);
 
     QLineEdit* suodatusEdit = new QLineEdit(this);
     suodatusEdit->setPlaceholderText(tr("Suodata"));
@@ -60,10 +63,10 @@ JunalistaIkkuna::JunalistaIkkuna(QWidget *parent) :
     QToolBar* tb = addToolBar(tr("Suodatus"));
     tb->addAction(refreshAktio);
     tb->addSeparator();
-    tb->addWidget(suodatusTyyppiCombo);
+    tb->addWidget(suodatusTyyppiCombo_);
     tb->addWidget(suodatusEdit);
 
-    connect( suodatusTyyppiCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(suodatusTyypinAsetus(int)) );
+    connect( suodatusTyyppiCombo_, SIGNAL(currentIndexChanged(int)), this, SLOT(suodatusTyypinAsetus(int)) );
     connect( suodatusEdit, SIGNAL(textEdited(QString)), proxy_, SLOT(setFilterRegExp(QString)) );
 
 
@@ -81,9 +84,9 @@ void JunalistaIkkuna::valitseMuokkaukseen()
     }
 }
 
-void JunalistaIkkuna::suodatusTyypinAsetus(int sarake)
+void JunalistaIkkuna::suodatusTyypinAsetus(int indeksi)
 {
-    proxy_->setFilterKeyColumn(sarake);
+    proxy_->setFilterKeyColumn( suodatusTyyppiCombo_->itemData(indeksi, Qt::UserRole).toInt() );
 }
 
 void JunalistaIkkuna::junaPaivitetty(const QString &junatunnus)

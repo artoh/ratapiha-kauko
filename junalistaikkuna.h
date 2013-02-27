@@ -7,7 +7,7 @@ class QSortFilterProxyModel;
 class JunaTauluModel;
 class QTableView;
 class AikatauluMuokkaaja;
-
+class QComboBox;
 
 
 
@@ -22,7 +22,7 @@ signals:
     
 public slots:
     void valitseMuokkaukseen();
-    void suodatusTyypinAsetus(int sarake);
+    void suodatusTyypinAsetus(int indeksi);
     void junaPaivitetty(const QString& junatunnus);
     
 protected:
@@ -30,6 +30,7 @@ protected:
     JunaTauluModel* model_;
     QTableView* taulu_;
     AikatauluMuokkaaja* muokkaaja_;
+    QComboBox* suodatusTyyppiCombo_;
 
 };
 
