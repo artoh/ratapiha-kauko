@@ -22,6 +22,8 @@ signals:
     
 public slots:
     void valitseMuokkaukseen();
+    void suodatusTyypinAsetus(int sarake);
+    void junaPaivitetty(const QString& junatunnus);
     
 protected:
     QSortFilterProxyModel* proxy_;

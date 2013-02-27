@@ -163,7 +163,7 @@ void JunaTauluModel::paivita()
     QSqlQuery kysely(kysymys);
     model_.setQuery(kysymys);
 
-    qDebug() << kysymys << model_.rowCount() << "riviä ";
+//    qDebug() << kysymys << model_.rowCount() << "riviä ";
 
     endResetModel();
 

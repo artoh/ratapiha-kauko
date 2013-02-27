@@ -9,6 +9,11 @@
 #include <QDockWidget>
 #include <QSqlRecord>
 
+#include <QToolBar>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QAction>
+
 
 
 JunalistaIkkuna::JunalistaIkkuna(QWidget *parent) :
@@ -33,13 +38,34 @@ JunalistaIkkuna::JunalistaIkkuna(QWidget *parent) :
     muokkaajaDock->setWidget(muokkaaja_);
     addDockWidget(Qt::RightDockWidgetArea, muokkaajaDock);
 
-    connect(muokkaaja_, SIGNAL(junaPaivitetty(QString)), model_, SLOT(paivita())  );
+    connect(muokkaaja_, SIGNAL(junaPaivitetty(QString)), this, SLOT(junaPaivitetty(QString)) );
     connect(taulu_->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
-            this, SLOT(valitseMuokkaukseen()));
+            this, SLOT(valitseMuokkaukseen())  );
 
     taulu_->selectRow(0);
 
     setWindowTitle("Ratapiha: Junat");
+
+    QAction* refreshAktio = new QAction(QIcon(":/r/pic/refresh.png"), tr("Päivitä"), this);
+    connect(refreshAktio, SIGNAL(triggered()), model_, SLOT(paivita()) );
+
+    QComboBox* suodatusTyyppiCombo = new QComboBox(this);
+    suodatusTyyppiCombo->addItem(tr("Junanumero"), JunaTauluModel::JunaNro);
+    suodatusTyyppiCombo->addItem(tr("Lähtöasema"), JunaTauluModel::Mista);
+    suodatusTyyppiCombo->addItem(tr("Määräasema"), JunaTauluModel::Minne);
+
+    QLineEdit* suodatusEdit = new QLineEdit(this);
+    suodatusEdit->setPlaceholderText(tr("Suodata"));
+
+    QToolBar* tb = addToolBar(tr("Suodatus"));
+    tb->addAction(refreshAktio);
+    tb->addSeparator();
+    tb->addWidget(suodatusTyyppiCombo);
+    tb->addWidget(suodatusEdit);
+
+    connect( suodatusTyyppiCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(suodatusTyypinAsetus(int)) );
+    connect( suodatusEdit, SIGNAL(textEdited(QString)), proxy_, SLOT(setFilterRegExp(QString)) );
+
 
 }
 
@@ -53,4 +79,28 @@ void JunalistaIkkuna::valitseMuokkaukseen()
         muokkaaja_->valittuJuna(junatunnus);
         muokkaaja_->selaaja()->haeJunaAikataulu(junatunnus);
     }
+}
+
+void JunalistaIkkuna::suodatusTyypinAsetus(int sarake)
+{
+    proxy_->setFilterKeyColumn(sarake);
+}
+
+void JunalistaIkkuna::junaPaivitetty(const QString &junatunnus)
+{
+    model_->paivita();
+
+    // Valitaan kyseinen juna
+
+    if( junatunnus.isEmpty())
+        return;
+
+    for(int i=0; i < model_->rowCount(QModelIndex()) ; i++)
+        if( model_->junaNumero(i) == junatunnus)
+        {
+            taulu_->selectRow( proxy_->mapFromSource( model_->index(i,0) ).row()  );
+
+            return;
+        }
+
 }
