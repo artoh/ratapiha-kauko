@@ -44,7 +44,7 @@ public slots:
     void haeJunaAikataulu(const QString& juna);
     void haeAsemaAikataulu(const QString& liikennepaikka);
 
-    void asetaFiltteri(bool saapuvat, bool lahtevat, bool etelaan, bool pohjoiseen, bool lahi, bool kauko, bool muut);
+    void asetaFiltteri(bool saapuvat, bool lahtevat, bool etelaan, bool pohjoiseen, bool lahi, bool kauko, bool muut, int raide);
 
     void paivita();
 
@@ -61,6 +61,7 @@ protected:
     bool lahijunat_;
     bool kaukojunat_;
     bool muutjunat_;
+    int raide_;
 };
 
 #endif // AIKATAULUSELAAJA_H

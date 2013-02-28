@@ -71,6 +71,8 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
 
     int rivi = 0;
     int tunti = -1;
+    bool raideVarattu = false;
+
     QSqlQuery junaKysely( kysymys );
     while( junaKysely.next())
     {
@@ -94,11 +96,21 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
         else if( !muutjunat_ && ( juna.startsWith('M') || juna.startsWith('X') || juna.startsWith('T')  ) )
             continue;
 
+        int raide = junaKysely.value(4).toInt();
+        // Näytetään vain raiteen viimeinen numero (paitsi Helsingissä kaksi)
+        if( liikennepaikka == "Hki" || liikennepaikka == "Psl")
+            raide = raide % 100;
+        else
+            raide = raide % 10;
+
+        if( raide_ > 0 && raide != raide_ )
+            continue;   // Raidefiltteri
+
         rivi++;
         QTime lahtee = junaKysely.value(1).toTime();
         QString minne = junaKysely.value(2).toString();
         QTime perilla = junaKysely.value(3).toTime();
-        int raide = junaKysely.value(4).toInt();
+
 
 
         QString minnelyhenne = junaKysely.value(7).toString();
@@ -126,11 +138,7 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
         if( lahtee.isValid())
             teksti.append( lahtee.toString("hh.mm"));
 
-        // Näytetään vain raiteen viimeinen numero (paitsi Helsingissä kaksi)
-        if( liikennepaikka == "Hki" || liikennepaikka == "Psl")
-            raide = raide % 100;
-        else
-            raide = raide % 10;
+
 
         QString korostettuJunaTunnus;
         if( juna.startsWith('H') && juna.length() > 3 && juna[1].isLetter() )
@@ -141,10 +149,23 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
         else
             korostettuJunaTunnus = juna;
 
+        // Jos filtteröidään raiteella, selvittää myös "raidevirheen" eli jos raide ylikuormittuu. Ei ole virhe, jos
+        // junia liitetään tai pätkitään...
+
+        bool raidevirhe = ((raide_ && raideVarattu && saapuu.isValid() )  || ( raide_ && !raideVarattu && lahtee.isValid() )) ;
+        if( saapuu.isValid() )
+            raideVarattu = true;
+        if( lahtee.isValid())
+            raideVarattu = false;
+
+        QString raidetyyli="raide";
+        if( raidevirhe )
+            raidetyyli = "virheraide";
+
 
         teksti.append( QString("</td><td class=juna><a href=\"file:J%1\">%6</a> </td><td class=minne><a href=\"file:A%5\">%2</a></td>"
-                               "<td class=perilla>%3</td><td class=raide>%4</td></tr>\n")
-                       .arg(juna).arg(minne).arg( perilla.toString("hh:mm")).arg(raide).arg(minnelyhenne).arg(korostettuJunaTunnus)   );
+                               "<td class=perilla>%3</td><td class=%7>%4</td></tr>\n")
+                       .arg(juna).arg(minne).arg( perilla.toString("hh:mm")).arg(raide).arg(minnelyhenne).arg(korostettuJunaTunnus).arg(raidetyyli)   );
 
     }
     teksti.append("</table></body></html>");
@@ -157,6 +178,7 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
             "td.saapuu { font-size: 14px; } "
             "td.minne { font-size: 14px; font-weight: bold; } "
             "td.raide { font-size: 14px; } "
+            "td.virheraide { font-size: 14px; background-color: red; } "
             "td.tunti { background-color: darkgray; font-size:14px; } "
             "a  { color: black; text-decoration:none;  }";
     clear();
@@ -168,7 +190,7 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
     emit naytetaanAsema(liikennepaikka);
 }
 
-void AikatauluSelaaja::asetaFiltteri(bool saapuvat, bool lahtevat, bool etelaan, bool pohjoiseen, bool lahi, bool kauko, bool muut)
+void AikatauluSelaaja::asetaFiltteri(bool saapuvat, bool lahtevat, bool etelaan, bool pohjoiseen, bool lahi, bool kauko, bool muut, int raide)
 {
     saapuvat_ = saapuvat;
     lahtevat_ = lahtevat;
@@ -178,6 +200,7 @@ void AikatauluSelaaja::asetaFiltteri(bool saapuvat, bool lahtevat, bool etelaan,
     lahijunat_ = lahi;
     kaukojunat_ = kauko;
     muutjunat_ = muut;
+    raide_ = raide;
 
     if( selattavanTyyppi_ == Asema )
         paivita();

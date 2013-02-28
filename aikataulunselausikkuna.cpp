@@ -47,7 +47,8 @@ void AikataulunSelausIkkuna::suodatus()
 {
     selaaja_->asetaFiltteri(saapuvatSuodinAktio_->isChecked(), lahtevatSuodinAktio_->isChecked(),
                             etelaanSuodinAktio_->isChecked(), pohjoiseenSuodinAktio_->isChecked(),
-                            lahijunaSuodinAktio_->isChecked(), kaukojunaSuodinAktio_->isChecked(), muujunaSuodinAktio_->isChecked());
+                            lahijunaSuodinAktio_->isChecked(), kaukojunaSuodinAktio_->isChecked(), muujunaSuodinAktio_->isChecked(),
+                            raideCombo_->currentIndex());
 }
 
 
@@ -97,6 +98,11 @@ void AikataulunSelausIkkuna::luoTyokalurivi()
     muujunaSuodinAktio_->setCheckable(true);
     muujunaSuodinAktio_->setChecked(true);
 
+    raideCombo_ = new QComboBox(this);
+    raideCombo_->addItem(tr("Raide"));
+    for(int i=1; i < 17; i++)
+        raideCombo_->addItem( QString::number(i));
+
     connect( saapuvatSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
     connect( lahtevatSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
     connect( etelaanSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
@@ -104,6 +110,7 @@ void AikataulunSelausIkkuna::luoTyokalurivi()
     connect( lahijunaSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
     connect( kaukojunaSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
     connect( muujunaSuodinAktio_, SIGNAL(triggered()), this, SLOT(suodatus()));
+    connect( raideCombo_, SIGNAL(currentIndexChanged(int)), this, SLOT(suodatus()) );
 
 
     tbar->addWidget(asemaValintaCombo_);
@@ -119,5 +126,7 @@ void AikataulunSelausIkkuna::luoTyokalurivi()
     tbar->addAction(lahijunaSuodinAktio_);
     tbar->addAction(kaukojunaSuodinAktio_);
     tbar->addAction(muujunaSuodinAktio_);
+    tbar->addSeparator();
+    tbar->addWidget(raideCombo_);
 
 }

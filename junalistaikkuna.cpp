@@ -68,6 +68,7 @@ JunalistaIkkuna::JunalistaIkkuna(QWidget *parent) :
 
     connect( suodatusTyyppiCombo_, SIGNAL(currentIndexChanged(int)), this, SLOT(suodatusTyypinAsetus(int)) );
     connect( suodatusEdit, SIGNAL(textEdited(QString)), proxy_, SLOT(setFilterRegExp(QString)) );
+    connect( suodatusEdit, SIGNAL(textEdited(QString)), this, SLOT(asemaHaku(QString)) );
 
 
 }
@@ -87,6 +88,7 @@ void JunalistaIkkuna::valitseMuokkaukseen()
 void JunalistaIkkuna::suodatusTyypinAsetus(int indeksi)
 {
     proxy_->setFilterKeyColumn( suodatusTyyppiCombo_->itemData(indeksi, Qt::UserRole).toInt() );
+    muokkaaja_->lataaReitit();
 }
 
 void JunalistaIkkuna::junaPaivitetty(const QString &junatunnus)
@@ -106,4 +108,10 @@ void JunalistaIkkuna::junaPaivitetty(const QString &junatunnus)
             return;
         }
 
+}
+
+void JunalistaIkkuna::asemaHaku(const QString &asemat)
+{
+    if( suodatusTyyppiCombo_->itemData( suodatusTyyppiCombo_->currentIndex()) == JunaTauluModel::Mista )
+        muokkaaja_->lataaReitit( asemat );
 }

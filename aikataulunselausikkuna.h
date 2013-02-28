@@ -54,6 +54,8 @@ protected:
     QAction* lahijunaSuodinAktio_;
     QAction* kaukojunaSuodinAktio_;
     QAction* muujunaSuodinAktio_;
+
+    QComboBox* raideCombo_;
 };
 
 #endif // AIKATAULUNSELAUSIKKUNA_H

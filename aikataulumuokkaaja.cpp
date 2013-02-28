@@ -22,6 +22,7 @@ GNU General Public License for more details.
 #include <QSqlQuery>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QDebug>
 
 AikatauluMuokkaaja::AikatauluMuokkaaja(QWidget *parent) :
     QWidget(parent)
@@ -110,11 +111,22 @@ void AikatauluMuokkaaja::valittuJuna(const QString &tunnus)
     }
 }
 
-void AikatauluMuokkaaja::lataaReitit()
+void AikatauluMuokkaaja::lataaReitit(const QString &lahtoasema)
 {
     QString valittu = reittiCombo_->currentText();
     reittiCombo_->clear();
-    QSqlQuery reitit("select distinct(reitti) from aikataulu order by reitti");
+
+    QString kysymys;
+
+    if( lahtoasema.isEmpty())
+        kysymys = "select distinct(reitti) from aikataulu order by reitti";
+    else
+        kysymys =   QString("select distinct reitti from aikataulu natural join liikennepaikka where nimi like \"%1%\" and tapahtuma=\"L\"").arg(lahtoasema);
+
+
+    QSqlQuery reitit(kysymys);
+
+
     while( reitit.next())
         reittiCombo_->addItem( reitit.value(0).toString());
 

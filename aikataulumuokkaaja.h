@@ -46,7 +46,7 @@ public slots:
     void katsoKelpaako();
 
     void eiValittuaJunaa();
-    void lataaReitit();
+    void lataaReitit(const QString& lahtoasema = QString());
 
     void muokkausValmis();
     void peruMuokkaus();

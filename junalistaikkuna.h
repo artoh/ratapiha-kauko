@@ -24,6 +24,7 @@ public slots:
     void valitseMuokkaukseen();
     void suodatusTyypinAsetus(int indeksi);
     void junaPaivitetty(const QString& junatunnus);
+    void asemaHaku(const QString& asemat);
     
 protected:
     QSortFilterProxyModel* proxy_;
