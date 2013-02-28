@@ -110,7 +110,7 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
         QString raidetyyli="raide";
         if( raidevirhe )
             raidetyyli = "virheraide";
-        else if( edellinenSaapui.isValid() && lahtee.isValid() && edellinenSaapui.secsTo(lahtee) < 5 * 60 )
+        else if( raide_ && edellinenSaapui.isValid() && lahtee.isValid() && edellinenSaapui.secsTo(lahtee) < 5 * 60 )
             raidetyyli = "kiireraide";
 
         if( saapuu.isValid())

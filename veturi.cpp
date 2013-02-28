@@ -567,7 +567,7 @@ void Veturi::aja()
 
 
       // Liittämisen varmistaminen, hidastetaan kun ollaan lähellä toista junaa (Onnistuu, kun nopeus max. 35 km/h -- muuten kolari!!! )
-      if( liike > 2.0 && nopeus() < 36 )
+      if( liike > 2.0 && nopeus() < 35 )
       {
           QRectF varoalue;
           if( ajopoyta() == 1 )
@@ -584,7 +584,7 @@ void Veturi::aja()
 
       // Törmäystilanne: Jos juna osuu toiseen, tulee molemmille törmäys !!
       // Vaunut sinkoilevat ties minne!!!
-      if( nopeus() > 5)
+      if( nopeus() > 35)
       {
           QRectF tormaysalue(3.0, 2.0, pituus()-6.0, 6.0);
           QList<QGraphicsItem*> lista = scene()->items( mapToScene(tormaysalue) );
@@ -597,7 +597,8 @@ void Veturi::aja()
                       if( vaunu->etuakseli() != etuAkseli_->kytkettyAkseli() &&
                               vaunu->takaakseli() != etuAkseli_->kytkettyAkseli() &&
                               vaunu->etuakseli() != takaAkseli_->kytkettyAkseli() &&
-                              vaunu->takaakseli() != takaAkseli_->kytkettyAkseli() )
+                              vaunu->takaakseli() != takaAkseli_->kytkettyAkseli() &&
+                              vaunu->etuakseli()->kiskolla()  == etuakseli()->kiskolla() )
                       {
                         vaunu->tormays(nopeus());
                         tormatty = true;
