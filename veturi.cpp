@@ -36,6 +36,7 @@
 #include <QPixmap>
 #include <QDebug>
 #include <QSqlQuery>
+#include <QPainterPath>
 
 Veturi::Veturi(const QString &tyyppi, int vaununumero, RataScene *skene) :
     QObject(), Vaunu(tyyppi, vaununumero, skene),
@@ -586,8 +587,13 @@ void Veturi::aja()
       // Vaunut sinkoilevat ties minne!!!
       if( nopeus() > 35)
       {
-          QRectF tormaysalue(3.0, 2.0, pituus()-6.0, 6.0);
-          QList<QGraphicsItem*> lista = scene()->items( mapToScene(tormaysalue) );
+          QPainterPath path;
+          path.addRect(3.0,2.0,pituus()-6.0, 6.0);
+          QPainterPath skenePath = mapToScene(path);
+
+
+          QList<QGraphicsItem*> lista = collidingItems();
+
           foreach( QGraphicsItem* item, lista)
           {
               bool tormatty = false;
@@ -598,7 +604,8 @@ void Veturi::aja()
                               vaunu->takaakseli() != etuAkseli_->kytkettyAkseli() &&
                               vaunu->etuakseli() != takaAkseli_->kytkettyAkseli() &&
                               vaunu->takaakseli() != takaAkseli_->kytkettyAkseli() &&
-                              vaunu->etuakseli()->kiskolla()  == etuakseli()->kiskolla() )
+                              vaunu->collidesWithPath(skenePath)
+                              )
                       {
                         vaunu->tormays(nopeus());
                         tormatty = true;
