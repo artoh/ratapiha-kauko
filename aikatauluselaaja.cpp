@@ -72,6 +72,7 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
     int rivi = 0;
     int tunti = -1;
     bool raideVarattu = false;
+    QTime edellinenSaapui;
 
     QSqlQuery junaKysely( kysymys );
     while( junaKysely.next())
@@ -79,6 +80,47 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
         QString juna = junaKysely.value(0).toString();
         QString tapahtuma = junaKysely.value(6).toString();
         QString suuntakirjain = junaKysely.value(10).toString();
+
+
+        int raide = junaKysely.value(4).toInt();
+        // Näytetään vain raiteen viimeinen numero (paitsi Helsingissä kaksi)
+        if( liikennepaikka == "Hki" || liikennepaikka == "Psl")
+            raide = raide % 100;
+        else
+            raide = raide % 10;
+
+        if( raide_ > 0 && raide != raide_ )
+            continue;   // Raidefiltteri
+
+        QTime lahtee = junaKysely.value(1).toTime();
+        QString minne = junaKysely.value(2).toString();
+        QTime perilla = junaKysely.value(3).toTime();
+        QTime saapuu = junaKysely.value(9).toTime();
+
+        // Jos filtteröidään raiteella, selvittää myös "raidevirheen" eli jos raide ylikuormittuu. Ei ole virhe, jos
+        // junia liitetään tai pätkitään...
+
+        bool raidevirhe = ( (tapahtuma != "O" && tapahtuma != "P" && ( (raide_ && raideVarattu && saapuu.isValid() )  || ( raide_ && !raideVarattu && lahtee.isValid() ) ) ) ||
+                            (tapahtuma == "P"  && raide_ && raideVarattu)) ;
+        if( saapuu.isValid() )
+            raideVarattu = true;
+        if( lahtee.isValid() || tapahtuma == "O")
+            raideVarattu = false;
+
+        QString raidetyyli="raide";
+        if( raidevirhe )
+            raidetyyli = "virheraide";
+        else if( edellinenSaapui.isValid() && lahtee.isValid() && edellinenSaapui.secsTo(lahtee) < 5 * 60 )
+            raidetyyli = "kiireraide";
+
+        if( saapuu.isValid())
+            edellinenSaapui = saapuu;
+
+
+
+        QString minnelyhenne = junaKysely.value(7).toString();
+
+
 
         // Filtteröinti
         if( !saapuvat_ && tapahtuma == "S" )
@@ -96,26 +138,9 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
         else if( !muutjunat_ && ( juna.startsWith('M') || juna.startsWith('X') || juna.startsWith('T')  ) )
             continue;
 
-        int raide = junaKysely.value(4).toInt();
-        // Näytetään vain raiteen viimeinen numero (paitsi Helsingissä kaksi)
-        if( liikennepaikka == "Hki" || liikennepaikka == "Psl")
-            raide = raide % 100;
-        else
-            raide = raide % 10;
-
-        if( raide_ > 0 && raide != raide_ )
-            continue;   // Raidefiltteri
 
         rivi++;
-        QTime lahtee = junaKysely.value(1).toTime();
-        QString minne = junaKysely.value(2).toString();
-        QTime perilla = junaKysely.value(3).toTime();
 
-
-
-        QString minnelyhenne = junaKysely.value(7).toString();
-
-        QTime saapuu = junaKysely.value(9).toTime();
 
         QTime kello = lahtee;
         if( !kello.isValid())
@@ -149,18 +174,6 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
         else
             korostettuJunaTunnus = juna;
 
-        // Jos filtteröidään raiteella, selvittää myös "raidevirheen" eli jos raide ylikuormittuu. Ei ole virhe, jos
-        // junia liitetään tai pätkitään...
-
-        bool raidevirhe = ((raide_ && raideVarattu && saapuu.isValid() )  || ( raide_ && !raideVarattu && lahtee.isValid() )) ;
-        if( saapuu.isValid() )
-            raideVarattu = true;
-        if( lahtee.isValid())
-            raideVarattu = false;
-
-        QString raidetyyli="raide";
-        if( raidevirhe )
-            raidetyyli = "virheraide";
 
 
         teksti.append( QString("</td><td class=juna><a href=\"file:J%1\">%6</a> </td><td class=minne><a href=\"file:A%5\">%2</a></td>"
@@ -179,6 +192,7 @@ void AikatauluSelaaja::haeAsemaAikataulu(const QString &liikennepaikka)
             "td.minne { font-size: 14px; font-weight: bold; } "
             "td.raide { font-size: 14px; } "
             "td.virheraide { font-size: 14px; background-color: red; } "
+            "td.kiireraide { font-size: 14px; background-color: orange; } "
             "td.tunti { background-color: darkgray; font-size:14px; } "
             "a  { color: black; text-decoration:none;  }";
     clear();
