@@ -585,42 +585,49 @@ void Veturi::aja()
 
       // Törmäystilanne: Jos juna osuu toiseen, tulee molemmille törmäys !!
       // Vaunut sinkoilevat ties minne!!!
-      if( nopeus() > 35)
+      if( nopeus() > 2)
       {
           QPainterPath path;
-          path.addRect(3.0,2.0,pituus()-6.0, 6.0);
+          path.addRect(7.0,2.0,pituus()-14.0, 6.0);
           QPainterPath skenePath = mapToScene(path);
 
 
           QList<QGraphicsItem*> lista = collidingItems();
 
+          bool tormatty = false;
           foreach( QGraphicsItem* item, lista)
           {
-              bool tormatty = false;
               if( item != this )
                   if(  Vaunu* vaunu = dynamic_cast<Vaunu*>(item) )
                   {
                       if( vaunu->etuakseli() != etuAkseli_->kytkettyAkseli() &&
                               vaunu->takaakseli() != etuAkseli_->kytkettyAkseli() &&
                               vaunu->etuakseli() != takaAkseli_->kytkettyAkseli() &&
-                              vaunu->takaakseli() != takaAkseli_->kytkettyAkseli() &&
-                              vaunu->collidesWithPath(skenePath)
-                              )
+                              vaunu->takaakseli() != takaAkseli_->kytkettyAkseli() )
                       {
-                        vaunu->tormays(nopeus());
-                        tormatty = true;
+                         QPainterPath tarkastusPath;
+                         tarkastusPath.addRect(7.0, 2.0, vaunu->pituus() - 14.0, 6.0);
+                         QPainterPath mapattuTarkastus = vaunu->mapToScene(tarkastusPath);
+
+                         if( mapattuTarkastus.intersects(skenePath))
+                         {
+                            vaunu->tormays(nopeus());
+                            tormatty = true;
+                         }
                       }
                   }
+            }
 
-              if(tormatty)
-              {
-                kirjoitaLokiin("T", aktiivinenAkseli()->kiskolla()->raide());  // Törmäysilmoitus!!!
-                tormays( nopeus() );
-                return;
-              }
-
+          if(tormatty)
+          {
+            kirjoitaLokiin("T", aktiivinenAkseli()->kiskolla()->raide());  // Törmäysilmoitus!!!
+            tormays( nopeus() );
+            return;
           }
+
+
       }
+
 
 
 
@@ -1110,6 +1117,7 @@ bool Veturi::haeReitti(Akseli *akseli)
 {
     // Haetaan reitti kyseessä olevalle junalle
     QSqlQuery reitinkysymys( QString("select reitti, lahtee, vaunuja from juna where junanro =\"%1\" ").arg( junaNumero() ));
+    qDebug() << junaNumero() << vaunuNumero();
     if( !reitinkysymys.next())
         return false;
 
@@ -1223,6 +1231,9 @@ bool Veturi::haeReitti(Akseli *akseli)
             }
             else
                 return false;
+
+            if( aktiivinenAkseli())
+                return; // Null Pointer Programmers Rules !!!
 
             // Yhteiset toimet:
             veturiAutomaatio_ = AutoAktiivinen;
