@@ -248,6 +248,14 @@ void Veturi::paivitaJkvTiedot()
                             else
                                 myohassa_ = myohassa;
                         }
+
+                        // Jos kello on jo ohittanut aikataulun mukaisen lähtöajan, saattaa myöhässä oleminen
+                        // olla vielä tätäkin suurempi ...
+                        int myohastysTassa = aikataulunlahtoaika.secsTo( RatapihaIkkuna::getInstance()->simulaatioAika().time() );
+                        if( myohastysTassa > 10 && myohastysTassa < 60 * 60 * 12 && myohastysTassa > myohassa_)
+                        {
+                            myohassa_ = myohastysTassa;
+                        }
                     }
 
 
