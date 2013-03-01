@@ -728,7 +728,8 @@ void Veturi::aja()
               else
                   myohassa = 0;
           }
-          kirjoitaLokiin("L", aktiivinenAkseli()->kiskolla()->raide());  // Juna lähti taas liikkeelle!
+          if( aktiivinenAkseli() && aktiivinenAkseli()->kiskolla() )
+            kirjoitaLokiin("L", aktiivinenAkseli()->kiskolla()->raide());  // Juna lähti taas liikkeelle!
 
       }
 
