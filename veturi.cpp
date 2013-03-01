@@ -690,7 +690,8 @@ void Veturi::aja()
               else
               {
                   // Tässä voisi kirjata lokiin, että juna pysähtyi
-                  kirjoitaLokiin("P", aktiivinenAkseli()->kiskolla()->raide());
+                  if( aktiivinenAkseli() && aktiivinenAkseli()->kiskolla() )
+                    kirjoitaLokiin("P", aktiivinenAkseli()->kiskolla()->raide());
               }
 
               // Automaattinen vaihtotyö päättyy, kun vaihtotyöyksikkö pysähtyy
