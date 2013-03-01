@@ -63,6 +63,7 @@ public:
 
     /** Asiakkaita lisää tai vähemmän */
     void asiakasMuutos(int muutos);
+    QDateTime simulaatioAika() { return simulaatioAika_; }
 
 public slots:
     void yhdistaPalvelimeen();
@@ -93,7 +94,7 @@ public slots:
 
     void aikaMuuttunut(const QDateTime& aika);
 
-    QDateTime simulaatioAika() { return simulaatioAika_; }
+
 
 signals:
     /* Asetinlaitteelle annettuun käskyyn tullut vastaus */

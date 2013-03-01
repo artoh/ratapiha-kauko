@@ -160,6 +160,7 @@ void RataRaide::akseliSisaan(RaiteenPaa::Suunta suunta, RataRaide *raiteelta)
     {
         if( kulkutienRaide())
             kulkutienRaide()->raideVarautuu(suunta);
+        RataScene::turvaLoki(1001, raidetunnusLiikennepaikalla());
 
         // Kulkutieautomaatin herättäminen
         RataIkkuna::rataSkene()->raideVarautunut(this, suunta);
@@ -178,6 +179,7 @@ void RataRaide::akseliUlos(RaiteenPaa::Suunta suunta, RataRaide * /* raiteelle *
             kulkutienRaide()->raideVapautuu(suunta);
 
         junanumero_.clear();
+        RataScene::turvaLoki(1002, raidetunnusLiikennepaikalla());
     }
 
     paivita();
@@ -190,6 +192,7 @@ void RataRaide::alhp()
     akseleita_ = 0;
     junanumero_.clear();
     paivita();
+    RataScene::turvaLoki(9001, raidetunnusLiikennepaikalla());
 }
 
 QString RataRaide::raideSelitys()

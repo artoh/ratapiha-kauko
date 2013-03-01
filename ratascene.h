@@ -63,6 +63,8 @@ public:
 
     QDateTime simulaatioAika() const { return simulaatioAika_; }
     KulkutieAutomaatti* automaatti() { return kulkutieautomaatti_; }
+
+    static void turvaLoki(int tyyppi,QString teksti);  /** Kirjoittaa tapahtuman turvalaitelokiin*/
 signals:
     void kello(const QDateTime& aika);  /** Kun kello päivitetty */
 

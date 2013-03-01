@@ -249,6 +249,8 @@ void Veturi::paivitaJkvTiedot()
                                 myohassa_ = myohassa;
                         }
                     }
+
+
                 }
 
                 // Nyt on laskettu kaksi pysähdysaikaa, joista pidempi on voimassa
@@ -488,6 +490,8 @@ void Veturi::kirjoitaLokiin(const QString &ilmoitustyyppi, RataRaide *raide, con
 
     QSqlQuery paivityskysely;
     paivityskysely.exec(paivitys);
+
+    kirjoitaJunatilatieto();
 }
 
 void Veturi::siirtyyRaiteelle(RataRaide *raiteelle)
@@ -508,6 +512,16 @@ void Veturi::siirtyyRaiteelle(RataRaide *raiteelle)
 
             nopeusRajoitukset_.prepend( qMakePair( matkaMittari_ + aktiivinenAkseli()->kiskolla()->pituus(),
                                                    nopeusrajoitus ));
+
+
+            // Jos on ohitettava reitti, lasketaan myöhästyminen
+            if( reitti_.value( raiteelle->raidetunnusLiikennepaikalla()).saapumisAika().isValid() )
+            {
+                int myohassa = reitti_.value(raiteelle->raidetunnusLiikennepaikalla()).saapumisAika().secsTo( RatapihaIkkuna::getInstance()->simulaatioAika().time() );
+                if(myohassa > 0 && myohassa < 60*60*10 )
+                    myohassa_ = myohassa;
+            }
+
         }
 }
 
@@ -654,8 +668,8 @@ void Veturi::aja()
                       // SAAPUMINEN MÄÄRÄASEMALLE
               {
                   // Saavuttu määräraiteelle!
-                  kirjoitaLokiin("S", aktiivinenAkseli()->kiskolla()->raide());
                   tavoiteNopeus_ = 0;
+                  kirjoitaLokiin("S", aktiivinenAkseli()->kiskolla()->raide());
                   tyhjennaReitti();
                   if( veturiAutomaationTila() == AutoAktiivinen )
                   {
@@ -963,6 +977,8 @@ QPixmap Veturi::jkvKuva()
 
 void Veturi::tarkistaRaiteenJunanumero()
 {
+    kirjoitaJunatilatieto();  // Varmistetaan, että junan tilatieto tulee usein valvontaan...
+
     if( !etuAkseli_->onkoKytketty() && etuAkseli_->kiskolla() && ajopoydat() != AjopoytaKaksi)
         tarkistaRaiteenNumeroAkselilta(etuAkseli_);
     if( !takaAkseli_->onkoKytketty() && takaAkseli_->kiskolla() && ajopoydat() != AjopoytaYksi)
@@ -1082,6 +1098,41 @@ bool Veturi::tarkistaRaiteenNumeroAkselilta(Akseli *akseli)
 
     } // Löytyy akseli, jolta asettaa tunnus
     return false; // Ei aktivoitu junaa!
+}
+
+void Veturi::kirjoitaJunatilatieto()
+{
+    if( junaNumero().isEmpty() ||
+            !aktiivinenAkseli() ||
+            !aktiivinenAkseli()->kiskolla())
+        return;
+
+    QString tila;
+
+    if( nopeus() )
+        tila = 'A';
+    else if( tavoiteNopeus() == 0 )
+        tila = '-';
+    else if( !jkvTiedot_.empty())
+    {
+        if( jkvTiedot_.first().opaste() == RaiteenPaa::OdotaLahtolupaa )
+            tila = 'L'; // Odottaa lähtölupaa
+        else if( jkvTiedot_.first().pysahdyLaiturille() )
+            tila = 'T'; // Odottaa aikataulun lähtöaikaa
+        else
+            tila = 'P'; // Pysähtynyt muusta syystä (opastin ?? )
+    }
+
+    QString kysymys = QString("replace junatila(junanro,myohassa,liikennepaikka,raide,nopeus,tila) "
+            "values (\"%1\",%2, \"%3\", %4, %5, \"%6\")")
+            .arg(junaNumero()).arg(myohassa()).arg( aktiivinenAkseli()->kiskolla()->raide()->liikennepaikka() )
+            .arg( aktiivinenAkseli()->kiskolla()->raide()->raidetunnus())
+            .arg( nopeus())
+            .arg(tila);
+
+    QSqlQuery kysely(kysymys);
+
+
 }
 
 void Veturi::asetaVaihtotyoAutomaatio(Akseli *akseli)

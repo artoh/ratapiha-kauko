@@ -87,6 +87,8 @@ bool KulkutienMuodostaja::muodostaKulkutie()
         minne_->naapuritTarkistakaaKulkutiet(kulkutie);
 
         RataIkkuna::rataSkene()->kulkutieValmis(minne_->raidetunnusLiikennepaikalla(), kulkutie);
+        RataScene::turvaLoki(3001, QString("%1 %2-%3").arg(kulkutie->kulkutienTyyppi())
+                             .arg(kulkutie->lahtoRaideTunnus()).arg(kulkutie->maaliRaideTunnus()));
     }
 
 

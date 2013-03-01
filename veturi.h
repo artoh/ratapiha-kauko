@@ -103,6 +103,8 @@ protected:
     Akseli* aktiivinenAkseli();
     void asetaReitti(const QString& reitti);
     bool tarkistaRaiteenNumeroAkselilta(Akseli* akseli);
+
+    void kirjoitaJunatilatieto();
     void tyhjennaReitti();
 
     void asetaVaihtotyoAutomaatio(Akseli* akseli);

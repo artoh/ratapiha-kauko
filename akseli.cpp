@@ -23,6 +23,7 @@
 #include "rataraide.h"
 #include "vaunu.h"
 #include "veturi.h"
+#include "ratascene.h"
 
 #include <QPainter>
 #include <QBrush>
@@ -159,7 +160,10 @@ void Akseli::liiku(qreal matka)
     {
         // Aukiajo, jos tullaan vaihteen pasiivisesta haarasta!!
         if( !kiskolla()->aktiivinen(RataKisko::EtelaPaa) )
+        {
             kiskolla()->raide()->pohjoinen()->aukiaja();
+            RataScene::turvaLoki(20, kiskolla()->raide()->raidetunnusLiikennepaikalla() );
+        }
 
         // Mennään etelänpuoleiselle kiskolle
         RataKisko* uusiKisko = kiskolla()->haeAktiivinenNaapuri( kiskolla()->etelainen());
@@ -199,7 +203,10 @@ void Akseli::liiku(qreal matka)
         // Mennään ulos pohjoisesta...
 
         if( !kiskolla()->aktiivinen(RataKisko::PohjoisPaa) )
+        {
             kiskolla()->raide()->etelainen()->aukiaja();
+            RataScene::turvaLoki(20, kiskolla()->raide()->raidetunnusLiikennepaikalla() );
+        }
 
          RataKisko* uusiKisko=kiskolla()->haeAktiivinenNaapuri( kiskolla()->pohjoinen());
         if( !uusiKisko)

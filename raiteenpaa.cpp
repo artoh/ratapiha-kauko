@@ -9,7 +9,7 @@
 #include "raiteenpaa.h"
 #include "rataraide.h"
 
-
+#include "ratascene.h"
 
 #include <QStringList>
 

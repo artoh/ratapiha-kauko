@@ -158,7 +158,7 @@ void KulkutienRaide::raideVarautuu(RaiteenPaa::Suunta suunta)
     // Tarkastetaan, ollaanko tultu oikeasta suunnasta!!
     if( suunta != suunta_ && kulkutie()->kulkutienTyyppi() != RataRaide::Vaihtokulkutie )
     {
-        kulkutie()->vikatilaan();
+   //     kulkutie()->vikatilaan();  // ** aiheuttaa ongelmia ***
         qDebug() << "Vikatila: Suunta " << raide()->raidetunnusLiikennepaikalla() << " " << kulkutieto();
     }
     else
@@ -170,7 +170,8 @@ void KulkutienRaide::raideVapautuu(RaiteenPaa::Suunta suunta)
 
     // Opastin punaiselle jos vaihtokulkutie
     if( lahtoOpastin() && lahtoOpastin()->opasteKasite() != RaiteenPaa::Seis
-            && kulkutie()->kulkutienTyyppi() == RataRaide::Vaihtokulkutie )
+            && ( kulkutie()->kulkutienTyyppi() == RataRaide::Vaihtokulkutie
+                 || kulkutie()->kulkutienTyyppi() == RataRaide::Varattukulkutie) )
     {
         lahtoOpastin()->asetaOpaste(RaiteenPaa::Seis);
         lahtoRaide()->paivita();

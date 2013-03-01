@@ -86,6 +86,8 @@ void KulkuTie::puraKulkutie()
 
     deleteLater();
 
+    RataScene::turvaLoki(3002,lahtoRaideTunnus());
+
 }
 
 void KulkuTie::poistaElementti(KulkutienRaide *elementti)

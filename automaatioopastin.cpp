@@ -93,7 +93,7 @@ QString AutomaatioOpastin::opastinSelitys() const
         }
         selitys.append( pyynto->maaliRaiteenTunnus());
         if( pyynto->viive())
-            selitys.append(" %1 s. viiveellä ").arg(pyynto->viive());
+            selitys.append(QString(" %1 s. viiveellä ").arg(pyynto->viive()));
     }
     return selitys;
 }

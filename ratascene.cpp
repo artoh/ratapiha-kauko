@@ -26,6 +26,7 @@
 #include "vaunu.h"
 #include "veturi.h"
 #include "kulkutieautomaatti.h"
+#include "ratapihaikkuna.h"
 
 #include <QSqlQuery>
 #include <QVariant>
@@ -550,6 +551,13 @@ void RataScene::asetaJunaNumero(RataRaide *raide, const QString &junanumero)
         veturi->tarkistaRaiteenJunanumero();
 }
 
+void RataScene::turvaLoki(int tyyppi, QString teksti)
+{
+    QSqlQuery kysely( QString("insert into turvalaiteloki(tapahtuma,aika,teksti) values (%1,\"%2\",\"%3\") ")
+                      .arg(tyyppi).arg( RatapihaIkkuna::getInstance()->simulaatioAika().toString(Qt::ISODate) )
+                      .arg(teksti));
+}
+
 void RataScene::lahetaJunat(const QDateTime &aika)
 {
     QTime lahtoaika = aika.time().addSecs(120);     // Junat aktivoidaan kaksi minuuttia ennen lähtöaikaa
@@ -569,6 +577,14 @@ void RataScene::lahetaJunat(const QDateTime &aika)
         {
             raide->asetaJunanumero( lahtokysely.value(0).toString());
             junia++;
+        }
+        else
+        {
+            // Raiteella ei junia, tämä juna perutaan!
+            QSqlQuery peruutus( QString("replace junatila(junanro, myohassa, liikennepaikka, raide, nopeus, tila) "
+                                        "values(\"%1\", 0, NULL, NULL, 0, \"X\") ")
+                                .arg(lahtokysely.value(0).toString()));
+            turvaLoki(5001,lahtokysely.value(0).toString());
         }
     }
 
