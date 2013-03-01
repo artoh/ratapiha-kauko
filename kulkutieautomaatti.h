@@ -46,6 +46,8 @@ public:
     void talletaAutomaatit();
     void lataaAutomaatit();
 
+    QString automaattiSelitys(const QString& opastintunnus) const;
+
 signals:
     
 public slots:

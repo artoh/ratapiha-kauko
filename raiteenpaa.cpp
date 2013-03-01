@@ -9,6 +9,8 @@
 #include "raiteenpaa.h"
 #include "rataraide.h"
 
+
+
 #include <QStringList>
 
 RaiteenPaa::RaiteenPaa(const QString &tila) :
@@ -86,6 +88,77 @@ QString RaiteenPaa::tilaTieto() const
         tila.append("LäpikulkuAktiivinen");
     else if( automaatioTila() == LapikulkuViive )
         tila.append("LäpikulkuViive");
+
+    return tila;
+}
+
+QString RaiteenPaa::tilaSelitys() const
+{
+    QString tila;
+
+    if( paanTyyppi() == Vaihde && vaihde()==Vasen)
+        tila.append("\nVaihde vasemmalle ");
+    else if(paanTyyppi() == Vaihde && vaihde()==Oikea)
+        tila.append("\nVaihde oikealle");
+    else if(paanTyyppi() == Vaihde && vaihde() == Aukiajettu)
+        tila.append("\nVAIHDE AUKIAJETTU ");
+
+    if( paanTyyppi() == RaideRisteys && vaihde() == Vasen )
+        tila.append("\nRaideristeys vasemmalle ");
+    else if(paanTyyppi()==RaideRisteys && vaihde() == Oikea)
+        tila.append("\nRaideristeys oikealle ");
+
+    if( opastin() == PaaOpastin)
+        tila.append("\nPääopastin ");
+    else if(opastin() == SuojastusOpastin )
+        tila.append("\nSuojastusopastin ");
+    else if(opastin() == RaideOpastin)
+        tila.append("\nRaideopastin ");
+
+
+    switch( opaste() )
+    {
+    case Aja:
+        tila.append("Aja "); break;
+    case AjaSn:
+        tila.append("Aja Sn "); break;
+    case AjaVarovasti:
+        tila.append("Aja varovasti "); break;
+    case EiOpastetta:
+        tila.append("Ei opastetta "); break;
+    case AjaVaratulle:
+        tila.append("Aja varatulle raiteelle "); break;
+    default:
+        break;
+    }
+
+    if( opastinSeis())
+        tila.append("Seis ");
+
+    if( raiteenSulku() == SpSallii)
+        tila.append("\nRaiteensulku sivussa ");
+    else if(raiteenSulku() == SpSulkee)
+        tila.append("\nRaiteensulku kiskolla ");
+
+    if( paanTyyppi() == RaidePuskuri)
+        tila.append("\nRaidepuskuri ");
+
+
+
+    if( automaatioTila() == AutomaatioKaytossa)
+        tila.append("\nJunanumeroautomaatio käytössä ");
+    else if( automaatioTila() == AutomaatioAktiivinen )
+        tila.append("\nJunanumeroautomaatio aktiivinen ");
+    else if( automaatioTila() == AutomaatioViive)
+        tila.append("\nJunanumeroautomaatio viivetilassa");
+    else if( automaatioTila() == Lapikulku)
+        tila.append("\nLäpikulkuautomaatio käytössä");
+    else if( automaatioTila() == LapikulkuAktiivinen )
+        tila.append("\nLäpikulkuautomaatio aktiivinen");
+    else if( automaatioTila() == LapikulkuViive )
+        tila.append("\nLäpikulkuautomaatio viivetilassa");
+
+
 
     return tila;
 }

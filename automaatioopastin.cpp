@@ -76,6 +76,28 @@ void AutomaatioOpastin::talletaPyynnot(const QString& opastintunnus)
     }
 }
 
+QString AutomaatioOpastin::opastinSelitys() const
+{
+    QString selitys;
+
+    foreach( AutomaatioPyynto* pyynto, pyynnot_)
+    {
+
+
+        switch( pyynto->kulkutientyyppi() )
+        {
+            case RataRaide::Junakulkutie : selitys.append("\n Junakulkutie "); break;
+            case RataRaide::Vaihtokulkutie: selitys.append("\n Vaihtokulkutie "); break;
+            case RataRaide::Varattukulkutie: selitys.append("\n Junakulkutie varatulle raiteelle"); break;
+        default: ;
+        }
+        selitys.append( pyynto->maaliRaiteenTunnus());
+        if( pyynto->viive())
+            selitys.append(" %1 s. viiveellä ").arg(pyynto->viive());
+    }
+    return selitys;
+}
+
 void AutomaatioOpastin::paivitaTila()
 {
     RaiteenPaa::Automaatio uusitila;

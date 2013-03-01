@@ -297,6 +297,14 @@ void KulkutieAutomaatti::lataaAutomaatit()
 
 }
 
+QString KulkutieAutomaatti::automaattiSelitys(const QString &opastintunnus) const
+{
+    AutomaatioOpastin* opastin = opastimet_.value(opastintunnus, 0);
+    if(opastin)
+        return opastin->opastinSelitys();
+    return QString();
+}
+
 
 void KulkutieAutomaatti::jnHerateRaiteelle(RataRaide *raide, RaiteenPaa::Suunta suunta)
 {

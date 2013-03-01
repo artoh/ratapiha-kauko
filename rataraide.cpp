@@ -24,6 +24,7 @@
 #include "kulkutienraide.h"
 #include "ratascene.h"
 #include "rataikkuna.h"
+#include "kulkutieautomaatti.h"
 #include <QSqlQuery>
 
 RataRaide::RataRaide(int raidetunnus, const QString& liikennepaikka, int raideid, int akseleita, const QString& junanumero, const QString& tila, const QString& etelatila, const QString& pohjoistila, const QString& kulkutietila)
@@ -189,6 +190,64 @@ void RataRaide::alhp()
     akseleita_ = 0;
     junanumero_.clear();
     paivita();
+}
+
+QString RataRaide::raideSelitys()
+{
+    QString selitys = raidetunnusLiikennepaikalla();
+    if( akseleita())
+        selitys.append( QString("\nAkseleita: %1").arg(akseleita()) );
+    if( !junanumero().isEmpty())
+        selitys.append( QString("\nJuna: %1").arg(junanumero()));
+    switch( kulkutieTyyppi() )
+    {
+    case Junakulkutie:
+        selitys.append("\nJunakulkutie "); break;
+    case Vaihtokulkutie:
+        selitys.append("\nVaihtokulkutie "); break;
+    case Linjasuojastus:
+        selitys.append("\nLinjasuojastus "); break;
+    case Varattukulkutie:
+        selitys.append("\nJunakulkutie varatulle raiteelle "); break;
+    default:
+        ;
+
+    }
+
+    if( kulkutienRaide() )
+    {
+        KulkuTie* ktie = kulkutienRaide()->kulkutie();
+
+        RaideTieto::KulkutieTila tila = ktie->tila();
+
+
+        if( tila == Valmis )
+            selitys.append("Valmis ");
+        else if( tila == Varattu )
+            selitys.append("Varattu ");
+        else if( tila == Virhetila )
+            selitys.append("VIRHETILA ");
+
+
+        selitys.append(QString(" %1 - %2 ").arg(ktie->lahtoRaideTunnus()).arg(ktie->maaliRaideTunnus()));
+
+        if( kulkutienRaide()->suunta() == RaiteenPaa::Pohjoiseen)
+            selitys.append("Pohjoiseen");
+        else if( kulkutienRaide()->suunta() == RaiteenPaa::Etelaan)
+            selitys.append("Etelään");
+    }
+
+    selitys.append("\n\nETELÄINEN");
+    selitys.append( etelainen()->tilaSelitys() );
+    selitys.append( RatapihaIkkuna::getInstance()->skene()->automaatti()->automaattiSelitys( QString("E%1").arg(raidetunnusLiikennepaikalla()) ) );
+
+    selitys.append("\n\nPOHJOINEN");
+    selitys.append(pohjoinen()->tilaSelitys());
+    selitys.append( RatapihaIkkuna::getInstance()->skene()->automaatti()->automaattiSelitys( QString("P%1").arg(raidetunnusLiikennepaikalla()) ) );
+
+
+    return selitys;
+
 }
 
 

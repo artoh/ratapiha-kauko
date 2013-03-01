@@ -70,6 +70,8 @@ public:
     void akseliUlos(RaiteenPaa::Suunta suunta, RataRaide* raiteelle = 0);
     void alhp(); /** Akselinlaskennan hätäpurku ! */
 
+    QString raideSelitys();    /** Raiteen tiedot kyselyyn */
+
 
 protected:
     int raidetunnus_;   // Raiteen tunnusnumero

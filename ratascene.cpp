@@ -455,6 +455,15 @@ QString RataScene::ASLKasky(const QString &parametrit)
         return QString("OK");
     }
 
+    else if( paramLista.first()=="?" && paramLista.count() > 1) // Tilan kysely
+    {
+
+        RataRaide* raide = haeRaide(paramLista[1]);
+        if( !raide )
+            return QString("VIRHE Ei raidetta %1 ").arg(paramLista[1]);
+        return raide->raideSelitys();
+    }
+
 
 
 

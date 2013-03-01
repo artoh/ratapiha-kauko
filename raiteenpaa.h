@@ -37,6 +37,7 @@ public:
     bool opastinSeis() const { return opastinSeis_; }   // Onko opastin asetettu näyttämään SEIS
 
     QString tilaTieto() const;  // Tilatieto tietokantaan
+    QString tilaSelitys() const;
 
     bool kaannaVaihde();    // Kääntää vaihteen
     bool kaannaVaihde(VaihdeKasite tilaan);
