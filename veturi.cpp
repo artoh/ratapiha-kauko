@@ -1232,7 +1232,7 @@ bool Veturi::haeReitti(Akseli *akseli)
             else
                 return false;
 
-            if( aktiivinenAkseli())
+            if( !aktiivinenAkseli())
                 return false; // Null Pointer Programmers Rules !!!
 
             // Yhteiset toimet:
