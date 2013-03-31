@@ -597,7 +597,7 @@ void RataScene::lahetaJunat(const QDateTime &aika)
         RataRaide* mista = raideTunnukset_.value(vaihtokysely.value(0).toString());
         RataRaide* minne = raideTunnukset_.value(vaihtokysely.value(1).toString());
 
-        if( mista && minne)
+        if( mista && minne && mista->akseleita() )  // Vaihtotyöautomaatio toiminnassa vain, mikäli lähtöraide on varattu
         {
             KulkutienMuodostaja ktie(RataRaide::Vaihtokulkutie, mista, minne);
             ktie.muodostaKulkutie();
