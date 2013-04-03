@@ -98,7 +98,9 @@ KulkutieElementti::KulkutieElementti(KulkutienMuodostaja *muodostaja, KulkutieEl
     QList<Naapuruus*> naapurit = naapuruus_->naapuriRaide()->naapurit();
     foreach( Naapuruus* uusinaapuri, naapurit)
     {
-        if( uusinaapuri->naapuriRaide() && uusinaapuri->omaSuunta() != naapuruus_->naapurinSuunta() )
+        if( uusinaapuri->naapuriRaide() && uusinaapuri->omaSuunta() != naapuruus_->naapurinSuunta()
+                && ( naapuruus_->naapuriRaide()->onkoVaihde() ||
+                     naapuruus_->naapurinVaihde() == uusinaapuri->omaVaihde() /* RR-suoja */)   )
         {
             // Mennään toiseen suuntaan eli eteenpäin
             lapset_.append(new KulkutieElementti(muodostaja, this, uusinaapuri, uusiopastin, uusiLahtoraide));
@@ -277,6 +279,7 @@ bool KulkutieElementti::tarkistaKulkutieEhdot(KulkutienMuodostaja *muodostaja)
     if( naapuruus_->naapuriRaide()->etelainen()->vaihde() == RaiteenPaa::Aukiajettu ||
             naapuruus_->naapuriRaide()->pohjoinen()->vaihde() == RaiteenPaa::Aukiajettu)
         return false;
+
 
     return true;
 }

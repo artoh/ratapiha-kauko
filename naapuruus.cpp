@@ -20,6 +20,7 @@
 #include "naapuruus.h"
 
 #include <QGraphicsScene>
+#include <QDebug>
 
 Naapuruus::Naapuruus(RataKisko *omaKisko, RaiteenPaa::Suunta omasuunta)
     : omaSuunta_(omasuunta), naapurinSuunta_(RaiteenPaa::Virhe), naapurinVaihde_(RaiteenPaa::EiVaihdetta),
@@ -36,12 +37,14 @@ Naapuruus::Naapuruus(RataKisko *omaKisko, RaiteenPaa::Suunta omasuunta)
 
     if( omasuunta == RaiteenPaa::Etelaan)
     {
+
         if( omaKisko->pohjoisTyyppi()==Kisko::VaihdeVasen )
             omaVaihde_ = RaiteenPaa::Vasen;
         else if( omaKisko->pohjoisTyyppi() == Kisko::VaihdeOikea)
             omaVaihde_ = RaiteenPaa::Oikea;
         else
             omaVaihde_ = RaiteenPaa::EiVaihdetta;
+
     }
     else if( omasuunta == RaiteenPaa::Pohjoiseen)
     {
@@ -106,6 +109,8 @@ Naapuruus::Naapuruus(RataKisko *omaKisko, RaiteenPaa::Suunta omasuunta)
             naapurinVaihde_ = RaiteenPaa::Oikea;
     }
 
+
+
     // Sitten pienempi nopeus
     pieninNopeus_ = omaKisko->sn();
     if( naapuriKisko->sn() < pieninNopeus())
@@ -123,6 +128,10 @@ Naapuruus::Naapuruus(RataKisko *omaKisko, RaiteenPaa::Suunta omasuunta)
 
 void Naapuruus::lukitseVaihteet()
 {
+
+    if( omaVaihde() == RaiteenPaa::EiKulkua )
+        return;
+
     // Ensin oma vaihde
     if( omaVaihde() == RaiteenPaa::Vasen)
     {

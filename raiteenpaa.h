@@ -21,7 +21,7 @@ public:
     enum OpastinTyyppi { EiOpastinta, PaaOpastin, SuojastusOpastin, RaideOpastin };
     enum PaanTyyppi { Suora, Vaihde, RaideRisteys, RaidePuskuri } ;
 
-    enum VaihdeKasite { EiVaihdetta, Vasen, Oikea, Aukiajettu } ;
+    enum VaihdeKasite { EiVaihdetta, Vasen, Oikea, Aukiajettu, EiKulkua /* Ettei mennä raideristeyksen yli */ } ;
     enum SpKasite { SpPuuttuu = 0, SpSallii, SpSulkee } ;
     enum Suunta { Virhe=0, Etelaan, Pohjoiseen} ;
 
