@@ -19,6 +19,10 @@ KaukoKisko::KaukoKisko(KaukoScene* skene, const QLineF &viiva, int kiskoid, cons
     // Sijoitetaan tunnus, jos numero sopii
     if( naytaRaideNumero() )
     {
+        // Raide 1001 näytetään 001b
+        if( raide > 999 && raide < 2000)
+            raidetunnus_ = QString("%1b").arg(raide-1000,3,10,QChar('0'));
+        else
             raidetunnus_ = QString("%1").arg(raide,3,10,QChar('0'));
     }
 
