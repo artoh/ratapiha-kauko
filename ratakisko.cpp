@@ -128,12 +128,36 @@ void RataKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
         painter->setPen( Qt::NoPen);
         painter->setBrush( QBrush( Qt::gray));
         painter->drawRect(QRectF(10.0, -18.0, pituus()-20.0, 15.0));
+
+        // Raiteen nro
+        painter->setPen( Qt::lightGray);
+        painter->setFont(QFont("Helvetica",8, QFont::Bold));
+        QString laiturinumero;
+        if( raide()->raidetunnus() % 100 < 20)
+            laiturinumero = QString::number(raide()->raidetunnus() % 100);
+        else
+            laiturinumero = QString::number(raide()->raidetunnus() % 10);
+
+
+        painter->drawText(QRectF(0.0, -15.0, pituus()-40.0, 12.0), laiturinumero, QTextOption(Qt::AlignCenter)  );
     }
     if( laituri() == LaituriOikealla || laituri() == LaituriMolemmat )
     {
         painter->setPen( Qt::NoPen);
         painter->setBrush( QBrush( Qt::gray));
         painter->drawRect(QRectF(10.0, 3.0, pituus()-20.0, 15.0));
+
+        // Raiteen nro
+        painter->setPen( Qt::lightGray);
+        painter->setFont(QFont("Helvetica",8, QFont::Bold));
+        QString laiturinumero;
+        if( raide()->raidetunnus() % 100 < 20)
+            laiturinumero = QString::number(raide()->raidetunnus() % 100);
+        else
+            laiturinumero = QString::number(raide()->raidetunnus() % 10);
+
+
+        painter->drawText(QRectF(40.0, 3.0, pituus()-40.0, 12.0), laiturinumero, QTextOption(Qt::AlignCenter)  );
     }
 
 
