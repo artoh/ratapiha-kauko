@@ -308,6 +308,9 @@ void Veturi::paivitaJkvTiedot()
                 && jkvopaste.opaste() != RaiteenPaa::NopeusRajoitus )
             break;
 
+        if( !seuraavaKisko)
+            break;
+
         // Sitten siirrytään seuraavaan päähän
         matka += seuraavaKisko->pituus();
 
