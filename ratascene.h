@@ -72,6 +72,7 @@ public slots:
     void valkytys();
     void asetaNopeutus(int nopeutuskerroin);
     void kellonPaivitys();
+    void asetaTestimoodi(bool testimoodi); /** Lähetetäänkö vain testijunat */
 
 private slots:
     void lahetaJunat(const QDateTime& aika);
@@ -95,6 +96,8 @@ private:
     QDateTime simulaatioAika_;
 
     QTimer kelloTimer_;
+
+    bool vainTestiJunat_;   /** Lähetetään liikkeelle vain KOE-junia */
 };
 
 #endif // RATASCENE_H

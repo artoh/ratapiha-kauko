@@ -37,7 +37,7 @@
 
 RataScene::RataScene(QObject *parent) :
     QGraphicsScene(parent), seuraavaVaunuNumero_(1),
-    nopeutusKerroin_(5)
+    nopeutusKerroin_(5), vainTestiJunat_(false)
 {
     kulkutieautomaatti_ = new KulkutieAutomaatti(this);
 
@@ -85,6 +85,11 @@ void RataScene::kellonPaivitys()
     // ilmoitetaan asiakkaille
     if( simulaatioAika().time().second() == 0)
         emit kello( simulaatioAika() );
+}
+
+void RataScene::asetaTestimoodi(bool testimoodi)
+{
+    vainTestiJunat_ = testimoodi;
 }
 
 void RataScene::lataaRata()
@@ -561,9 +566,15 @@ void RataScene::turvaLoki(int tyyppi, QString teksti)
 void RataScene::lahetaJunat(const QDateTime &aika)
 {
     QTime lahtoaika = aika.time().addSecs(120);     // Junat aktivoidaan kaksi minuuttia ennen lähtöaikaa
-    QSqlQuery lahtokysely( QString("select junanro,liikennepaikka,raide from juna natural join aikataulu "
-                                   " where lahtee=\"%1\" and tapahtuma=\"L\" " )
-                           .arg(lahtoaika.toString()));
+
+    QString kysymys = QString ( "select junanro,liikennepaikka,raide from juna natural join aikataulu "
+                     " where lahtee=\"%1\" and tapahtuma=\"L\" " )
+             .arg(lahtoaika.toString()) ;
+
+    if( vainTestiJunat_)
+        kysymys.append(" and junanro like \"%KOE%\"");  // Testimoodissa vain junia, joiden tunnuksessa lukee KOE, esim SKOE100
+
+    QSqlQuery lahtokysely( kysymys );
 
     int junia = 0;
     while( lahtokysely.next() )

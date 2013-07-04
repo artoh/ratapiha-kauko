@@ -235,8 +235,10 @@ void RatapihaIkkuna::kaynnistaPalvelin()
         connect( ratascene_, SIGNAL(kello(QDateTime)), this, SLOT(aikaMuuttunut(QDateTime)));
 
         ratascene_->asetaNopeutus( ui->nopeusSlider->value() );
+        ratascene_->asetaTestimoodi( ui->testiCheck->isChecked());
 
         connect( ui->nopeusSlider, SIGNAL(valueChanged(int)), ratascene_, SLOT(asetaNopeutus(int)) );
+        connect( ui->testiCheck, SIGNAL(clicked(bool)), ratascene_, SLOT(asetaTestimoodi(bool)));
 
         yhteystila_ = PaikallinenPalvelin;
         nappienHimmennykset();

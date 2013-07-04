@@ -39,7 +39,7 @@
      <enum>QTabWidget::Triangular</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="kaukoTab">
      <attribute name="title">
@@ -286,6 +286,19 @@
       </property>
       <property name="text">
        <string>x</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="testiCheck">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>160</y>
+        <width>191</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Lähetä vain testijunat</string>
       </property>
      </widget>
     </widget>
