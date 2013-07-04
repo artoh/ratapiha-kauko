@@ -599,23 +599,26 @@ void RataScene::lahetaJunat(const QDateTime &aika)
         }
     }
 
-    // Tehdään ajastetut vaihtokulkutiet
-    QSqlQuery vaihtokysely( QString("select raiteelta,raiteelle from vaihtotyoautomaatio "
-                                   " where aika=\"%1\"  " )
-                           .arg(aika.time().toString()));
-    while( vaihtokysely.next())
+    if( !vainTestiJunat_)   // Vaihtokulkutieautomaatiota ei testimoodissa!
     {
-        RataRaide* mista = raideTunnukset_.value(vaihtokysely.value(0).toString());
-        RataRaide* minne = raideTunnukset_.value(vaihtokysely.value(1).toString());
 
-        if( mista && minne && mista->akseleita() )  // Vaihtotyöautomaatio toiminnassa vain, mikäli lähtöraide on varattu
+        // Tehdään ajastetut vaihtokulkutiet
+        QSqlQuery vaihtokysely( QString("select raiteelta,raiteelle from vaihtotyoautomaatio "
+                                       " where aika=\"%1\"  " )
+                               .arg(aika.time().toString()));
+        while( vaihtokysely.next())
         {
-            KulkutienMuodostaja ktie(RataRaide::Vaihtokulkutie, mista, minne);
-            ktie.muodostaKulkutie();
+            RataRaide* mista = raideTunnukset_.value(vaihtokysely.value(0).toString());
+            RataRaide* minne = raideTunnukset_.value(vaihtokysely.value(1).toString());
+
+            if( mista && minne && mista->akseleita() )  // Vaihtotyöautomaatio toiminnassa vain, mikäli lähtöraide on varattu
+            {
+                KulkutienMuodostaja ktie(RataRaide::Vaihtokulkutie, mista, minne);
+                ktie.muodostaKulkutie();
+            }
         }
-    }
 
-
+        }
    // Laitetaan automaatiotoiminnat kehiin...
    // Sekä automaationumeroita että vaihtotyöautomaatio
     foreach(Veturi* veturi, veturilista_)
