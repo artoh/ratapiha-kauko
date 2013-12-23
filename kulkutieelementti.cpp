@@ -57,10 +57,15 @@ KulkutieElementti::KulkutieElementti(KulkutienMuodostaja *muodostaja, KulkutieEl
         pieninNopeus_ = naapuri->pieninNopeus();
 
     // 1) Lisätään pituus
+    int omapituus = naapuri->naapuriRaide()->pituus();
+    // 1xxx: Sallitaan yksi pitkä raide
+    if(omapituus > 8000 )
+        omapituus = 8000;
+
     if( vanhempi)
-        pituus_ = vanhempi->pituus() + naapuri->naapuriRaide()->pituus();
+        pituus_ = vanhempi->pituus() + omapituus;
     else
-        pituus_ = naapuri->naapuriRaide()->pituus();
+        pituus_ = omapituus;
 
     if( pituus_ > muodostaja->lyhinPituus())
         return;     // Ei tarvitse jatkaa

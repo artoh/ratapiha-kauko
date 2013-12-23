@@ -132,7 +132,9 @@ void JkvOpaste::piirra(QPainter *painter, int ysijainti, bool kaytaesiopastimia)
 
     // Sitten etäisyysrivi
     painter->setFont(QFont("Helvetica",12));
-    if( matka_ > 5.0)
+    if( matka_ > 10000.0)
+        painter->drawText(x+55, y+20, 60, 20, Qt::AlignLeft, QString("%1 km").arg((int) matka_ / 1000));
+    else if( matka_ > 5.0)
         painter->drawText(x+55, y+20, 60, 20, Qt::AlignLeft, QString("%1 m").arg((int) matka_));
     // Ja nopeusrivi
     if( sn() > 0 && opaste() != RaiteenPaa::Lahtolupa)
