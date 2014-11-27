@@ -28,6 +28,11 @@ Kiskonpaa::Kiskonpaa(KiskoLiitos *kiskoliitos, int kiskonpaikka)
 {
 }
 
+Kiskonpaa *Kiskonpaa::vastakkainenPaa()
+{
+    return kiskoliitos_->seuraava(this);
+}
+
 Kiskonpaa *Kiskonpaa::ajaUlos()
 {
     return kiskoliitos_->siirrySeuraavalle(this);
@@ -46,6 +51,11 @@ int Kiskonpaa::y()
 bool Kiskonpaa::onkoAktiivinen()
 {
     return kiskoliitos_->onkoAktiivinenPaa(this);
+}
+
+void Kiskonpaa::kytkeToinenPaa(Kiskonpaa *toinenpaa)
+{
+    kiskonToisenPaanLiitos_ = toinenpaa;
 }
 
 

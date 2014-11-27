@@ -40,7 +40,6 @@ class KiskoLiitos
 public:
     enum Liitostyyppi
     {
-        TYHJA = 0 /** Pisteeseen ei ole liitetty yhtään kiskoa */,
         RAIDEPUSKURI = 1 /** Vain yksi, raidepuskuriin päättyvä kisko */,
         SUORALIITOS = 2 /** Kahden kiskon välinen liitos samalla raiteella */,
         AKSELINLASKENTA = 6 /** Kaksi kiskoa eri raiteilla*/,
@@ -70,7 +69,7 @@ public:
      * @param Mistä kiskonpäästä tullaan
      * @return Kiskonpää, minne siirrytään tai 0, jos akseli suistuu tai törmää
      */
-    virtual Kiskonpaa* siirrySeuraavalle(Kiskonpaa* mista) = 0;
+    virtual Kiskonpaa* siirrySeuraavalle(Kiskonpaa* mista);
 
     /**
      * @brief Onko kysytty pää vaihteen aktiivisena päänä.
@@ -80,14 +79,14 @@ public:
      * @param paa
      * @return tosi, jos aktiivinen
      */
-    virtual bool onkoAktiivinenPaa(Kiskonpaa* paa) { return false; }
+    virtual bool onkoAktiivinenPaa(Kiskonpaa* paa) { return true; }
 
     /**
      * @brief lisaaPaa Liittää liitokseen kiskonpään
      * @param kiskonpaa Liitettävä kiskonpää
      * @param raidetunnus Raiteen tunnus vaihdetta tai akselinlaskentaa varten
      */
-    virtual void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus = 0);
+    virtual void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus = 0)  = 0;
 
     /**
      * @brief Tehdasmetodi, joka luo halutun liitoksen

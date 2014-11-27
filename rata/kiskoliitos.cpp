@@ -20,3 +20,32 @@
 **************************************************************************/
 
 #include "kiskoliitos.h"
+#include "raidepuskuri.h"
+#include "suoraliitos.h"
+
+KiskoLiitos::KiskoLiitos(int liitosId, int x, int y)
+    : liitosId_(liitosId), x_(x), y_(y)
+{
+
+}
+
+Kiskonpaa *KiskoLiitos::siirrySeuraavalle(Kiskonpaa *mista)
+{
+    // Ellei tässä ole vaihdetta tai akselinlaskentaa, niin
+    // mitään muuta ei tapahdu kuin seuraavan pään määrittäminen
+    return seuraava();
+}
+
+KiskoLiitos *KiskoLiitos::luoLiitos(int liitosId, int x, int y, int liitostyyppi)
+{
+    switch(liitostyyppi)
+    {
+    case RAIDEPUSKURI :
+        return new Raidepuskuri(liitosId, x, y);
+    case SUORALIITOS:
+        return new Suoraliitos(liitosId, x,y);
+    default:
+        return 0;
+    }
+
+}

@@ -63,8 +63,7 @@ public:
      * @brief Tähän kiskonpäähän kiskoliitoksella aktiivisesti kytketty pää
      * @return Vastakkainen pää
      */
-    Kiskonpaa* vastakkainenPaa() { return vastakkainenPaa(); }
-
+    Kiskonpaa* vastakkainenPaa();
     /**
      * @brief Akseli ajetaan tämän kiskon pään ylitse seuraavalle kiskolle
      * @return Pää, johon akseli saapuu (vastakkainen pää)
@@ -99,14 +98,14 @@ public:
      * @brief Kytkee tämän kiskon toisen pään
      * @param toinenpaa
      */
-    void kytkeToinenPaa(Kiskoliitos* toinenpaa);
+    void kytkeToinenPaa(Kiskonpaa *toinenpaa);
 
 private:
     KiskoLiitos* kiskoliitos_;
     Kiskonpaikka kiskonpaikka_;
 
-    /** Saman kiskon toisen pään kiskoliitos*/
-    KiskoLiitos* kiskonToisenPaanLiitos_;
+    /** Saman kiskon toinen pää*/
+    Kiskonpaa* kiskonToisenPaanLiitos_;
 
 };
 
