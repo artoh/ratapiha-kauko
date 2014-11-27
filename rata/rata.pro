@@ -15,4 +15,10 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    kiskoliitos.cpp \
+    kiskonpaa.cpp
+
+HEADERS += \
+    kiskoliitos.h \
+    kiskonpaa.h
