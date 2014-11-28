@@ -33,7 +33,12 @@ Kiskonpaa *KiskoLiitos::siirrySeuraavalle(Kiskonpaa *mista)
 {
     // Ellei tässä ole vaihdetta tai akselinlaskentaa, niin
     // mitään muuta ei tapahdu kuin seuraavan pään määrittäminen
-    return seuraava();
+    return seuraava(mista);
+}
+
+bool KiskoLiitos::onkoAktiivinenPaa(Kiskonpaa* /* paa */ )
+{
+    return true;    // Vain vaihteessa ei-aktiivisia päitä
 }
 
 KiskoLiitos *KiskoLiitos::luoLiitos(int liitosId, int x, int y, int liitostyyppi)

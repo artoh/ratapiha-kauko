@@ -22,7 +22,6 @@
 #ifndef KISKOLIITOS_H
 #define KISKOLIITOS_H
 
-#include <QtGlobal>
 
 class Kiskonpaa;
 
@@ -79,7 +78,7 @@ public:
      * @param paa
      * @return tosi, jos aktiivinen
      */
-    virtual bool onkoAktiivinenPaa(Kiskonpaa* paa) { return true; }
+    virtual bool onkoAktiivinenPaa(Kiskonpaa* paa);
 
     /**
      * @brief lisaaPaa Liittää liitokseen kiskonpään

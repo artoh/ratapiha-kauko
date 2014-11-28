@@ -12,7 +12,7 @@ public:
     Raidepuskuri(int liitosId, int x, int y);
 
     Liitostyyppi tyyppi() { return RAIDEPUSKURI; }
-    Kiskonpaa* seuraava() { return 0; /* Tästä päästä ajetaan ulos */ }
+    Kiskonpaa *seuraava(Kiskonpaa* mista);
     void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus=0);
 };
 

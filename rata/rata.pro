@@ -17,8 +17,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     kiskoliitos.cpp \
-    kiskonpaa.cpp
+    kiskonpaa.cpp \
+    akselinlaskentaliitos.cpp \
+    raidepuskuri.cpp \
+    suoraliitos.cpp \
+    ratalaite.cpp
 
 HEADERS += \
     kiskoliitos.h \
-    kiskonpaa.h
+    kiskonpaa.h \
+    akselinlaskentaliitos.h \
+    raidepuskuri.h \
+    suoraliitos.h \
+    ratalaite.h

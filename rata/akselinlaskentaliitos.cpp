@@ -1,8 +1,11 @@
 #include "akselinlaskentaliitos.h"
 #include "kiskonpaa.h"
 
-AkselinlaskentaLiitos::AkselinlaskentaLiitos()
+
+AkselinlaskentaLiitos::AkselinlaskentaLiitos(int liitosId, int x, int y)
+    : Suoraliitos(liitosId, x, y), ekaLaite_(0), tokaLaite_(0)
 {
+
 }
 
 Kiskonpaa *AkselinlaskentaLiitos::siirrySeuraavalle(Kiskonpaa *mista)
@@ -27,12 +30,12 @@ void AkselinlaskentaLiitos::lisaaPaa(Kiskonpaa *kiskonpaa, int raidetunnus)
     // raidetunnus ilmaisee aina raiteen, jolta akseli lasketaan ulos
     if( ekaPaa_ )
     {
-        ekaPaa_ = paa;
+        ekaPaa_ = kiskonpaa;
         ekaLaite_ = new Ratalaite( Ratalaite::muodostaLaitetunnus(raidetunnus, 0xF) );
     }
     else
     {
-        tokaPaa_ = paa;
+        tokaPaa_ = kiskonpaa;
         tokaLaite_ = new Ratalaite( Ratalaite::muodostaLaitetunnus(raidetunnus, 0xF));
     }
 }

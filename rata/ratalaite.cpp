@@ -1,6 +1,7 @@
 #include "ratalaite.h"
+#include <QDebug>
 
-Ratalaite::Ratalaite(quint32 laitetunnus)
+Ratalaite::Ratalaite(int laitetunnus)
 {
     // Huom! Vain 20 bittiä merkitseviä
     laitetunnus_ = laitetunnus & 0xfffff;
@@ -8,13 +9,19 @@ Ratalaite::Ratalaite(quint32 laitetunnus)
     // Sitten tässä vaiheessa voisi rekisteröitä ratalaitteen
 }
 
-quint32 Ratalaite::muodostaLaitetunnus(int raidetunnus, int laiteosa)
+int Ratalaite::muodostaLaitetunnus(int raidetunnus, int laiteosa)
 {
-    return ( (raidetunnus & 0xffff) << 4 ) | (laiteosa & 0xf)
+    return ( (raidetunnus & 0xffff) << 4 ) | (laiteosa & 0xf) ;
+}
+
+void Ratalaite::komento(int /* komento */)
+{
+    // Runko ei tee mitään
 }
 
 void Ratalaite::lahetaViesti(int viesti)
 {
-    quint32 kokoviesti = 0xf0000000 | ((viesti & 0xf ) << 20) | laitetunnus();
+    int kokoviesti = 0xf0000000 | ((viesti & 0xf ) << 20) | laitetunnus();
     // Sitten tämä viesti pitäisi vielä lähettääkin ;)
+    qDebug() << kokoviesti;
 }

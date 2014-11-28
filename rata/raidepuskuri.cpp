@@ -1,8 +1,13 @@
 #include "raidepuskuri.h"
 
 Raidepuskuri::Raidepuskuri(int liitosId, int x, int y)
-    : Kiskonpaa(liitosId, x, y)
+    : KiskoLiitos(liitosId, x, y)
 {
+}
+
+Kiskonpaa *Raidepuskuri::seuraava(Kiskonpaa* /* mista */)
+{
+    return 0;   // Aina ajetaan ulos
 }
 
 void Raidepuskuri::lisaaPaa(Kiskonpaa* /* kiskonpaa*/ , int /*raidetunnus*/)

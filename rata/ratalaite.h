@@ -1,7 +1,6 @@
 #ifndef RATALAITE_H
 #define RATALAITE_H
 
-#include <QtGlobal>
 
 /**
  * @brief Kantaluokka radalla oleville laitteille, jotka yhteydessä asetinlaitteeseen
@@ -14,13 +13,13 @@
 class Ratalaite
 {
 public:
-    Ratalaite(quint32 laitetunnus);
+    Ratalaite(int laitetunnus);
 
     /**
      * @brief Ratalaitteen tunnus
      * @return Laitteen 20-bittinen laitetunnus
      */
-    quint32 laitetunnus() { return laitetunnus; }
+    int laitetunnus() const { return laitetunnus_; }
 
     /**
      * @brief Muodostaa laitetunnuksen
@@ -28,23 +27,22 @@ public:
      * @param laiteosa Laitetyypin tunnus (4 bittiä)
      * @return Laitetunnus (20 bittiä)
      */
-    static quint32 muodostaLaitetunnus(int raidetunnus, int laiteosa);
+    static int muodostaLaitetunnus(int raidetunnus, int laiteosa);
 
     /**
      * @brief Asetinlaitteen antaman komennon käsittely
      * @param komento 8-bittinen käskysanoma
      */
-    virtual void komento(int komento) { ; }
+    virtual void komento(int komento);
 
-protected:
     /**
      * @brief Lähettää tilaviestin asetinlaitteelle
      * @param viesti Lähetettävä tilaviesti
      */
-    void lahetaViesti( quint8 viesti);
+    void lahetaViesti( int viesti);
 
 private:
-    quint32 laitetunnus_;
+    int laitetunnus_;
 
 };
 

@@ -1,7 +1,7 @@
 #include "suoraliitos.h"
 
 Suoraliitos::Suoraliitos(int liitosId, int x, int y)
-    : KiskoLiitos(liitosId, x, y), ekaPaa(0), tokaPaa(0)
+    : KiskoLiitos(liitosId, x, y), ekaPaa_(0), tokaPaa_(0)
 {
 }
 
