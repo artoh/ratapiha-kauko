@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     akselinlaskentaliitos.cpp \
     raidepuskuri.cpp \
     suoraliitos.cpp \
-    ratalaite.cpp
+    ratalaite.cpp \
+    raideristeys.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -29,4 +30,5 @@ HEADERS += \
     akselinlaskentaliitos.h \
     raidepuskuri.h \
     suoraliitos.h \
-    ratalaite.h
+    ratalaite.h \
+    raideristeys.h

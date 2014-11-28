@@ -5,7 +5,7 @@ Suoraliitos::Suoraliitos(int liitosId, int x, int y)
 {
 }
 
-Kiskonpaa *Suoraliitos::seuraava(Kiskonpaa *mista)
+Kiskonpaa *Suoraliitos::seuraava(Kiskonpaa *mista) const
 {
     // Suorassa liitoksessa aivan vallan yksinkertaisesti
     // siirrytään kiskolta toiselle

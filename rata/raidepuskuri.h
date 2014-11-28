@@ -11,8 +11,8 @@ class Raidepuskuri : public KiskoLiitos
 public:
     Raidepuskuri(int liitosId, int x, int y);
 
-    Liitostyyppi tyyppi() { return RAIDEPUSKURI; }
-    Kiskonpaa *seuraava(Kiskonpaa* mista);
+    Liitostyyppi tyyppi() const { return RAIDEPUSKURI; }
+    Kiskonpaa *seuraava(Kiskonpaa* mista) const;
     void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus=0);
 };
 

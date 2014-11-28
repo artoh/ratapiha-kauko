@@ -12,8 +12,8 @@ class Suoraliitos : public KiskoLiitos
 public:
     Suoraliitos(int liitosId, int x, int y);
 
-    Liitostyyppi tyyppi() { return SUORALIITOS; }
-    Kiskonpaa* seuraava(Kiskonpaa *mista);
+    Liitostyyppi tyyppi() const { return SUORALIITOS; }
+    Kiskonpaa* seuraava(Kiskonpaa *mista) const;
     void lisaaPaa(Kiskonpaa *kiskonpaa, int raidetunnus=0);
 
 protected:

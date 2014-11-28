@@ -51,17 +51,17 @@ public:
     KiskoLiitos(int liitosId, int x, int y);
 
     int liitosId() { return liitosId_; }
-    int x() { return x_; }
-    int y() { return y_; }
+    int x() const { return x_; }
+    int y() const { return y_; }
 
-    virtual Liitostyyppi tyyppi() = 0;
+    virtual Liitostyyppi tyyppi() const = 0;
 
     /**
      * @brief Seuraava kiskonpää, johon tullaan saavuttaessa tietystä suunnasta.
      * @param mista Kiskonpää, mistä saavutaan
      * @return Vastakkainen kiskonpää tai 0, ellei voi kulkea
      */
-    virtual Kiskonpaa* seuraava(Kiskonpaa* mista) = 0;
+    virtual Kiskonpaa* seuraava(Kiskonpaa* mista) const = 0;
 
     /**
      * @brief Siirtyy liitoksen ylitse
@@ -78,7 +78,7 @@ public:
      * @param paa
      * @return tosi, jos aktiivinen
      */
-    virtual bool onkoAktiivinenPaa(Kiskonpaa* paa);
+    virtual bool onkoAktiivinenPaa(Kiskonpaa* paa) const;
 
     /**
      * @brief lisaaPaa Liittää liitokseen kiskonpään

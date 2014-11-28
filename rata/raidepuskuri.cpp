@@ -5,7 +5,7 @@ Raidepuskuri::Raidepuskuri(int liitosId, int x, int y)
 {
 }
 
-Kiskonpaa *Raidepuskuri::seuraava(Kiskonpaa* /* mista */)
+Kiskonpaa *Raidepuskuri::seuraava(Kiskonpaa* /* mista */) const
 {
     return 0;   // Aina ajetaan ulos
 }

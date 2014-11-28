@@ -19,38 +19,26 @@
 **
 **************************************************************************/
 
+
+#ifndef RAIDERISTEYS_H
+#define RAIDERISTEYS_H
+
 #include "kiskoliitos.h"
-#include "raidepuskuri.h"
-#include "suoraliitos.h"
 
-KiskoLiitos::KiskoLiitos(int liitosId, int x, int y)
-    : liitosId_(liitosId), x_(x), y_(y)
+class RaideRisteys : public KiskoLiitos
 {
+public:
+    RaideRisteys(int liitosId, int x, int y);
 
-}
+    Liitostyyppi tyyppi() const { return RAIDERISTEYS; }
 
-Kiskonpaa *KiskoLiitos::siirrySeuraavalle(Kiskonpaa *mista)
-{
-    // Ellei tässä ole vaihdetta tai akselinlaskentaa, niin
-    // mitään muuta ei tapahdu kuin seuraavan pään määrittäminen
-    return seuraava(mista);
-}
+    Kiskonpaa* seuraava(Kiskonpaa *mista) const;
 
-bool KiskoLiitos::onkoAktiivinenPaa(Kiskonpaa* /* paa */ ) const
-{
-    return true;    // Vain vaihteessa ei-aktiivisia päitä
-}
+    void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus = 0);
 
-KiskoLiitos *KiskoLiitos::luoLiitos(int liitosId, int x, int y, int liitostyyppi)
-{
-    switch(liitostyyppi)
-    {
-    case RAIDEPUSKURI :
-        return new Raidepuskuri(liitosId, x, y);
-    case SUORALIITOS:
-        return new Suoraliitos(liitosId, x,y);
-    default:
-        return 0;
-    }
 
-}
+private:
+    Kiskonpaa* paat_[4];
+};
+
+#endif // RAIDERISTEYS_H

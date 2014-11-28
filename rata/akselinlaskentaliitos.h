@@ -12,9 +12,9 @@ class AkselinlaskentaLiitos : public Suoraliitos
 public:
     AkselinlaskentaLiitos(int liitosId, int x, int y);
 
-    Liitostyyppi tyyppi() { return AKSELINLASKENTA; }
+    Liitostyyppi tyyppi() const { return AKSELINLASKENTA; }
 
-    Kiskonpaa* siirrySeuraavalle(Kiskonpaa *mista);
+    Kiskonpaa* siirrySeuraavalle(Kiskonpaa *mista) const ;
     void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus = 0);
 
 private:
