@@ -13,7 +13,13 @@
 class Ratalaite
 {
 public:
-    Ratalaite(int laitetunnus);
+    Ratalaite(int laitetunnus = 0);
+
+    /**
+     * @brief Asettaa laitetunnuksen ja rekisteröi laitteen
+     * @param laitetunnus Laitteen 20-bittinen laitetunnus
+     */
+    void asetaLaitetunnus(int laitetunnus);
 
     /**
      * @brief Ratalaitteen tunnus

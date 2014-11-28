@@ -3,6 +3,14 @@
 
 Ratalaite::Ratalaite(int laitetunnus)
 {
+    if( laitetunnus)
+        asetaLaitetunnus(laitetunnus);
+    else
+        laitetunnus_ = 0;
+}
+
+void Ratalaite::asetaLaitetunnus(int laitetunnus)
+{
     // Huom! Vain 20 bittiä merkitseviä
     laitetunnus_ = laitetunnus & 0xfffff;
 

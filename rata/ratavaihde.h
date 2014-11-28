@@ -20,31 +20,27 @@
 **************************************************************************/
 
 
-#ifndef RAIDERISTEYS_H
-#define RAIDERISTEYS_H
+#ifndef RATAVAIHDE_H
+#define RATAVAIHDE_H
 
 #include "kiskoliitos.h"
+#include "ratalaite.h"
 
-/**
- * @brief Kaksi toisiaan risteävää raidetta
- *
- * Kahden raiteen risteys, jossa ei ole vaihdetta
- *
- */
-class RaideRisteys : public KiskoLiitos
+class RataVaihde : public KiskoLiitos, public Ratalaite
 {
 public:
-    RaideRisteys(int liitosId, int x, int y);
+    RataVaihde(int liitosId, int x, int y);
 
-    Liitostyyppi tyyppi() const { return RAIDERISTEYS; }
-
+    Liitostyyppi tyyppi() const;
     Kiskonpaa* seuraava(Kiskonpaa *mista) const;
+    Kiskonpaa* siirrySeuraavalle(Kiskonpaa *mista);
 
-    void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus = 0);
+    bool onkoAktiivinenPaa(Kiskonpaa *paa) const;
 
+    void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus=0);
 
-private:
-    Kiskonpaa* paat_[4];
+    void komento(int komento);
+
 };
 
-#endif // RAIDERISTEYS_H
+#endif // RATAVAIHDE_H

@@ -22,6 +22,8 @@
 #include "kiskoliitos.h"
 #include "raidepuskuri.h"
 #include "suoraliitos.h"
+#include "akselinlaskentaliitos.h"
+#include "raideristeys.h"
 
 KiskoLiitos::KiskoLiitos(int liitosId, int x, int y)
     : liitosId_(liitosId), x_(x), y_(y)
@@ -49,6 +51,10 @@ KiskoLiitos *KiskoLiitos::luoLiitos(int liitosId, int x, int y, int liitostyyppi
         return new Raidepuskuri(liitosId, x, y);
     case SUORALIITOS:
         return new Suoraliitos(liitosId, x,y);
+    case AKSELINLASKENTA :
+        return new AkselinlaskentaLiitos(liitosId, x, y);
+    case RAIDERISTEYS :
+        return new RaideRisteys(liitosId, x, y);
     default:
         return 0;
     }
