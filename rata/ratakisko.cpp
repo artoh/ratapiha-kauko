@@ -20,54 +20,33 @@
 **************************************************************************/
 
 
+#include <QtGui/QPainter>
+
+#include "ratakisko.h"
 #include "kiskonpaa.h"
 #include "kiskoliitos.h"
 
-Kiskonpaa::Kiskonpaa(KiskoLiitos *kiskoliitos, int /* kiskonpaikka */)
-    : kiskoliitos_(kiskoliitos)
+
+RataKisko::RataKisko(Kiskonpaa *etela, Kiskonpaa *pohjoinen, int sn, int kiskotieto)
+    : QGraphicsItem(), RataKiskoTieto(etela, pohjoinen, sn, kiskotieto)
 {
+
+    QLineF viiva = QLineF( etelaPaa()->x(), etelaPaa()->y(), pohjoisPaa()->x(), pohjoisPaa()->y() );
+
+    pituus_ = viiva.length();
+    setRotation(0.0 - viiva.angle());
+    setPos( viiva.p1());
+
 }
 
-Kiskonpaa *Kiskonpaa::vastakkainenPaa()
+QRectF RataKisko::boundingRect() const
 {
-    return kiskoliitos_->seuraava(this);
+    return QRectF(-15.0, -15.0, pituus()+30.0, 30.0);
 }
 
-Kiskonpaa *Kiskonpaa::ajaUlos()
+void RataKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    return kiskoliitos_->siirrySeuraavalle(this);
+    // Aluksi piirretään vain viiva ;)
+    painter->setPen( QPen(QBrush(Qt::black), 2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    painter->drawLine(0.0, 0.0, pituus(), 0.0);
 }
-
-void Kiskonpaa::ajaSisaan()
-{
-    ;
-}
-
-int Kiskonpaa::x()
-{
-    return kiskoliitos_->x();
-}
-
-int Kiskonpaa::y()
-{
-    return kiskoliitos_->y();
-}
-
-bool Kiskonpaa::onkoAktiivinen()
-{
-    return kiskoliitos_->onkoAktiivinenPaa(this);
-}
-
-Kiskonpaa::RaiteenSulku Kiskonpaa::raiteenSulku()
-{
-    return SP_EI;
-}
-
-void Kiskonpaa::kytkeToinenPaa(Kiskonpaa *toinenpaa)
-{
-    kiskonToisenPaanLiitos_ = toinenpaa;
-}
-
-
-
-

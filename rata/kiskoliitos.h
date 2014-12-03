@@ -46,6 +46,14 @@ public:
         RISTEYSVAIHDE = 0x18 /** Molemminpuolinen vaihde, kaksi kiskoa*/,
         RAIDERISTEYS = 0x30 /** Kahden raiteen risteys ilman vaihdetta, neljä kiskoa*/
     };
+    enum VaihteenTilaBitit
+    {
+        VAIHDE_VASEMMALLE = 0x01 /** Vaihde on vastavaihteeseen katsottuna vasemmalle */ ,
+        VAIHDE_OIKEALLE = 0x02 /** Vaihde on vastavaihteeseen katsottuna oikealle */,
+        VAIHDE_VALVOTTU = 0x04 /** Vaihde on valvotussa pääteasennossa */,
+        VAIHDE_KAANTYY = 0x40 /** Vaihde on kääntymässä käskyn mukaan*/,
+        VAIHDE_OK = 0x80 /** Vaihdessa ei ole vikoja */
+    };
 
 
     KiskoLiitos(int liitosId, int x, int y);

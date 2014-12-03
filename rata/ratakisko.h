@@ -20,54 +20,26 @@
 **************************************************************************/
 
 
-#include "kiskonpaa.h"
-#include "kiskoliitos.h"
+#ifndef RATAKISKO_H
+#define RATAKISKO_H
 
-Kiskonpaa::Kiskonpaa(KiskoLiitos *kiskoliitos, int /* kiskonpaikka */)
-    : kiskoliitos_(kiskoliitos)
+#include <QtWidgets/QGraphicsItem>
+
+#include "ratakiskotieto.h"
+
+class RataKisko : public QGraphicsItem, RataKiskoTieto
 {
-}
 
-Kiskonpaa *Kiskonpaa::vastakkainenPaa()
-{
-    return kiskoliitos_->seuraava(this);
-}
+public:
+    RataKisko(Kiskonpaa* etela, Kiskonpaa* pohjoinen, int sn, int kiskotieto);
 
-Kiskonpaa *Kiskonpaa::ajaUlos()
-{
-    return kiskoliitos_->siirrySeuraavalle(this);
-}
+    QRectF boundingRect() const;
 
-void Kiskonpaa::ajaSisaan()
-{
-    ;
-}
+    qreal pituus() const { return pituus_; }
+    void paint(QPainter *painter,  const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-int Kiskonpaa::x()
-{
-    return kiskoliitos_->x();
-}
+protected:
+    qreal pituus_;
+};
 
-int Kiskonpaa::y()
-{
-    return kiskoliitos_->y();
-}
-
-bool Kiskonpaa::onkoAktiivinen()
-{
-    return kiskoliitos_->onkoAktiivinenPaa(this);
-}
-
-Kiskonpaa::RaiteenSulku Kiskonpaa::raiteenSulku()
-{
-    return SP_EI;
-}
-
-void Kiskonpaa::kytkeToinenPaa(Kiskonpaa *toinenpaa)
-{
-    kiskonToisenPaanLiitos_ = toinenpaa;
-}
-
-
-
-
+#endif // RATAKISKO_H

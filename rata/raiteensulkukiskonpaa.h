@@ -20,42 +20,45 @@
 **************************************************************************/
 
 
-#ifndef RATAVAIHDE_H
-#define RATAVAIHDE_H
+#ifndef RAITEENSULKUKISKONPAA_H
+#define RAITEENSULKUKISKONPAA_H
 
-
-#include "kiskoliitos.h"
+#include "kiskonpaa.h"
 #include "ratalaite.h"
 
 /**
- * @brief Radalla oleva yksipuoleinen vaihde
+ * @brief Kiskon pää, jossa on raiteensulku
  */
-class RataVaihde : public KiskoLiitos, public Ratalaite
-{
+class RaiteenSulkuKiskonpaa : public Kiskonpaa, Ratalaite
+{        
 public:
-    RataVaihde(int liitosId, int x, int y);
+    enum RaiteenSulunTila
+    {
+        POISSAKISKOLTA = 0x01,
+        KISKOLLA = 0x02,
+        VALVOTTU = 0x04,
+        KAANTYY = 0x40,
+        SPOK = 0x80
+    };
 
-    Liitostyyppi tyyppi() const { return VAIHDE; }
-    Kiskonpaa* seuraava(Kiskonpaa *mista) const;
-    Kiskonpaa *siirrySeuraavalle(Kiskonpaa *mista);
 
-    bool onkoAktiivinenPaa(Kiskonpaa *paa) const;
+    RaiteenSulkuKiskonpaa(KiskoLiitos* kiskoliitos, int kiskonpaikka, int raide);
 
-    void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus=0);
+    RaiteenSulku raiteenSulku();
+
+    Kiskonpaa* ajaUlos();
+    void ajaSisaan();
+
+    bool onkoAktiivinen();
 
     void komento(int komento);
-    void viiveValmis(int viesti);
+    void viiveValmis(int komento);
 
 protected:
-    Kiskonpaa *vasen_, *oikea_, *kanta_;
-    /**
-     * @brief Onko vaihde jatkoksesta katsottuna etelän suuntaan
-     */
+    int raiteenSulunTila() const { return raiteensuluntila_; }
 
-    int vaihteenTila_;
+    int raiteensuluntila_;
 
-    int vaihteenTila() const { return vaihteenTila_; }
-    void ilmoitaTila() const;
 };
 
-#endif // RATAVAIHDE_H
+#endif // RAITEENSULKUKISKONPAA_H

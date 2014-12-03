@@ -20,54 +20,13 @@
 **************************************************************************/
 
 
+#include "ratakiskotieto.h"
+
 #include "kiskonpaa.h"
-#include "kiskoliitos.h"
 
-Kiskonpaa::Kiskonpaa(KiskoLiitos *kiskoliitos, int /* kiskonpaikka */)
-    : kiskoliitos_(kiskoliitos)
+RataKiskoTieto::RataKiskoTieto(Kiskonpaa *etelaPaa, Kiskonpaa *pohjoisPaa, int sn, int kiskotieto)
+    : etelaPaa_(etelaPaa), pohjoisPaa_(pohjoisPaa), sn_(sn), kiskotieto_(kiskotieto)
 {
+    etelaPaa_->kytkeToinenPaa(pohjoisPaa_);
+    pohjoisPaa_->kytkeToinenPaa(etelaPaa_);
 }
-
-Kiskonpaa *Kiskonpaa::vastakkainenPaa()
-{
-    return kiskoliitos_->seuraava(this);
-}
-
-Kiskonpaa *Kiskonpaa::ajaUlos()
-{
-    return kiskoliitos_->siirrySeuraavalle(this);
-}
-
-void Kiskonpaa::ajaSisaan()
-{
-    ;
-}
-
-int Kiskonpaa::x()
-{
-    return kiskoliitos_->x();
-}
-
-int Kiskonpaa::y()
-{
-    return kiskoliitos_->y();
-}
-
-bool Kiskonpaa::onkoAktiivinen()
-{
-    return kiskoliitos_->onkoAktiivinenPaa(this);
-}
-
-Kiskonpaa::RaiteenSulku Kiskonpaa::raiteenSulku()
-{
-    return SP_EI;
-}
-
-void Kiskonpaa::kytkeToinenPaa(Kiskonpaa *toinenpaa)
-{
-    kiskonToisenPaanLiitos_ = toinenpaa;
-}
-
-
-
-

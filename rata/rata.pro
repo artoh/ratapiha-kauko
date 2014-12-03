@@ -4,13 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core
-
-QT       -= gui
+QT       += gui
+QT       += widgets
+QT       += sql
 
 TARGET = rata
-CONFIG   += console
-CONFIG   -= app_bundle
 
 TEMPLATE = app
 
@@ -23,7 +21,12 @@ SOURCES += main.cpp \
     suoraliitos.cpp \
     ratalaite.cpp \
     raideristeys.cpp \
-    ratavaihde.cpp
+    ratavaihde.cpp \
+    raiteensulkukiskonpaa.cpp \
+    rataristeysvaihde.cpp \
+    ratakiskotieto.cpp \
+    ratakisko.cpp \
+    ratascene.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -33,4 +36,9 @@ HEADERS += \
     suoraliitos.h \
     ratalaite.h \
     raideristeys.h \
-    ratavaihde.h
+    ratavaihde.h \
+    raiteensulkukiskonpaa.h \
+    rataristeysvaihde.h \
+    ratakiskotieto.h \
+    ratakisko.h \
+    ratascene.h

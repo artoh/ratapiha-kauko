@@ -51,6 +51,14 @@ public:
         D = 0xF /* Liitoksen pohjoispuolella oikeaan + */
     };
 
+    enum RaiteenSulku
+    {
+        SP_EI = 0 /* Ei raiteensulkua */,
+        SP_SALLII = 1 /* Raiteensulku sallii liikenteen */,
+        SP_ESTAA = 2 /* Raiteensulku estää liikenteen */
+
+    };
+
     Kiskonpaa(KiskoLiitos* kiskoliitos, int kiskonpaikka);
 
     /**
@@ -68,7 +76,12 @@ public:
      * @brief Akseli ajetaan tämän kiskon pään ylitse seuraavalle kiskolle
      * @return Pää, johon akseli saapuu (vastakkainen pää)
      */
-    Kiskonpaa* ajaUlos();
+    virtual Kiskonpaa* ajaUlos();
+
+    /**
+     * @brief Akseli ajetaan sisään
+     */
+    virtual void ajaSisaan();
 
     /**
      * @brief Kiskon paikka liitoksessa
@@ -92,7 +105,13 @@ public:
      * @brief Onko tämä kiskonpää vaihteen aktiivinen pää
      * @return tosi, jos on aktiivinen pää
      */
-    bool onkoAktiivinen();
+    virtual bool onkoAktiivinen();
+
+    /**
+     * @brief Raiteensulun tila
+     * @return 0 - Ei, 1 - Sallii, 2 - Estää
+     */
+    virtual RaiteenSulku raiteenSulku();
 
     /**
      * @brief Kytkee tämän kiskon toisen pään

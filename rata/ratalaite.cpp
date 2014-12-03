@@ -27,9 +27,20 @@ void Ratalaite::komento(int /* komento */)
     // Runko ei tee mitään
 }
 
-void Ratalaite::lahetaViesti(int viesti)
+void Ratalaite::viiveValmis(int /* viesti */)
+{
+    // Runko ei tee mitään
+}
+
+void Ratalaite::lahetaViesti(int viesti) const
 {
     int kokoviesti = 0xf0000000 | ((viesti & 0xf ) << 20) | laitetunnus();
     // Sitten tämä viesti pitäisi vielä lähettääkin ;)
     qDebug() << kokoviesti;
+}
+
+void Ratalaite::viiveToiminto(int kesto, int viesti) const
+{
+    // @TODO : Tämä toiminto on vielä toteuttamatta
+    qDebug() << "Viive aktivoitu " << kesto << " s, viesti: " << viesti << "\n";
 }

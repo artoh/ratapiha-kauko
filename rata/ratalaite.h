@@ -42,10 +42,27 @@ public:
     virtual void komento(int komento);
 
     /**
+     * @brief Tätä kutsutaan, kun viiveellinen toiminto valmis
+     *
+     * Esimerkiksi vaihdetta käännettäessä saadaan ajastimelta viesti halutun
+     * ajan jälkeen
+     */
+    virtual void viiveValmis(int viesti);
+
+
+    /**
      * @brief Lähettää tilaviestin asetinlaitteelle
      * @param viesti Lähetettävä tilaviesti
      */
-    void lahetaViesti( int viesti);
+    void lahetaViesti( int viesti) const;
+
+    /**
+     * @brief Pyytää viiveValmis-viestiä halutun viiveen jälkeen
+     * @param Viiveen pituus simulaatiosekunteina
+     * @param Viesti viiveen kuluttua
+     */
+    void viiveToiminto(int kesto, int viesti) const;
+
 
 private:
     int laitetunnus_;

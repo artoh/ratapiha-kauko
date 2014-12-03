@@ -20,54 +20,31 @@
 **************************************************************************/
 
 
-#include "kiskonpaa.h"
+#ifndef RATASCENE_H
+#define RATASCENE_H
+
+#include <QtWidgets/QGraphicsScene>
+
 #include "kiskoliitos.h"
+#include "ratakisko.h"
+#include <QMap>
 
-Kiskonpaa::Kiskonpaa(KiskoLiitos *kiskoliitos, int /* kiskonpaikka */)
-    : kiskoliitos_(kiskoliitos)
+class RataScene : public QGraphicsScene
 {
-}
-
-Kiskonpaa *Kiskonpaa::vastakkainenPaa()
-{
-    return kiskoliitos_->seuraava(this);
-}
-
-Kiskonpaa *Kiskonpaa::ajaUlos()
-{
-    return kiskoliitos_->siirrySeuraavalle(this);
-}
-
-void Kiskonpaa::ajaSisaan()
-{
-    ;
-}
-
-int Kiskonpaa::x()
-{
-    return kiskoliitos_->x();
-}
-
-int Kiskonpaa::y()
-{
-    return kiskoliitos_->y();
-}
-
-bool Kiskonpaa::onkoAktiivinen()
-{
-    return kiskoliitos_->onkoAktiivinenPaa(this);
-}
-
-Kiskonpaa::RaiteenSulku Kiskonpaa::raiteenSulku()
-{
-    return SP_EI;
-}
-
-void Kiskonpaa::kytkeToinenPaa(Kiskonpaa *toinenpaa)
-{
-    kiskonToisenPaanLiitos_ = toinenpaa;
-}
+    Q_OBJECT
+public:
+    explicit RataScene(QObject *parent = 0);
 
 
+    void lataaRata();
+signals:
+
+public slots:
 
 
+protected:
+    QMap<int,KiskoLiitos*> kiskoliitokset_;
+    QMap<int,RataKisko*> kiskot_;
+};
+
+#endif // RATASCENE_H

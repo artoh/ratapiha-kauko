@@ -20,42 +20,42 @@
 **************************************************************************/
 
 
-#ifndef RATAVAIHDE_H
-#define RATAVAIHDE_H
-
+#ifndef RATARISTEYSVAIHDE_H
+#define RATARISTEYSVAIHDE_H
 
 #include "kiskoliitos.h"
 #include "ratalaite.h"
 
 /**
- * @brief Radalla oleva yksipuoleinen vaihde
+ * @brief Risteysvaihde
+ *
+ *   A \/ C
+ *   B /\ D
+ *
  */
-class RataVaihde : public KiskoLiitos, public Ratalaite
+class RataRisteysVaihde : public KiskoLiitos, public Ratalaite
 {
 public:
-    RataVaihde(int liitosId, int x, int y);
+    RataRisteysVaihde(int liitosId, int x, int y);
 
-    Liitostyyppi tyyppi() const { return VAIHDE; }
-    Kiskonpaa* seuraava(Kiskonpaa *mista) const;
-    Kiskonpaa *siirrySeuraavalle(Kiskonpaa *mista);
+    Liitostyyppi tyyppi() const { return RISTEYSVAIHDE; }
+    Kiskonpaa *seuraava(Kiskonpaa *mista) const;
+    Kiskonpaa* siirrySeuraavalle(Kiskonpaa *mista);
 
     bool onkoAktiivinenPaa(Kiskonpaa *paa) const;
 
-    void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus=0);
+    void lisaaPaa(Kiskonpaa *kiskonpaa, int raidetunnus);
 
     void komento(int komento);
     void viiveValmis(int viesti);
 
-protected:
-    Kiskonpaa *vasen_, *oikea_, *kanta_;
-    /**
-     * @brief Onko vaihde jatkoksesta katsottuna etelän suuntaan
-     */
 
+protected:
+    Kiskonpaa *a_, *b_, *c_, *d_;
     int vaihteenTila_;
 
-    int vaihteenTila() const { return vaihteenTila_; }
+    int vaihteenTila() const { return vaihteenTila_;  }
     void ilmoitaTila() const;
 };
 
-#endif // RATAVAIHDE_H
+#endif // RATARISTEYSVAIHDE_H
