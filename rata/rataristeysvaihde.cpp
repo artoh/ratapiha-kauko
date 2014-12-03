@@ -24,7 +24,8 @@
 #include "kiskonpaa.h"
 
 RataRisteysVaihde::RataRisteysVaihde(int liitosId, int x, int y)
-    : KiskoLiitos(liitosId, x, y), Ratalaite(0)
+    : KiskoLiitos(liitosId, x, y), Ratalaite(0),
+      vaihteenTila_(0xad)
 {
 }
 

@@ -26,7 +26,10 @@ SOURCES += main.cpp \
     rataristeysvaihde.cpp \
     ratakiskotieto.cpp \
     ratakisko.cpp \
-    ratascene.cpp
+    ratascene.cpp \
+    laitekeskus.cpp \
+    pikaopastin.cpp \
+    rataview.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -41,4 +44,7 @@ HEADERS += \
     rataristeysvaihde.h \
     ratakiskotieto.h \
     ratakisko.h \
-    ratascene.h
+    ratascene.h \
+    laitekeskus.h \
+    pikaopastin.h \
+    rataview.h

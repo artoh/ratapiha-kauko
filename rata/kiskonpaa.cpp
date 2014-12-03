@@ -23,9 +23,33 @@
 #include "kiskonpaa.h"
 #include "kiskoliitos.h"
 
-Kiskonpaa::Kiskonpaa(KiskoLiitos *kiskoliitos, int /* kiskonpaikka */)
+Kiskonpaa::Kiskonpaa(KiskoLiitos *kiskoliitos, int  kiskonpaikka )
     : kiskoliitos_(kiskoliitos)
 {
+    // Tyyppisuojan takia kiskonpaikka pitää käsitellä switchillä
+    switch (kiskonpaikka) {
+    case E:
+        kiskonpaikka_ = E;
+        break;
+    case A:
+        kiskonpaikka_ = A;
+        break;
+    case B:
+        kiskonpaikka_ = B;
+        break;
+    case P:
+        kiskonpaikka_ = P;
+        break;
+    case C:
+       kiskonpaikka_ = C;
+       break;
+    case D:
+        kiskonpaikka_ = D;
+        break;
+    default:
+        kiskonpaikka_ = VIRHE;
+        break;
+    }
 }
 
 Kiskonpaa *Kiskonpaa::vastakkainenPaa()
@@ -56,6 +80,11 @@ int Kiskonpaa::y()
 bool Kiskonpaa::onkoAktiivinen()
 {
     return kiskoliitos_->onkoAktiivinenPaa(this);
+}
+
+bool Kiskonpaa::onkoPuskuri()
+{
+    return ( kiskoliitos()->tyyppi() == KiskoLiitos::RAIDEPUSKURI);
 }
 
 Kiskonpaa::RaiteenSulku Kiskonpaa::raiteenSulku()

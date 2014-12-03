@@ -1,4 +1,5 @@
 #include "ratalaite.h"
+#include "laitekeskus.h"
 #include <QDebug>
 
 Ratalaite::Ratalaite(int laitetunnus)
@@ -15,6 +16,7 @@ void Ratalaite::asetaLaitetunnus(int laitetunnus)
     laitetunnus_ = laitetunnus & 0xfffff;
 
     // Sitten tässä vaiheessa voisi rekisteröitä ratalaitteen
+    Laitekeskus::rekisteroiLaite(laitetunnus, this);
 }
 
 int Ratalaite::muodostaLaitetunnus(int raidetunnus, int laiteosa)

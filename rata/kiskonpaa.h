@@ -108,6 +108,12 @@ public:
     virtual bool onkoAktiivinen();
 
     /**
+     * @brief Onko tässä päässä raiteen loppu
+     * @return
+     */
+    bool onkoPuskuri();
+
+    /**
      * @brief Raiteensulun tila
      * @return 0 - Ei, 1 - Sallii, 2 - Estää
      */
@@ -125,6 +131,9 @@ private:
 
     /** Saman kiskon toinen pää*/
     Kiskonpaa* kiskonToisenPaanLiitos_;
+
+protected:
+    KiskoLiitos* kiskoliitos() { return kiskoliitos_; }
 
 };
 

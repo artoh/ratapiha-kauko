@@ -31,10 +31,12 @@
 #include "kiskoliitos.h"
 #include "kiskonpaa.h"
 #include "ratakisko.h"
+#include "pikaopastin.h"
 
 RataScene::RataScene(QObject *parent) :
     QGraphicsScene(parent)
 {
+    setBackgroundBrush( QBrush( Qt::lightGray));
 }
 
 void RataScene::lataaRata()
@@ -78,6 +80,7 @@ void RataScene::lataaRata()
         int etelapaikka = ( kiskotieto >> 8 ) & 0xF;
         int pohjoispaikka = (kiskotieto >> 12) & 0xF;
 
+
         Kiskonpaa* etelaPaa = new Kiskonpaa(liitosEtela, etelapaikka);
         Kiskonpaa* pohjoisPaa = new Kiskonpaa(liitosPohjoinen, pohjoispaikka);
 
@@ -87,6 +90,16 @@ void RataScene::lataaRata()
         RataKisko* kisko = new RataKisko(etelaPaa,pohjoisPaa,sn,kiskotieto);
         addItem(kisko);
         kiskot_.insert(kiskoid, kisko);
+    }
+
+    kysely.exec("select opastin, kisko, opastintyyppi from opastin");
+    while( kysely.next())
+    {
+        int opastinId = kysely.value(0).toInt();
+        int kiskoId = kysely.value(1).toInt();
+        int opastinTyyppi = kysely.value(2).toInt();
+
+        PikaOpastin* uusi = new PikaOpastin(kiskot_[kiskoId],opastinId, opastinTyyppi);
     }
 
 }
