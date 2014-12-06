@@ -25,7 +25,7 @@
 
 RataVaihde::RataVaihde(int liitosId, int x, int y)
     : KiskoLiitos(liitosId, x, y), Ratalaite(0),
-      vaihteenTila_(0x85), kanta_(0), vasen_(0), oikea_(0)
+      vasen_(0), oikea_(0), kanta_(0), vaihteenTila_(0x85)
 {
 }
 

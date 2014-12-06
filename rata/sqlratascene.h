@@ -20,34 +20,24 @@
 **************************************************************************/
 
 
-#ifndef LAITEKESKUS_H
-#define LAITEKESKUS_H
+#ifndef SQLRATASCENE_H
+#define SQLRATASCENE_H
 
-#include <QMap>
-#include "ratalaite.h"
+#include "ratascene.h"
 
 /**
- * @brief Ratalaitteiden yhteyskeskus, ainokainen
+ * @brief RataScene, johon on lisätty radan lataaminen sql-tietokannasta
+ *
  */
-class Laitekeskus
+class SqlRataScene : public RataScene
 {
-public:
+public:   
+    SqlRataScene(int aika);
 
-    static void rekisteroiLaite(int tunnus, Ratalaite* laite);
-
-    static int laitetta() { return keskus()->laitteet_.count(); }
-
-protected:
-    static Laitekeskus *keskus();
-    Laitekeskus();
-
-    static Laitekeskus* instanssi__;
-
-
-
-private:
-    QMap<int,Ratalaite*> laitteet_;
-
+    /**
+     * @brief Lataa radan Sql-tietokannasta
+     */
+    void lataaRata();
 };
 
-#endif // LAITEKESKUS_H
+#endif // SQLRATASCENE_H

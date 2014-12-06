@@ -36,6 +36,8 @@ public:
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
+    static void valkyta();
+
 protected:
     int laji_;
     int opasteet_;
@@ -45,6 +47,8 @@ protected:
 
     void piirraVari(QPainter *painter, qreal x, qreal y, qreal sade, int r, int g, int b, int r2, int g2, int b2, bool himmea=false);
     void piirraPimea(QPainter *painter, qreal x, qreal y, qreal sade);
+
+    static bool valkky__;
 };
 
 #endif // PIKAOPASTIN_H

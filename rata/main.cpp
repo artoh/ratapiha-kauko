@@ -4,8 +4,7 @@
 #include <QTime>
 #include <QGraphicsView>
 
-#include "ratascene.h"
-#include "laitekeskus.h"
+#include "sqlratascene.h"
 #include "rataview.h"
 
 int main(int argc, char *argv[])
@@ -18,13 +17,12 @@ int main(int argc, char *argv[])
 
 qDebug() << QCoreApplication::libraryPaths();
 
-    RataScene skene;
-    skene.lataaRata();
-    RataView view(&skene);
+    SqlRataScene *skene = new SqlRataScene(0);
+    skene->lataaRata();
+    RataView view(skene);
     view.show();
     view.ensureVisible(0.0,0.0,10.0,10.0);
 
     qDebug("Time elapsed: %d ms", t.elapsed());
-    qDebug() << Laitekeskus::laitetta() << " laitetta ";
     return a.exec();
 }

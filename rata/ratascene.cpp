@@ -20,86 +20,94 @@
 **************************************************************************/
 
 
-#include <QtSql/QSqlDatabase>
-#include <QtSql/QSqlQuery>
-#include <QtSql/QSqlError>
+
 #include <QVariant>
 #include <QDebug>
-#include <QMessageBox>
+
 
 #include "ratascene.h"
-#include "kiskoliitos.h"
-#include "kiskonpaa.h"
-#include "ratakisko.h"
+
 #include "pikaopastin.h"
 
-RataScene::RataScene(QObject *parent) :
-    QGraphicsScene(parent)
+RataScene::RataScene(int aika) :
+    QGraphicsScene(0), simulaatioAika_(aika),
+    nopeutusKerroin_(0)
 {
     setBackgroundBrush( QBrush( Qt::lightGray));
+
+    // Yhdistetään simulaatioajan timer
+    connect(&kelloTimer_, SLOT(timeout()), this, SLOT(sekuntiKulunut()));
+
+    // PiirtoTimerin avulla näyttö piirretään uudelleen puolen sekunnin välein,
+    // mikä on myös välkkyvien opastimien taajuus.
+    QTimer *piirtoTimer = new QTimer(this);
+    connect( piirtoTimer, SIGNAL(timeout()), this, SLOT(naytonPaivitys()));
+    piirtoTimer->start();
 }
 
-void RataScene::lataaRata()
+RataScene *RataScene::instanssi()
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("localhost");
-    db.setDatabaseName("rata");
-    db.setUserName("ratapiha");
-    db.setPassword("ratapiha");
+    return instanssi__;
+}
 
-    if( !db.open())
-        QMessageBox::critical(0, "Tietokantavirhe", db.lastError().text());
+void RataScene::rekisteroiLaite(int tunnus, Ratalaite *laite)
+{
+    instanssi()->laitteet_.insert(tunnus, laite);
+}
 
-    QSqlQuery kysely;
-    kysely.exec("select kiskoliitos,x,y,kiskoliitoslaji from kiskoliitos");
-    while( kysely.next())
+void RataScene::laiteKomento(int laitetunnus, int komento)
+{
+    Ratalaite* laite = instanssi()->laitteet_.value(laitetunnus, 0);
+    if( laite )
+        laite->komento(komento);
+}
+
+void RataScene::lisaaViiveToiminto(int laitetunnus, int viesti, int viive)
+{
+    int tietokentat = viesti << 20 | laitetunnus;
+    instanssi()->laitteidenViiveToimet_.insert( instanssi()->aika() + viive, tietokentat);
+}
+
+int RataScene::aika()
+{
+    return simulaatioAika_;
+}
+
+void RataScene::asetaNopeus(int nopeutuskerroin)
+{
+    nopeutusKerroin_ = nopeutuskerroin;
+    kelloTimer_.stop();
+    if( nopeuskerroin() )
+        kelloTimer_.start( nopeuskerroin());
+}
+
+void RataScene::sekuntiKulunut()
+{
+    simulaatioAika_++;
+    emit ajanMuutos( aika() );
+
+    // Viivästetyt laitetoiminnot
+    // Kun viive on kulunut, kutsutaan laitteiden viivevalmis-funktioita
+    QList<int> laitetoimet = laitteidenViiveToimet_.values(aika());
+    foreach (int laitetoimi, laitetoimet )
     {
-        int liitosid = kysely.value(0).toInt();
-        int x = kysely.value(1).toInt();
-        int y = 0-kysely.value(2).toInt();
-        int laji = kysely.value(3).toInt();
-
-        KiskoLiitos *uusiliitos = KiskoLiitos::luoLiitos(liitosid,x,y,laji);
-        kiskoliitokset_.insert(liitosid, uusiliitos);
-    }
-    qDebug() << "Luotu " << kiskoliitokset_.count() << " liitosta ";
-
-    kysely.exec("select kisko,raide,etela,pohjoinen,kiskotieto,sn from kisko");
-    while( kysely.next())
-    {
-        int kiskoid = kysely.value(0).toInt();
-        int raideid = kysely.value(1).toInt();
-        int etela = kysely.value(2).toInt();
-        int pohjoinen = kysely.value(3).toInt();
-        int kiskotieto = kysely.value(4).toInt();
-        int sn = kysely.value(5).toInt();
-
-        KiskoLiitos* liitosEtela = kiskoliitokset_[etela];
-        KiskoLiitos* liitosPohjoinen = kiskoliitokset_[pohjoinen];
-
-        int etelapaikka = ( kiskotieto >> 8 ) & 0xF;
-        int pohjoispaikka = (kiskotieto >> 12) & 0xF;
-
-
-        Kiskonpaa* etelaPaa = new Kiskonpaa(liitosEtela, etelapaikka);
-        Kiskonpaa* pohjoisPaa = new Kiskonpaa(liitosPohjoinen, pohjoispaikka);
-
-        liitosEtela->lisaaPaa(etelaPaa, raideid);
-        liitosPohjoinen->lisaaPaa(pohjoisPaa, raideid);
-
-        RataKisko* kisko = new RataKisko(etelaPaa,pohjoisPaa,sn,kiskotieto);
-        addItem(kisko);
-        kiskot_.insert(kiskoid, kisko);
+        int laitenro = laitetoimi & 0xfffff;
+        int viesti = laitetoimi >> 20;
+        Ratalaite* laite = laitteet_.value(laitenro, 0);
+        if( laite )
+            laite->viiveValmis(viesti);
     }
 
-    kysely.exec("select opastin, kisko, opastintyyppi from opastin");
-    while( kysely.next())
-    {
-        int opastinId = kysely.value(0).toInt();
-        int kiskoId = kysely.value(1).toInt();
-        int opastinTyyppi = kysely.value(2).toInt();
+    laitteidenViiveToimet_.remove(aika());
 
-        PikaOpastin* uusi = new PikaOpastin(kiskot_[kiskoId],opastinId, opastinTyyppi);
-    }
 
 }
+
+void RataScene::naytonPaivitys()
+{
+    PikaOpastin::valkyta();
+    // Piirtää näytön uudelleen
+    invalidate( sceneRect());
+}
+
+RataScene* RataScene::instanssi__ = 0;

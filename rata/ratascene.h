@@ -27,24 +27,83 @@
 
 #include "kiskoliitos.h"
 #include "ratakisko.h"
-#include <QMap>
+#include "ratalaite.h"
+#include <QHash>
+#include <QMultiMap>
+#include <QTimer>
 
+/**
+ * @brief Radan sisältävä skene
+ *
+ * Tätä luokkaa ei voi suodaan luoda, vaan tämän luokan perillinen (SqlRataScene)
+ * Tehokkuuden takia luokkafunktio ei tarkista, että instanssi todella on olemassa
+ */
 class RataScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    explicit RataScene(QObject *parent = 0);
+    /**
+     * @brief Rekisteröi ratalaitteen
+     *
+     * Ratalaite-kantaluokka kutsuu tätä
+     *
+     * @param tunnus 20-bittinen tunnus
+     * @param laite
+     */
+    static void rekisteroiLaite(int tunnus, Ratalaite *laite);
 
+    static void laiteKomento(int laitetunnus, int komento);
+    static void lisaaViiveToiminto(int laitetunnus, int viesti, int viive);
 
-    void lataaRata();
+    /**
+     * @brief Palauttaa simulaatioajan sekunteina alkuhetkestä
+     * @return
+     */
+    int aika();
+
+    int nopeuskerroin() { return nopeutusKerroin_; }
+
 signals:
 
+    void ajanMuutos(int simulaatioaika);
 public slots:
+    /**
+     * @brief Asettaa simulaation nopeuden
+     * @param nopeuskerroin Kuinka moninkertaiseksi simulaatio nopeutettu, 0 pysäytetty
+     */
+    void asetaNopeus(int nopeutuskerroin);
+
+    void sekuntiKulunut();
+
+    /**
+     * @brief Näyttöä päivitetään puolen sekunnin välein
+     *
+     * Näin toteutuu opasteiden välkytys, sekä vaihteiden yms.
+     * asentojen muuttuminen
+     *
+     */
+    void naytonPaivitys();
+
+
 
 
 protected:
-    QMap<int,KiskoLiitos*> kiskoliitokset_;
-    QMap<int,RataKisko*> kiskot_;
+    RataScene(int aika);
+    static RataScene* instanssi();
+
+    /** Simulaation aika sekunteina alkuhetkestä*/
+    int simulaatioAika_;
+    /** Kuinka moninkertaiseksi simulaation kello on nopeutettu*/
+    int nopeutusKerroin_;
+
+    QHash<int,Ratalaite*> laitteet_;
+    QHash<int,KiskoLiitos*> kiskoliitokset_;
+    QHash<int,RataKisko*> kiskot_;
+    QMultiMap<int,int> laitteidenViiveToimet_;
+
+    QTimer kelloTimer_;
+
+    static RataScene* instanssi__;
 };
 
 #endif // RATASCENE_H

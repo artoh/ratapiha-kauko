@@ -78,6 +78,11 @@ void PikaOpastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
 
 }
 
+void PikaOpastin::valkyta()
+{
+    valkky__ = ( valkky__ == false );
+}
+
 void PikaOpastin::piirraVari(QPainter *painter, qreal x, qreal y, qreal sade, int r, int g, int b, int r2, int g2, int b2, bool himmea)
 {
     QRadialGradient grad( x, y, sade*3.0, x, y  );
@@ -107,3 +112,5 @@ void PikaOpastin::piirraPimea(QPainter *painter, qreal x, qreal y, qreal sade)
     painter->drawEllipse(QPointF(x,y),sade,sade);
 
 }
+
+bool PikaOpastin::valkky__ = false;

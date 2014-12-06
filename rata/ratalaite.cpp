@@ -1,5 +1,5 @@
 #include "ratalaite.h"
-#include "laitekeskus.h"
+#include "ratascene.h"
 #include <QDebug>
 
 Ratalaite::Ratalaite(int laitetunnus)
@@ -16,7 +16,7 @@ void Ratalaite::asetaLaitetunnus(int laitetunnus)
     laitetunnus_ = laitetunnus & 0xfffff;
 
     // Sitten tässä vaiheessa voisi rekisteröitä ratalaitteen
-    Laitekeskus::rekisteroiLaite(laitetunnus, this);
+    RataScene::rekisteroiLaite(laitetunnus, this);
 }
 
 int Ratalaite::muodostaLaitetunnus(int raidetunnus, int laiteosa)
@@ -43,6 +43,5 @@ void Ratalaite::lahetaViesti(int viesti) const
 
 void Ratalaite::viiveToiminto(int kesto, int viesti) const
 {
-    // @TODO : Tämä toiminto on vielä toteuttamatta
-    qDebug() << "Viive aktivoitu " << kesto << " s, viesti: " << viesti << "\n";
+    RataScene::lisaaViiveToiminto(laitetunnus(), viesti, kesto);
 }
