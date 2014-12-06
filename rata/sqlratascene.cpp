@@ -36,7 +36,7 @@
 SqlRataScene::SqlRataScene(int aika)
     : RataScene(aika)
 {
-    instanssi__ = this;
+
 }
 
 void SqlRataScene::lataaRata()

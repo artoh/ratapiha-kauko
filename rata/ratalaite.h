@@ -1,6 +1,7 @@
 #ifndef RATALAITE_H
 #define RATALAITE_H
 
+class RataScene;
 
 /**
  * @brief Kantaluokka radalla oleville laitteille, jotka yhteydessä asetinlaitteeseen
@@ -63,9 +64,15 @@ public:
      */
     void viiveToiminto(int kesto, int viesti) const;
 
-
+    /**
+     * @brief Yhdistää skeneen laitetoimintoja varten
+     * @param skene
+     */
+    static void asetaSkene(RataScene *skene);
 private:
     int laitetunnus_;
+
+    static RataScene *skene__;
 
 };
 

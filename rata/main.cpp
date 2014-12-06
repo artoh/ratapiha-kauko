@@ -6,6 +6,7 @@
 
 #include "sqlratascene.h"
 #include "rataview.h"
+#include "ratalaite.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,6 +19,8 @@ int main(int argc, char *argv[])
 qDebug() << QCoreApplication::libraryPaths();
 
     SqlRataScene *skene = new SqlRataScene(0);
+    Ratalaite::asetaSkene(skene);
+
     skene->lataaRata();
     RataView view(skene);
     view.show();

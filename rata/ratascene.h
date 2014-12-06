@@ -50,10 +50,10 @@ public:
      * @param tunnus 20-bittinen tunnus
      * @param laite
      */
-    static void rekisteroiLaite(int tunnus, Ratalaite *laite);
+    void rekisteroiLaite(int tunnus, Ratalaite *laite);
 
-    static void laiteKomento(int laitetunnus, int komento);
-    static void lisaaViiveToiminto(int laitetunnus, int viesti, int viive);
+
+    void lisaaViiveToiminto(int laitetunnus, int viesti, int viive);
 
     /**
      * @brief Palauttaa simulaatioajan sekunteina alkuhetkestä
@@ -63,9 +63,15 @@ public:
 
     int nopeuskerroin() { return nopeutusKerroin_; }
 
+    /**
+     * @brief Lähettää viestin asetinlaitteeseen
+     * @param 32-bittinen viesti
+     */
+    void lahtetaViesti(unsigned int viesti);
 signals:
 
     void ajanMuutos(int simulaatioaika);
+    void astlViesti(unsigned int viesti);
 public slots:
     /**
      * @brief Asettaa simulaation nopeuden
@@ -84,7 +90,11 @@ public slots:
      */
     void naytonPaivitys();
 
-
+    /**
+     * @brief Välittää asetinlaitteelta sanoman laitteelle
+     * @param komento 32-bittinen asetinlaitesanoma
+     */
+    void sanoma(quint32 sanoma);
 
 
 protected:
@@ -102,8 +112,6 @@ protected:
     QMultiMap<int,int> laitteidenViiveToimet_;
 
     QTimer kelloTimer_;
-
-    static RataScene* instanssi__;
 };
 
 #endif // RATASCENE_H

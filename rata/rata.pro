@@ -7,6 +7,7 @@
 QT       += gui
 QT       += widgets
 QT       += sql
+QT       += network
 
 TARGET = rata
 
@@ -29,7 +30,8 @@ SOURCES += main.cpp \
     ratascene.cpp \
     pikaopastin.cpp \
     rataview.cpp \
-    sqlratascene.cpp
+    sqlratascene.cpp \
+    ratasoketti.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -47,4 +49,5 @@ HEADERS += \
     ratascene.h \
     pikaopastin.h \
     rataview.h \
-    sqlratascene.h
+    sqlratascene.h \
+    ratasoketti.h

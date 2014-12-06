@@ -36,7 +36,7 @@ RataScene::RataScene(int aika) :
     setBackgroundBrush( QBrush( Qt::lightGray));
 
     // Yhdistetään simulaatioajan timer
-    connect(&kelloTimer_, SLOT(timeout()), this, SLOT(sekuntiKulunut()));
+    connect(&kelloTimer_, SIGNAL(timeout()), this, SLOT(sekuntiKulunut()));
 
     // PiirtoTimerin avulla näyttö piirretään uudelleen puolen sekunnin välein,
     // mikä on myös välkkyvien opastimien taajuus.
@@ -45,19 +45,17 @@ RataScene::RataScene(int aika) :
     piirtoTimer->start();
 }
 
-RataScene *RataScene::instanssi()
-{
-    return instanssi__;
-}
-
 void RataScene::rekisteroiLaite(int tunnus, Ratalaite *laite)
 {
-    instanssi()->laitteet_.insert(tunnus, laite);
+    laitteet_.insert(tunnus, laite);
 }
 
-void RataScene::laiteKomento(int laitetunnus, int komento)
+void RataScene::sanoma(quint32 sanoma)
 {
-    Ratalaite* laite = instanssi()->laitteet_.value(laitetunnus, 0);
+    int laitetunnus = sanoma & 0xfffff;
+    int komento = (sanoma >> 20) & 0xf;
+
+    Ratalaite* laite = laitteet_.value(laitetunnus, 0);
     if( laite )
         laite->komento(komento);
 }
@@ -65,12 +63,17 @@ void RataScene::laiteKomento(int laitetunnus, int komento)
 void RataScene::lisaaViiveToiminto(int laitetunnus, int viesti, int viive)
 {
     int tietokentat = viesti << 20 | laitetunnus;
-    instanssi()->laitteidenViiveToimet_.insert( instanssi()->aika() + viive, tietokentat);
+    laitteidenViiveToimet_.insert( aika() + viive, tietokentat);
 }
 
 int RataScene::aika()
 {
     return simulaatioAika_;
+}
+
+void RataScene::lahtetaViesti(unsigned int viesti)
+{
+    emit astlViesti(viesti);
 }
 
 void RataScene::asetaNopeus(int nopeutuskerroin)
@@ -85,6 +88,9 @@ void RataScene::sekuntiKulunut()
 {
     simulaatioAika_++;
     emit ajanMuutos( aika() );
+
+    // Ilmoitetaan aika myös asetinlaitteeseen aikasanomalla
+    emit astlViesti( aika() );
 
     // Viivästetyt laitetoiminnot
     // Kun viive on kulunut, kutsutaan laitteiden viivevalmis-funktioita
@@ -110,4 +116,3 @@ void RataScene::naytonPaivitys()
     invalidate( sceneRect());
 }
 
-RataScene* RataScene::instanssi__ = 0;

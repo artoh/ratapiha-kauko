@@ -16,7 +16,7 @@ void Ratalaite::asetaLaitetunnus(int laitetunnus)
     laitetunnus_ = laitetunnus & 0xfffff;
 
     // Sitten tässä vaiheessa voisi rekisteröitä ratalaitteen
-    RataScene::rekisteroiLaite(laitetunnus, this);
+    skene__->rekisteroiLaite(laitetunnus, this);
 }
 
 int Ratalaite::muodostaLaitetunnus(int raidetunnus, int laiteosa)
@@ -36,12 +36,19 @@ void Ratalaite::viiveValmis(int /* viesti */)
 
 void Ratalaite::lahetaViesti(int viesti) const
 {
-    int kokoviesti = 0xf0000000 | ((viesti & 0xf ) << 20) | laitetunnus();
+    unsigned int kokoviesti = 0xf0000000 | ((viesti & 0xf ) << 20) | laitetunnus();
     // Sitten tämä viesti pitäisi vielä lähettääkin ;)
-    qDebug() << kokoviesti;
+    skene__->lahtetaViesti(kokoviesti);
 }
 
 void Ratalaite::viiveToiminto(int kesto, int viesti) const
 {
-    RataScene::lisaaViiveToiminto(laitetunnus(), viesti, kesto);
+    skene__->lisaaViiveToiminto(laitetunnus(), viesti, kesto);
 }
+
+void Ratalaite::asetaSkene(RataScene *skene)
+{
+    skene__ = skene;
+}
+
+RataScene* Ratalaite::skene__ = 0;
