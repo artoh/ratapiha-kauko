@@ -46,7 +46,7 @@ void RataSoketti::lueSanoma()
         if( (unsigned) socket_->bytesAvailable() < sizeof(quint16))
             break;
 
-        quint16 sanoma;
+        quint32 sanoma;
 //        in >> sanoma;
         QString rivi;
         rivi = QString::fromLatin1( socket_->readLine() ).simplified();
@@ -57,9 +57,9 @@ void RataSoketti::lueSanoma()
 }
 
 
-void RataSoketti::lahetaSanoma(uint sanoma)
+void RataSoketti::lahetaSanoma(quint32 sanoma)
 {
-    qDebug() << " L.SAN " << sanoma;
+//    qDebug() << " L.SAN " << sanoma;
 
     // Muokataan myöhemmin lähettämään 256 sanoman blokkeja
     /*

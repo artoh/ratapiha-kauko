@@ -42,7 +42,7 @@ RataScene::RataScene(int aika) :
     // mikä on myös välkkyvien opastimien taajuus.
     QTimer *piirtoTimer = new QTimer(this);
     connect( piirtoTimer, SIGNAL(timeout()), this, SLOT(naytonPaivitys()));
-    piirtoTimer->start();
+    piirtoTimer->start(500);
 }
 
 void RataScene::rekisteroiLaite(int tunnus, Ratalaite *laite)
@@ -52,8 +52,12 @@ void RataScene::rekisteroiLaite(int tunnus, Ratalaite *laite)
 
 void RataScene::sanoma(quint32 sanoma)
 {
+
     int laitetunnus = sanoma & 0xfffff;
-    int komento = (sanoma >> 20) & 0xf;
+    int komento = (sanoma >> 20) & 0xff;
+
+    qDebug() << "Sanoma " << sanoma << " Laite " << laitetunnus << " Komento " << komento ;
+
 
     Ratalaite* laite = laitteet_.value(laitetunnus, 0);
     if( laite )
@@ -64,6 +68,8 @@ void RataScene::lisaaViiveToiminto(int laitetunnus, int viesti, int viive)
 {
     int tietokentat = viesti << 20 | laitetunnus;
     laitteidenViiveToimet_.insert( aika() + viive, tietokentat);
+
+    qDebug() << "Lisätty viivetoiminto laite  "  << laitetunnus << " viesti " << viesti;
 }
 
 int RataScene::aika()
@@ -74,7 +80,7 @@ int RataScene::aika()
 void RataScene::lahetaViesti(unsigned int viesti)
 {
     emit astlViesti(viesti);
-    qDebug() << "ASTL " << viesti;
+//    qDebug() << "ASTL " << viesti;
 }
 
 void RataScene::asetaNopeus(int nopeutuskerroin)
@@ -103,6 +109,8 @@ void RataScene::sekuntiKulunut()
         Ratalaite* laite = laitteet_.value(laitenro, 0);
         if( laite )
             laite->viiveValmis(viesti);
+
+        qDebug() << " Viive ilmoitettu " << laitetoimi;
     }
 
     laitteidenViiveToimet_.remove(aika());

@@ -39,7 +39,7 @@ private slots:
     void lueSanoma();
 
 public slots:
-    void lahetaSanoma( uint sanoma);
+    void lahetaSanoma( quint32 sanoma);
 
 private:
     QTcpSocket *socket_;

@@ -23,9 +23,12 @@
 #include "pikaopastin.h"
 
 #include <QtWidgets/QGraphicsItem>
+#include <QStyleOptionGraphicsItem>
+
 #include <QPainter>
 
 #include <QDebug>
+
 
 PikaOpastin::PikaOpastin(RataKisko *kisko, int laitetunnus, int laji)
     : QGraphicsItem(kisko), Ratalaite(laitetunnus), laji_(laji), opasteet_(2)
@@ -50,6 +53,12 @@ QRectF PikaOpastin::boundingRect() const
 
 void PikaOpastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
+    if( QStyleOptionGraphicsItem::levelOfDetailFromTransform(painter->worldTransform()) < 0.25 )
+    {
+        // Suuressa mittakaavassa ei piirretä opastimia
+        return;
+    }
+
     painter->setPen(Qt::NoPen);
     painter->setBrush(QBrush(Qt::black));
     painter->drawRect(0.0, 0.0, 4.0, 30.0);
@@ -57,15 +66,12 @@ void PikaOpastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
     painter->setBrush( QBrush(Qt::white));
     painter->drawRect( 0.0, 12.0, 4.0, 2.0);
 
+    // Ensin lamput piirretään pimeinä, jotta ei tule varjoja
+
     if( onkoLamppua(0x1))
         piirraPimea(painter, 2.0, 2.0, 1.6);
     if( onkoLamppua(0x2))
-    {
-        if( onkoVaria( 0x2))
-            piirraVari(painter, 2.0, 6.0, 1.6, 255, 0, 0, 255, 50, 50);
-         else
-            piirraPimea(painter, 2.0, 6.0, 1.6);
-    }
+        piirraPimea(painter, 2.0, 6.0, 1.6);
     if( onkoLamppua(0x4))
         piirraPimea(painter, 2.0, 10.0, 1.6);
 
@@ -78,12 +84,31 @@ void PikaOpastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
     if( onkoLamppua(0x40))
         piirraPimea(painter,2.0,28.0,1.6);
 
+    if( onkoVaria(0x1) && onkoLamppua(0x1))     // Vihreä
+            piirraVari(painter, 2.0, 2.0, 1.6, 0, 255, 0, 50, 255, 50);
+    if( onkoVaria(0x2) && onkoLamppua(0x2)) // Punainen
+            piirraVari(painter, 2.0, 6.0, 1.6, 255, 0, 0, 255, 50, 50);
+    if( onkoVaria(0x4) && onkoLamppua(0x4))  // Keltainen
+            piirraVari(painter, 2.0, 10.0, 1.6, 255, 255, 0, 255, 255, 50);
+
+    if( onkoVaria(0x8) && onkoLamppua(0x8))  // Vihreä välkkyvä
+            piirraVari(painter, 2.0, 16.0, 1.6, 0, 255, 0, 50, 255, 50, valkky__);
+    if( onkoVaria(0x10) && onkoLamppua(0x10))     // Valkoinen
+            piirraVari(painter, 2.0, 20.0, 1.6, 255, 255, 255, 255, 255, 255);
+    if( onkoVaria(0x20) && onkoLamppua(0x20))     // Sininen
+            piirraVari(painter, 2.0, 24.0, 1.6, 31, 244, 255, 50, 50, 225);
+    if( onkoVaria(0x40) && onkoLamppua(0x40))  // Keltainen välkkyvä
+            piirraVari(painter, 2.0, 28.0, 1.6, 255, 255, 0, 255, 255, 50, valkky__);
+
+
 }
 
 void PikaOpastin::komento(int komento)
 {
-    qDebug() << komento;
-    opasteet_ = komento & 0xf;
+    qDebug() << "KOMENTO " << komento;
+    if( komento & 0x80)
+        opasteet_ = komento & 0xff;
+    lahetaViesti( opasteet_ );
 }
 
 void PikaOpastin::valkyta()
@@ -96,8 +121,8 @@ void PikaOpastin::piirraVari(QPainter *painter, qreal x, qreal y, qreal sade, in
     QRadialGradient grad( x, y, sade*3.0, x, y  );
     if( himmea )
     {
-        grad.setColorAt(0.0, QColor(r,g,b,50));
-        grad.setColorAt(0.5, QColor(r2,g2,b2,30));
+        grad.setColorAt(0.0, QColor(r,g,b,125));
+        grad.setColorAt(0.5, QColor(r2,g2,b2,100));
         grad.setColorAt(1.0, QColor(r2,g2,b2,0));
     }
     else

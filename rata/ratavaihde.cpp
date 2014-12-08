@@ -23,10 +23,13 @@
 #include "ratavaihde.h"
 #include "kiskonpaa.h"
 
+#include <QDebug>
+
 RataVaihde::RataVaihde(int liitosId, int x, int y)
     : KiskoLiitos(liitosId, x, y), Ratalaite(0),
       vasen_(0), oikea_(0), kanta_(0), vaihteenTila_(0x85)
 {
+
 }
 
 Kiskonpaa *RataVaihde::seuraava(Kiskonpaa *mista) const
@@ -102,6 +105,7 @@ void RataVaihde::lisaaPaa(Kiskonpaa *kiskonpaa, int raidetunnus)
     if( !laitetunnus() )
     {
         asetaLaitetunnus( muodostaLaitetunnus(raidetunnus, 0));
+        qDebug() << " Vaihde " << muodostaLaitetunnus(raidetunnus,0);
     }
 
     // Sijoitetaan kiskonpäät liitosasennon mukaan
@@ -123,6 +127,8 @@ void RataVaihde::lisaaPaa(Kiskonpaa *kiskonpaa, int raidetunnus)
 
 void RataVaihde::komento(int komento)
 {
+    qDebug() << " VAIHDEKOMENTO " << komento ;
+
     if( komento & 0x80)
     {
         // Kääntökomento. Kääntökomentoa ei hyväksytä, jos on kääntymässä
@@ -146,8 +152,9 @@ void RataVaihde::komento(int komento)
 void RataVaihde::viiveValmis(int viesti)
 {
     // Viive on valmis, eli vaihde siirtyy uuteen tilaan
-    vaihteenTila_ = ( viesti & 0xFF ) | 0x20;
+    vaihteenTila_ = ( viesti & 0xFF ) | 0x04;
     ilmoitaTila();
+    qDebug() << "Vaihde valmis tilaan " << vaihteenTila();
 }
 
 
