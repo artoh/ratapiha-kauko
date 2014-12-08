@@ -24,7 +24,7 @@
 
 #include "kiskonpaa.h"
 #include "ratakisko.h"
-#include "pikaopastin.h"
+#include "rataopastin.h"
 
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
@@ -92,14 +92,16 @@ void SqlRataScene::lataaRata()
         kiskot_.insert(kiskoid, kisko);
     }
 
-    kysely.exec("select opastin, kisko, opastintyyppi from opastin");
+    kysely.exec("select opastin, opastin.kisko, opastintyyppi, raidetunnus from opastin,kisko,raide "
+                "where opastin.kisko=kisko.kisko and kisko.raide=raide.raide");
     while( kysely.next())
     {
         int opastinId = kysely.value(0).toInt();
         int kiskoId = kysely.value(1).toInt();
         int opastinTyyppi = kysely.value(2).toInt();
+        int raidetunnus = kysely.value(3).toInt();
 
-        new PikaOpastin(kiskot_.value(kiskoId),opastinId, opastinTyyppi);
+        RataOpastin::luoOpastin(kiskot_.value(kiskoId),opastinId, opastinTyyppi, raidetunnus);
     }
 
 }

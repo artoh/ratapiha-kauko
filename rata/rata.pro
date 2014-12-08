@@ -32,7 +32,9 @@ SOURCES += main.cpp \
     rataview.cpp \
     sqlratascene.cpp \
     ratasoketti.cpp \
-    ratapalvelin.cpp
+    ratapalvelin.cpp \
+    rataopastin.cpp \
+    yhdistelmaopastin.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -52,4 +54,6 @@ HEADERS += \
     rataview.h \
     sqlratascene.h \
     ratasoketti.h \
-    ratapalvelin.h
+    ratapalvelin.h \
+    rataopastin.h \
+    yhdistelmaopastin.h

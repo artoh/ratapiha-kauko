@@ -105,7 +105,6 @@ void RataVaihde::lisaaPaa(Kiskonpaa *kiskonpaa, int raidetunnus)
     if( !laitetunnus() )
     {
         asetaLaitetunnus( muodostaLaitetunnus(raidetunnus, 0));
-        qDebug() << " Vaihde " << muodostaLaitetunnus(raidetunnus,0);
     }
 
     // Sijoitetaan kiskonpäät liitosasennon mukaan

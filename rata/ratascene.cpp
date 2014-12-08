@@ -105,12 +105,12 @@ void RataScene::sekuntiKulunut()
     foreach (int laitetoimi, laitetoimet )
     {
         int laitenro = laitetoimi & 0xfffff;
-        int viesti = laitetoimi >> 20;
+        int viesti = (laitetoimi >> 20) & 0xff;
         Ratalaite* laite = laitteet_.value(laitenro, 0);
         if( laite )
             laite->viiveValmis(viesti);
 
-        qDebug() << " Viive ilmoitettu " << laitetoimi;
+        qDebug() << " Viive ilmoitettu " << laitetoimi << " laite " << laitenro;
     }
 
     laitteidenViiveToimet_.remove(aika());
