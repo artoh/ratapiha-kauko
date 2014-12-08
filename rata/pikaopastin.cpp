@@ -25,6 +25,8 @@
 #include <QtWidgets/QGraphicsItem>
 #include <QPainter>
 
+#include <QDebug>
+
 PikaOpastin::PikaOpastin(RataKisko *kisko, int laitetunnus, int laji)
     : QGraphicsItem(kisko), Ratalaite(laitetunnus), laji_(laji), opasteet_(2)
 {
@@ -76,6 +78,12 @@ void PikaOpastin::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
     if( onkoLamppua(0x40))
         piirraPimea(painter,2.0,28.0,1.6);
 
+}
+
+void PikaOpastin::komento(int komento)
+{
+    qDebug() << komento;
+    opasteet_ = komento & 0xf;
 }
 
 void PikaOpastin::valkyta()

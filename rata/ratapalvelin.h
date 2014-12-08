@@ -20,30 +20,29 @@
 **************************************************************************/
 
 
-#ifndef RATASOKETTI_H
-#define RATASOKETTI_H
+#ifndef RATAPALVELIN_H
+#define RATAPALVELIN_H
 
-#include <QTcpSocket>
+#include <QtNetwork/QTcpServer>
 
-class RataSoketti : public QObject
+class RataScene;
+
+class RataPalvelin : public QTcpServer
 {
     Q_OBJECT
 public:
-    explicit RataSoketti(QTcpSocket *soketti, QObject *parent=0);
+    RataPalvelin(RataScene *skene);
 
 signals:
-    void saapunutSanoma( quint32 sanoma);
-
 
 private slots:
-    void lueSanoma();
+    void yhteys();
 
-public slots:
-    void lahetaSanoma( uint sanoma);
+protected:
+//    void incomingConnection(int handle);
 
 private:
-    QTcpSocket *socket_;
-
+    RataScene *skene_;
 };
 
-#endif // RATASOKETTI_H
+#endif // RATAPALVELIN_H

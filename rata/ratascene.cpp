@@ -71,9 +71,10 @@ int RataScene::aika()
     return simulaatioAika_;
 }
 
-void RataScene::lahtetaViesti(unsigned int viesti)
+void RataScene::lahetaViesti(unsigned int viesti)
 {
     emit astlViesti(viesti);
+    qDebug() << "ASTL " << viesti;
 }
 
 void RataScene::asetaNopeus(int nopeutuskerroin)
@@ -81,13 +82,13 @@ void RataScene::asetaNopeus(int nopeutuskerroin)
     nopeutusKerroin_ = nopeutuskerroin;
     kelloTimer_.stop();
     if( nopeuskerroin() )
-        kelloTimer_.start( nopeuskerroin());
+        kelloTimer_.start( 1000 / nopeuskerroin());
 }
 
 void RataScene::sekuntiKulunut()
 {
     simulaatioAika_++;
-    emit ajanMuutos( aika() );
+    lahetaViesti( aika() );
 
     // Ilmoitetaan aika myös asetinlaitteeseen aikasanomalla
     emit astlViesti( aika() );

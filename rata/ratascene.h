@@ -67,7 +67,7 @@ public:
      * @brief Lähettää viestin asetinlaitteeseen
      * @param 32-bittinen viesti
      */
-    void lahtetaViesti(unsigned int viesti);
+    void lahetaViesti(unsigned int viesti);
 signals:
 
     void ajanMuutos(int simulaatioaika);

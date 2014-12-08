@@ -31,7 +31,8 @@ SOURCES += main.cpp \
     pikaopastin.cpp \
     rataview.cpp \
     sqlratascene.cpp \
-    ratasoketti.cpp
+    ratasoketti.cpp \
+    ratapalvelin.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -50,4 +51,5 @@ HEADERS += \
     pikaopastin.h \
     rataview.h \
     sqlratascene.h \
-    ratasoketti.h
+    ratasoketti.h \
+    ratapalvelin.h

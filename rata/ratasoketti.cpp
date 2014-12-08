@@ -23,37 +23,53 @@
 #include <QtNetwork/QTcpSocket>
 #include <QIODevice>
 
+#include <QDebug>
+
 #include "ratasoketti.h"
 
-RataSoketti::RataSoketti(QObject *parent) :
-    QTcpSocket(parent)
+RataSoketti::RataSoketti(QTcpSocket *soketti, QObject *parent) :
+    QObject(parent), socket_(soketti)
 {
+    connect( socket_, SIGNAL(readyRead()), this, SLOT(lueSanoma()));
 }
 
 void RataSoketti::lueSanoma()
 {
-    QDataStream in(this);
-    in.setVersion(QDataStream::Qt_5_0);
+    QDataStream in( socket_ );
+    in.setVersion(QDataStream::Qt_4_0);
 
-    forever
+    // Tilapäisesti teksiprotokolla
+
+    //forever
+    while( socket_->canReadLine())
     {
-        if( (unsigned) bytesAvailable() < sizeof(quint16))
+        if( (unsigned) socket_->bytesAvailable() < sizeof(quint16))
             break;
 
         quint16 sanoma;
-        in >> sanoma;
-        emit saapunutSanoma(sanoma);
+//        in >> sanoma;
+        QString rivi;
+        rivi = QString::fromLatin1( socket_->readLine() ).simplified();
+        sanoma = rivi.toUInt();
+        if( sanoma > 0)
+            emit saapunutSanoma(sanoma);
     }
 }
 
 
-void RataSoketti::lahetaSanoma(quint32 sanoma)
+void RataSoketti::lahetaSanoma(uint sanoma)
 {
+    qDebug() << " L.SAN " << sanoma;
+
     // Muokataan myöhemmin lähettämään 256 sanoman blokkeja
+    /*
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_0 );
+    out.setVersion(QDataStream::Qt_4_0 );
     out << sanoma;
 
-    write(block);
+    socket_->write(block);
+    */
+    QString teksti = QString::number(sanoma);
+    socket_->write(teksti.toLatin1());
 }

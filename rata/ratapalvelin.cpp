@@ -20,30 +20,27 @@
 **************************************************************************/
 
 
-#ifndef RATASOKETTI_H
-#define RATASOKETTI_H
+#include "ratapalvelin.h"
 
-#include <QTcpSocket>
+#include "ratascene.h"
+#include "ratasoketti.h"
 
-class RataSoketti : public QObject
+#include <QDebug>
+
+RataPalvelin::RataPalvelin(RataScene *skene)
+    : QTcpServer(skene),
+      skene_(skene)
 {
-    Q_OBJECT
-public:
-    explicit RataSoketti(QTcpSocket *soketti, QObject *parent=0);
+    connect( this, SIGNAL(newConnection()), this, SLOT(yhteys()));
+}
 
-signals:
-    void saapunutSanoma( quint32 sanoma);
+void RataPalvelin::yhteys()
+{
+    QTcpSocket* soketti = nextPendingConnection();
+    soketti->write("Ratapiha hei hei \n\n");
+    RataSoketti* rsoketti = new RataSoketti(soketti, this);
 
+    connect( skene_, SIGNAL(astlViesti(uint)), rsoketti, SLOT(lahetaSanoma(uint)));
+    connect( rsoketti, SIGNAL(saapunutSanoma(quint32)), skene_, SLOT(sanoma(quint32)));
+}
 
-private slots:
-    void lueSanoma();
-
-public slots:
-    void lahetaSanoma( uint sanoma);
-
-private:
-    QTcpSocket *socket_;
-
-};
-
-#endif // RATASOKETTI_H

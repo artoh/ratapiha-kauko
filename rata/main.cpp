@@ -8,6 +8,8 @@
 #include "rataview.h"
 #include "ratalaite.h"
 
+#include "ratapalvelin.h"
+
 int main(int argc, char *argv[])
 {
 
@@ -23,8 +25,16 @@ qDebug() << QCoreApplication::libraryPaths();
 
     skene->lataaRata();
     RataView view(skene);
+
+    RataPalvelin palvelin(skene);
+    if( !palvelin.listen(QHostAddress::Any, 5432))
+        qDebug() << "Virhe palvelun käynnistyksessä " << palvelin.errorString();
+
+
     view.show();
     view.ensureVisible(0.0,0.0,10.0,10.0);
+
+    skene->asetaNopeus(5);
 
     qDebug("Time elapsed: %d ms", t.elapsed());
     return a.exec();
