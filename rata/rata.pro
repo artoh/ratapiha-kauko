@@ -8,6 +8,7 @@ QT       += gui
 QT       += widgets
 QT       += sql
 QT       += network
+QT       += svg
 
 TARGET = rata
 
@@ -38,7 +39,9 @@ SOURCES += main.cpp \
     esiopastin.cpp \
     raideopastin.cpp \
     paa2opastin.cpp \
-    rataikkuna.cpp
+    rataikkuna.cpp \
+    akseli.cpp \
+    vaunu.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -64,7 +67,9 @@ HEADERS += \
     esiopastin.h \
     raideopastin.h \
     paa2opastin.h \
-    rataikkuna.h
+    rataikkuna.h \
+    akseli.h \
+    vaunu.h
 
 RESOURCES += \
     rata.qrc

@@ -10,8 +10,9 @@
 #include "ratalaite.h"
 
 #include "rataikkuna.h"
-
 #include "ratapalvelin.h"
+#include "vaunu.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -27,6 +28,7 @@ int main(int argc, char *argv[])
 
     SqlRataScene *skene = new SqlRataScene(0);
     Ratalaite::asetaSkene(skene);
+    Vaunu::alustaRenderoija();
 
     skene->lataaRata();
     RataPalvelin palvelin(skene);

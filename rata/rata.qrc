@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/r">
         <file>pic/tausta.png</file>
+        <file>pic/vaunut.svg</file>
     </qresource>
 </RCC>

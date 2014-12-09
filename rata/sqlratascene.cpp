@@ -26,6 +26,8 @@
 #include "ratakisko.h"
 #include "rataopastin.h"
 
+#include "vaunu.h"
+
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
@@ -90,6 +92,13 @@ void SqlRataScene::lataaRata()
         RataKisko* kisko = new RataKisko(etelaPaa,pohjoisPaa,sn,kiskotieto);
         addItem(kisko);
         kiskot_.insert(kiskoid, kisko);
+
+        // Tilapäinen vaunukoe
+        if( kisko->pituus() > 150)
+        {
+            Vaunu* uusiVaunu = new Vaunu(this, "Sr2");
+            uusiVaunu->sijoitaKiskolle(kisko);
+        }
     }
 
     kysely.exec("select opastin, opastin.kisko, opastintyyppi, raidetunnus from opastin,kisko,raide "

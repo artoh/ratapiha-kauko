@@ -20,34 +20,47 @@
 **************************************************************************/
 
 
-#ifndef RATAKISKO_H
-#define RATAKISKO_H
+#ifndef VAUNU_H
+#define VAUNU_H
 
-#include <QtWidgets/QGraphicsItem>
+#include <QGraphicsItem>
 
-#include "ratakiskotieto.h"
+class Akseli;
+class QSvgRenderer;
+class RataScene;
 
-class RataOpastin;
+class RataKisko;
 
-class RataKisko : public QGraphicsItem, public RataKiskoTieto
+class Vaunu : public QGraphicsItem
 {
-
 public:
-    RataKisko(Kiskonpaa* etela, Kiskonpaa* pohjoinen, int sn, int kiskotieto);
+    Vaunu(RataScene* skene, const QString& tyyppi);
+
+    void sijoitaKiskolle(RataKisko* kisko);
+
+    int type() const { return UserType + 10; }
 
     QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-    qreal pituus() const { return pituus_; }
-    void paint(QPainter *painter,  const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void paivitaSijainti();
 
-    /**
-     * @brief Kytkee opastimen ja sijoittaa sen paikalleen
-     * @param opastin
-     */
-    void kytkeOpastin(RataOpastin* opastin);
+    qreal vaununPituus() const { return vaununPituus_; }
+    QString vaununTyyppi() const { return tyyppi_; }
+
+    static void alustaRenderoija();
+
 
 protected:
-    qreal pituus_;
+    QString tyyppi_;
+
+    Akseli* etuAkseli_;
+    Akseli* takaAkseli_;
+
+    qreal vaununPituus_;
+
+    static QSvgRenderer *renderoija__;
+    static QSvgRenderer *renderoija() { return renderoija__; }
 };
 
-#endif // RATAKISKO_H
+#endif // VAUNU_H
