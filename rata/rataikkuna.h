@@ -29,6 +29,8 @@
 
 #include "ratascene.h"
 
+class RataView;
+
 /**
  * @brief Rataa näyttävä ikkuna
  */
@@ -49,11 +51,15 @@ public slots:
      */
     void kellonPaivitys(int simulaatioAika);
 
+    void naytaLiikennepaikka(const QString& liikennepaikka);
 
+protected:
+    void luoTilarivi();
+    void luoTyokalurivi();
 
 private:
     RataScene *skene_;
-
+    RataView* view_;
     QLabel* aikaLabel_;
 
 };

@@ -64,6 +64,16 @@ void RataScene::sanoma(quint32 sanoma)
         laite->komento(komento);
 }
 
+QStringList RataScene::liikepaikkojenNimet() const
+{
+    return liikennepaikat_.keys();
+}
+
+QPoint RataScene::liikennepaikanKoordinaatit(const QString &liikennepaikanNimi) const
+{
+    return liikennepaikat_.value(liikennepaikanNimi);
+}
+
 void RataScene::lisaaViiveToiminto(int laitetunnus, int viesti, int viive)
 {
     int tietokentat = viesti << 20 | laitetunnus;
@@ -84,10 +94,13 @@ void RataScene::lahetaViesti(unsigned int viesti)
 
 void RataScene::asetaNopeus(int nopeutuskerroin)
 {
+    if( nopeutuskerroin == nopeuskerroin())
+        return; // Ei muutosta
     nopeutusKerroin_ = nopeutuskerroin;
     kelloTimer_.stop();
     if( nopeuskerroin() )
         kelloTimer_.start( 1000 / nopeuskerroin());
+    emit nopeutuksenMuutos(nopeutuskerroin);
 }
 
 void RataScene::sekuntiKulunut()

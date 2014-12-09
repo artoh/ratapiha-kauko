@@ -72,6 +72,7 @@ signals:
 
     void ajanMuutos(int simulaatioaika);
     void astlViesti(unsigned int viesti);
+    void nopeutuksenMuutos(int nopeutuskerroin);
 public slots:
     /**
      * @brief Asettaa simulaation nopeuden
@@ -96,6 +97,9 @@ public slots:
      */
     void sanoma(quint32 sanoma);
 
+    QStringList liikepaikkojenNimet() const;
+    QPoint liikennepaikanKoordinaatit(const QString& liikennepaikanNimi) const;
+
 
 protected:
     RataScene(int aika);
@@ -110,6 +114,7 @@ protected:
     QHash<int,KiskoLiitos*> kiskoliitokset_;
     QHash<int,RataKisko*> kiskot_;
     QMultiMap<int,int> laitteidenViiveToimet_;
+    QMap<QString,QPoint> liikennepaikat_;
 
     QTimer kelloTimer_;
 };

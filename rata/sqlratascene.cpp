@@ -104,4 +104,27 @@ void SqlRataScene::lataaRata()
         RataOpastin::luoOpastin(kiskot_.value(kiskoId),opastinId, opastinTyyppi, raidetunnus);
     }
 
+    // kysytään liikennepaikat
+    kysely.exec("select nimi, sijainti_x, sijainti_y from liikennepaikka");
+
+    while( kysely.next() )
+    {
+        QString nimi = kysely.value(0).toString();
+        int koordX = kysely.value(1).toInt();
+        int koordY = 0 - kysely.value(2).toInt();
+
+        if( koordX == 0 && koordY == 0 )
+            continue;   // Ei sijaintitietoa
+
+        // Lisätään listaan luetteloa varten
+        liikennepaikat_.insert(nimi, QPoint(koordX, koordY));
+
+        // Laitetaan karttaan nimi
+        QGraphicsSimpleTextItem* teksti = new QGraphicsSimpleTextItem(nimi);
+        teksti->setFont( QFont("Helvetica",18));
+        teksti->setPos(koordX, koordY);
+        teksti->setBrush(QBrush(Qt::blue));
+        teksti->setZValue(-20);
+        addItem(teksti);
+    }
 }

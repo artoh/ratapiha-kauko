@@ -20,7 +20,12 @@
 **************************************************************************/
 
 #include <QStatusBar>
+#include <QToolBar>
+#include <QSpinBox>
+#include <QComboBox>
 
+#include <QLineEdit>
+#include <QCompleter>
 
 #include "rataikkuna.h"
 
@@ -31,15 +36,14 @@ RataIkkuna::RataIkkuna(RataScene *skene) :
     QMainWindow(0), skene_(skene)
 {
 
-    RataView *view = new RataView(skene_);
-    view->ensureVisible(0.0,0.0,10.0,10.0);
+    view_ = new RataView(skene_);
+    view_->ensureVisible(0.0,0.0,10.0,10.0);
 
-    aikaLabel_ = new QLabel("Tervetuloa!");
-    statusBar()->addPermanentWidget(aikaLabel_);
-    connect( skene, SIGNAL(ajanMuutos(int)), this, SLOT(kellonPaivitys(int)));
+    setCentralWidget(view_);
 
-    setCentralWidget(view);
-
+    luoTilarivi();
+    luoTyokalurivi();
+    setWindowTitle("Ratapiha 5 - Ratanäkymä");
 
 }
 
@@ -60,4 +64,44 @@ void RataIkkuna::kellonPaivitys(int simulaatioAika)
     aikaLabel_->setText( QString("%1.%2.%3  klo %4.%5.%6").arg(pvm+1).arg(kk+1).arg(vuosi)
                          .arg(tunnit,2,10,QChar('0')).arg(minuutit,2,10,QChar('0')).arg(sekunnit,2,10,QChar('0'))  );
 
+}
+
+void RataIkkuna::naytaLiikennepaikka(const QString &liikennepaikka)
+{
+    QPoint sijainti = skene()->liikennepaikanKoordinaatit(liikennepaikka);
+    if( !sijainti.isNull())
+    {
+        view_->ensureVisible(sijainti.x(), sijainti.y(),100.0,100.0);
+    }
+}
+
+void RataIkkuna::luoTilarivi()
+{
+    aikaLabel_ = new QLabel("Tervetuloa!");
+    statusBar()->addPermanentWidget(aikaLabel_);
+    connect( skene(), SIGNAL(ajanMuutos(int)), this, SLOT(kellonPaivitys(int)));
+}
+
+void RataIkkuna::luoTyokalurivi()
+{
+    QToolBar *trivi = addToolBar("Rata");
+
+    QSpinBox *nopeusSpin = new QSpinBox();
+    nopeusSpin->setRange(0,20);
+    nopeusSpin->setSuffix("x");
+
+    connect(nopeusSpin, SIGNAL(valueChanged(int)), skene(), SLOT(asetaNopeus(int)));
+    connect( skene(), SIGNAL(nopeutuksenMuutos(int)), nopeusSpin, SLOT(setValue(int)));
+
+    trivi->addWidget(nopeusSpin);
+
+    // Liikennepaikan etsiminen
+    QLineEdit *liikennepaikkaEdit = new QLineEdit;
+    QCompleter *taydentaja = new QCompleter(skene()->liikepaikkojenNimet() ,this);
+    taydentaja->setCaseSensitivity( Qt::CaseInsensitive);
+    taydentaja->setCompletionMode( QCompleter::UnfilteredPopupCompletion);
+    liikennepaikkaEdit->setCompleter(taydentaja);
+    connect( liikennepaikkaEdit, SIGNAL(textChanged(QString) ), this, SLOT(naytaLiikennepaikka(QString)));
+
+    trivi->addWidget(liikennepaikkaEdit);
 }
