@@ -24,7 +24,7 @@
 #include "kiskoliitos.h"
 
 Kiskonpaa::Kiskonpaa(KiskoLiitos *kiskoliitos, int  kiskonpaikka )
-    : kiskoliitos_(kiskoliitos)
+    : kiskoliitos_(kiskoliitos), opastin_(0)
 {
     // Tyyppisuojan takia kiskonpaikka pitää käsitellä switchillä
     switch (kiskonpaikka) {
@@ -95,6 +95,11 @@ Kiskonpaa::RaiteenSulku Kiskonpaa::raiteenSulku()
 void Kiskonpaa::kytkeToinenPaa(Kiskonpaa *toinenpaa)
 {
     kiskonToisenPaanLiitos_ = toinenpaa;
+}
+
+void Kiskonpaa::kytkeOpastin(RataOpastin *opastin)
+{
+    opastin_ = opastin;
 }
 
 

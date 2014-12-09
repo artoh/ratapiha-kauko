@@ -100,8 +100,10 @@ void SqlRataScene::lataaRata()
         int kiskoId = kysely.value(1).toInt();
         int opastinTyyppi = kysely.value(2).toInt();
         int raidetunnus = kysely.value(3).toInt();
+        RataKisko* kisko = kiskot_.value(kiskoId);
 
-        RataOpastin::luoOpastin(kiskot_.value(kiskoId),opastinId, opastinTyyppi, raidetunnus);
+        RataOpastin *opastin = RataOpastin::luoOpastin(opastinId, opastinTyyppi, raidetunnus);
+        kisko->kytkeOpastin(opastin);
     }
 
     // kysytään liikennepaikat

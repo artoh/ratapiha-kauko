@@ -26,7 +26,7 @@
 #include "ratakisko.h"
 #include "kiskonpaa.h"
 #include "kiskoliitos.h"
-
+#include "rataopastin.h"
 
 RataKisko::RataKisko(Kiskonpaa *etela, Kiskonpaa *pohjoinen, int sn, int kiskotieto)
     : QGraphicsItem(), RataKiskoTieto(etela, pohjoinen, sn, kiskotieto)
@@ -92,4 +92,24 @@ void RataKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
         painter->drawLine(QLineF(0.0, -4.0, 0.0, 4.0));
     if( pohjoisPaa()->onkoPuskuri())
         painter->drawLine(QLineF(pituus(), -4.0, pituus(), 4.0));
+}
+
+void RataKisko::kytkeOpastin(RataOpastin *opastin)
+{
+    opastin->setParentItem(this);
+
+    if( opastin->onkoPohjoiseen() )
+    {
+        opastin->setPos( pituus(), 5.0);
+        opastin->setRotation(90.0);
+        pohjoisPaa()->kytkeOpastin(opastin);
+    }
+    else
+    {
+        opastin->setPos(0.0,-5.0);
+        opastin->setRotation(-90.0);
+        etelaPaa()->kytkeOpastin(opastin);
+    }
+
+    opastin->setZValue(10);
 }

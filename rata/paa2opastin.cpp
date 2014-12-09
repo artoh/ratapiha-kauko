@@ -25,23 +25,13 @@
 #include "paa2opastin.h"
 #include "ratakisko.h"
 
-Paa2Opastin::Paa2Opastin(RataKisko *kisko, int laitetunnus, int raidetunnus)
-    : RataOpastin(kisko,laitetunnus)
+Paa2Opastin::Paa2Opastin(int laitetunnus, int raidetunnus)
+    : RataOpastin(laitetunnus)
 {
-    if( laitetunnus & 0x1)  // Pohjoinen
-    {
+    if( onkoPohjoiseen())
         teksti_ = QString("P%1").arg(raidetunnus,3,10,QChar('0'));
-        setPos( kisko->pituus(), 5.0);
-        setRotation(90.0);
-    }
     else
-    {
         teksti_ = QString("E%1").arg(raidetunnus,3,10,QChar('0'));
-        setPos( 0.0, -5.0);
-        setRotation(-90.0);
-    }
-
-    setZValue(10);
 }
 
 QRectF Paa2Opastin::boundingRect() const

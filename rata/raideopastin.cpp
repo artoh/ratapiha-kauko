@@ -27,24 +27,14 @@
 #include "ratakisko.h"
 
 
-RaideOpastin::RaideOpastin(RataKisko *kisko, int laitetunnus, int raidetunnus)
-    : RataOpastin(kisko,laitetunnus)
+RaideOpastin::RaideOpastin(int laitetunnus, int raidetunnus)
+    : RataOpastin(laitetunnus)
 {
-
-    if( laitetunnus & 0x1)  // Pohjoinen
-    {
+    if( onkoPohjoiseen())
         teksti_ = QString("O%1").arg(raidetunnus,3,10,QChar('0'));
-        setPos( kisko->pituus(), 5.0);
-        setRotation(90.0);
-    }
     else
-    {
         teksti_ = QString("T%1").arg(raidetunnus,3,10,QChar('0'));
-        setPos( 0.0, -5.0);
-        setRotation(-90.0);
-    }
 
-    setZValue(10);
 }
 
 QRectF RaideOpastin::boundingRect() const

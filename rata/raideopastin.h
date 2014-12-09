@@ -28,7 +28,7 @@
 class RaideOpastin : public RataOpastin
 {
 public:
-    RaideOpastin(RataKisko* kisko, int laitetunnus, int raidetunnus);
+    RaideOpastin(int laitetunnus, int raidetunnus);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 

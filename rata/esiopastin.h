@@ -31,7 +31,7 @@
 class EsiOpastin : public RataOpastin
 {
 public:
-    EsiOpastin(RataKisko* kisko, int laitetunnus, int raidetunnus);
+    EsiOpastin(int laitetunnus, int raidetunnus);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 

@@ -31,7 +31,7 @@
 class Paa2Opastin : public RataOpastin
 {
 public:
-    Paa2Opastin(RataKisko* kisko, int laitetunnus, int raidetunnus);
+    Paa2Opastin(int laitetunnus, int raidetunnus);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 

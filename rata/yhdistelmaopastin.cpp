@@ -26,23 +26,13 @@
 #include "ratakisko.h"
 
 
-YhdistelmaOpastin::YhdistelmaOpastin(RataKisko *kisko, int laitetunnus, int laji, int raidetunnus)
-    : RataOpastin(kisko, laitetunnus), laji_(laji)
+YhdistelmaOpastin::YhdistelmaOpastin(int laitetunnus, int laji, int raidetunnus)
+    : RataOpastin(laitetunnus), laji_(laji)
 {
-    if( laitetunnus & 0x1)  // Pohjoinen
-    {
+    if( onkoPohjoiseen())
         teksti_ = QString("P%1").arg(raidetunnus,3,10,QChar('0'));
-        setPos( kisko->pituus(), 5.0);
-        setRotation(90.0);
-    }
     else
-    {
         teksti_ = QString("E%1").arg(raidetunnus,3,10,QChar('0'));
-        setPos( 0.0, -5.0);
-        setRotation(-90.0);
-    }
-
-    setZValue(10);
 }
 
 QRectF YhdistelmaOpastin::boundingRect() const

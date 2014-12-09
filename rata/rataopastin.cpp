@@ -29,8 +29,8 @@
 #include "ratakisko.h"
 
 
-RataOpastin::RataOpastin(RataKisko *kisko, int laitetunnus)
-    : QGraphicsItem(kisko), Ratalaite(laitetunnus), opasteet_(0x2)
+RataOpastin::RataOpastin(int laitetunnus)
+    : QGraphicsItem(0), Ratalaite(laitetunnus), opasteet_(0x2)
 {
 
 }
@@ -50,16 +50,16 @@ void RataOpastin::valkyta()
     valkky__ = ( valkky__ == false );
 }
 
-RataOpastin *RataOpastin::luoOpastin(RataKisko *kisko, int laitetunnus, int laji, int raidetunnus)
+RataOpastin *RataOpastin::luoOpastin(int laitetunnus, int laji, int raidetunnus)
 {
     if( (laitetunnus & 0xe) == 0x6 )  // Esiopastin
-        return new EsiOpastin(kisko,laitetunnus,raidetunnus);
+        return new EsiOpastin(laitetunnus,raidetunnus);
     else if(( laitetunnus & 0xe) == 0x4 ) // Raideopastin
-        return new RaideOpastin(kisko,laitetunnus,raidetunnus);
+        return new RaideOpastin(laitetunnus,raidetunnus);
     else if((laji & 0x7f) == 0x3)
-        return new Paa2Opastin(kisko,laitetunnus,raidetunnus);
+        return new Paa2Opastin(laitetunnus,raidetunnus);
 
-    return new YhdistelmaOpastin(kisko, laitetunnus, laji, raidetunnus);
+    return new YhdistelmaOpastin(laitetunnus, laji, raidetunnus);
 }
 
 void RataOpastin::piirraVari(QPainter *painter, qreal x, qreal y, qreal sade, int r, int g, int b, int r2, int g2, int b2, bool himmea)

@@ -31,7 +31,7 @@
 class YhdistelmaOpastin : public RataOpastin
 {
 public:
-    YhdistelmaOpastin(RataKisko* kisko, int laitetunnus, int laji, int raidetunnus);
+    YhdistelmaOpastin(int laitetunnus, int laji, int raidetunnus);
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

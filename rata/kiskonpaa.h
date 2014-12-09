@@ -24,6 +24,7 @@
 #define KISKONPAA_H
 
 class KiskoLiitos;
+class RataOpastin;
 
 /**
  * @brief Kiskon eteläinen tai pohjoinen pää, joka liittyy kiskoliitokseen
@@ -125,12 +126,27 @@ public:
      */
     void kytkeToinenPaa(Kiskonpaa *toinenpaa);
 
+    /**
+     * @brief Kiskon päässä oleva opastin
+     * @return
+     */
+    RataOpastin* opastin() { return opastin_; }
+
+
+    /**
+     * @brief Sijoittaa opastimen
+     * @param opastin
+     */
+    void kytkeOpastin( RataOpastin *opastin);
+
 private:
     KiskoLiitos* kiskoliitos_;
     Kiskonpaikka kiskonpaikka_;
 
     /** Saman kiskon toinen pää*/
     Kiskonpaa* kiskonToisenPaanLiitos_;
+
+    RataOpastin* opastin_;
 
 protected:
     KiskoLiitos* kiskoliitos() { return kiskoliitos_; }

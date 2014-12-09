@@ -27,7 +27,7 @@
 
 #include "ratalaite.h"
 
-class RataKisko;
+
 
 /**
  * @brief Opastinten kantaluokka
@@ -35,13 +35,15 @@ class RataKisko;
 class RataOpastin : public QGraphicsItem, public Ratalaite
 {
 public:
-    RataOpastin(RataKisko *kisko, int laitetunnus);
+    RataOpastin(int laitetunnus);
 
     void komento(int komento);
 
     static void valkyta();
 
-    static RataOpastin* luoOpastin(RataKisko* kisko, int laitetunnus, int laji, int raidetunnus);
+    static RataOpastin* luoOpastin(int laitetunnus, int laji, int raidetunnus);
+
+    bool onkoPohjoiseen() const { return laitetunnus() & 0x1; }
 
 protected:
     bool onkoVaria(int varibitti) { return opasteet_ & varibitti; }

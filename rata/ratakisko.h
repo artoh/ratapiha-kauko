@@ -27,6 +27,8 @@
 
 #include "ratakiskotieto.h"
 
+class RataOpastin;
+
 class RataKisko : public QGraphicsItem, RataKiskoTieto
 {
 
@@ -37,6 +39,12 @@ public:
 
     qreal pituus() const { return pituus_; }
     void paint(QPainter *painter,  const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+    /**
+     * @brief Kytkee opastimen ja sijoittaa sen paikalleen
+     * @param opastin
+     */
+    void kytkeOpastin(RataOpastin* opastin);
 
 protected:
     qreal pituus_;
