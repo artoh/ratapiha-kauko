@@ -118,6 +118,17 @@ qreal Vaunu::vaununSijaintiKiskolla(RataKisko *kisko, bool pohjoinen)
     else
         paa = kisko->etelaPaa();
 
+    QList<Akseli*> lista = kisko->akselitKiskolla();
+    foreach( akseli, lista)
+    {
+        Akseli *akseli = vaunu->etuAkseli_;
+        if( akseli->edessa() == paa && akseli->matkaEteen() > sijainti)
+            sijainti = akseli->matkaEteen();
+        else if( akseli->takana() == paa && akseli->matkaTaakse() > sijainti)
+            sijainti = akseli->matkaTaakse();
+    }
+
+    /*
     QList<QGraphicsItem*> lista = kisko->collidingItems();
     foreach( QGraphicsItem* item, lista)
     {
@@ -139,7 +150,7 @@ qreal Vaunu::vaununSijaintiKiskolla(RataKisko *kisko, bool pohjoinen)
             else if( akseli->takana() == paa && akseli->matkaTaakse() > sijainti)
                 sijainti = akseli->matkaTaakse();
         }
-    }
+    } */
 
     // Nyt sijainnissa on suurin etäisyys.
     // Edellyttää kuitenkin vähintään 80 m varan

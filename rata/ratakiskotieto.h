@@ -23,6 +23,9 @@
 #ifndef RATAKISKOTIETO_H
 #define RATAKISKOTIETO_H
 
+#include <QSet>
+
+class Akseli;
 class Kiskonpaa;
 
 /**
@@ -49,11 +52,16 @@ public:
     Kiskonpaa* etelaPaa() { return etelaPaa_; }
     Kiskonpaa* pohjoisPaa() { return pohjoisPaa_; }
 
+    void akseliKiskolle(Akseli* akseli);
+    void akseliKiskolta(Akseli* akseli);
+    QList<Akseli*> akselitKiskolla() const { return akselit_.toList(); }
+
 
 private:
     Kiskonpaa *etelaPaa_, *pohjoisPaa_;
     int sn_;
     int kiskotieto_;
+    QSet<Akseli*> akselit_;
 
     int kiskotieto() const { return kiskotieto_; }
 };

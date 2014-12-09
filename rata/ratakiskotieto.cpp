@@ -27,6 +27,16 @@
 RataKiskoTieto::RataKiskoTieto(Kiskonpaa *etelaPaa, Kiskonpaa *pohjoisPaa, int sn, int kiskotieto)
     : etelaPaa_(etelaPaa), pohjoisPaa_(pohjoisPaa), sn_(sn), kiskotieto_(kiskotieto)
 {
-    etelaPaa_->kytkeToinenPaa(pohjoisPaa_);
-    pohjoisPaa_->kytkeToinenPaa(etelaPaa_);
+    etelaPaa_->kytkeToinenPaa(pohjoisPaa_, this);
+    pohjoisPaa_->kytkeToinenPaa(etelaPaa_, this);
+}
+
+void RataKiskoTieto::akseliKiskolle(Akseli *akseli)
+{
+    akselit_.insert( akseli );
+}
+
+void RataKiskoTieto::akseliKiskolta(Akseli *akseli)
+{
+    akselit_.remove( akseli );
 }

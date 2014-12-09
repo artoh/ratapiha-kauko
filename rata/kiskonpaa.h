@@ -25,6 +25,7 @@
 
 class KiskoLiitos;
 class RataOpastin;
+class RataKiskoTieto;
 
 /**
  * @brief Kiskon eteläinen tai pohjoinen pää, joka liittyy kiskoliitokseen
@@ -121,10 +122,11 @@ public:
     virtual RaiteenSulku raiteenSulku();
 
     /**
-     * @brief Kytkee tämän kiskon toisen pään
+     * @brief Kytkee tämän kiskon toisen pään ja kiskon
      * @param toinenpaa
+     * @param kiskotieto Kytkettävä kisko
      */
-    void kytkeToinenPaa(Kiskonpaa *toinenpaa);
+    void kytkeToinenPaa(Kiskonpaa *toinenpaa, RataKiskoTieto* kiskotieto = 0);
 
     /**
      * @brief Kiskon päässä oleva opastin
@@ -139,6 +141,12 @@ public:
      */
     void kytkeOpastin( RataOpastin *opastin);
 
+    /**
+     * @brief Kisko (tiedot)
+     * @return
+     */
+    RataKiskoTieto* kiskotieto() { return kiskotieto_; }
+
 private:
     KiskoLiitos* kiskoliitos_;
     Kiskonpaikka kiskonpaikka_;
@@ -147,6 +155,7 @@ private:
     Kiskonpaa* kiskonToisenPaanLiitos_;
 
     RataOpastin* opastin_;
+    RataKiskoTieto* kiskotieto_;
 
 protected:
     KiskoLiitos* kiskoliitos() { return kiskoliitos_; }

@@ -23,6 +23,7 @@
 #include "akseli.h"
 
 #include "kiskonpaa.h"
+#include "ratakiskotieto.h"
 
 Akseli::Akseli() :
     edessa_(0), takana_(0)
@@ -36,6 +37,9 @@ void Akseli::sijoita(Kiskonpaa *edessa, qreal matkaEteen, Kiskonpaa *takana, qre
     takana_ = takana;
     matkaTaakse_ = matkaTaakse;
     
+    edessa_->kiskotieto()->akseliKiskolle(this);
+    takana_->kiskotieto()->akseliKiskolle(this);
+
     laskeKulkuViiva();
     laskeSijainti();
 }
@@ -68,9 +72,11 @@ bool Akseli::liikeKiskolla(qreal matka)
         {
             // Joo - mennään eteenpäin
             takana_ = edessa_->ajaUlos();
+            edessa_->kiskotieto()->akseliKiskolta(this);
             if( takana_ )
             {
                 takana_->ajaSisaan();
+                takana_->kiskotieto()->akseliKiskolle(this);
                 edessa_ = takana_->toinenPaa();
                 
                 laskeKulkuViiva();
@@ -87,9 +93,11 @@ bool Akseli::liikeKiskolla(qreal matka)
         {
             // Mennään taaksepäin
             edessa_ = takana_->ajaUlos();
+            takana_->kiskotieto()->akseliKiskolta(this);
             if( edessa_)
             {
                 edessa_->ajaSisaan();
+                edessa_->kiskotieto()->akseliKiskolle(this);
                 takana_ = edessa_->toinenPaa();
                 
                 laskeKulkuViiva();

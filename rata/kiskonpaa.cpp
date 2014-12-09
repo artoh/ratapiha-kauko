@@ -23,8 +23,8 @@
 #include "kiskonpaa.h"
 #include "kiskoliitos.h"
 
-Kiskonpaa::Kiskonpaa(KiskoLiitos *kiskoliitos, int  kiskonpaikka )
-    : kiskoliitos_(kiskoliitos), opastin_(0)
+Kiskonpaa::Kiskonpaa(KiskoLiitos *kiskoliitos, int  kiskonpaikka)
+    : kiskoliitos_(kiskoliitos), opastin_(0), kiskotieto_(0)
 {
     // Tyyppisuojan takia kiskonpaikka pitää käsitellä switchillä
     switch (kiskonpaikka) {
@@ -92,9 +92,10 @@ Kiskonpaa::RaiteenSulku Kiskonpaa::raiteenSulku()
     return SP_EI;
 }
 
-void Kiskonpaa::kytkeToinenPaa(Kiskonpaa *toinenpaa)
+void Kiskonpaa::kytkeToinenPaa(Kiskonpaa *toinenpaa, RataKiskoTieto *kiskotieto)
 {
     kiskonToisenPaanLiitos_ = toinenpaa;
+    kiskotieto_ = kiskotieto;
 }
 
 void Kiskonpaa::kytkeOpastin(RataOpastin *opastin)
