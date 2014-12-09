@@ -34,7 +34,10 @@ SOURCES += main.cpp \
     ratasoketti.cpp \
     ratapalvelin.cpp \
     rataopastin.cpp \
-    yhdistelmaopastin.cpp
+    yhdistelmaopastin.cpp \
+    esiopastin.cpp \
+    raideopastin.cpp \
+    paa2opastin.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -56,4 +59,7 @@ HEADERS += \
     ratasoketti.h \
     ratapalvelin.h \
     rataopastin.h \
-    yhdistelmaopastin.h
+    yhdistelmaopastin.h \
+    esiopastin.h \
+    raideopastin.h \
+    paa2opastin.h

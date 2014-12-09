@@ -23,6 +23,9 @@
 
 #include "rataopastin.h"
 #include "yhdistelmaopastin.h"
+#include "esiopastin.h"
+#include "raideopastin.h"
+#include "paa2opastin.h"
 #include "ratakisko.h"
 
 
@@ -49,6 +52,13 @@ void RataOpastin::valkyta()
 
 RataOpastin *RataOpastin::luoOpastin(RataKisko *kisko, int laitetunnus, int laji, int raidetunnus)
 {
+    if( (laitetunnus & 0xe) == 0x6 )  // Esiopastin
+        return new EsiOpastin(kisko,laitetunnus,raidetunnus);
+    else if(( laitetunnus & 0xe) == 0x4 ) // Raideopastin
+        return new RaideOpastin(kisko,laitetunnus,raidetunnus);
+    else if((laji & 0x7f) == 0x3)
+        return new Paa2Opastin(kisko,laitetunnus,raidetunnus);
+
     return new YhdistelmaOpastin(kisko, laitetunnus, laji, raidetunnus);
 }
 
