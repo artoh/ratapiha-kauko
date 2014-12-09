@@ -23,10 +23,13 @@
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
 
+#include <QDebug>
+
 #include "vaunu.h"
 #include "akseli.h"
 #include "ratakisko.h"
 #include "ratascene.h"
+#include "kiskonpaa.h"
 
 Vaunu::Vaunu(RataScene *skene, const QString &tyyppi)
     : QGraphicsItem(0),  tyyppi_(tyyppi)
@@ -43,13 +46,28 @@ Vaunu::Vaunu(RataScene *skene, const QString &tyyppi)
     setZValue(100);
 }
 
-void Vaunu::sijoitaKiskolle(RataKisko *kisko)
+void Vaunu::sijoitaKiskolle(RataKisko *kisko, bool pohjoiseen)
 {
-    etuAkseli_->sijoita(kisko->pohjoisPaa(), kisko->pituus()-vaununPituus()-10,
-                        kisko->etelaPaa(), 10+vaununPituus());
-    takaAkseli_->sijoita(kisko->etelaPaa(), 10,
-                         kisko->pohjoisPaa(), kisko->pituus()-10);
-    paivitaSijainti();
+    // Ensin haetaan ko. sijainti
+    qreal matkaEteen = vaununSijaintiKiskolla(kisko, pohjoiseen);
+
+    if( matkaEteen > 0.0)
+    {
+        Kiskonpaa *paaEdessa;
+        if( pohjoiseen )
+            paaEdessa = kisko->pohjoisPaa();
+        else
+            paaEdessa = kisko->etelaPaa();
+
+        Kiskonpaa *paaTakana = paaEdessa->toinenPaa();
+
+
+        etuAkseli_->sijoita(paaEdessa, matkaEteen,
+                            paaTakana, kisko->pituus()-matkaEteen) ;
+        takaAkseli_->sijoita(paaTakana, kisko->pituus()-matkaEteen-vaununPituus() ,
+                             paaEdessa, matkaEteen + vaununPituus() );
+        paivitaSijainti();
+    }
 }
 
 QRectF Vaunu::boundingRect() const
@@ -88,6 +106,48 @@ void Vaunu::paivitaSijainti()
 void Vaunu::alustaRenderoija()
 {
     renderoija__ = new QSvgRenderer(QString(":/r/pic/vaunut.svg"));
+}
+
+qreal Vaunu::vaununSijaintiKiskolla(RataKisko *kisko, bool pohjoinen)
+{
+    qreal sijainti = 10.0;
+
+    Kiskonpaa *paa = 0;
+    if( pohjoinen)
+        paa = kisko->pohjoisPaa();
+    else
+        paa = kisko->etelaPaa();
+
+    QList<QGraphicsItem*> lista = kisko->collidingItems();
+    foreach( QGraphicsItem* item, lista)
+    {
+        Vaunu* vaunu = dynamic_cast<Vaunu*>(item);
+        if( vaunu && vaunu->vaununPituus())
+        {
+//            qDebug() << vaunu->vaununTyyppi() << " p " << vaunu->vaununPituus();
+
+            // Selvitetään akselin sijainti suhteessa kysyttyyn päähän
+            Akseli *akseli = vaunu->etuAkseli_;
+            if( akseli->edessa() == paa && akseli->matkaEteen() > sijainti)
+                sijainti = akseli->matkaEteen();
+            else if( akseli->takana() == paa && akseli->matkaTaakse() > sijainti)
+                sijainti = akseli->matkaTaakse();
+            // Myös toiselta akselilta
+            akseli = vaunu->takaAkseli_;
+            if( akseli->edessa() == paa && akseli->matkaEteen() > sijainti)
+                sijainti = akseli->matkaEteen();
+            else if( akseli->takana() == paa && akseli->matkaTaakse() > sijainti)
+                sijainti = akseli->matkaTaakse();
+        }
+    }
+
+    // Nyt sijainnissa on suurin etäisyys.
+    // Edellyttää kuitenkin vähintään 80 m varan
+
+    if( kisko->pituus() < sijainti + 80)
+        return 0;
+    else
+        return sijainti;
 }
 
 QSvgRenderer* Vaunu::renderoija__ = 0;

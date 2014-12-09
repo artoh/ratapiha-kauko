@@ -51,6 +51,11 @@ public:
     bool liiku(qreal matka);
 
     void kytkeToinenAkseli(Akseli* toinen);
+
+    Kiskonpaa* edessa() { return edessa_; }
+    Kiskonpaa* takana()  { return takana_; }
+    qreal matkaEteen() const { return matkaEteen_;  }
+    qreal matkaTaakse() const { return matkaTaakse_; }
     
 protected:
     /**

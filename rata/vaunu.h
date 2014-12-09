@@ -36,9 +36,9 @@ class Vaunu : public QGraphicsItem
 public:
     Vaunu(RataScene* skene, const QString& tyyppi);
 
-    void sijoitaKiskolle(RataKisko* kisko);
+    void sijoitaKiskolle(RataKisko* kisko, bool pohjoiseen);
 
-    int type() const { return UserType + 10; }
+    int type() const { return UserType + 500; }
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -49,6 +49,18 @@ public:
     QString vaununTyyppi() const { return tyyppi_; }
 
     static void alustaRenderoija();
+
+    /**
+     * @brief Uuden vaunun sijainti kiskolla
+     *
+     * Kun vaunua sijoitetaan kiskolle, palauttaa paikan, mihin
+     * vaunu tulisi.
+     *
+     * @param kisko
+     * @param pohjoinen Sijoitetaanko pohjoispäähän
+     * @return sijainti halutusta päästä lukien, 0 jos ei mahdu
+     */
+    static qreal vaununSijaintiKiskolla(RataKisko* kisko, bool pohjoinen);
 
 
 protected:

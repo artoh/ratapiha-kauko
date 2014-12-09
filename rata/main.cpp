@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
     Ratalaite::asetaSkene(skene);
     Vaunu::alustaRenderoija();
 
+    a.processEvents();
+
     skene->lataaRata();
     RataPalvelin palvelin(skene);
     if( !palvelin.listen(QHostAddress::Any, 5432))

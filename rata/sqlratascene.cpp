@@ -94,10 +94,15 @@ void SqlRataScene::lataaRata()
         kiskot_.insert(kiskoid, kisko);
 
         // Tilapäinen vaunukoe
-        if( kisko->pituus() > 150)
+        if( kiskoid < 3000 && kisko->pituus() > 250)
         {
             Vaunu* uusiVaunu = new Vaunu(this, "Sr2");
-            uusiVaunu->sijoitaKiskolle(kisko);
+            uusiVaunu->sijoitaKiskolle(kisko, true);
+            uusiVaunu = new Vaunu(this, "Eiu");
+            uusiVaunu->sijoitaKiskolle(kisko, true);
+            uusiVaunu = new Vaunu(this, "Eio");
+            uusiVaunu->sijoitaKiskolle(kisko, true);
+
         }
     }
 

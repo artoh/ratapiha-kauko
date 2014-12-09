@@ -24,7 +24,8 @@
 
 #include "kiskonpaa.h"
 
-Akseli::Akseli()
+Akseli::Akseli() :
+    edessa_(0), takana_(0)
 {
 }
 
