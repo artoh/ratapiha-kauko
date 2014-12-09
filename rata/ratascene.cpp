@@ -80,7 +80,6 @@ int RataScene::aika()
 void RataScene::lahetaViesti(unsigned int viesti)
 {
     emit astlViesti(viesti);
-//    qDebug() << "ASTL " << viesti;
 }
 
 void RataScene::asetaNopeus(int nopeutuskerroin)
@@ -94,10 +93,11 @@ void RataScene::asetaNopeus(int nopeutuskerroin)
 void RataScene::sekuntiKulunut()
 {
     simulaatioAika_++;
-    lahetaViesti( aika() );
 
-    // Ilmoitetaan aika myös asetinlaitteeseen aikasanomalla
+    // Ilmoitetaan aika asetinlaitteeseen aikasanomalla
     emit astlViesti( aika() );
+    // Sekä näytölle
+    emit ajanMuutos( aika() );
 
     // Viivästetyt laitetoiminnot
     // Kun viive on kulunut, kutsutaan laitteiden viivevalmis-funktioita

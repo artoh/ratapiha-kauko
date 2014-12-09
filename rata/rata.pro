@@ -37,7 +37,8 @@ SOURCES += main.cpp \
     yhdistelmaopastin.cpp \
     esiopastin.cpp \
     raideopastin.cpp \
-    paa2opastin.cpp
+    paa2opastin.cpp \
+    rataikkuna.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -62,7 +63,8 @@ HEADERS += \
     yhdistelmaopastin.h \
     esiopastin.h \
     raideopastin.h \
-    paa2opastin.h
+    paa2opastin.h \
+    rataikkuna.h
 
 RESOURCES += \
     rata.qrc

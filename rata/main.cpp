@@ -7,8 +7,9 @@
 #include <QSplashScreen>
 
 #include "sqlratascene.h"
-#include "rataview.h"
 #include "ratalaite.h"
+
+#include "rataikkuna.h"
 
 #include "ratapalvelin.h"
 
@@ -24,26 +25,22 @@ int main(int argc, char *argv[])
     QTime t;
      t.start();
 
-qDebug() << QCoreApplication::libraryPaths();
-
     SqlRataScene *skene = new SqlRataScene(0);
     Ratalaite::asetaSkene(skene);
 
     skene->lataaRata();
-    RataView view(skene);
-
     RataPalvelin palvelin(skene);
     if( !palvelin.listen(QHostAddress::Any, 5432))
         qDebug() << "Virhe palvelun käynnistyksessä " << palvelin.errorString();
 
+    RataIkkuna *ikkuna = new RataIkkuna(skene);
+    ikkuna->show();
 
-    view.show();
-    view.ensureVisible(0.0,0.0,10.0,10.0);
-
-    skene->asetaNopeus(5);
+    skene->asetaNopeus(20);
 
     qDebug("Time elapsed: %d ms", t.elapsed());
-    splash->finish(&view);
+    splash->finish(ikkuna);
+
     delete splash;
     return a.exec();
 }
