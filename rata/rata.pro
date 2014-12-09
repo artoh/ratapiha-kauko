@@ -63,3 +63,6 @@ HEADERS += \
     esiopastin.h \
     raideopastin.h \
     paa2opastin.h
+
+RESOURCES += \
+    rata.qrc

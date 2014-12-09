@@ -4,6 +4,8 @@
 #include <QTime>
 #include <QGraphicsView>
 
+#include <QSplashScreen>
+
 #include "sqlratascene.h"
 #include "rataview.h"
 #include "ratalaite.h"
@@ -14,6 +16,10 @@ int main(int argc, char *argv[])
 {
 
     QApplication a(argc, argv);
+
+    QSplashScreen *splash = new QSplashScreen(QPixmap(":/r/pic/tausta.png"));
+    splash->show();
+    splash->showMessage("Ladataan rataa", Qt::AlignBottom | Qt::AlignCenter, Qt::white);
 
     QTime t;
      t.start();
@@ -37,5 +43,7 @@ qDebug() << QCoreApplication::libraryPaths();
     skene->asetaNopeus(5);
 
     qDebug("Time elapsed: %d ms", t.elapsed());
+    splash->finish(&view);
+    delete splash;
     return a.exec();
 }

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/r">
+        <file>pic/tausta.png</file>
+    </qresource>
+</RCC>
