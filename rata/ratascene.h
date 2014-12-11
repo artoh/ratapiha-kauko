@@ -32,6 +32,9 @@
 #include <QMultiMap>
 #include <QTimer>
 
+class Veturi;
+
+
 /**
  * @brief Radan sisältävä skene
  *
@@ -97,8 +100,31 @@ public slots:
      */
     void sanoma(quint32 sanoma);
 
+    /**
+     * @brief Palauttaa listan liikennepaikkojen nimistä
+     * @return
+     */
     QStringList liikepaikkojenNimet() const;
+
+    /**
+     * @brief Palauttaa halutun liikennepaikan koordinaatit
+     * @param liikennepaikanNimi Liikennepaikan nimi esim. "Tampere asema"
+     * @return Liikennepaikan koordinaatit (x,y)
+     */
     QPoint liikennepaikanKoordinaatit(const QString& liikennepaikanNimi) const;
+
+
+    /**
+     * @brief Palauttaa seuraavan kelvollisen veturinumeron, jota ei käytössä
+     * @return
+     */
+    int seuraavanVeturinNumero() const;
+
+    /**
+     * @brief Lisää veturin listaan. Veturin rakentaja kutsuu tätä.
+     * @param veturi
+     */
+    void lisaaVeturi(Veturi* veturi);
 
 
 protected:
@@ -115,6 +141,7 @@ protected:
     QHash<int,RataKisko*> kiskot_;
     QMultiMap<int,int> laitteidenViiveToimet_;
     QMap<QString,QPoint> liikennepaikat_;
+    QMap<int,Veturi*> veturit_;
 
     QTimer kelloTimer_;
 };

@@ -43,14 +43,24 @@ public:
     
     QPointF sijainti() const { return sijainti_; }
     
-    /**
-     * @brief Akseli liikkuu matkan verran
-     * @param matka positiivinen suunta eteenpäin
-     * @return true jos yhä kiskolla
-     */
-    bool liiku(qreal matka);
 
+    /**
+     * @brief Kytkee saman vaunun toisen akselin
+     * @param toinen Saman vaunun toinen akseli
+     */
     void kytkeToinenAkseli(Akseli* toinen);
+
+    /**
+     * @brief Kytkee yhteen toisen vaunun kanssa
+     * @param kytkinakseli Akseli, johon kytkeydytään
+     */
+    void kytkeVaunu(Akseli* kytkinakseli);
+
+    /**
+     * @brief Moottori on kytketty tähän akseliin
+     * @param matka Liikuttava matka
+     */
+    void moottoriLiike(qreal matka);
 
     Kiskonpaa* edessa() { return edessa_; }
     Kiskonpaa* takana()  { return takana_; }
@@ -58,6 +68,26 @@ public:
     qreal matkaTaakse() const { return matkaTaakse_; }
     
 protected:
+
+    /**
+     * @brief Akseli liikkuu matkan verran
+     * @param matka positiivinen suunta eteenpäin
+     * @return true jos yhä kiskolla
+     */
+    bool liiku(qreal matka);
+
+    /**
+     * @brief Liike tulee kytkimen välityksellä toisesta vaunusta
+     * @param matka
+     */
+    void kytkinLiike(qreal matka);
+
+    /**
+     * @brief Liike tulee saman vaunun toisesta akselista
+     * @param matka
+     */
+    void vaunuLiike(qreal matka);
+
     /**
      * @brief Akselin liike ilman, että uusi paikka lasketaan
      * @param matka Liikuttava matka akselin kulkusuuntaan nähden

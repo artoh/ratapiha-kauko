@@ -26,7 +26,7 @@
 #include "ratakiskotieto.h"
 
 Akseli::Akseli() :
-    edessa_(0), takana_(0)
+    toinenAkseli_(0), kytkettyAkseli_(0) ,edessa_(0), takana_(0)
 {
 }
 
@@ -36,12 +36,26 @@ void Akseli::sijoita(Kiskonpaa *edessa, qreal matkaEteen, Kiskonpaa *takana, qre
     matkaEteen_ = matkaEteen;
     takana_ = takana;
     matkaTaakse_ = matkaTaakse;
+
+    // Selvittää, onko kytkettävää akselia
+    foreach (Akseli* akseli, edessa_->kiskotieto()->akselitKiskolla())
+    {
+        if( edessa==akseli->takana() && matkaEteen == akseli->matkaTaakse())
+        {
+                // Kiskolla on jo akseli samassa paikassa, eli nämä akselit
+                // on syytä kytkeä yhteen
+                kytkeVaunu(akseli);
+        }
+    }
+
     
     edessa_->kiskotieto()->akseliKiskolle(this);
     takana_->kiskotieto()->akseliKiskolle(this);
 
     laskeKulkuViiva();
     laskeSijainti();
+
+
 }
 
 bool Akseli::liiku(qreal matka)
@@ -55,9 +69,38 @@ bool Akseli::liiku(qreal matka)
         return false;
 }
 
+void Akseli::kytkinLiike(qreal matka)
+{
+    // Liike tulee kytkimestä, leviää vaunun toiseen akseliin
+    liiku(matka);
+    toinenAkseli_->vaunuLiike(0.0 - matka);
+}
+
+void Akseli::vaunuLiike(qreal matka)
+{
+    // Liike tulee vaunun toisesta akselista, leviää kytkimeen
+    liiku(matka);
+    if( kytkettyAkseli_)
+        kytkettyAkseli_->kytkinLiike(0.0-matka);
+}
+
 void Akseli::kytkeToinenAkseli(Akseli *toinen)
 {
     toinenAkseli_= toinen;
+}
+
+void Akseli::kytkeVaunu(Akseli *kytkinakseli)
+{
+    kytkettyAkseli_ = kytkinakseli;
+    kytkinakseli->kytkettyAkseli_ = this;
+}
+
+void Akseli::moottoriLiike(qreal matka)
+{
+    liiku(matka);
+    if( kytkettyAkseli_)
+        kytkettyAkseli_->kytkinLiike(0.0-matka);
+    toinenAkseli_->vaunuLiike(0.0 - matka);
 }
 
 bool Akseli::liikeKiskolla(qreal matka)

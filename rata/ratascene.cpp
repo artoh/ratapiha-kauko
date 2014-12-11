@@ -26,8 +26,9 @@
 
 
 #include "ratascene.h"
+#include "veturi.h"
+#include "rataopastin.h"
 
-#include "pikaopastin.h"
 
 RataScene::RataScene(int aika) :
     QGraphicsScene(0), simulaatioAika_(aika),
@@ -72,6 +73,31 @@ QStringList RataScene::liikepaikkojenNimet() const
 QPoint RataScene::liikennepaikanKoordinaatit(const QString &liikennepaikanNimi) const
 {
     return liikennepaikat_.value(liikennepaikanNimi);
+}
+
+int RataScene::seuraavanVeturinNumero() const
+{
+    int seuraava = 1;  // Numerot alkavat yhdestä
+    QMapIterator<int,Veturi*> i(veturit_);
+    while( i.hasNext())
+    {
+        i.next();
+        if( i.key() == seuraava)
+        {
+            // Numero on jo käytössä
+            seuraava++;
+        }
+        else
+        {
+            break;  // Numero vapaana
+        }
+    }
+    return seuraava;
+}
+
+void RataScene::lisaaVeturi(Veturi *veturi)
+{
+    veturit_.insert(veturi->veturiNumero(), veturi);
 }
 
 void RataScene::lisaaViiveToiminto(int laitetunnus, int viesti, int viive)
@@ -133,7 +159,7 @@ void RataScene::sekuntiKulunut()
 
 void RataScene::naytonPaivitys()
 {
-    PikaOpastin::valkyta();
+    RataOpastin::valkyta();
     // Piirtää näytön uudelleen
     invalidate( sceneRect());
 }

@@ -127,34 +127,11 @@ qreal Vaunu::vaununSijaintiKiskolla(RataKisko *kisko, bool pohjoinen)
             sijainti = akseli->matkaTaakse();
     }
 
-    /*
-    QList<QGraphicsItem*> lista = kisko->collidingItems();
-    foreach( QGraphicsItem* item, lista)
-    {
-        Vaunu* vaunu = dynamic_cast<Vaunu*>(item);
-        if( vaunu && vaunu->vaununPituus())
-        {
-//            qDebug() << vaunu->vaununTyyppi() << " p " << vaunu->vaununPituus();
-
-            // Selvitetään akselin sijainti suhteessa kysyttyyn päähän
-            Akseli *akseli = vaunu->etuAkseli_;
-            if( akseli->edessa() == paa && akseli->matkaEteen() > sijainti)
-                sijainti = akseli->matkaEteen();
-            else if( akseli->takana() == paa && akseli->matkaTaakse() > sijainti)
-                sijainti = akseli->matkaTaakse();
-            // Myös toiselta akselilta
-            akseli = vaunu->takaAkseli_;
-            if( akseli->edessa() == paa && akseli->matkaEteen() > sijainti)
-                sijainti = akseli->matkaEteen();
-            else if( akseli->takana() == paa && akseli->matkaTaakse() > sijainti)
-                sijainti = akseli->matkaTaakse();
-        }
-    } */
 
     // Nyt sijainnissa on suurin etäisyys.
-    // Edellyttää kuitenkin vähintään 80 m varan
+    // Edellyttää kuitenkin vähintään 30 m varan
 
-    if( kisko->pituus() < sijainti + 80)
+    if( kisko->pituus() < sijainti + 30)
         return 0;
     else
         return sijainti;

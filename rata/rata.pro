@@ -41,7 +41,8 @@ SOURCES += main.cpp \
     paa2opastin.cpp \
     rataikkuna.cpp \
     akseli.cpp \
-    vaunu.cpp
+    vaunu.cpp \
+    veturi.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -69,7 +70,8 @@ HEADERS += \
     paa2opastin.h \
     rataikkuna.h \
     akseli.h \
-    vaunu.h
+    vaunu.h \
+    veturi.h
 
 RESOURCES += \
     rata.qrc
