@@ -119,9 +119,8 @@ qreal Vaunu::vaununSijaintiKiskolla(RataKisko *kisko, bool pohjoinen)
         paa = kisko->etelaPaa();
 
     QList<Akseli*> lista = kisko->akselitKiskolla();
-    foreach( akseli, lista)
+    foreach( Akseli* akseli, lista)
     {
-        Akseli *akseli = vaunu->etuAkseli_;
         if( akseli->edessa() == paa && akseli->matkaEteen() > sijainti)
             sijainti = akseli->matkaEteen();
         else if( akseli->takana() == paa && akseli->matkaTaakse() > sijainti)
