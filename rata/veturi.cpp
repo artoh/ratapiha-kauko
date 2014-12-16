@@ -26,7 +26,7 @@
 
 
 Veturi::Veturi(RataScene *skene, const QString &tyyppi, int veturiNumero)
-    : Vaunu(skene, tyyppi), veturiNumero_(veturiNumero)
+    : Vaunu(skene, tyyppi), veturiNumero_(veturiNumero), moottori_(0)
 {
    // Jos numeroksi annetaan 0, niin veturin numero pitää hakea skeneltä
    if( !veturiNumero )

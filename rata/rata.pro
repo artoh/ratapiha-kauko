@@ -42,7 +42,8 @@ SOURCES += main.cpp \
     rataikkuna.cpp \
     akseli.cpp \
     vaunu.cpp \
-    veturi.cpp
+    veturi.cpp \
+    moottori.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -71,7 +72,8 @@ HEADERS += \
     rataikkuna.h \
     akseli.h \
     vaunu.h \
-    veturi.h
+    veturi.h \
+    moottori.h
 
 RESOURCES += \
     rata.qrc

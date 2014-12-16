@@ -25,6 +25,8 @@
 
 #include "vaunu.h"
 
+class Moottori;
+
 /**
  * @brief Veturi
  */
@@ -42,9 +44,15 @@ public:
     int veturiNumero() const { return veturiNumero_; }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    
+    qreal kiihtyvyys() const { return 0.8; }
+    qreal hidastuvuus() const { return 1.0; }
+
+    Moottori* moottori() { return moottori_; }
 
 protected:
     int veturiNumero_;
+    Moottori* moottori_;
 };
 
 #endif // VETURI_H

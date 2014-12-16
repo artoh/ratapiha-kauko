@@ -28,6 +28,7 @@
 #include <QLineF>
 
 class Kiskonpaa;
+class Moottori;
 
 /**
  * @brief Vaunun päässä oleva akseli
@@ -67,6 +68,14 @@ public:
     qreal matkaEteen() const { return matkaEteen_;  }
     qreal matkaTaakse() const { return matkaTaakse_; }
     
+    /**
+     * @brief Moottorin rakentaja kytkeytyy tällä akseliin
+     * @param moottori
+     */
+    void kytkeMoottori(Moottori* moottori);
+
+    Moottori* moottori() { return moottori_; }
+
 protected:
 
     /**
@@ -109,6 +118,11 @@ protected:
     
     QPointF sijainti_;
     QLineF kulkuViiva_;
+
+    /** Mittaa akselin kulkeman kokonaismatkan */
+    qreal matkaMittari_;
+
+    Moottori* moottori_;
 };
 
 #endif // AKSELI_H

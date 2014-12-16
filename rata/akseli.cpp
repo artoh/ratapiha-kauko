@@ -26,7 +26,7 @@
 #include "ratakiskotieto.h"
 
 Akseli::Akseli() :
-    toinenAkseli_(0), kytkettyAkseli_(0) ,edessa_(0), takana_(0)
+    toinenAkseli_(0), kytkettyAkseli_(0) ,edessa_(0), takana_(0), moottori_(0)
 {
 }
 
@@ -60,6 +60,9 @@ void Akseli::sijoita(Kiskonpaa *edessa, qreal matkaEteen, Kiskonpaa *takana, qre
 
 bool Akseli::liiku(qreal matka)
 {
+    // Lisätään liikuttu matka matkamittariin
+    matkaMittari_ += qAbs(matka);
+
     if(liikeKiskolla(matka))
     {
         laskeSijainti();
@@ -101,6 +104,11 @@ void Akseli::moottoriLiike(qreal matka)
     if( kytkettyAkseli_)
         kytkettyAkseli_->kytkinLiike(0.0-matka);
     toinenAkseli_->vaunuLiike(0.0 - matka);
+}
+
+void Akseli::kytkeMoottori(Moottori *moottori)
+{
+    moottori_ = moottori;
 }
 
 bool Akseli::liikeKiskolla(qreal matka)
