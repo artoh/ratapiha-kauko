@@ -19,14 +19,16 @@
 **
 **************************************************************************/
 
+#include <QDebug>
 
 #include "akseli.h"
 
 #include "kiskonpaa.h"
 #include "ratakiskotieto.h"
+#include "vaunu.h"
 
-Akseli::Akseli() :
-    toinenAkseli_(0), kytkettyAkseli_(0) ,edessa_(0), takana_(0), moottori_(0)
+Akseli::Akseli(Vaunu *vaunu) :
+    vaunu_(vaunu), toinenAkseli_(0), kytkettyAkseli_(0) ,edessa_(0), takana_(0), moottori_(0)
 {
 }
 
@@ -66,6 +68,7 @@ bool Akseli::liiku(qreal matka)
     if(liikeKiskolla(matka))
     {
         laskeSijainti();
+        vaunu_->akseliSiirtynyt();  // Jotta vaunun sijainti lasketaan
         return true;
     }
     else
@@ -122,20 +125,22 @@ bool Akseli::liikeKiskolla(qreal matka)
         if( matkaEteen_ < 0.00)
         {
             // Joo - mennään eteenpäin
-            takana_ = edessa_->ajaUlos();
             edessa_->kiskotieto()->akseliKiskolta(this);
+            takana_ = edessa_->ajaUlos();
             if( takana_ )
             {
+                qreal jaljella = 0.0 - matkaEteen_;
+
                 takana_->ajaSisaan();
                 takana_->kiskotieto()->akseliKiskolle(this);
-                edessa_ = takana_->toinenPaa();
-                
+
+                edessa_ = takana_->toinenPaa();               
                 laskeKulkuViiva();
                 
                 matkaTaakse_ = 0;
                 matkaEteen_ = kulkuViiva_.length();
                 
-                return liikeKiskolla(0.0-matkaTaakse_);  // Mennään lisää eteenpäin
+                return liikeKiskolla( jaljella );  // Mennään lisää eteenpäin
             }
             else
                 return false;
@@ -143,20 +148,22 @@ bool Akseli::liikeKiskolla(qreal matka)
         else if( matkaTaakse_ < 0.00)
         {
             // Mennään taaksepäin
-            edessa_ = takana_->ajaUlos();
             takana_->kiskotieto()->akseliKiskolta(this);
+            edessa_ = takana_->ajaUlos();
             if( edessa_)
             {
+                qreal jaljella = matkaTaakse_;
+
                 edessa_->ajaSisaan();
                 edessa_->kiskotieto()->akseliKiskolle(this);
                 takana_ = edessa_->toinenPaa();
                 
                 laskeKulkuViiva();
                 
-                matkaTaakse_ = 0;
-                matkaEteen_ = kulkuViiva_.length();
+                matkaEteen_ = 0;
+                matkaTaakse_ = kulkuViiva_.length();
                 
-                return liikeKiskolla(0.0-matkaTaakse_);  // Mennään lisää taaksepäin
+                return liikeKiskolla(jaljella);  // Mennään lisää taaksepäin
             }
             else
                 return false;
@@ -175,4 +182,6 @@ void Akseli::laskeKulkuViiva()
 {
     if( edessa_ && takana_)
         kulkuViiva_.setLine(takana_->x(), takana_->y(),edessa_->x(), edessa_->y());
+    else
+        qDebug() << "!" << edessa_ << takana_;
 }

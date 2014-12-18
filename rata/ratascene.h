@@ -24,15 +24,18 @@
 #define RATASCENE_H
 
 #include <QtWidgets/QGraphicsScene>
-
-#include "kiskoliitos.h"
-#include "ratakisko.h"
-#include "ratalaite.h"
 #include <QHash>
 #include <QMultiMap>
 #include <QTimer>
 
-class Veturi;
+
+#include "kiskoliitos.h"
+#include "ratakisko.h"
+#include "ratalaite.h"
+#include "veturi.h"
+
+
+
 
 
 /**
@@ -76,6 +79,7 @@ signals:
     void ajanMuutos(int simulaatioaika);
     void astlViesti(unsigned int viesti);
     void nopeutuksenMuutos(int nopeutuskerroin);
+
 public slots:
     /**
      * @brief Asettaa simulaation nopeuden
@@ -83,22 +87,13 @@ public slots:
      */
     void asetaNopeus(int nopeutuskerroin);
 
-    void sekuntiKulunut();
-
-    /**
-     * @brief Näyttöä päivitetään puolen sekunnin välein
-     *
-     * Näin toteutuu opasteiden välkytys, sekä vaihteiden yms.
-     * asentojen muuttuminen
-     *
-     */
-    void naytonPaivitys();
-
     /**
      * @brief Välittää asetinlaitteelta sanoman laitteelle
      * @param komento 32-bittinen asetinlaitesanoma
      */
     void sanoma(quint32 sanoma);
+
+public:
 
     /**
      * @brief Palauttaa listan liikennepaikkojen nimistä
@@ -126,6 +121,34 @@ public slots:
      */
     void lisaaVeturi(Veturi* veturi);
 
+    /**
+     * @brief Asettaa veturin aktiivisen ajopöydän
+     * @param veturi Veturin tunnusnumero
+     * @param ajopoyta
+     */
+    void asetaAjoPoyta(int veturiId, Veturi::Ajopoyta ajopoyta );
+
+    /**
+     * @brief Palauttaa halutun veturin
+     * @param veturiId
+     * @return
+     */
+    Veturi* veturi(int veturiId) { return veturit_.value(veturiId); }
+
+private slots:
+
+    void sekuntiKulunut();
+
+    /**
+     * @brief Näyttöä päivitetään puolen sekunnin välein
+     *
+     * Näin toteutuu opasteiden välkytys, sekä vaihteiden yms.
+     * asentojen muuttuminen
+     *
+     */
+    void naytonPaivitys();
+
+    void ajaVetureilla();
 
 protected:
     RataScene(int aika);
@@ -142,8 +165,11 @@ protected:
     QMultiMap<int,int> laitteidenViiveToimet_;
     QMap<QString,QPoint> liikennepaikat_;
     QMap<int,Veturi*> veturit_;
+    QList<Moottori*> moottorit_;
 
     QTimer kelloTimer_;
+
+    static const int MOOTTORI_PAIVITYS_KERROIN = 5;
 };
 
 #endif // RATASCENE_H

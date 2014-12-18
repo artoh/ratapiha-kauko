@@ -30,12 +30,12 @@ void AkselinlaskentaLiitos::lisaaPaa(Kiskonpaa *kiskonpaa, int raidetunnus)
     // raidetunnus ilmaisee aina raiteen, jolta akseli lasketaan ulos
     if( ekaPaa_ )
     {
-        ekaPaa_ = kiskonpaa;
-        ekaLaite_ = new Ratalaite( Ratalaite::muodostaLaitetunnus(raidetunnus, 0xF) );
+        tokaPaa_ = kiskonpaa;
+        tokaLaite_ = new Ratalaite( Ratalaite::muodostaLaitetunnus(raidetunnus, 0xF));
     }
     else
     {
-        tokaPaa_ = kiskonpaa;
-        tokaLaite_ = new Ratalaite( Ratalaite::muodostaLaitetunnus(raidetunnus, 0xF));
+        ekaPaa_ = kiskonpaa;
+        ekaLaite_ = new Ratalaite( Ratalaite::muodostaLaitetunnus(raidetunnus, 0xF) );
     }
 }

@@ -23,6 +23,8 @@
 #ifndef MOOTTORI_H
 #define MOOTTORI_H
 
+#include <QtGlobal>
+
 class Akseli;
 class RataScene;
 class Veturi;
@@ -50,7 +52,9 @@ public:
     qreal tavoiteNopeusKmH() const { return tavoiteNopeusMs() * 3.6; }
     
     void asetaTavoiteNopeus( qreal nopeusMs );
-    
+
+    Akseli* akseli() { return akseli_; }
+
 protected:
     Veturi* veturi_;
     Akseli* akseli_;
@@ -59,7 +63,7 @@ protected:
     qreal tavoiteNopeusMs_;
 
     Veturi* veturi() { return veturi_; }
-    Akseli* akseli() { return akseli_; }
+
     
 };
 

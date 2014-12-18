@@ -29,6 +29,7 @@
 
 class Kiskonpaa;
 class Moottori;
+class Vaunu;
 
 /**
  * @brief Vaunun päässä oleva akseli
@@ -38,7 +39,7 @@ class Moottori;
 class Akseli
 {
 public:
-    Akseli();
+    Akseli(Vaunu* vaunu);
     
     void sijoita(Kiskonpaa* edessa, qreal matkaEteen, Kiskonpaa* takana, qreal matkaTaakse);
     
@@ -106,9 +107,12 @@ protected:
     
     void laskeSijainti();
     void laskeKulkuViiva();
+
+    Vaunu* vaunu_;
     
     Akseli* toinenAkseli_;
     Akseli* kytkettyAkseli_;
+
     
     Kiskonpaa *edessa_;
     qreal matkaEteen_;

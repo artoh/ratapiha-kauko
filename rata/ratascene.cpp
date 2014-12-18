@@ -28,6 +28,7 @@
 #include "ratascene.h"
 #include "veturi.h"
 #include "rataopastin.h"
+#include "moottori.h"
 
 
 RataScene::RataScene(int aika) :
@@ -44,6 +45,11 @@ RataScene::RataScene(int aika) :
     QTimer *piirtoTimer = new QTimer(this);
     connect( piirtoTimer, SIGNAL(timeout()), this, SLOT(naytonPaivitys()));
     piirtoTimer->start(500);
+
+    // AjoTimerilla ajellaan ;)
+    QTimer *ajoTimer = new QTimer(this);
+    connect(ajoTimer, SIGNAL(timeout()), this, SLOT(ajaVetureilla()));
+    ajoTimer->start( 1000 / MOOTTORI_PAIVITYS_KERROIN );
 }
 
 void RataScene::rekisteroiLaite(int tunnus, Ratalaite *laite)
@@ -98,6 +104,25 @@ int RataScene::seuraavanVeturinNumero() const
 void RataScene::lisaaVeturi(Veturi *veturi)
 {
     veturit_.insert(veturi->veturiNumero(), veturi);
+}
+
+void RataScene::asetaAjoPoyta(int veturiId, Veturi::Ajopoyta ajopoyta)
+{
+    Veturi* veturi = veturit_.value(veturiId);
+    if( veturi )
+    {
+        if( ajopoyta == Veturi::EI_AJOPOYTAA)
+        {
+            moottorit_.removeOne( veturi->moottori());
+        }
+
+        Moottori *moottori = veturi->asetaAjopoyta(ajopoyta);
+
+        if( moottori)
+        {
+            moottorit_.append( moottori );
+        }
+    }
 }
 
 void RataScene::lisaaViiveToiminto(int laitetunnus, int viesti, int viive)
@@ -164,3 +189,21 @@ void RataScene::naytonPaivitys()
     invalidate( sceneRect());
 }
 
+void RataScene::ajaVetureilla()
+{
+    if( nopeuskerroin())    // Ei ajeta, jos simulaatio pysäytetty
+    {
+
+        qreal kerroin = (qreal) nopeuskerroin() / (qreal) MOOTTORI_PAIVITYS_KERROIN;
+
+        foreach (Moottori* moottori, moottorit_)
+        {
+            moottori->aja( kerroin );
+        }
+
+        invalidate(sceneRect());    // Päivitetään näyttö
+
+    }
+}
+
+const int RataScene::MOOTTORI_PAIVITYS_KERROIN;

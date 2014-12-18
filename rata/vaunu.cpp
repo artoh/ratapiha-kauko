@@ -32,10 +32,10 @@
 #include "kiskonpaa.h"
 
 Vaunu::Vaunu(RataScene *skene, const QString &tyyppi)
-    : QGraphicsItem(0),  tyyppi_(tyyppi)
+    : QGraphicsItem(0),  tyyppi_(tyyppi), yksiAkseliJoPaivitetty_(false)
 {
-    etuAkseli_ = new Akseli();
-    takaAkseli_ = new Akseli();
+    etuAkseli_ = new Akseli(this);
+    takaAkseli_ = new Akseli(this);
 
     etuAkseli_->kytkeToinenAkseli(takaAkseli_);
     takaAkseli_->kytkeToinenAkseli(etuAkseli_);
@@ -93,12 +93,25 @@ void Vaunu::paivitaSijainti()
 
     QLineF vaunuviiva(p1, p2);
 
-    scene()->addLine(vaunuviiva);
+ //   scene()->addLine(vaunuviiva);
+ //   scene()->addRect(p1.x(), p1.y(), 5.0, 5.0, QPen(), QBrush(Qt::cyan));
 
     setPos(p1);
     setRotation(0.0 - vaunuviiva.angle());
 
     update( boundingRect());
+}
+
+void Vaunu::akseliSiirtynyt()
+{
+    if( yksiAkseliJoPaivitetty_)
+    {
+        // Sijainti päivittyy vain joka toisella akselin liikkumisilmoituksella
+        paivitaSijainti();
+        yksiAkseliJoPaivitetty_ = false;
+    }
+    else
+        yksiAkseliJoPaivitetty_ = true;
 }
 
 

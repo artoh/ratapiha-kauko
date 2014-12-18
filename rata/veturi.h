@@ -43,12 +43,32 @@ public:
 
     int veturiNumero() const { return veturiNumero_; }
 
+    QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     
     qreal kiihtyvyys() const { return 0.8; }
     qreal hidastuvuus() const { return 1.0; }
 
     Moottori* moottori() { return moottori_; }
+
+    enum Ajopoyta
+    {
+        EI_AJOPOYTAA = 0 /** Kumpikaan ajopöytä ei ole aktiivinen */,
+        AJOPOYTA_EDESSA = 1 /** Etuakselin puoleinen ajopöytä */,
+        AJOPOYTA_TAKANA = 2 /** Taka-akselin puoleinen ajopöytä */
+    };
+
+    /**
+     * @brief Asettaa ajopöydän
+     *
+     * Luo Moottori-olion ja liittää sen Veturiin ja Akseliin. Skene kutsuu tätä
+     * ajopöytää valittaessa. Junassa ei saisi olla muita aktiivisia ajopöytiä.
+     *
+     * @param ajopoyta
+     * @return Luotu Moottori
+     */
+    Moottori* asetaAjopoyta( Ajopoyta ajopoyta);
+    Ajopoyta ajopoyta();
 
 protected:
     int veturiNumero_;

@@ -23,7 +23,7 @@
 
 #include "veturi.h"
 #include "ratascene.h"
-
+#include "moottori.h"
 
 Veturi::Veturi(RataScene *skene, const QString &tyyppi, int veturiNumero)
     : Vaunu(skene, tyyppi), veturiNumero_(veturiNumero), moottori_(0)
@@ -36,11 +36,66 @@ Veturi::Veturi(RataScene *skene, const QString &tyyppi, int veturiNumero)
    skene->lisaaVeturi(this);
 }
 
+QRectF Veturi::boundingRect() const
+{
+    // Veturin pituuteen lasketaan mukaan myös valokeilat
+    return QRectF( -20.0, -5.0, vaununPituus() + 40.0, 10.0);
+}
+
 void Veturi::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
+    if( ajopoyta() == AJOPOYTA_EDESSA)
+    {
+        painter->setPen( Qt::NoPen);
+        painter->setBrush( QColor(255,255,0,160));
+        painter->drawPie( QRectF(-20.0, -10.0, 40.0, 20.0 ), 135 * 16.0, 90 * 16.0);
+    }
+    else if( ajopoyta() == AJOPOYTA_TAKANA)
+    {
+        painter->setPen( Qt::NoPen);
+        painter->setBrush( QColor(255,255,0,160));
+        painter->drawPie( QRectF( vaununPituus() -20.0, -10.0, 40, 20.0 ), -45 * 16.0, 90 * 16.0);
+    }
+
+
     Vaunu::paint(painter,0,0);
 
     painter->setPen( QPen(Qt::black));
     painter->setFont( QFont("Helvetica",7.0,QFont::Bold));
     painter->drawText( QRectF(0.0, -5.5, vaununPituus(), 11.0), QString::number( veturiNumero() ), QTextOption(Qt::AlignCenter));
+}
+
+Moottori *Veturi::asetaAjopoyta(Veturi::Ajopoyta ajopoyta)
+{
+    if( !ajopoyta && moottori() )
+    {
+        delete moottori_;
+        moottori_ = 0;
+    }
+    else if( !moottori() && ajopoyta == AJOPOYTA_EDESSA)
+    {
+        moottori_ = new Moottori(this, etuAkseli_);
+        return moottori();
+    }
+    else if( !moottori() && ajopoyta == AJOPOYTA_TAKANA)
+    {
+        moottori_ = new Moottori(this, takaAkseli_);
+        return moottori();
+    }
+
+    return 0;
+
+}
+
+Veturi::Ajopoyta Veturi::ajopoyta()
+{
+    if( !moottori())
+        return EI_AJOPOYTAA;
+
+    if( moottori()->akseli() == etuAkseli_ )
+        return AJOPOYTA_EDESSA;
+    else if( moottori()->akseli() == takaAkseli_ )
+        return AJOPOYTA_TAKANA;
+
+    return EI_AJOPOYTAA;
 }

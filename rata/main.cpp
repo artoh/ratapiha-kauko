@@ -12,6 +12,7 @@
 #include "rataikkuna.h"
 #include "ratapalvelin.h"
 #include "vaunu.h"
+#include "moottori.h"
 
 
 int main(int argc, char *argv[])
@@ -40,10 +41,13 @@ int main(int argc, char *argv[])
     RataIkkuna *ikkuna = new RataIkkuna(skene);
     ikkuna->show();
 
-    skene->asetaNopeus(20);
+    skene->asetaNopeus(0);
 
     qDebug("Time elapsed: %d ms", t.elapsed());
     splash->finish(ikkuna);
+
+    skene->asetaAjoPoyta(2400,Veturi::AJOPOYTA_EDESSA);
+    skene->veturi(2400)->moottori()->asetaTavoiteNopeus(30);
 
     delete splash;
     return a.exec();

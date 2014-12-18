@@ -44,6 +44,13 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     void paivitaSijainti();
+    /**
+     * @brief Päivittää sijaintia akselien liikuttua
+     *
+     * Akseli kutsuu tätä, kun on liikkunut. Koska molemmat akselit liikkuvat yhdessä,
+     * lasketaan uusi sijainti vasta sitten, kun molemmat akselit ovat jo liikkuneet
+     */
+    void akseliSiirtynyt();
 
     qreal vaununPituus() const { return vaununPituus_; }
     QString vaununTyyppi() const { return tyyppi_; }
@@ -70,6 +77,8 @@ protected:
     Akseli* takaAkseli_;
 
     qreal vaununPituus_;
+
+    bool yksiAkseliJoPaivitetty_;
 
     static QSvgRenderer *renderoija__;
     static QSvgRenderer *renderoija() { return renderoija__; }
