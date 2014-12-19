@@ -30,6 +30,8 @@
 EsiOpastin::EsiOpastin(int laitetunnus, int raidetunnus)
     : RataOpastin(laitetunnus)
 {
+    opasteet_ = 0x40;
+
     if( onkoPohjoiseen())
         teksti_ = QString("EoP%1").arg(raidetunnus,3,10,QChar('0'));
     else

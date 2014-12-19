@@ -52,7 +52,7 @@ protected:
     void piirraVari(QPainter *painter, qreal x, qreal y, qreal sade, int r, int g, int b, int r2, int g2, int b2, bool himmea=false);
     void piirraPimea(QPainter *painter, qreal x, qreal y, qreal sade);
 
-private:
+protected:
     int opasteet_;
     static bool valkky__;
 
