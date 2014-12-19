@@ -24,8 +24,8 @@
 
 #include "kiskonpaa.h"
 
-RataKiskoTieto::RataKiskoTieto(Kiskonpaa *etelaPaa, Kiskonpaa *pohjoisPaa, int sn, int kiskotieto)
-    : etelaPaa_(etelaPaa), pohjoisPaa_(pohjoisPaa), sn_(sn), kiskotieto_(kiskotieto)
+RataKiskoTieto::RataKiskoTieto(Kiskonpaa *etelaPaa, Kiskonpaa *pohjoisPaa, int sn, int kiskotieto, qreal kiskopituus)
+    : kiskopituus_(kiskopituus), etelaPaa_(etelaPaa), pohjoisPaa_(pohjoisPaa), sn_(sn), kiskotieto_(kiskotieto)
 {
     etelaPaa_->kytkeToinenPaa(pohjoisPaa_, this);
     pohjoisPaa_->kytkeToinenPaa(etelaPaa_, this);

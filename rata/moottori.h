@@ -28,6 +28,7 @@
 class Akseli;
 class RataScene;
 class Veturi;
+class JKVLaite;
 
 /**
  * @brief Akseliin liittyvä moottori
@@ -52,6 +53,7 @@ public:
     qreal tavoiteNopeusKmH() const { return tavoiteNopeusMs() * 3.6; }
     
     void asetaTavoiteNopeus( qreal nopeusMs );
+    void asetaTavoiteNopeusKmh(int nopeusKmh);
 
     Akseli* akseli() { return akseli_; }
 
@@ -61,6 +63,8 @@ protected:
     
     qreal nopeusMs_;
     qreal tavoiteNopeusMs_;
+
+    JKVLaite *jkv_;
 
     Veturi* veturi() { return veturi_; }
 

@@ -19,16 +19,20 @@
 **
 **************************************************************************/
 
+#include <QDebug>
 
 #include "moottori.h"
 
 #include "akseli.h"
 #include "veturi.h"
 
+#include "jkvlaite.h"
+
 Moottori::Moottori(Veturi *veturi, Akseli *akseli)
     : veturi_(veturi), akseli_(akseli), nopeusMs_(0.0), tavoiteNopeusMs_(0.0)
 {
     akseli->kytkeMoottori(this);
+    jkv_ = new JKVLaite(akseli, veturi->hidastuvuus() - 0.1);
 }
 
 Moottori::~Moottori()
@@ -36,14 +40,22 @@ Moottori::~Moottori()
     // Poistetaan tämä moottori akselilta
     if( akseli() && akseli()->moottori() == this )
         akseli()->kytkeMoottori(0);
+
+    delete jkv_;
 }
 
 void Moottori::aja(qreal nopeutusKerroin)
 {
     // TODO : jkv-tiedot
+    jkv_->paivitaJkv();
 
+qDebug() << " JKV " << jkv_->jkvNopeusKmh() << " km/h " << jkv_->jkvMatka() << " m ";
 
     qreal tavoite = tavoiteNopeusMs();
+
+    // Ajetaan jkv-nopeuden mukaan, jos rajoittaa
+    if( tavoite > jkv_->jkvNopeusMs())
+        tavoite = jkv_->jkvNopeusMs();
 
     if( tavoite > nopeusMs())
     {
@@ -68,4 +80,9 @@ void Moottori::aja(qreal nopeutusKerroin)
 void Moottori::asetaTavoiteNopeus(qreal nopeusMs)
 {
     tavoiteNopeusMs_ = nopeusMs;
+}
+
+void Moottori::asetaTavoiteNopeusKmh(int nopeusKmh)
+{
+    asetaTavoiteNopeus((qreal) nopeusKmh / 3.6);
 }

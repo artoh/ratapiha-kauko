@@ -29,12 +29,12 @@
 #include "rataopastin.h"
 
 RataKisko::RataKisko(Kiskonpaa *etela, Kiskonpaa *pohjoinen, int sn, int kiskotieto)
-    : QGraphicsItem(), RataKiskoTieto(etela, pohjoinen, sn, kiskotieto)
+    : QGraphicsItem(), RataKiskoTieto(etela, pohjoinen, sn, kiskotieto, 0)
 {
 
     QLineF viiva = QLineF( etelaPaa()->x(), etelaPaa()->y(), pohjoisPaa()->x(), pohjoisPaa()->y() );
+    kiskopituus_ = viiva.length();
 
-    pituus_ = viiva.length();
     setRotation(0.0 - viiva.angle());
     setPos( viiva.p1());
 

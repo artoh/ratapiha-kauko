@@ -44,9 +44,9 @@ public:
     static RataOpastin* luoOpastin(int laitetunnus, int laji, int raidetunnus);
 
     bool onkoPohjoiseen() const { return laitetunnus() & 0x1; }
+    bool onkoVaria(int varibitti) { return opasteet_ & varibitti; }
 
 protected:
-    bool onkoVaria(int varibitti) { return opasteet_ & varibitti; }
     bool valkkyyko() { return valkky__; }
 
     void piirraVari(QPainter *painter, qreal x, qreal y, qreal sade, int r, int g, int b, int r2, int g2, int b2, bool himmea=false);

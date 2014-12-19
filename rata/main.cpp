@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     splash->finish(ikkuna);
 
     skene->asetaAjoPoyta(2400,Veturi::AJOPOYTA_EDESSA);
-    skene->veturi(2400)->moottori()->asetaTavoiteNopeus(30);
+    skene->veturi(2400)->moottori()->asetaTavoiteNopeusKmh(80);
 
     delete splash;
     return a.exec();

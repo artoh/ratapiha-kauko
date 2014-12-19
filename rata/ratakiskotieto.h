@@ -42,7 +42,7 @@ public:
         SILTA = 0x20
     };
 
-    RataKiskoTieto(Kiskonpaa* etelaPaa, Kiskonpaa *pohjoisPaa, int sn, int kiskotieto);
+    RataKiskoTieto(Kiskonpaa* etelaPaa, Kiskonpaa *pohjoisPaa, int sn, int kiskotieto, qreal kiskopituus);
 
     bool laituriVasemmalla() const { return kiskotieto() & LAITURI_VASEN; }
     bool laituriOikealla() const { return kiskotieto() & LAITURI_OIKEA; }
@@ -56,6 +56,11 @@ public:
     void akseliKiskolta(Akseli* akseli);
     QList<Akseli*> akselitKiskolla() const { return akselit_.toList(); }
 
+    qreal pituus() const { return kiskopituus_; }
+
+
+protected:
+    qreal kiskopituus_;
 
 private:
     Kiskonpaa *etelaPaa_, *pohjoisPaa_;

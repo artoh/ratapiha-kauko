@@ -37,7 +37,6 @@ public:
 
     QRectF boundingRect() const;
 
-    qreal pituus() const { return pituus_; }
     void paint(QPainter *painter,  const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     /**
@@ -47,7 +46,7 @@ public:
     void kytkeOpastin(RataOpastin* opastin);
 
 protected:
-    qreal pituus_;
+
 };
 
 #endif // RATAKISKO_H
