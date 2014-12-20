@@ -94,8 +94,9 @@ void SqlRataScene::lataaRata()
         addItem(kisko);
         kiskot_.insert(kiskoid, kisko);
 
-        // Tilapäinen vaunukoe
-        if( kiskoid < 30000 && kisko->pituus() > 250)
+
+        // Tilapäinen vaunukoe -- kommentoitu ulos
+        if( 0==1 && kiskoid < 30000 && kisko->pituus() > 250)
         {
             Veturi* uusiVeturi = new Veturi(this, "Sr2");
             uusiVeturi->sijoitaKiskolle(kisko, true);

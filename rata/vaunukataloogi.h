@@ -20,43 +20,30 @@
 **************************************************************************/
 
 
-#ifndef RATAVIEW_H
-#define RATAVIEW_H
+#ifndef VAUNUKATALOOGI_H
+#define VAUNUKATALOOGI_H
 
-#include <QGraphicsView>
+#include <QListWidget>
 
-#include "ratascene.h"
-
-class RataKisko;
-
-class RataView : public QGraphicsView
+class VaunuKataloogi : public QListWidget
 {
     Q_OBJECT
 public:
-    RataView(RataScene* skene);
-
-protected:
-
-    void wheelEvent(QWheelEvent *event);
-    bool rullaSkaalaa_;
-    RataScene *skene_;
-
-    /**
-     * @brief Halutussa sijainnissa oleva kisko
-     * @param sijainti Sijainti viewin koordinaatistossa
-     * @return
-     */
-    RataKisko* kiskoKohdalla(const QPoint& sijainti);
-
-    void dragMoveEvent(QDragMoveEvent *event);
-    void dropEvent(QDropEvent *event);
+    explicit VaunuKataloogi(QWidget *parent = 0);
 
 signals:
 
 public slots:
 
+protected:
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *e);
 
+private:
+    void teeDrag();
+
+    QPoint aloitusPaikka_;
 
 };
 
-#endif // RATAVIEW_H
+#endif // VAUNUKATALOOGI_H

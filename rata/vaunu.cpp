@@ -142,9 +142,9 @@ qreal Vaunu::vaununSijaintiKiskolla(RataKisko *kisko, bool pohjoinen)
 
 
     // Nyt sijainnissa on suurin etäisyys.
-    // Edellyttää kuitenkin vähintään 30 m varan
+    // Edellyttää kuitenkin vähintään 50 m varan jotta pidempikin vaunu mahtuu
 
-    if( kisko->pituus() < sijainti + 30)
+    if( kisko->pituus() < sijainti + 50)
         return 0;
     else
         return sijainti;

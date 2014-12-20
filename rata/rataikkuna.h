@@ -56,6 +56,7 @@ public slots:
 protected:
     void luoTilarivi();
     void luoTyokalurivi();
+    void luoVaunuDock();
 
 private:
     RataScene *skene_;

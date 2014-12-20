@@ -44,7 +44,8 @@ SOURCES += main.cpp \
     vaunu.cpp \
     veturi.cpp \
     moottori.cpp \
-    jkvlaite.cpp
+    jkvlaite.cpp \
+    vaunukataloogi.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -75,7 +76,8 @@ HEADERS += \
     vaunu.h \
     veturi.h \
     moottori.h \
-    jkvlaite.h
+    jkvlaite.h \
+    vaunukataloogi.h
 
 RESOURCES += \
     rata.qrc

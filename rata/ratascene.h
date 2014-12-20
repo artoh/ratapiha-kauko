@@ -162,6 +162,7 @@ protected:
     QHash<int,Ratalaite*> laitteet_;
     QHash<int,KiskoLiitos*> kiskoliitokset_;
     QHash<int,RataKisko*> kiskot_;
+
     QMultiMap<int,int> laitteidenViiveToimet_;
     QMap<QString,QPoint> liikennepaikat_;
     QMap<int,Veturi*> veturit_;

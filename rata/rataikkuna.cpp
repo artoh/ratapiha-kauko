@@ -23,13 +23,14 @@
 #include <QToolBar>
 #include <QSpinBox>
 #include <QComboBox>
-
+#include <QDockWidget>
 #include <QLineEdit>
 #include <QCompleter>
 
 #include "rataikkuna.h"
 
 #include "rataview.h"
+#include "vaunukataloogi.h"
 
 
 RataIkkuna::RataIkkuna(RataScene *skene) :
@@ -43,6 +44,7 @@ RataIkkuna::RataIkkuna(RataScene *skene) :
 
     luoTilarivi();
     luoTyokalurivi();
+    luoVaunuDock();
     setWindowTitle("Ratapiha 5 - Ratanäkymä");
 
 }
@@ -104,4 +106,12 @@ void RataIkkuna::luoTyokalurivi()
     connect( liikennepaikkaEdit, SIGNAL(textChanged(QString) ), this, SLOT(naytaLiikennepaikka(QString)));
 
     trivi->addWidget(liikennepaikkaEdit);
+}
+
+void RataIkkuna::luoVaunuDock()
+{
+    VaunuKataloogi* luettelo = new VaunuKataloogi();
+    QDockWidget *vaunuLuetteloDock = new QDockWidget( tr("Lisää vaunu"), this);
+    vaunuLuetteloDock->setWidget( luettelo);
+    addDockWidget( Qt::RightDockWidgetArea, vaunuLuetteloDock);
 }

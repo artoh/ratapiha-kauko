@@ -37,6 +37,9 @@ public:
 
     QRectF boundingRect() const;
 
+    enum { Type = UserType + 100 } ;
+    int type() const { return Type; }
+
     void paint(QPainter *painter,  const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     /**

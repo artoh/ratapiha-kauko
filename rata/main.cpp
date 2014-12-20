@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
     qDebug("Time elapsed: %d ms", t.elapsed());
     splash->finish(ikkuna);
 
-    skene->asetaAjoPoyta(2400,Veturi::AJOPOYTA_EDESSA);
-    skene->veturi(2400)->moottori()->asetaTavoiteNopeusKmh(80);
+//    skene->asetaAjoPoyta(2400,Veturi::AJOPOYTA_EDESSA);
+//    skene->veturi(2400)->moottori()->asetaTavoiteNopeusKmh(80);
 
     delete splash;
     return a.exec();
