@@ -1,0 +1,56 @@
+/**************************************************************************
+**
+**  Ratapiha
+**
+**  Copyright (c) 2012-2015 Arto Hyvättinen
+**
+**  This program is free software: you can redistribute it and/or modify
+**  it under the terms of the GNU General Public License as published by
+**  the Free Software Foundation, either version 3 of the License, or
+**  (at your option) any later version.
+**
+**  This program is distributed in the hope that it will be useful,
+**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**  GNU General Public License for more details.
+**
+**  See <http://www.gnu.org/licenses/>
+**
+**
+**************************************************************************/
+
+
+#ifndef RAITEENPAA_H
+#define RAITEENPAA_H
+
+class RaiteenPaa
+{
+public:
+    enum PaaKirjain
+    {
+        E = 0x1,
+        A = 0xd,
+        B = 0x9,
+        P = 0x3,
+        C = 0xb,
+        D = 0xf
+    };
+
+    RaiteenPaa();
+
+    bool onkoPohjoiseen() const { return paakirjain_ & 0x2; }
+    PaaKirjain paakirjain() const { return paakirjain_; }
+    RaiteenPaa* liitettyPaa() { return liitettyPaa_; }
+
+protected:
+    /**
+     * @brief Raiteenpään rooli
+     */
+    PaaKirjain paakirjain_;
+
+    /** Raiteen pää seuraavalla raiteella, johon tämä on liitetty*/
+    RaiteenPaa *liitettyPaa_;
+
+};
+
+#endif // RAITEENPAA_H

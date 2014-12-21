@@ -79,7 +79,7 @@ int AkselinLaskentaLaite::tilabitit() const
     if( vikaTilassa() )
         return 0x0;     // Vikabitti
     else if( akseleita() )
-        return 0x1;     // Raide varattu
+        return 0x81;     // Raide varattu
     else
-        return 0x1;     // Raide vapaa
+        return 0x82;     // Raide vapaa
 }
