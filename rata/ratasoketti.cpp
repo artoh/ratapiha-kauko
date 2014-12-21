@@ -43,7 +43,7 @@ void RataSoketti::lueSanoma()
     //forever
     while( socket_->canReadLine())
     {
-        if( (unsigned) socket_->bytesAvailable() < sizeof(quint16))
+        if( (unsigned) socket_->bytesAvailable() < sizeof(quint32))
             break;
 
         quint32 sanoma;
@@ -70,6 +70,6 @@ void RataSoketti::lahetaSanoma(quint32 sanoma)
 
     socket_->write(block);
     */
-    QString teksti = QString::number(sanoma);
+    QString teksti = QString::number(sanoma) + "\n";
     socket_->write(teksti.toLatin1());
 }

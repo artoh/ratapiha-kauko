@@ -41,6 +41,7 @@ public:
 
 
     Opastin(int opastintunnus, int tyyppitieto);
+    int opastinId() const { return opastintunnus_; }
 
 
 protected:

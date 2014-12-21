@@ -23,6 +23,8 @@
 #ifndef RAITEENPAA_H
 #define RAITEENPAA_H
 
+class Opastin;
+
 class RaiteenPaa
 {
 public:
@@ -53,7 +55,7 @@ public:
     void asetaHidas();
     void asetaKulkutieLajit(KulkutieLajit lajit);
 
-    virtual void eiTeeMitaan() {;}  // Because of dynamic cast
+    virtual Opastin* opastin() { return 0; }
 
 protected:
     /**

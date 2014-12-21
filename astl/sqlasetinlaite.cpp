@@ -159,6 +159,7 @@ void SqlAsetinlaite::lataaRata()
                 suoraPaa->lisaaOpastin(opastinId, opastintyyppi);
                 opastimet++;
             }
+
         }
     }
     qDebug() << opastimet << " opastinta";

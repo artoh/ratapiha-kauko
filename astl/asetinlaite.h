@@ -26,6 +26,8 @@
 #include <QObject>
 #include <QHash>
 
+#include <QTcpSocket>
+
 #include "raidetieto.h"
 
 class Asetinlaite : public QObject
@@ -37,11 +39,14 @@ public:
 signals:
 
 public slots:
+    void kaskytesti();
 
 
 protected:
     QHash<int,RaideTieto*> raiteet_;
     QHash<QString,RaideTieto*> raiteetTunnustekstilla_;
+
+    QTcpSocket socket_;
 };
 
 #endif // ASETINLAITE_H

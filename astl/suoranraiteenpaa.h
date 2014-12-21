@@ -36,6 +36,7 @@ public:
 
 
     void lisaaOpastin(int opastintunnus, int tyyppitieto);
+    Opastin* opastin()  { return opastin_; }
 
 protected:
     Opastin *opastin_;
