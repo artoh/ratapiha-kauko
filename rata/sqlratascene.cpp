@@ -90,7 +90,7 @@ void SqlRataScene::lataaRata()
         liitosEtela->lisaaPaa(etelaPaa, raideid);
         liitosPohjoinen->lisaaPaa(pohjoisPaa, raideid);
 
-        RataKisko* kisko = new RataKisko(etelaPaa,pohjoisPaa,sn,kiskotieto);
+        RataKisko* kisko = new RataKisko(etelaPaa,pohjoisPaa,sn, raideid, kiskotieto);
         addItem(kisko);
         kiskot_.insert(kiskoid, kisko);
 

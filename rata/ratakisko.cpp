@@ -28,8 +28,8 @@
 #include "kiskoliitos.h"
 #include "rataopastin.h"
 
-RataKisko::RataKisko(Kiskonpaa *etela, Kiskonpaa *pohjoinen, int sn, int kiskotieto)
-    : QGraphicsItem(), RataKiskoTieto(etela, pohjoinen, sn, kiskotieto, 0)
+RataKisko::RataKisko(Kiskonpaa *etela, Kiskonpaa *pohjoinen, int sn, int raideId, int kiskotieto)
+    : QGraphicsItem(), RataKiskoTieto(etela, pohjoinen, sn, raideId, kiskotieto, 0)
 {
 
     QLineF viiva = QLineF( etelaPaa()->x(), etelaPaa()->y(), pohjoisPaa()->x(), pohjoisPaa()->y() );

@@ -69,6 +69,9 @@ public:
      * @param skene
      */
     static void asetaSkene(RataScene *skene);
+    
+    static RataScene* skene() { return skene__;  }
+
 private:
     int laitetunnus_;
 

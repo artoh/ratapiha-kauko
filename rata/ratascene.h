@@ -135,6 +135,13 @@ public:
      */
     Veturi* veturi(int veturiId) { return veturit_.value(veturiId); }
 
+    /**
+     * @brief Palauttaa kysytyn laitetunnuksen
+     * @param laitetunnus
+     * @return
+     */
+    Ratalaite* ratalaite(int laitetunnus) { return laitteet_.value(laitetunnus); }
+
 private slots:
 
     void sekuntiKulunut();

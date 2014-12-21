@@ -42,13 +42,14 @@ public:
         SILTA = 0x20
     };
 
-    RataKiskoTieto(Kiskonpaa* etelaPaa, Kiskonpaa *pohjoisPaa, int sn, int kiskotieto, qreal kiskopituus);
+    RataKiskoTieto(Kiskonpaa* etelaPaa, Kiskonpaa *pohjoisPaa, int sn, int raideId, int kiskotieto, qreal kiskopituus);
 
     bool laituriVasemmalla() const { return kiskotieto() & LAITURI_VASEN; }
     bool laituriOikealla() const { return kiskotieto() & LAITURI_OIKEA; }
     bool silta() const { return kiskotieto() & SILTA ; }
 
     int sn() const { return sn_; }
+    int raideId() const { return raideId_; }
     Kiskonpaa* etelaPaa() { return etelaPaa_; }
     Kiskonpaa* pohjoisPaa() { return pohjoisPaa_; }
 
@@ -65,6 +66,7 @@ protected:
 private:
     Kiskonpaa *etelaPaa_, *pohjoisPaa_;
     int sn_;
+    int raideId_;
     int kiskotieto_;
     QSet<Akseli*> akselit_;
 

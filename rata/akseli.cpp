@@ -27,6 +27,9 @@
 #include "ratakiskotieto.h"
 #include "vaunu.h"
 
+#include "ratalaite.h"
+#include "ratascene.h"
+
 Akseli::Akseli(Vaunu *vaunu) :
     vaunu_(vaunu), toinenAkseli_(0), kytkettyAkseli_(0) ,edessa_(0), takana_(0), moottori_(0)
 {
@@ -50,9 +53,13 @@ void Akseli::sijoita(Kiskonpaa *edessa, qreal matkaEteen, Kiskonpaa *takana, qre
         }
     }
 
-    
     edessa_->kiskotieto()->akseliKiskolle(this);
     takana_->kiskotieto()->akseliKiskolle(this);
+
+    // Lähetetään akselinlaskentalaitteelle sanoma akselin laskemiseksi raiteelle
+    unsigned int sanoma = ( edessa->kiskotieto()->raideId() << 4 ) | 0xf410000f;
+    Ratalaite::skene()->sanoma(sanoma);
+
 
     laskeKulkuViiva();
     laskeSijainti();

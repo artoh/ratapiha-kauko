@@ -2,7 +2,7 @@
 #define AKSELINLASKENTALIITOS_H
 
 #include "suoraliitos.h"
-#include "ratalaite.h"
+#include  "ratalaite.h"
 
 /**
  * @brief Liitos kahden eri raidetta olevan kiskon välissä
@@ -18,8 +18,8 @@ public:
     void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus = 0);
 
 private:
-    Ratalaite* ekaLaite_;
-    Ratalaite* tokaLaite_;
+    Ratalaite *ekaLaite_;
+    Ratalaite *tokaLaite_;
 };
 
 #endif // AKSELINLASKENTALIITOS_H

@@ -29,7 +29,6 @@ SOURCES += main.cpp \
     ratakiskotieto.cpp \
     ratakisko.cpp \
     ratascene.cpp \
-    pikaopastin.cpp \
     rataview.cpp \
     sqlratascene.cpp \
     ratasoketti.cpp \
@@ -45,7 +44,8 @@ SOURCES += main.cpp \
     veturi.cpp \
     moottori.cpp \
     jkvlaite.cpp \
-    vaunukataloogi.cpp
+    vaunukataloogi.cpp \
+    akselinlaskentalaite.cpp
 
 HEADERS += \
     kiskoliitos.h \
@@ -61,7 +61,6 @@ HEADERS += \
     ratakiskotieto.h \
     ratakisko.h \
     ratascene.h \
-    pikaopastin.h \
     rataview.h \
     sqlratascene.h \
     ratasoketti.h \
@@ -77,7 +76,8 @@ HEADERS += \
     veturi.h \
     moottori.h \
     jkvlaite.h \
-    vaunukataloogi.h
+    vaunukataloogi.h \
+    akselinlaskentalaite.h
 
 RESOURCES += \
     rata.qrc

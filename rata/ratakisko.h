@@ -33,7 +33,7 @@ class RataKisko : public QGraphicsItem, public RataKiskoTieto
 {
 
 public:
-    RataKisko(Kiskonpaa* etela, Kiskonpaa* pohjoinen, int sn, int kiskotieto);
+    RataKisko(Kiskonpaa* etela, Kiskonpaa* pohjoinen, int sn, int raideId, int kiskotieto);
 
     QRectF boundingRect() const;
 
