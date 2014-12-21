@@ -20,24 +20,28 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
+#ifndef ASETINLAITE_H
+#define ASETINLAITE_H
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
-{
-}
+#include <QObject>
+#include <QHash>
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
-{
-    liitettyPaa_ = paa;
-}
+#include "raidetieto.h"
 
-void RaiteenPaa::asetaHidas()
+class Asetinlaite : public QObject
 {
-    hidasKulkutie_ = true;
-}
+    Q_OBJECT
+public:
+    explicit Asetinlaite(QObject *parent = 0);
 
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
-}
+signals:
+
+public slots:
+
+
+protected:
+    QHash<int,RaideTieto*> raiteet_;
+    QHash<QString,RaideTieto*> raiteetTunnustekstilla_;
+};
+
+#endif // ASETINLAITE_H

@@ -20,24 +20,10 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
+#include "opastin.h"
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
+Opastin::Opastin(int opastintunnus, int tyyppitieto)
+    : varit_(0), pyydetyt_varit_(0),
+      opastintunnus_(opastintunnus), tyyppitieto_(tyyppitieto)
 {
-}
-
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
-{
-    liitettyPaa_ = paa;
-}
-
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
-
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
 }

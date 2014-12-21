@@ -36,11 +36,24 @@ public:
         D = 0xf
     };
 
-    RaiteenPaa();
+    enum KulkutieLajit
+    {
+        JUNAKULKUTIE = 1,
+        TOISSIJAINEN = 2,
+        VAINVAIHTO = 3
+    };
+
+    RaiteenPaa(PaaKirjain paakirjain);
 
     bool onkoPohjoiseen() const { return paakirjain_ & 0x2; }
     PaaKirjain paakirjain() const { return paakirjain_; }
     RaiteenPaa* liitettyPaa() { return liitettyPaa_; }
+
+    void liitaPaa(RaiteenPaa* paa);
+    void asetaHidas();
+    void asetaKulkutieLajit(KulkutieLajit lajit);
+
+    virtual void eiTeeMitaan() {;}  // Because of dynamic cast
 
 protected:
     /**
@@ -50,6 +63,12 @@ protected:
 
     /** Raiteen pää seuraavalla raiteella, johon tämä on liitetty*/
     RaiteenPaa *liitettyPaa_;
+
+    /** Tämän raiteenpään kautta näytetään keltavihreää */
+    bool hidasKulkutie_;
+
+    /** Mitä kulkuteitä voi muodostaa */
+    KulkutieLajit kulkutieLajit_;
 
 };
 

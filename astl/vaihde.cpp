@@ -20,24 +20,23 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
+#include "vaihde.h"
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
+
+Vaihde::Vaihde()
+    : RaideTieto(),
+      kanta_(RaiteenPaa::E), vasen_(RaiteenPaa::C), oikea_(RaiteenPaa::D)
 {
+
 }
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
+RaiteenPaa *Vaihde::raiteenPaa(int paaKirjain)
 {
-    liitettyPaa_ = paa;
-}
-
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
-
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
+    // Ei tarvitse ottaa ilmansuuntaa huomioon
+    if( (paaKirjain & 0x8) == 0)
+        return &kanta_;
+    else if( paaKirjain & 0x4)
+        return &oikea_;
+    else
+        return &vasen_;
 }

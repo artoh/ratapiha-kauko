@@ -20,24 +20,25 @@
 **************************************************************************/
 
 
+#ifndef SUORANRAITEENPAA_H
+#define SUORANRAITEENPAA_H
+
 #include "raiteenpaa.h"
+#include "opastin.h"
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
+/**
+ * @brief Suoran raiteen pää, jossa voi olla opastin ja raiteensulku
+ */
+class SuoranRaiteenPaa : public RaiteenPaa
 {
-}
+public:
+    SuoranRaiteenPaa(PaaKirjain paakirjain);
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
-{
-    liitettyPaa_ = paa;
-}
 
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
+    void lisaaOpastin(int opastintunnus, int tyyppitieto);
 
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
-}
+protected:
+    Opastin *opastin_;
+};
+
+#endif // SUORANRAITEENPAA_H

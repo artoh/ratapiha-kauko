@@ -20,24 +20,24 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
+#ifndef SQLASETINLAITE_H
+#define SQLASETINLAITE_H
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
-{
-}
+#include "asetinlaite.h"
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
+class SqlAsetinlaite : public Asetinlaite
 {
-    liitettyPaa_ = paa;
-}
+    Q_OBJECT
+public:
+    explicit SqlAsetinlaite(QObject *parent = 0);
 
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
+signals:
 
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
-}
+public slots:
+
+public:
+    void lataaRata();
+
+};
+
+#endif // SQLASETINLAITE_H

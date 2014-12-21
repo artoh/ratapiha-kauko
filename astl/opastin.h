@@ -20,24 +20,36 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
+#ifndef OPASTIN_H
+#define OPASTIN_H
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
+class Opastin
 {
-}
+public:
+    enum OpastinBitit
+    {
+        VIHREA = 0x1,
+        PUNAINEN = 0x2,
+        KELTAINEN = 0x4,
+        VIHREA_VILKKU = 0x8,
+        VALKOINEN = 0x10,
+        SININEN = 0x20,
+        KELTAINEN_VILKKU = 0x40,
+        SUOJASTUS = 0x80,
+        KIINTEASTI_KYTKETTY_ESIOPASTIN = 0x100
+    };
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
-{
-    liitettyPaa_ = paa;
-}
 
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
+    Opastin(int opastintunnus, int tyyppitieto);
 
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
-}
+
+protected:
+    int varit_;
+    int pyydetyt_varit_;
+
+    int opastintunnus_;
+    int tyyppitieto_;
+
+};
+
+#endif // OPASTIN_H

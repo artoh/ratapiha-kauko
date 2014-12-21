@@ -22,6 +22,43 @@
 
 #include "raidetieto.h"
 
+#include "raide.h"
+#include "vaihde.h"
+#include "risteysvaihde.h"
+#include "raideristeys.h"
+
 RaideTieto::RaideTieto()
 {
+}
+
+void RaideTieto::asetaTiedot(int raideId, const QString &liikennepaikka, int raideTunnus, int raidepituus, bool sahkoistetty, bool valvottu)
+{
+    raideId_ = raideId;
+    liikennepaikka_ = liikennepaikka;
+    raideTunnus_ = raideTunnus;
+    raidepituus_ = raidepituus;
+    sahkoistetty_ = sahkoistetty;
+    valvottu_ = valvottu;
+}
+
+RaideTieto *RaideTieto::luoRaide(RaideTyyppi tyyppi)
+{
+    switch (tyyppi) {
+    case RAIDE:
+        return new Raide();
+    case VAIHDE:
+        return new Vaihde();
+    case RISTEYSVAIHDE:
+        return new RisteysVaihde();
+    case RAIDERISTEYS:
+        return new RaideRisteys();
+    default:
+        return 0;
+    }
+
+}
+
+QString RaideTieto::raideTunnusTeksti() const
+{
+    return QString("%1%2").arg(liikennepaikka() ).arg( raidetunnus() ,3,10,QChar('0'));
 }

@@ -20,24 +20,24 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
+#ifndef RISTEYSVAIHDE_H
+#define RISTEYSVAIHDE_H
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
-{
-}
+#include "raidetieto.h"
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
+/**
+ * @brief Risteysvaihde
+ */
+class RisteysVaihde : public RaideTieto
 {
-    liitettyPaa_ = paa;
-}
+public:
+    RisteysVaihde();
 
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
+    int raideTyyppi() const { return RISTEYSVAIHDE; }
+    RaiteenPaa* raiteenPaa(int paaKirjain);
 
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
-}
+protected:
+    RaiteenPaa paaA_, paaB_, paaC_, paaD_;
+};
+
+#endif // RISTEYSVAIHDE_H

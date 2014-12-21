@@ -20,24 +20,9 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
+#include "raideristeys.h"
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
+RaideRisteys::RaideRisteys()
+    : RisteysVaihde()
 {
-}
-
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
-{
-    liitettyPaa_ = paa;
-}
-
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
-
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
 }

@@ -20,24 +20,26 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
+#ifndef VAIHDE_H
+#define VAIHDE_H
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
-{
-}
+#include "raidetieto.h"
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
+/**
+ * @brief Yksinkertainen vaihde
+ */
+class Vaihde : public RaideTieto
 {
-    liitettyPaa_ = paa;
-}
+public:
+    Vaihde();
 
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
+    int raideTyyppi() const { return VAIHDE; }
+    RaiteenPaa* raiteenPaa(int paaKirjain);
 
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
-}
+protected:
+    RaiteenPaa kanta_;
+    RaiteenPaa vasen_;
+    RaiteenPaa oikea_;
+};
+
+#endif // VAIHDE_H

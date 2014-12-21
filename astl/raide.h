@@ -20,24 +20,26 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
+#ifndef RAIDE_H
+#define RAIDE_H
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
-{
-}
+#include "raidetieto.h"
+#include "suoranraiteenpaa.h"
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
+/**
+ * @brief Suora raide
+ */
+class Raide : public RaideTieto
 {
-    liitettyPaa_ = paa;
-}
+public:
+    Raide();
 
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
+    int raideTyyppi() const { return RAIDE; }
+    RaiteenPaa* raiteenPaa(int paaKirjain);
 
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
-}
+protected:
+    SuoranRaiteenPaa etelaPaa_;
+    SuoranRaiteenPaa pohjoisPaa_;
+};
+
+#endif // RAIDE_H

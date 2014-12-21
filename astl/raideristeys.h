@@ -20,24 +20,23 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
+#ifndef RAIDERISTEYS_H
+#define RAIDERISTEYS_H
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
-{
-}
+#include "risteysvaihde.h"
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
+/**
+ * @brief Kahden raiteen raideristeys
+ *
+ * Asetinlaitteen kannalta vastaa raideristeystä, jossa pääsee vain suoraan
+ * ja käännetään vain asetinlaitteen toimintalogiikassa
+ */
+class RaideRisteys : public RisteysVaihde
 {
-    liitettyPaa_ = paa;
-}
+public:
+    RaideRisteys();
 
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
+    int raideTyyppi() const { return RAIDERISTEYS; }
+};
 
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
-}
+#endif // RAIDERISTEYS_H

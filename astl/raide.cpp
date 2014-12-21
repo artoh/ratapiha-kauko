@@ -20,24 +20,19 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
+#include "raide.h"
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
+Raide::Raide()
+    : RaideTieto(),
+      etelaPaa_(RaiteenPaa::E), pohjoisPaa_(RaiteenPaa::P)
 {
 }
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
+RaiteenPaa *Raide::raiteenPaa(int paaKirjain)
 {
-    liitettyPaa_ = paa;
-}
-
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
-
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
+    if( paaKirjain == RaiteenPaa::E)
+        return &etelaPaa_;
+    else if( paaKirjain == RaiteenPaa::P)
+        return &pohjoisPaa_;
+    return 0;
 }
