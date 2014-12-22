@@ -37,6 +37,8 @@ public:
     int raideTyyppi() const { return RAIDE; }
     RaiteenPaa* raiteenPaa(int paaKirjain);
 
+    RaiteenPaa* aktiivinenVastapaa(RaiteenPaa *paalle);
+
 protected:
     SuoranRaiteenPaa etelaPaa_;
     SuoranRaiteenPaa pohjoisPaa_;

@@ -92,7 +92,7 @@ void SqlAsetinlaite::lataaRata()
         int tila = kysely.value(2).toInt();
 
         int asennosta = ( tila >> 12 ) & 0xf;
-        int asentoon = (tila >> 12 ) & 0xf;
+        int asentoon = (tila >> 8 ) & 0xf;
 
         RaideTieto *raide = raiteet_.value(raiteelta);
         RaiteenPaa *paaYksi = 0;
@@ -101,15 +101,21 @@ void SqlAsetinlaite::lataaRata()
             paaYksi =  raide->raiteenPaa(asennosta);
         }
 
-        raide = raiteet_.value(raiteelle);
+        RaideTieto* raideKaksi = raiteet_.value(raiteelle);
         RaiteenPaa *paaKaksi = 0;
-        if( raide )
+        if( raideKaksi )
         {
-            paaKaksi = raide->raiteenPaa(asentoon);
+            paaKaksi = raideKaksi->raiteenPaa(asentoon);
         }
 
         if( paaYksi && paaKaksi)
         {
+            if( raide->liikennepaikka() == "Hki" || raideKaksi->liikennepaikka()=="Hki")
+            qDebug() << raide->raideTunnusTeksti()
+                        << " " << paaYksi->onkoPohjoiseen() << " --- "
+                           << raideKaksi->raideTunnusTeksti()
+                              << " " << paaKaksi->onkoPohjoiseen();
+
             paaYksi->liitaPaa(paaKaksi);
             paaKaksi->liitaPaa(paaYksi);
             if( tila & 0x1 )    // "Hidas" eli kelta-vihreä värinä

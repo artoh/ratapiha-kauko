@@ -65,6 +65,8 @@ public:
 
 protected:
     int esiopastinBititEdestapain();
+    void haeTaakseEsiopastintiedot();
+    void paivitaEsiopasteet();
 
 protected:
     SuoranRaiteenPaa *raiteenPaa_;

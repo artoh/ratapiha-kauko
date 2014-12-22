@@ -36,3 +36,12 @@ RaiteenPaa *Raide::raiteenPaa(int paaKirjain)
         return &pohjoisPaa_;
     return 0;
 }
+
+RaiteenPaa *Raide::aktiivinenVastapaa(RaiteenPaa *paalle)
+{
+    if( paalle == &etelaPaa_)
+        return &pohjoisPaa_;
+    else if( paalle == &pohjoisPaa_)
+        return &etelaPaa_;
+    return 0;
+}

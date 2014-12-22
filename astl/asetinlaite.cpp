@@ -59,7 +59,7 @@ void Asetinlaite::yhdistettyRataan(bool onko)
     // Tässä pitäisi alustaa hakemalla tilat asetinlaitteelta,
     // mutta eikös tässä vain tehdäkin niin, että
     // laitetaan opastimille värejä ???
-    if(onko)
+    for(int i=0; i<3;i++)
     {
 
         QHashIterator<int,RaideTieto*> iter(raiteet_);
@@ -67,7 +67,7 @@ void Asetinlaite::yhdistettyRataan(bool onko)
         {
             iter.next();
             RaiteenPaa* paa = iter.value()->raiteenPaa(RaiteenPaa::P);
-            if( paa )
+            if( paa && paa->raide()->liikennepaikka()=="Hki")
             {
                 Opastin* opastin = paa->opastin();
                 if( opastin )

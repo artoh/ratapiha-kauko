@@ -19,10 +19,13 @@
 **
 **************************************************************************/
 
+#include <QDebug>
 
 #include "opastin.h"
 #include "asetinlaite.h"
 #include "suoranraiteenpaa.h"
+
+#include "raidetieto.h"
 
 Opastin::Opastin(SuoranRaiteenPaa *raiteenPaa, int opastintunnus, int tyyppitieto)
     : raiteenPaa_(raiteenPaa), varit_(0),
@@ -74,20 +77,35 @@ void Opastin::asetaOpaste(Opastin::Opaste opaste)
 int Opastin::esiopastinBititEdestapain()
 {
     RaiteenPaa *paa = raiteenPaa()->seuraavaRaiteenpaa();
+    qDebug() << "Etsitään opastetta " << raiteenPaa()->raide()->raidetunnus() << " seuraava " << paa;
     while( paa != 0)
     {
+        qDebug() << paa->raide()->raidetunnus() << " /" << paa->onkoPohjoiseen();
         Opastin* opastin = paa->opastin();
         if( opastin )
         {
-            if( opastin->varit() & AJASN )
+            qDebug() << " OP " << opastin->opastinId() << " : " << opastin->varit();
+            if( opastin->varit() & KELTAINEN)
                 return KELTAINEN_VILKKU | VIHREA_VILKKU;
-            else if( opastin->varit() & AJA)
+            else if( opastin->varit() & VIHREA)
                 return VIHREA_VILKKU;
             else
                 return KELTAINEN_VILKKU;
         }
         paa = paa->seuraavaRaiteenpaa();
+
     }
     // Päättyy raidepuskuriin tms. eli laitetaan seis-bitit
     return KELTAINEN_VILKKU;
+}
+
+void Opastin::haeTaakseEsiopastintiedot()
+{
+    // TODO ...
+}
+
+void Opastin::paivitaEsiopasteet()
+{
+   varit_ = 0x80 | ( varit_ & 0x37) | esiopastinBititEdestapain();
+   Asetinlaite::instanssi()->lahetaSanoma( opastinId(), varit_);
 }
