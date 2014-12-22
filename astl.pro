@@ -18,7 +18,9 @@ SOURCES += astl/main.cpp \
     astl/risteysvaihde.cpp \
     astl/raideristeys.cpp \
     astl/asetinlaite.cpp \
-    astl/sqlasetinlaite.cpp
+    astl/sqlasetinlaite.cpp \
+    astl/asetinlaitepaneeli.cpp \
+    astl/ratayhteys.cpp
 
 HEADERS += \
     astl/raidetieto.h \
@@ -30,5 +32,10 @@ HEADERS += \
     astl/risteysvaihde.h \
     astl/raideristeys.h \
     astl/asetinlaite.h \
-    astl/sqlasetinlaite.h
+    astl/sqlasetinlaite.h \
+    astl/asetinlaitepaneeli.h \
+    astl/ratayhteys.h
+
+FORMS += \
+    astl/asetinlaitepaneeli.ui
 

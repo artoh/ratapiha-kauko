@@ -56,6 +56,7 @@ public:
     virtual int raideTyyppi() const = 0;
 
     virtual RaiteenPaa* raiteenPaa(int paaKirjain) = 0;
+    virtual RaiteenPaa* aktiivinenVastapaa(RaiteenPaa* paalle) { return 0; }
 
     int raideId() const { return raideId_; }
     QString liikennepaikka() const { return liikennepaikka_; }

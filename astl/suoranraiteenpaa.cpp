@@ -30,5 +30,5 @@ SuoranRaiteenPaa::SuoranRaiteenPaa(RaiteenPaa::PaaKirjain paakirjain, RaideTieto
 
 void SuoranRaiteenPaa::lisaaOpastin(int opastintunnus, int tyyppitieto)
 {
-    opastin_ = new Opastin(opastintunnus, tyyppitieto);
+    opastin_ = new Opastin(this, opastintunnus, tyyppitieto);
 }

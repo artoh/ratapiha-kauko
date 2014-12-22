@@ -20,39 +20,38 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
-#include "raidetieto.h"
+#ifndef RATAYHTEYS_H
+#define RATAYHTEYS_H
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain, RaideTieto *raide)
-    : paakirjain_(paakirjain), raide_(raide),
-      liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
-{
-}
+#include <QObject>
+#include <QTcpSocket>
 
-RaiteenPaa *RaiteenPaa::aktiivinenVastapaa()
+/**
+ * @brief Tietoliikenneyhteys asetinlaitteelta rataan
+ */
+class RataYhteys : public QObject
 {
-    return raide()->aktiivinenVastapaa(this);
-}
+    Q_OBJECT
+public:
+   RataYhteys(QObject *parent = 0);
 
-RaiteenPaa *RaiteenPaa::seuraavaRaiteenpaa()
-{
-    if( liitettyPaa() )
-        return liitettyPaa()->aktiivinenVastapaa();
-    else
-        return 0;
-}
+signals:
+    void yhdistettyRataan(bool onko);
+    void sanomaSaapunut(unsigned int sanoma);
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
-{
-    liitettyPaa_ = paa;
-}
+public slots:
+    void lahetaSanoma(unsigned int sanoma);
 
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
+private slots:
+    void yhteysMuodostettu();
+    void lueSanoma();
+    void yhteysKatkennut();
+    void yhdista();
 
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
-}
+
+private:
+    QTcpSocket soketti_;
+
+};
+
+#endif // RATAYHTEYS_H

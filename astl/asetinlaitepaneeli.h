@@ -20,39 +20,29 @@
 **************************************************************************/
 
 
-#include "raiteenpaa.h"
-#include "raidetieto.h"
+#ifndef ASETINLAITEPANEELI_H
+#define ASETINLAITEPANEELI_H
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain, RaideTieto *raide)
-    : paakirjain_(paakirjain), raide_(raide),
-      liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
-{
+#include <QWidget>
+
+namespace Ui {
+class AsetinlaitePaneeli;
 }
 
-RaiteenPaa *RaiteenPaa::aktiivinenVastapaa()
+class AsetinlaitePaneeli : public QWidget
 {
-    return raide()->aktiivinenVastapaa(this);
-}
+    Q_OBJECT
 
-RaiteenPaa *RaiteenPaa::seuraavaRaiteenpaa()
-{
-    if( liitettyPaa() )
-        return liitettyPaa()->aktiivinenVastapaa();
-    else
-        return 0;
-}
+public:
+    explicit AsetinlaitePaneeli(QWidget *parent = 0);
+    ~AsetinlaitePaneeli();
 
-void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
-{
-    liitettyPaa_ = paa;
-}
+public slots:
+    void ajanPaivitys(int simulaatioAika);
+    void yhdistettyRataan(bool onko);
 
-void RaiteenPaa::asetaHidas()
-{
-    hidasKulkutie_ = true;
-}
+private:
+    Ui::AsetinlaitePaneeli *ui;
+};
 
-void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
-{
-    kulkutieLajit_ = lajit;
-}
+#endif // ASETINLAITEPANEELI_H

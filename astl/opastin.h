@@ -23,6 +23,11 @@
 #ifndef OPASTIN_H
 #define OPASTIN_H
 
+class SuoranRaiteenPaa;
+
+/**
+ * @brief Pää/Raideopastimen käsittely asetinlaitelogiikassa
+ */
 class Opastin
 {
 public:
@@ -39,14 +44,32 @@ public:
         KIINTEASTI_KYTKETTY_ESIOPASTIN = 0x100
     };
 
+    enum Opaste
+    {
+        VIRHE,
+        SEIS,
+        AJA,
+        AJASN,
+        AJAVAROVASTI,
+        EIOPASTETTA
+    };
 
-    Opastin(int opastintunnus, int tyyppitieto);
+
+    Opastin(SuoranRaiteenPaa *raiteenPaa, int opastintunnus, int tyyppitieto);
     int opastinId() const { return opastintunnus_; }
 
+    void asetaOpaste(Opaste opaste);
+
+    int varit() const { return varit_; }
+    SuoranRaiteenPaa* raiteenPaa() { return raiteenPaa_; }
 
 protected:
+    int esiopastinBititEdestapain();
+
+protected:
+    SuoranRaiteenPaa *raiteenPaa_;
+
     int varit_;
-    int pyydetyt_varit_;
 
     int opastintunnus_;
     int tyyppitieto_;

@@ -5,6 +5,9 @@
 #include <QDebug>
 
 #include "sqlasetinlaite.h"
+#include "asetinlaitepaneeli.h"
+
+#include "ratayhteys.h"
 
 int main(int argc, char* argv[])
 {
@@ -14,13 +17,28 @@ int main(int argc, char* argv[])
     t.start();
 
     SqlAsetinlaite asetinlaite;
+    Asetinlaite::rekisteroiInstanssi(&asetinlaite);
     asetinlaite.lataaRata();
  
+    RataYhteys yhteys;
+
+
+    AsetinlaitePaneeli paneeli;
+
+    QObject::connect( &yhteys, SIGNAL(sanomaSaapunut(unsigned int)),
+                      &asetinlaite, SLOT(sanomaAsetinlaitteelta(unsigned int)));
+    QObject::connect( &yhteys, SIGNAL(yhdistettyRataan(bool)),
+                      &paneeli, SLOT(yhdistettyRataan(bool)));
+    QObject::connect( &asetinlaite, SIGNAL(simulaatioAikaMuutos(int)),
+                      &paneeli, SLOT(ajanPaivitys(int)));
+    QObject::connect( &asetinlaite, SIGNAL(sanomaAsetinlaitteelle(uint)),
+                      &yhteys, SLOT(lahetaSanoma(uint)));
+    QObject::connect( &yhteys, SIGNAL(yhdistettyRataan(bool)),
+                      &asetinlaite, SLOT(yhdistettyRataan(bool)));
+
+    paneeli.show();
+
     qDebug("Time elapsed: %d ms", t.elapsed());
 
-
-    QLabel label("ASETINLAITE ASETINLAITE ASETINLAITE ASETINLAITE");
-    label.show();
-    
     return a.exec();  
 }

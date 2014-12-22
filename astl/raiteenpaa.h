@@ -51,6 +51,20 @@ public:
     bool onkoPohjoiseen() const { return paakirjain_ & 0x2; }
     PaaKirjain paakirjain() const { return paakirjain_; }
     RaiteenPaa* liitettyPaa() { return liitettyPaa_; }
+    RaideTieto* raide() { return raide_; }
+
+    /**
+     * @brief Palauttaa saman raiteen toisen pään, joka aktiivinen
+     * @return
+     */
+    virtual RaiteenPaa *aktiivinenVastapaa();
+
+    /**
+     * @brief Seuraava raiteenpää edessäpäin samaan suuntaan
+     * aktiivisella reitillä
+     * @return
+     */
+    virtual RaiteenPaa* seuraavaRaiteenpaa();
 
     void liitaPaa(RaiteenPaa* paa);
     void asetaHidas();

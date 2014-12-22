@@ -26,27 +26,44 @@
 #include <QObject>
 #include <QHash>
 
-#include <QTcpSocket>
-
 #include "raidetieto.h"
 
 class Asetinlaite : public QObject
 {
     Q_OBJECT
 public:
-    explicit Asetinlaite(QObject *parent = 0);
+    Asetinlaite(QObject *parent = 0);
 
 signals:
+    void simulaatioAikaMuutos(int simulaatioAika);
+    void sanomaAsetinlaitteelle(unsigned int sanoma);
+
 
 public slots:
-    void kaskytesti();
+    void sanomaAsetinlaitteelta(unsigned int sanoma);
 
+    void lahetaSanoma(int laite, int komento);
+    void lahetaSanoma(int raide, int laite, int komento);
+
+    void yhdistettyRataan(bool onko);
+
+public:
+
+    /** Palauttaa simulaatioajan sekunteina nollahetkestä */
+    int simulaatioAika() const { return simulaatioAika_; }
 
 protected:
     QHash<int,RaideTieto*> raiteet_;
     QHash<QString,RaideTieto*> raiteetTunnustekstilla_;
 
-    QTcpSocket socket_;
+    int simulaatioAika_;
+
+public:
+    static void rekisteroiInstanssi(Asetinlaite *instanssi);
+    static Asetinlaite* instanssi() { return instanssi__; }
+
+private:
+    static Asetinlaite *instanssi__;
 };
 
 #endif // ASETINLAITE_H

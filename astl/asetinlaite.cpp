@@ -24,32 +24,64 @@
 #include "asetinlaite.h"
 #include "suoranraiteenpaa.h"
 
+
 Asetinlaite::Asetinlaite(QObject *parent) :
-    QObject(parent)
+    QObject(parent), simulaatioAika_(0)
 {
-    connect( &socket_, SIGNAL(connected()), this, SLOT(kaskytesti()));
-    socket_.connectToHost("localhost",5432);
+
 }
 
-void Asetinlaite::kaskytesti()
+void Asetinlaite::sanomaAsetinlaitteelta(unsigned int sanoma)
 {
-    QHashIterator<int,RaideTieto*> iter(raiteet_);
-
-    while(iter.hasNext())
+    // Ensimmäisenä t8estataan, onko kyse ajasta
+    if( !(sanoma & 0x80000000))
     {
-        iter.next();
-        RaiteenPaa* paa = iter.value()->raiteenPaa(RaiteenPaa::P);
-        if( paa )
-        {
-            Opastin* opastin = paa->opastin();
-            if( opastin )
-            {
-                unsigned int opastinkasky = 0xfb100000 | opastin->opastinId();
-                QString txt = QString::number(opastinkasky) + "\n";
-                socket_.write(txt.toLatin1());
+        // Aikasanoma
+        simulaatioAika_ = sanoma & 0x7fffffff;
+        emit simulaatioAikaMuutos(simulaatioAika());
+    }
+}
 
-                qDebug() << txt;
+void Asetinlaite::lahetaSanoma(int laite, int komento)
+{
+    unsigned int sanoma = 0xf0000000 | ( komento << 20) | laite ;
+    emit sanomaAsetinlaitteelle(sanoma);
+}
+
+void Asetinlaite::lahetaSanoma(int raide, int laite, int komento)
+{
+    unsigned int sanoma = 0xf0000000 | ( komento << 20) | ( raide << 4 )| laite ;
+    emit sanomaAsetinlaitteelle(sanoma);
+}
+
+void Asetinlaite::yhdistettyRataan(bool onko)
+{
+    // Tässä pitäisi alustaa hakemalla tilat asetinlaitteelta,
+    // mutta eikös tässä vain tehdäkin niin, että
+    // laitetaan opastimille värejä ???
+    if(onko)
+    {
+
+        QHashIterator<int,RaideTieto*> iter(raiteet_);
+        while(iter.hasNext())
+        {
+            iter.next();
+            RaiteenPaa* paa = iter.value()->raiteenPaa(RaiteenPaa::P);
+            if( paa )
+            {
+                Opastin* opastin = paa->opastin();
+                if( opastin )
+                    opastin->asetaOpaste(Opastin::AJA);
             }
         }
     }
 }
+
+void Asetinlaite::rekisteroiInstanssi(Asetinlaite *instanssi)
+{
+    instanssi__ = instanssi;
+}
+
+Asetinlaite* Asetinlaite::instanssi__ = 0;
+
+
