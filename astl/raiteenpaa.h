@@ -24,6 +24,7 @@
 #define RAITEENPAA_H
 
 class Opastin;
+class RaideTieto;
 
 class RaiteenPaa
 {
@@ -45,7 +46,7 @@ public:
         VAINVAIHTO = 3
     };
 
-    RaiteenPaa(PaaKirjain paakirjain);
+    RaiteenPaa(PaaKirjain paakirjain, RaideTieto* raide);
 
     bool onkoPohjoiseen() const { return paakirjain_ & 0x2; }
     PaaKirjain paakirjain() const { return paakirjain_; }
@@ -62,6 +63,8 @@ protected:
      * @brief Raiteenpään rooli
      */
     PaaKirjain paakirjain_;
+
+    RaideTieto *raide_;
 
     /** Raiteen pää seuraavalla raiteella, johon tämä on liitetty*/
     RaiteenPaa *liitettyPaa_;

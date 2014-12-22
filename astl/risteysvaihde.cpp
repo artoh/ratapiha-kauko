@@ -24,10 +24,10 @@
 
 RisteysVaihde::RisteysVaihde()
     : RaideTieto() ,
-      paaA_(RaiteenPaa::A),
-      paaB_(RaiteenPaa::B),
-      paaC_(RaiteenPaa::C),
-      paaD_(RaiteenPaa::D)
+      paaA_(RaiteenPaa::A, this),
+      paaB_(RaiteenPaa::B, this),
+      paaC_(RaiteenPaa::C, this),
+      paaD_(RaiteenPaa::D, this)
 {
 }
 

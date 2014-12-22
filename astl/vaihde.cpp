@@ -25,7 +25,7 @@
 
 Vaihde::Vaihde()
     : RaideTieto(),
-      kanta_(RaiteenPaa::E), vasen_(RaiteenPaa::C), oikea_(RaiteenPaa::D)
+      kanta_(RaiteenPaa::E, this), vasen_(RaiteenPaa::C, this), oikea_(RaiteenPaa::D, this)
 {
 
 }

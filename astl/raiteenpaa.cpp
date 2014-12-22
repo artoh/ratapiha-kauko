@@ -22,8 +22,9 @@
 
 #include "raiteenpaa.h"
 
-RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain)
-    : paakirjain_(paakirjain), liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
+RaiteenPaa::RaiteenPaa(PaaKirjain paakirjain, RaideTieto *raide)
+    : paakirjain_(paakirjain), raide_(raide),
+      liitettyPaa_(0), hidasKulkutie_(false), kulkutieLajit_(JUNAKULKUTIE)
 {
 }
 
