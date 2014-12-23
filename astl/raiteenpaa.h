@@ -66,6 +66,12 @@ public:
      */
     virtual RaiteenPaa* seuraavaRaiteenpaa();
 
+    /**
+     * @brief Edellinen raiteenpää taaksepäin samaan suuntaan aktiivisella reitillä
+     * @return
+     */
+    virtual RaiteenPaa* edellinenRaiteenpaa();
+
     void liitaPaa(RaiteenPaa* paa);
     void asetaHidas();
     void asetaKulkutieLajit(KulkutieLajit lajit);

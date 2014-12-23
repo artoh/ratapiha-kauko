@@ -24,21 +24,42 @@
 #include "asetinlaite.h"
 #include "suoranraiteenpaa.h"
 
+#include "kaskytulkki.h"
 
 Asetinlaite::Asetinlaite(QObject *parent) :
     QObject(parent), simulaatioAika_(0)
 {
-
+    // Asetinlaitteen tekstimuotoiset käskyt käsitellään erillisessä luokassa
+    // tämän luokan yksinkertaistamiseksi
+    tulkki_ = new KaskyTulkki(this);
 }
 
 void Asetinlaite::sanomaAsetinlaitteelta(unsigned int sanoma)
 {
-    // Ensimmäisenä t8estataan, onko kyse ajasta
+    // Ensimmäisenä t8estataan, onko kyse ajasta (bitti 31 = 0 )
     if( !(sanoma & 0x80000000))
     {
         // Aikasanoma
         simulaatioAika_ = sanoma & 0x7fffffff;
         emit simulaatioAikaMuutos(simulaatioAika());
+    }
+    else
+    {
+        // Muuten sanoma delegoidaan ko. raiteelle
+        // Hajotetaan sanoma kentiksi
+        int kasky = ( sanoma & 0xff00000 ) >> 20;
+        int raideid = ( sanoma & 0xffff0) >> 4;
+        int laite = ( sanoma & 0xf );
+
+
+
+        RaideTieto* raide = raiteet_.value(raideid, 0);
+        if( raide )
+        {
+            if( raide->liikennepaikka()=="Hki")
+                qDebug() << " Raide " << raide->raideTunnusTeksti() << " Laite " << laite << " Sanoma " << kasky;
+            raide->asetinLaiteSanoma(laite, kasky);
+        }
     }
 }
 
@@ -59,7 +80,7 @@ void Asetinlaite::yhdistettyRataan(bool onko)
     // Tässä pitäisi alustaa hakemalla tilat asetinlaitteelta,
     // mutta eikös tässä vain tehdäkin niin, että
     // laitetaan opastimille värejä ???
-    for(int i=0; i<3;i++)
+    for(int i=0; i<0;i++)
     {
 
         QHashIterator<int,RaideTieto*> iter(raiteet_);
@@ -75,6 +96,16 @@ void Asetinlaite::yhdistettyRataan(bool onko)
             }
         }
     }
+}
+
+RaideTieto *Asetinlaite::raideTunnustekstilla(const QString &tunnusteksti)
+{
+    return raiteetTunnuksilla_.value(tunnusteksti, 0);
+}
+
+QString Asetinlaite::aslKomento(const QString &komento)
+{
+    return tulkki_->komento(komento);
 }
 
 void Asetinlaite::rekisteroiInstanssi(Asetinlaite *instanssi)

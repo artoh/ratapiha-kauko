@@ -20,30 +20,31 @@
 **************************************************************************/
 
 
-#include "ratapalvelin.h"
+#ifndef KASKYTULKKI_H
+#define KASKYTULKKI_H
 
-#include "ratascene.h"
-#include "ratasoketti.h"
+#include <QString>
+#include <QStringList>
 
-#include <QDebug>
+class Asetinlaite;
 
-RataPalvelin::RataPalvelin(RataScene *skene)
-    : QTcpServer(skene),
-      skene_(skene)
+class KaskyTulkki
 {
-    connect( this, SIGNAL(newConnection()), this, SLOT(yhteys()));
-}
+public:
+    KaskyTulkki(Asetinlaite* asetinlaite);
 
-void RataPalvelin::yhteys()
-{
-    QTcpSocket* soketti = nextPendingConnection();
-    RataSoketti* rsoketti = new RataSoketti(soketti, this);
+    /**
+     * @brief Suorittaa annetun asetinlaitekäskyn
+     * @param kasky
+     * @return
+     */
+    QString komento(const QString& kasky);
 
-    connect( skene_, SIGNAL(astlViesti(uint)), rsoketti, SLOT(lahetaSanoma(uint)));
-    connect( rsoketti, SIGNAL(saapunutSanoma(quint32)), skene_, SLOT(sanoma(quint32)));
+    QString vaihteenKaanto(QString vaihdetunnus);
 
-    // Alustetaan ilmoittamalla kaikki tilatiedot
-    // Myöhemmin osaa toimia eri moodeissa (astl/veturilaite)
-    skene_->lahetaKaikkiTilatiedot();
-}
+protected:
+    Asetinlaite* asl() { return asetinlaite_; }
+    Asetinlaite* asetinlaite_;
+};
 
+#endif // KASKYTULKKI_H

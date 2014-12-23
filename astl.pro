@@ -20,7 +20,8 @@ SOURCES += astl/main.cpp \
     astl/asetinlaite.cpp \
     astl/sqlasetinlaite.cpp \
     astl/asetinlaitepaneeli.cpp \
-    astl/ratayhteys.cpp
+    astl/ratayhteys.cpp \
+    astl/kaskytulkki.cpp
 
 HEADERS += \
     astl/raidetieto.h \
@@ -34,7 +35,8 @@ HEADERS += \
     astl/asetinlaite.h \
     astl/sqlasetinlaite.h \
     astl/asetinlaitepaneeli.h \
-    astl/ratayhteys.h
+    astl/ratayhteys.h \
+    astl/kaskytulkki.h
 
 FORMS += \
     astl/asetinlaitepaneeli.ui

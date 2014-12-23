@@ -24,6 +24,7 @@
 #define RAIDETIETO_H
 
 #include <QString>
+#include <QPair>
 
 #include "raiteenpaa.h"
 
@@ -48,6 +49,13 @@ public:
         VAPAA = 2
     };
 
+    enum KulkutieTyyppi
+    {
+        EIKULKUTIETA,
+        JUNAKULKUTIE,
+        VAIHTOKULKUTIE
+    };
+
     RaideTieto();
 
     void asetaTiedot(int raideId, const QString& liikennepaikka, int raideTunnus,
@@ -57,6 +65,41 @@ public:
 
     virtual RaiteenPaa* raiteenPaa(int paaKirjain) = 0;
     virtual RaiteenPaa* aktiivinenVastapaa(RaiteenPaa* paalle) { return 0; }
+
+    /**
+     * @brief Vastakkaiset päät, joiden kautta voidaan muodostaa kulkutie
+     * @return
+     */
+    virtual QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa* paalle, KulkutieTyyppi tyyppi)
+    { return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0); }
+
+    /**
+     * @brief Voiko tämän raiteen lukita kulkutielle?
+     * @param tyyppi
+     * @return
+     */
+    virtual bool voikoLukitaKulkutielle(KulkutieTyyppi tyyppi);
+
+    virtual bool onkoLukittuKulkutielle() { return false; }
+    virtual bool onkoAjonestoa() { return false; }
+
+    /**
+     * @brief Käsittelee asetinlaitteelta tulevan tätä raidetta koskevan sanoman
+     *
+     * Käsittelee itse vapaanaolon valvontaa koskevat sanomat, ja delegoi muita
+     * laitteita koskevat sanomat edelleen laiteSanoma()-funktiolla
+     *
+     * @param laite Sanoman laite-osa, bitit 0..4
+     * @param sanoma Sanoman käsky-osa, bitit 20..27
+     */
+    void asetinLaiteSanoma(int laite, int sanoma);
+
+    /**
+     * @brief Tällä delegoidaan radalla olevia laitteita koskeva sanoma alaluokille
+     * @param laite Sanoman laite-osa, bitit 0..4
+     * @param sanoma Sanoman käsky-osa, bitit 20..27
+     */
+    virtual void laiteSanoma(int laite, int sanoma) {;}
 
     int raideId() const { return raideId_; }
     QString liikennepaikka() const { return liikennepaikka_; }
@@ -70,6 +113,12 @@ public:
     static RaideTieto* luoRaide(RaideTyyppi tyyppi);
 
     QString raideTunnusTeksti() const;
+
+    /**
+     * @brief Tilapäinen (?) funktio, joka kertoo raiteesta
+     * @return
+     */
+    virtual QString raideInfo() const;
 
 protected:
     int raideId_;

@@ -76,7 +76,7 @@ void SqlAsetinlaite::lataaRata()
                                 raidepituus, sahkoistetty, valvottu);
 
         raiteet_.insert(raideId, raidetieto);
-        raiteetTunnustekstilla_.insert( raidetieto->raideTunnusTeksti(), raidetieto);  // Muodossa Hki001
+        raiteetTunnuksilla_.insert( raidetieto->raideTunnusTeksti(), raidetieto );  // Muodossa Hki001
 
     }
 

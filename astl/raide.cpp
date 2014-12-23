@@ -45,3 +45,31 @@ RaiteenPaa *Raide::aktiivinenVastapaa(RaiteenPaa *paalle)
         return &etelaPaa_;
     return 0;
 }
+
+QPair<RaiteenPaa *, RaiteenPaa *> Raide::mahdollisetVastapaat(RaiteenPaa *paalle, RaideTieto::KulkutieTyyppi tyyppi)
+{
+    // Jos tämän raiteen voi lukita kulkutielle, on ainoa mahdollinen vastapää
+    // tämän raiteen toinen eli aktiivinen pää.
+    if( voikoLukitaKulkutielle(tyyppi))
+        return qMakePair( aktiivinenVastapaa(paalle), (RaiteenPaa*) 0 );
+    else
+        return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0);
+}
+
+void Raide::laiteSanoma(int laite, int sanoma)
+{
+    // Välitetään sanoma opastimelle
+    if( laite == 0x2 || laite == 0x4)
+    {
+        // Etelässä
+        if( etelaPaa_.opastin())
+            etelaPaa_.opastin()->aslViesti(sanoma);
+    }
+    else if( laite == 0x3 || laite == 0x5)
+    {
+        // Pohjoiseen
+        if( pohjoisPaa_.opastin())
+            pohjoisPaa_.opastin()->aslViesti(sanoma);
+    }
+}
+

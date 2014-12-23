@@ -71,6 +71,18 @@ void RataScene::sanoma(quint32 sanoma)
         laite->komento(komento);
 }
 
+void RataScene::lahetaKaikkiTilatiedot()
+{
+    // Lähettää kaikille laitteille nollaviestin, jolloin kaikki
+    // laitteet ilmoittavat tilaviestin asetinlaitteelle.
+    QHashIterator<int,Ratalaite*> i(laitteet_);
+    while(i.hasNext())
+    {
+        i.next();
+        i.value()->komento(0);
+    }
+}
+
 QStringList RataScene::liikepaikkojenNimet() const
 {
     return liikennepaikat_.keys();

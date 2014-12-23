@@ -23,12 +23,18 @@
 #include "asetinlaitepaneeli.h"
 #include "ui_asetinlaitepaneeli.h"
 
+#include "asetinlaite.h"
+#include "raidetieto.h"
+
 AsetinlaitePaneeli::AsetinlaitePaneeli(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AsetinlaitePaneeli)
 {
     ui->setupUi(this);
     setWindowTitle("Asetinlaite");
+
+    connect( ui->kysymysEdit, SIGNAL(returnPressed()), this, SLOT(haeInfo()));
+    connect( ui->kaskyEdit, SIGNAL(returnPressed()), this, SLOT(aslKomento()));
 }
 
 AsetinlaitePaneeli::~AsetinlaitePaneeli()
@@ -60,4 +66,23 @@ void AsetinlaitePaneeli::yhdistettyRataan(bool onko)
         ui->rataLabel->setText("<font color=green>RATA</font>");
     else
         ui->rataLabel->setText("<font color=red>RATA</font>");
+}
+
+void AsetinlaitePaneeli::haeInfo()
+{
+    QString raidetunnus = ui->kysymysEdit->text();
+    RaideTieto* raide = Asetinlaite::instanssi()->raideTunnustekstilla(raidetunnus);
+    if( raide )
+    {
+        QString teksti = raide->raideInfo();
+        ui->raideInfoLabel->setText( teksti);
+    }
+
+}
+
+void AsetinlaitePaneeli::aslKomento()
+{
+    QString komento = ui->kaskyEdit->text();
+    QString vastaus = Asetinlaite::instanssi()->aslKomento(komento);
+    ui->aslVastausLabel->setText(vastaus);
 }

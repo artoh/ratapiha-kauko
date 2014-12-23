@@ -36,7 +36,7 @@ void Ratalaite::viiveValmis(int /* viesti */)
 
 void Ratalaite::lahetaViesti(int viesti) const
 {
-    unsigned int kokoviesti = 0xf0000000 | ((viesti & 0xf ) << 20) | laitetunnus();
+    unsigned int kokoviesti = 0xf0000000 | ((viesti & 0xff ) << 20) | laitetunnus();
     // Sitten tämä viesti pitäisi vielä lähettääkin ;)
     skene__->lahetaViesti(kokoviesti);
 }

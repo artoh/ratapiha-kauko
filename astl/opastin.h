@@ -61,17 +61,26 @@ public:
     void asetaOpaste(Opaste opaste);
 
     int varit() const { return varit_; }
+    int pyydetytVarit() const { return pyydetytVarit_; }
+    int tyyppitieto() const { return tyyppitieto_; }
     SuoranRaiteenPaa* raiteenPaa() { return raiteenPaa_; }
+
+    /**
+     * @brief Käsittelee asetinlaitteelta tulleen tilasanoman
+     * @param sanoma bitit 0..6 värejä, 7 toiminta ok
+     */
+    void aslViesti(int sanoma);
 
 protected:
     int esiopastinBititEdestapain();
     void haeTaakseEsiopastintiedot();
-    void paivitaEsiopasteet();
+    void paivitaEsiopasteet(int esiopastinbitit);
 
 protected:
     SuoranRaiteenPaa *raiteenPaa_;
 
     int varit_;
+    int pyydetytVarit_;
 
     int opastintunnus_;
     int tyyppitieto_;

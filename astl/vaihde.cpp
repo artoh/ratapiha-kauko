@@ -21,11 +21,12 @@
 
 
 #include "vaihde.h"
-
+#include "asetinlaite.h"
 
 Vaihde::Vaihde()
     : RaideTieto(),
-      kanta_(RaiteenPaa::E, this), vasen_(RaiteenPaa::C, this), oikea_(RaiteenPaa::D, this)
+      kanta_(RaiteenPaa::E, this), vasen_(RaiteenPaa::C, this), oikea_(RaiteenPaa::D, this),
+      vaihdeTila_(0), pyydettyVaihdeTila_(0)
 {
 
 }
@@ -39,4 +40,79 @@ RaiteenPaa *Vaihde::raiteenPaa(int paaKirjain)
         return &oikea_;
     else
         return &vasen_;
+}
+
+void Vaihde::laiteSanoma(int laite, int sanoma)
+{
+    // Käsittelee vaihdetta koskevat viestit
+    if( laite == 0x0)
+    {
+        vaihdeTila_ = sanoma;
+
+        if( sanoma == pyydettyVaihdeTila_)
+        {
+            // Kääntyi pyynnön mukaan
+            pyydettyVaihdeTila_ = 0;
+        }
+    }
+}
+
+RaiteenPaa *Vaihde::aktiivinenVastapaa(RaiteenPaa *paalle)
+{
+    if( paalle == &kanta_)
+    {
+        if( vaihdeVasen() )
+            return &vasen_;
+        else if( vaihdeOikea() )
+            return &oikea_;
+    }
+    else if( paalle == &vasen_ && vaihdeVasen() )
+        return &kanta_;
+    else if( paalle == &oikea_ && vaihdeOikea() )
+        return &kanta_;
+
+    return 0;
+}
+
+QPair<RaiteenPaa *, RaiteenPaa *> Vaihde::mahdollisetVastapaat(RaiteenPaa *paalle, RaideTieto::KulkutieTyyppi tyyppi)
+{
+    if( voikoLukitaKulkutielle(tyyppi))
+    {
+        if( paalle == &kanta_)
+            return qMakePair(&vasen_, &oikea_);
+        else if(paalle == &vasen_ || paalle == &oikea_ )
+            return qMakePair( &kanta_, (RaiteenPaa*) 0);
+
+    }
+    return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0);
+}
+
+QString Vaihde::raideInfo() const
+{
+    QString info = RaideTieto::raideInfo();
+    if( vaihdeVika() )
+        info.append(" VIKA ");
+    if( !vaihdeValvottu() )
+        info.append(" EI VALVOTTU ");
+    if( vaihdeKaantyy())
+        info.append(" KÄÄNTYY ");
+    if( vaihdeVasen() )
+        info.append(" - VASEMMALLE ");
+    if( vaihdeOikea() )
+        info.append(" + OIKEALLE ");
+
+    return info;
+}
+
+bool Vaihde::kaanna()
+{
+    if( !vaihdeValvottu() )
+        return false;
+    if( vaihdeVasen())
+        pyydettyVaihdeTila_ = 0x86;
+    else if( vaihdeOikea())
+        pyydettyVaihdeTila_ = 0x85;
+
+    Asetinlaite::instanssi()->lahetaSanoma(raideId(),0x0, pyydettyVaihdeTila_);
+    return true;
 }

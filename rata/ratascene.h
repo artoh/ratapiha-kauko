@@ -93,6 +93,12 @@ public slots:
      */
     void sanoma(quint32 sanoma);
 
+    /**
+     * @brief Lähettää kaikille laitteille 0-sanoman, joka saa ilmoittamaan
+     * tilatiedot asetinlaitteelle
+     */
+    void lahetaKaikkiTilatiedot();
+
 public:
 
     /**

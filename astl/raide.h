@@ -38,6 +38,9 @@ public:
     RaiteenPaa* raiteenPaa(int paaKirjain);
 
     RaiteenPaa* aktiivinenVastapaa(RaiteenPaa *paalle);
+    QPair<RaiteenPaa *, RaiteenPaa *> mahdollisetVastapaat(RaiteenPaa *paalle, KulkutieTyyppi tyyppi);
+
+    void laiteSanoma(int laite, int sanoma);
 
 protected:
     SuoranRaiteenPaa etelaPaa_;

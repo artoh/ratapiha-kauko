@@ -28,6 +28,8 @@
 
 #include "raidetieto.h"
 
+class KaskyTulkki;
+
 class Asetinlaite : public QObject
 {
     Q_OBJECT
@@ -52,9 +54,18 @@ public:
     /** Palauttaa simulaatioajan sekunteina nollahetkestä */
     int simulaatioAika() const { return simulaatioAika_; }
 
+    RaideTieto* raideTunnustekstilla(const QString& tunnusteksti);
+
+    /**
+     * @brief Suorittaa asetinlaitekomennon
+     * @param komento
+     * @return
+     */
+    QString aslKomento(const QString& komento);
+
 protected:
     QHash<int,RaideTieto*> raiteet_;
-    QHash<QString,RaideTieto*> raiteetTunnustekstilla_;
+    QHash<QString,RaideTieto*> raiteetTunnuksilla_;
 
     int simulaatioAika_;
 
@@ -64,6 +75,7 @@ public:
 
 private:
     static Asetinlaite *instanssi__;
+    KaskyTulkki* tulkki_;
 };
 
 #endif // ASETINLAITE_H

@@ -41,6 +41,9 @@ public slots:
     void ajanPaivitys(int simulaatioAika);
     void yhdistettyRataan(bool onko);
 
+    void haeInfo();
+    void aslKomento();
+
 private:
     Ui::AsetinlaitePaneeli *ui;
 };

@@ -28,7 +28,7 @@
 #include "raidetieto.h"
 
 Opastin::Opastin(SuoranRaiteenPaa *raiteenPaa, int opastintunnus, int tyyppitieto)
-    : raiteenPaa_(raiteenPaa), varit_(0),
+    : raiteenPaa_(raiteenPaa), varit_(0), pyydetytVarit_(0),
       opastintunnus_(opastintunnus), tyyppitieto_(tyyppitieto)
 {
 }
@@ -37,45 +37,57 @@ void Opastin::asetaOpaste(Opastin::Opaste opaste)
 {
     if( opaste == AJA )
     {
-        varit_ = 0x80 | VIHREA | esiopastinBititEdestapain();    // 0x80 = OK
-        // Tähän väliin pitäisi selvittää edestäpäin esiopastintieto
-        Asetinlaite::instanssi()->lahetaSanoma( opastinId(), varit_);
+        pyydetytVarit_ = 0x80 | VIHREA | esiopastinBititEdestapain();    // 0x80 = OK
+        Asetinlaite::instanssi()->lahetaSanoma( opastinId(), pyydetytVarit_);
 
         if( tyyppitieto_ & KIINTEASTI_KYTKETTY_ESIOPASTIN )
         {
             // Annetaan odota-aja opaste esiopastimeen
             Asetinlaite::instanssi()->lahetaSanoma( opastinId() | 0x6 , 0x80 | VIHREA_VILKKU  );
         }
-        // Jos ei, niin ilmoitettava taaksepäin esiopastintieto
+        else
+            haeTaakseEsiopastintiedot();
     }
     else if( opaste == AJASN )
     {
-        varit_ = 0x80 | VIHREA | KELTAINEN | esiopastinBititEdestapain();    // 0x80 = OK
+        pyydetytVarit_ = 0x80 | VIHREA | KELTAINEN | esiopastinBititEdestapain();    // 0x80 = OK
         // Taas syytä selvittää edestäpäin esiopastintieto
-        Asetinlaite::instanssi()->lahetaSanoma( opastinId(), varit_);
+        Asetinlaite::instanssi()->lahetaSanoma( opastinId(), pyydetytVarit_);
 
         if( tyyppitieto_ & KIINTEASTI_KYTKETTY_ESIOPASTIN )
         {
             // Annetaan odota-ajasn opaste esiopastimeen
             Asetinlaite::instanssi()->lahetaSanoma( opastinId() | 0x6 , 0x80 | VIHREA_VILKKU | KELTAINEN_VILKKU  );
         }
-        // else: esiopastintieto taaksepäin
+        else
+            haeTaakseEsiopastintiedot();
     }
     else if( opaste == SEIS )
     {
-        varit_ = 0x80 | PUNAINEN;    // 0x80 = OK
-        Asetinlaite::instanssi()->lahetaSanoma( opastinId(), varit_);
+        pyydetytVarit_ = 0x80 | PUNAINEN;    // 0x80 = OK
+        Asetinlaite::instanssi()->lahetaSanoma( opastinId(), pyydetytVarit_);
 
         if( tyyppitieto_ & KIINTEASTI_KYTKETTY_ESIOPASTIN )
         {
             // Annetaan odota-seis opaste esiopastimeen
             Asetinlaite::instanssi()->lahetaSanoma( opastinId() | 0x6 , 0x80 | KELTAINEN_VILKKU  );
         }
+        else
+            haeTaakseEsiopastintiedot();
     }
+}
+
+void Opastin::aslViesti(int sanoma)
+{
+    varit_ = sanoma;
 }
 
 int Opastin::esiopastinBititEdestapain()
 {
+    // Vain, jos tähän on yhdistetty esiopastin
+    if( !(tyyppitieto() & KELTAINEN_VILKKU) )
+        return 0;
+
     RaiteenPaa *paa = raiteenPaa()->seuraavaRaiteenpaa();
     qDebug() << "Etsitään opastetta " << raiteenPaa()->raide()->raidetunnus() << " seuraava " << paa;
     while( paa != 0)
@@ -101,11 +113,33 @@ int Opastin::esiopastinBititEdestapain()
 
 void Opastin::haeTaakseEsiopastintiedot()
 {
-    // TODO ...
+    RaiteenPaa *paa = raiteenPaa()->edellinenRaiteenpaa();
+    while( paa != 0)
+    {
+        Opastin* opastin = paa->opastin();
+        if( opastin )
+        {
+            if( !(opastin->varit() & VIHREA ))
+                return;
+
+            int eobitit = 0;
+            if( pyydetytVarit() & VIHREA)
+                eobitit |= VIHREA_VILKKU;
+            if( (pyydetytVarit() & 0x7 ) != 0x1 )
+                eobitit |= KELTAINEN_VILKKU;
+
+            opastin->paivitaEsiopasteet(eobitit);
+            return;
+        }
+        paa = paa->edellinenRaiteenpaa();
+    }
 }
 
-void Opastin::paivitaEsiopasteet()
+void Opastin::paivitaEsiopasteet(int esiopastinbitit)
 {
-   varit_ = 0x80 | ( varit_ & 0x37) | esiopastinBititEdestapain();
-   Asetinlaite::instanssi()->lahetaSanoma( opastinId(), varit_);
+   if( !pyydetytVarit() )
+       pyydetytVarit_ = varit();
+
+   pyydetytVarit_ = 0x80 | ( pyydetytVarit_ & 0x37) | esiopastinbitit;
+   Asetinlaite::instanssi()->lahetaSanoma( opastinId(), pyydetytVarit_);
 }

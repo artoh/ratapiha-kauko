@@ -19,6 +19,7 @@
 **
 **************************************************************************/
 
+#include <QDebug>
 
 #include "raidetieto.h"
 
@@ -41,6 +42,33 @@ void RaideTieto::asetaTiedot(int raideId, const QString &liikennepaikka, int rai
     valvottu_ = valvottu;
 }
 
+bool RaideTieto::voikoLukitaKulkutielle(RaideTieto::KulkutieTyyppi tyyppi)
+{
+    return( !onkoLukittuKulkutielle() && !onkoAjonestoa() );
+}
+
+void RaideTieto::asetinLaiteSanoma(int laite, int sanoma)
+{
+    qDebug() <<  raideTunnusTeksti() << " laite" << laite << " sanoma " << sanoma;
+    if( laite == 0xf)
+    {
+        // Vapaanaolon valvontaa koskeva sanoma
+        if( sanoma == 0x81)
+            vapaanaOlo_ = VARATTU;
+        else if( sanoma == 0x82)
+            vapaanaOlo_ = VAPAA;
+        else
+            vapaanaOlo_ = VIRHE;
+        // Sitten tehdään vapaanaoloon liittyvät herätteet
+
+    }
+    else
+    {
+        // Delegoidaan alaluokalle
+        laiteSanoma(laite, sanoma);
+    }
+}
+
 RaideTieto *RaideTieto::luoRaide(RaideTyyppi tyyppi)
 {
     switch (tyyppi) {
@@ -61,4 +89,14 @@ RaideTieto *RaideTieto::luoRaide(RaideTyyppi tyyppi)
 QString RaideTieto::raideTunnusTeksti() const
 {
     return QString("%1%2").arg(liikennepaikka() ).arg( raidetunnus() ,3,10,QChar('0'));
+}
+
+QString RaideTieto::raideInfo() const
+{
+    QString info = raideTunnusTeksti() + " " + QString::number(raideId()) + "\n";
+    if( vapaanaOlo() == VARATTU)
+        info += "VARATTU ";
+    else if( vapaanaOlo() == VIRHE)
+        info += "VALVONTAVIRHE";
+    return info;
 }

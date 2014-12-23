@@ -42,6 +42,15 @@ RaiteenPaa *RaiteenPaa::seuraavaRaiteenpaa()
         return 0;
 }
 
+RaiteenPaa *RaiteenPaa::edellinenRaiteenpaa()
+{
+    RaiteenPaa *paa = aktiivinenVastapaa();
+    if( paa )
+        return paa->liitettyPaa();
+    else
+        return 0;
+}
+
 void RaiteenPaa::liitaPaa(RaiteenPaa *paa)
 {
     liitettyPaa_ = paa;
