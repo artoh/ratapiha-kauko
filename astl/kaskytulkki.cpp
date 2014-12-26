@@ -25,8 +25,11 @@
 #include "asetinlaite.h"
 #include "raidetieto.h"
 #include "vaihde.h"
+#include "risteysvaihde.h"
 #include "raiteenpaa.h"
 #include "opastin.h"
+
+#include "junakulkutienmuodostaja.h"
 
 KaskyTulkki::KaskyTulkki(Asetinlaite *asetinlaite)
     : asetinlaite_(asetinlaite)
@@ -73,11 +76,50 @@ QString KaskyTulkki::komento(const QString &kasky)
 
     }
 
+    if( sanat.first() == "JK" && sanat.count() == 3)
+    {
+        // Kokeillaan kulkutien muodostusta
+        RaideTieto *mista = asl()->raideTunnustekstilla(sanat.at(1));
+        RaideTieto *minne = asl()->raideTunnustekstilla(sanat.at(2));
+
+        if( mista && minne)
+        {
+            JunaKulkutienMuodostaja jktm(mista, minne);
+            jktm.etsiKulkutie(KulkutienMuodostaja::EISUUNTAA);
+            return jktm.raiteet();
+        }
+    }
+
     return QString("VIRHE TuntematonKäsky");
 }
 
 QString KaskyTulkki::vaihteenKaanto(QString vaihdetunnus)
 {
+
+    // Risteysvaihteeseen viitataan komennolla V Hki040a / V Hki040c
+    if( vaihdetunnus.endsWith('a') || vaihdetunnus.endsWith('c'))
+    {
+        RaideTieto* raide = asl()->raideTunnustekstilla( vaihdetunnus.left(vaihdetunnus.length()-1) );
+        if( !raide )
+            return QString("VIRHE EiRaidetta");
+        RisteysVaihde* vaihde = dynamic_cast<RisteysVaihde*>(raide);
+        if( !vaihde)
+            return QString("VIRHE EiVaihdetta");
+        bool tulos;
+
+        if( vaihdetunnus.endsWith('A'))
+            tulos = vaihde->kaanna(true,false);
+        else
+            tulos = vaihde->kaanna(false, true);
+
+        if( tulos )
+            return QString("OK");
+        else
+            return QString("VIRHE Vaihde");
+    }
+
+    // Muuten ihan normaali vaihde
+
     RaideTieto* raide = asl()->raideTunnustekstilla( vaihdetunnus );
     if( !raide )
         return QString("VIRHE EiRaidetta");

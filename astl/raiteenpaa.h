@@ -75,6 +75,19 @@ public:
     void asetaHidas();
     void asetaKulkutieLajit(KulkutieLajit lajit);
 
+
+    /**
+     * @brief Pitääkö tämän kautta muodostetulle junakulkutielle näyttää AjaSn
+     * @return
+     */
+    bool onkoHidas() const { return hidasKulkutie_; }
+
+    /**
+     * @brief Mitä kulkuteitä tämän elementin kautta voi muodostaa?
+     * @return
+     */
+    KulkutieLajit kulkutieLajit() const { return kulkutieLajit_; }
+
     virtual Opastin* opastin() { return 0; }
 
 protected:

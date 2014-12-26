@@ -79,7 +79,14 @@ QPair<RaiteenPaa *, RaiteenPaa *> Vaihde::mahdollisetVastapaat(RaiteenPaa *paall
     if( voikoLukitaKulkutielle(tyyppi))
     {
         if( paalle == &kanta_)
-            return qMakePair(&vasen_, &oikea_);
+        {
+            if( vasen_.onkoHidas() )
+                // Pyritään antamaan ensimmäisenä nopeampi haara, jolloin
+                // todennäköisemmin saadaan helpommin lyhin kulkutie haettua
+                return qMakePair(&oikea_, &vasen_);
+            else
+                return qMakePair(&vasen_, &oikea_);
+        }
         else if(paalle == &vasen_ || paalle == &oikea_ )
             return qMakePair( &kanta_, (RaiteenPaa*) 0);
 

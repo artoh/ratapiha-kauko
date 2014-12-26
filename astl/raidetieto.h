@@ -104,6 +104,7 @@ public:
     int raideId() const { return raideId_; }
     QString liikennepaikka() const { return liikennepaikka_; }
     int raidetunnus() const { return raideTunnus_; }
+    int pituus() const { return raidepituus_; }
 
     bool onkoSahkoistetty() const { return sahkoistetty_; }
     bool onkoValvottu() const { return valvottu_; }
