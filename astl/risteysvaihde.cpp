@@ -21,25 +21,139 @@
 
 
 #include "risteysvaihde.h"
+#include "asetinlaite.h"
 
 RisteysVaihde::RisteysVaihde()
-    : RaideTieto() ,
-      paaA_(RaiteenPaa::A, this),
-      paaB_(RaiteenPaa::B, this),
-      paaC_(RaiteenPaa::C, this),
-      paaD_(RaiteenPaa::D, this)
+    : KantaRisteys()
 {
 }
 
-RaiteenPaa *RisteysVaihde::raiteenPaa(int paaKirjain)
+void RisteysVaihde::laiteSanoma(int laite, int sanoma)
 {
-    if( paaKirjain == RaiteenPaa::A)
-        return &paaA_;
-    else if(paaKirjain == RaiteenPaa::B)
-        return &paaB_;
-    else if(paaKirjain == RaiteenPaa::C)
-        return &paaC_;
-    else if(paaKirjain == RaiteenPaa::D)
-        return &paaD_;
+    if( laite == 0x0)
+    {
+        vaihdeTila_ = sanoma;
+
+        if( sanoma == pyydettyVaihdeTila_)
+        {
+            // Kääntyi pyynnön mukaan
+            pyydettyVaihdeTila_ = 0;
+        }
+    }
+
+}
+
+RaiteenPaa *RisteysVaihde::aktiivinenVastapaa(RaiteenPaa *paalle)
+{
+    // Aktiivinen vastapää vaihteen asennon mukaan.
+    // Edellyttää, että vaihde on kääntynyt myös sitä päätä
+    // kohden, josta kysely tulee
+
+    if( ( paalle == &paaA_ && vaihdeAOikea() ) ||
+         ( paalle == &paaB_ && vaihdeBVasen()) )
+    {
+        if( vaihdeCVasen())
+            return &paaC_;
+        else if( vaihdeCOikea())
+            return &paaD_;
+    }
+    else if(( paalle == &paaC_ && vaihdeCVasen()) ||
+            ( paalle == &paaD_ && vaihdeCOikea()) )
+    {
+        if( vaihdeAVasen())
+            return &paaB_;
+        else if( vaihdeAOikea())
+            return &paaA_;
+    }
+
     return 0;
 }
+
+QPair<RaiteenPaa *, RaiteenPaa *> RisteysVaihde::mahdollisetVastapaat(RaiteenPaa *paalle, RaideTieto::KulkutieTyyppi tyyppi)
+{
+    // Molemmista haaroista tultaessa on aina kaksi mahdollista
+    // jatkoa kulkuteille
+    if( voikoLukitaKulkutielle(tyyppi))
+    {
+        if( paalle == paaA_ || paalle == paaB_)
+            return qMakePair( paaC_, paaD_);
+        else if( paalle == paaC_ || paalle == paaD_)
+            return qMakePair( paaA_, paaB_);
+    }
+    return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0);
+}
+
+QString RisteysVaihde::raideInfo() const
+{
+    QString info = RaideTieto::raideInfo();
+    if( vaihdeVika() )
+        info.append(" VIKA ");
+    if( !vaihdeCValvottu() || !vaihdeAValvottu() )
+        info.append(" EI VALVOTTU ");
+    if( vaihdeKaantyy())
+        info.append(" KÄÄNTYY ");
+    if( vaihdeAVasen() )
+        info.append(" -B ");
+    if( vaihdeAOikea() )
+        info.append(" +A ");
+    if( vaihdeCVasen() )
+        info.append(" C- ");
+    if( vaihdeCOikea() )
+        info.append(" D+ ");
+
+
+    return info;
+}
+
+bool RisteysVaihde::kaanna(bool ab, bool cd)
+{
+    if( !( ab || cd))
+        return false;   // Ei kääntöpyyntöä lainkaan
+
+    if(!(  vaihdeAValvottu() && vaihdeCValvottu()) )
+        return false;   // Vaihteen oltava kokonaan valvottu
+
+    pyydettyVaihdeTila_ = 0x80 | 0x20 | 0x4;
+    int kaantoPyynto = 0x80;    // Kääntökomento
+    if( ab )
+    {
+        // Käännetään vasenta puolta
+        if( vaihdeAVasen())
+        {
+            pyydettyVaihdeTila_ |= 0x2; // Oikealle
+            kaantoPyynto |= 0x2;
+        }
+        else if( vaihdeAOikea())
+        {
+            pyydettyVaihdeTila_ |= 0x1; // Vasemmalle
+            kaantoPyynto |= 0x1;
+        }
+
+    }
+    else
+        // Ei muutosta a/b-vaihteen tilaan
+        pyydettyVaihdeTila_ = vaihdeTila() & 0x3;
+
+    if( cd )
+    {
+        // Käännetään vasenta puolta
+        if( vaihdeCVasen())
+        {
+            pyydettyVaihdeTila_ |= 0x10; // Oikealle
+            kaantoPyynto |= 0x10;
+        }
+        else if( vaihdeCOikea())
+        {
+            pyydettyVaihdeTila_ |= 0x8; // Vasemmalle
+            kaantoPyynto |= 0x8;
+        }
+
+    }
+    else
+        // Ei muutosta a/b-vaihteen tilaan
+        pyydettyVaihdeTila_ = vaihdeTila() & 0x3;
+
+    // Lähetetään kääntöpyyntö
+    Asetinlaite::instanssi()->lahetaSanoma(raideId(), 0x0, kaantoPyynto);
+}
+

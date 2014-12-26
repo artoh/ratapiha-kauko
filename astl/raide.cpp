@@ -24,7 +24,7 @@
 
 Raide::Raide()
     : RaideTieto(),
-      etelaPaa_(RaiteenPaa::E, this), pohjoisPaa_(RaiteenPaa::P, this)
+      etelaPaa_(this), pohjoisPaa_(this)
 {
 }
 

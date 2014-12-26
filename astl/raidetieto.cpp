@@ -69,6 +69,11 @@ void RaideTieto::asetinLaiteSanoma(int laite, int sanoma)
     }
 }
 
+void RaideTieto::laiteSanoma(int /*laite*/, int /*sanoma*/)
+{
+    // Tyhjä runko
+}
+
 RaideTieto *RaideTieto::luoRaide(RaideTyyppi tyyppi)
 {
     switch (tyyppi) {

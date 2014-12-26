@@ -23,6 +23,34 @@
 #include "raideristeys.h"
 
 RaideRisteys::RaideRisteys()
-    : RisteysVaihde()
+    : KantaRisteys()
 {
+}
+
+RaiteenPaa *RaideRisteys::aktiivinenVastapaa(RaiteenPaa *paalle)
+{
+    // Raideristeyksessä kuljetaan vain ja ainoastaan
+    // suoraan risteyksen lävitse
+
+    if( paalle == &paaA_)
+        return &paaD_;
+    else if(paalle == &paaB_)
+        return &paaC_;
+    else if(paalle == &paaC_)
+        return &paaB_;
+    else if(paalle == &paaD_)
+        return &paaA_;
+    return 0;
+}
+
+QPair<RaiteenPaa *, RaiteenPaa *> RaideRisteys::mahdollisetVastapaat(RaiteenPaa *paalle, RaideTieto::KulkutieTyyppi tyyppi)
+{
+    if( voikoLukitaKulkutielle(tyyppi))
+        // Jos tämän raideristeyksen voi lukita kulkutielle,
+        // niin ainoa mahdollinen on aktiivinen pää
+        return qMakePair( aktiivinenVastapaa(paalle), (RaiteenPaa*) 0 );
+    else
+        // Muuten ei ole mahdollista vastapäätä
+        return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0);
+
 }

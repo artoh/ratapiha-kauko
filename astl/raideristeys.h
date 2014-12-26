@@ -23,7 +23,7 @@
 #ifndef RAIDERISTEYS_H
 #define RAIDERISTEYS_H
 
-#include "risteysvaihde.h"
+#include "kantaristeys.h"
 
 /**
  * @brief Kahden raiteen raideristeys
@@ -31,12 +31,18 @@
  * Asetinlaitteen kannalta vastaa raideristeystä, jossa pääsee vain suoraan
  * ja käännetään vain asetinlaitteen toimintalogiikassa
  */
-class RaideRisteys : public RisteysVaihde
+class RaideRisteys : public KantaRisteys
 {
 public:
     RaideRisteys();
 
     int raideTyyppi() const { return RAIDERISTEYS; }
+
+    RaiteenPaa *aktiivinenVastapaa(RaiteenPaa *paalle);
+    QPair<RaiteenPaa *, RaiteenPaa *> mahdollisetVastapaat(RaiteenPaa *paalle, KulkutieTyyppi tyyppi);
+
+protected:
+
 };
 
 #endif // RAIDERISTEYS_H

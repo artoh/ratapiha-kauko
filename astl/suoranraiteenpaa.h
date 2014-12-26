@@ -32,7 +32,7 @@
 class SuoranRaiteenPaa : public RaiteenPaa
 {
 public:
-    SuoranRaiteenPaa(PaaKirjain paakirjain, RaideTieto *raide);
+    SuoranRaiteenPaa(RaideTieto *raide);
 
 
     void lisaaOpastin(int opastintunnus, int tyyppitieto);

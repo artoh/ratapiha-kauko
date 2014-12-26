@@ -94,7 +94,9 @@ int Opastin::esiopastinBititEdestapain()
     {
         qDebug() << paa->raide()->raidetunnus() << " /" << paa->onkoPohjoiseen();
         Opastin* opastin = paa->opastin();
-        if( opastin )
+        // Esiopastetta ei näytetä raideopastimen valkoisesta
+        // vaan vasta kulkutien päässä olevasta väristä
+        if( opastin && !(opastin->varit() & VALKOINEN))
         {
             qDebug() << " OP " << opastin->opastinId() << " : " << opastin->varit();
             if( opastin->varit() & KELTAINEN)
@@ -117,7 +119,9 @@ void Opastin::haeTaakseEsiopastintiedot()
     while( paa != 0)
     {
         Opastin* opastin = paa->opastin();
-        if( opastin )
+        // Jos takanapäin on opastin, joka voi näyttää
+        // esiopasteita (ohitetaan siis raideopastimet)
+        if( opastin && opastin->tyyppitieto() & KELTAINEN_VILKKU)
         {
             if( !(opastin->varit() & VIHREA ))
                 return;

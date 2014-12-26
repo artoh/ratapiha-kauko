@@ -64,7 +64,7 @@ public:
     virtual int raideTyyppi() const = 0;
 
     virtual RaiteenPaa* raiteenPaa(int paaKirjain) = 0;
-    virtual RaiteenPaa* aktiivinenVastapaa(RaiteenPaa* paalle) { return 0; }
+    virtual RaiteenPaa* aktiivinenVastapaa(RaiteenPaa* paalle) = 0;
 
     /**
      * @brief Vastakkaiset päät, joiden kautta voidaan muodostaa kulkutie
@@ -99,7 +99,7 @@ public:
      * @param laite Sanoman laite-osa, bitit 0..4
      * @param sanoma Sanoman käsky-osa, bitit 20..27
      */
-    virtual void laiteSanoma(int laite, int sanoma) {;}
+    virtual void laiteSanoma(int laite, int sanoma);
 
     int raideId() const { return raideId_; }
     QString liikennepaikka() const { return liikennepaikka_; }

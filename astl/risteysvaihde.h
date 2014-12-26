@@ -23,21 +23,52 @@
 #ifndef RISTEYSVAIHDE_H
 #define RISTEYSVAIHDE_H
 
-#include "raidetieto.h"
+#include "kantaristeys.h"
 
 /**
  * @brief Risteysvaihde
  */
-class RisteysVaihde : public RaideTieto
+class RisteysVaihde : public KantaRisteys
 {
 public:
     RisteysVaihde();
 
     int raideTyyppi() const { return RISTEYSVAIHDE; }
-    RaiteenPaa* raiteenPaa(int paaKirjain);
+
+    void laiteSanoma(int laite, int sanoma);
+
+    int vaihdeTila() const { return vaihdeTila_; }
+
+    bool vaihdeVika() const { return !(vaihdeTila() & 0x80) ; }
+    bool vaihdeKaantyy() const { return vaihdeTila() & 0x40; }
+
+    bool vaihdeCValvottu() const { return vaihdeTila() & 0x20; }
+    bool vaihdeCOikea() const { return vaihdeTila() & 0x10; }
+    bool vaihdeCVasen() const { return vaihdeTila() & 0x08; }
+
+    bool vaihdeAValvottu() const { return vaihdeTila() & 0x4; }
+    bool vaihdeAOikea() const { return vaihdeTila() & 0x02; }
+    bool vaihdeAVasen() const { return vaihdeTila() & 0x01; }
+
+    RaiteenPaa *aktiivinenVastapaa(RaiteenPaa *paalle);
+    QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa *paalle, KulkutieTyyppi tyyppi);
+
+
+    virtual QString raideInfo() const;
+
+    /**
+     * @brief Vaihteen kääntökäsky
+     * @param ab Käännetään eteläinen a/b
+     * @param cd Käännetään pohjoinen c/d
+     * @return Onnistuiko käskyn antaminen
+     */
+    bool kaanna(bool ab, bool cd);
+
 
 protected:
-    RaiteenPaa paaA_, paaB_, paaC_, paaD_;
+    int vaihdeTila_;
+    int pyydettyVaihdeTila_;
+
 };
 
 #endif // RISTEYSVAIHDE_H

@@ -22,8 +22,8 @@
 
 #include "suoranraiteenpaa.h"
 
-SuoranRaiteenPaa::SuoranRaiteenPaa(RaiteenPaa::PaaKirjain paakirjain, RaideTieto *raide)
-    : RaiteenPaa(paakirjain, raide), opastin_(0)
+SuoranRaiteenPaa::SuoranRaiteenPaa(RaideTieto *raide)
+    : RaiteenPaa(raide), opastin_(0)
 {
 
 }

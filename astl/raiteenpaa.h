@@ -46,10 +46,9 @@ public:
         VAINVAIHTO = 3
     };
 
-    RaiteenPaa(PaaKirjain paakirjain, RaideTieto* raide);
+    RaiteenPaa(RaideTieto* raide);
 
     bool onkoPohjoiseen() const { return paakirjain_ & 0x2; }
-    PaaKirjain paakirjain() const { return paakirjain_; }
     RaiteenPaa* liitettyPaa() { return liitettyPaa_; }
     RaideTieto* raide() { return raide_; }
 
@@ -79,10 +78,6 @@ public:
     virtual Opastin* opastin() { return 0; }
 
 protected:
-    /**
-     * @brief Raiteenpään rooli
-     */
-    PaaKirjain paakirjain_;
 
     RaideTieto *raide_;
 
