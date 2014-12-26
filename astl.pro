@@ -22,7 +22,10 @@ SOURCES += astl/main.cpp \
     astl/asetinlaitepaneeli.cpp \
     astl/ratayhteys.cpp \
     astl/kaskytulkki.cpp \
-    astl/kantaristeys.cpp
+    astl/kantaristeys.cpp \
+    astl/kulkutienmuodostaja.cpp \
+    astl/kulkutienmuodostajanelementti.cpp \
+    astl/junakulkutienmuodostaja.cpp
 
 HEADERS += \
     astl/raidetieto.h \
@@ -38,7 +41,10 @@ HEADERS += \
     astl/asetinlaitepaneeli.h \
     astl/ratayhteys.h \
     astl/kaskytulkki.h \
-    astl/kantaristeys.h
+    astl/kantaristeys.h \
+    astl/kulkutienmuodostaja.h \
+    astl/kulkutienmuodostajanelementti.h \
+    astl/junakulkutienmuodostaja.h
 
 FORMS += \
     astl/asetinlaitepaneeli.ui
