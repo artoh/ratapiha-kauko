@@ -64,7 +64,7 @@ public:
      * @brief Elementti on saapunut maaliraiteelle
      * @param elementti
      */
-    void ollaanMaalissa(KulkutienMuodostajanElementti *elementti) = 0;
+    void ollaanMaalissa(KulkutienMuodostajanElementti *elementti);
 
     bool ollaankoLyhimmalla(KulkutienMuodostajanElementti *elementti);
 

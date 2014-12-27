@@ -110,11 +110,6 @@ void SqlAsetinlaite::lataaRata()
 
         if( paaYksi && paaKaksi)
         {
-            if( raide->liikennepaikka() == "Hki" || raideKaksi->liikennepaikka()=="Hki")
-            qDebug() << raide->raideTunnusTeksti()
-                        << " " << paaYksi->onkoPohjoiseen() << " --- "
-                           << raideKaksi->raideTunnusTeksti()
-                              << " " << paaKaksi->onkoPohjoiseen();
 
             paaYksi->liitaPaa(paaKaksi);
             paaKaksi->liitaPaa(paaYksi);

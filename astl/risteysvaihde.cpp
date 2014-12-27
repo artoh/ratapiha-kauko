@@ -50,7 +50,7 @@ RaiteenPaa *RisteysVaihde::aktiivinenVastapaa(RaiteenPaa *paalle)
     // kohden, josta kysely tulee
 
     if( ( paalle == &paaA_ && vaihdeAOikea() ) ||
-         ( paalle == &paaB_ && vaihdeBVasen()) )
+         ( paalle == &paaB_ && vaihdeAVasen()) )
     {
         if( vaihdeCVasen())
             return &paaC_;
@@ -75,10 +75,10 @@ QPair<RaiteenPaa *, RaiteenPaa *> RisteysVaihde::mahdollisetVastapaat(RaiteenPaa
     // jatkoa kulkuteille
     if( voikoLukitaKulkutielle(tyyppi))
     {
-        if( paalle == paaA_ || paalle == paaB_)
-            return qMakePair( paaC_, paaD_);
-        else if( paalle == paaC_ || paalle == paaD_)
-            return qMakePair( paaA_, paaB_);
+        if( paalle == &paaA_ || paalle == &paaB_)
+            return qMakePair( &paaC_, &paaD_);
+        else if( paalle == &paaC_ || paalle == &paaD_)
+            return qMakePair( &paaA_, &paaB_);
     }
     return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0);
 }
@@ -109,6 +109,9 @@ bool RisteysVaihde::kaanna(bool ab, bool cd)
 {
     if( !( ab || cd))
         return false;   // Ei kääntöpyyntöä lainkaan
+
+    if( vapaanaOlo() == VARATTU)
+        return false;   // Ei käännetä yksikön alta
 
     if(!(  vaihdeAValvottu() && vaihdeCValvottu()) )
         return false;   // Vaihteen oltava kokonaan valvottu
@@ -155,5 +158,6 @@ bool RisteysVaihde::kaanna(bool ab, bool cd)
 
     // Lähetetään kääntöpyyntö
     Asetinlaite::instanssi()->lahetaSanoma(raideId(), 0x0, kaantoPyynto);
+    return true;
 }
 

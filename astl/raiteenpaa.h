@@ -48,7 +48,6 @@ public:
 
     RaiteenPaa(RaideTieto* raide);
 
-    bool onkoPohjoiseen() const { return paakirjain_ & 0x2; }
     RaiteenPaa* liitettyPaa() { return liitettyPaa_; }
     RaideTieto* raide() { return raide_; }
 

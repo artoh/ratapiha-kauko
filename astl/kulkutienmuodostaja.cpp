@@ -5,7 +5,7 @@
 #include "opastin.h"
 
 KulkutienMuodostaja::KulkutienMuodostaja(RaideTieto *mista, RaideTieto *minne)
-    : mista_(mista), minne_(minne), tyyppi_(tyyppi),
+    : mista_(mista), minne_(minne),
       parasKulkutie_(0),
       lyhimmanKulkutienPituus_(20000),  // Kulkutien enimmäispituus 20 km
       onkoLyhinToissijaisella_(true)
@@ -119,7 +119,7 @@ void KulkutienMuodostaja::kulkutienEtsija(RaiteenPaa *paa, int taso, int pituus,
             else if( taso < 20)
             {
                 // Jatketaan eteenpäin, jos saa jatkaa
-                QPair<RaiteenPaa*, RaiteenPaa*> vastaPaat = raiteenPaa->raide()->mahdollisetVastapaat( muodostaja->tyyppi());
+                QPair<RaiteenPaa*, RaiteenPaa*> vastaPaat = paa->raide()->mahdollisetVastapaat( paa, tyyppi());
                 if( vastaPaat.first)
                 {
                     RaiteenPaa *seuraava = vastaPaat.first->liitettyPaa();

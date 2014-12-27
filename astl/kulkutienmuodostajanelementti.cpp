@@ -19,7 +19,7 @@ KulkutienMuodostajanElementti::KulkutienMuodostajanElementti(RaiteenPaa *raiteen
     {
         taso_ = 0;
         pituus_ = raiteenPaa->raide()->pituus();
-        toissijainen_ = false
+        toissijainen_ = false;
     }
 
     // Selvitetään, onko tämä reitti "toissijainen"
@@ -43,7 +43,7 @@ KulkutienMuodostajanElementti::KulkutienMuodostajanElementti(RaiteenPaa *raiteen
             else if( taso() < 20 )
             {
                 // Muuten jatketaan eteenpäin, jos saa jatkaa
-                QPair<RaiteenPaa*, RaiteenPaa*> vastaPaat = raiteenPaa->raide()->mahdollisetVastapaat( muodostaja->tyyppi());
+                QPair<RaiteenPaa*, RaiteenPaa*> vastaPaat = raiteenPaa->raide()->mahdollisetVastapaat( raiteenPaa, muodostaja->tyyppi());
                 if( vastaPaat.first)
                 {
                     RaiteenPaa *seuraava = vastaPaat.first->liitettyPaa();

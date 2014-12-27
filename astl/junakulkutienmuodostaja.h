@@ -11,7 +11,7 @@ public:
     JunaKulkutienMuodostaja(RaideTieto *mista, RaideTieto *minne);
     ~JunaKulkutienMuodostaja();
 
-    KulkutienTyyppi tyyppi() const { return JUNAKULKUTIE; }
+    RaideTieto::KulkutieTyyppi tyyppi() const { return RaideTieto::JUNAKULKUTIE; }
 
     bool alkuEhdot(RaiteenPaa *paa);
     bool kulkutieEhdot(RaiteenPaa *paa);

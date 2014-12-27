@@ -40,7 +40,7 @@ bool JunaKulkutienMuodostaja::loppuEhdot(RaiteenPaa *maaliPaa)
         return true;
 
     Opastin *opastin = maaliPaa->opastin();
-    if( opastin && ( opastin->tyyppitieto() & Opastin::PUNAINEN )
+    if( opastin && ( opastin->tyyppitieto() & Opastin::PUNAINEN ) )
             return true;
 
     return false;

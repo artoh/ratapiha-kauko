@@ -42,7 +42,7 @@ void RaideTieto::asetaTiedot(int raideId, const QString &liikennepaikka, int rai
     valvottu_ = valvottu;
 }
 
-bool RaideTieto::voikoLukitaKulkutielle(RaideTieto::KulkutieTyyppi tyyppi)
+bool RaideTieto::voikoLukitaKulkutielle(RaideTieto::KulkutieTyyppi /* tyyppi */)
 {
     return( !onkoLukittuKulkutielle() && !onkoAjonestoa() );
 }

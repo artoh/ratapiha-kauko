@@ -70,8 +70,7 @@ public:
      * @brief Vastakkaiset päät, joiden kautta voidaan muodostaa kulkutie
      * @return
      */
-    virtual QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa* paalle, KulkutieTyyppi tyyppi)
-    { return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0); }
+    virtual QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa* paalle, KulkutieTyyppi tyyppi) = 0;
 
     /**
      * @brief Voiko tämän raiteen lukita kulkutielle?

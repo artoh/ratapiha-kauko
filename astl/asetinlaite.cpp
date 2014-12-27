@@ -77,22 +77,25 @@ void Asetinlaite::lahetaSanoma(int raide, int laite, int komento)
 
 void Asetinlaite::yhdistettyRataan(bool onko)
 {
+    if( onko && 0==1)
+    {
     // Tässä pitäisi alustaa hakemalla tilat asetinlaitteelta,
     // mutta eikös tässä vain tehdäkin niin, että
     // laitetaan opastimille värejä ???
-    for(int i=0; i<0;i++)
-    {
-
-        QHashIterator<int,RaideTieto*> iter(raiteet_);
-        while(iter.hasNext())
+        for(int i=0; i<0;i++)
         {
-            iter.next();
-            RaiteenPaa* paa = iter.value()->raiteenPaa(RaiteenPaa::P);
-            if( paa && paa->raide()->liikennepaikka()=="Hki")
+
+            QHashIterator<int,RaideTieto*> iter(raiteet_);
+            while(iter.hasNext())
             {
-                Opastin* opastin = paa->opastin();
-                if( opastin )
-                    opastin->asetaOpaste(Opastin::AJA);
+                iter.next();
+                RaiteenPaa* paa = iter.value()->raiteenPaa(RaiteenPaa::P);
+                if( paa && paa->raide()->liikennepaikka()=="Hki")
+                {
+                    Opastin* opastin = paa->opastin();
+                    if( opastin )
+                        opastin->asetaOpaste(Opastin::AJA);
+                }
             }
         }
     }

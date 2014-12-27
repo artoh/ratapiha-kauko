@@ -92,8 +92,7 @@ int Opastin::esiopastinBititEdestapain()
     qDebug() << "Etsitään opastetta " << raiteenPaa()->raide()->raidetunnus() << " seuraava " << paa;
     while( paa != 0)
     {
-        qDebug() << paa->raide()->raidetunnus() << " /" << paa->onkoPohjoiseen();
-        Opastin* opastin = paa->opastin();
+        Opastin *opastin = paa->opastin();
         // Esiopastetta ei näytetä raideopastimen valkoisesta
         // vaan vasta kulkutien päässä olevasta väristä
         if( opastin && !(opastin->varit() & VALKOINEN))
