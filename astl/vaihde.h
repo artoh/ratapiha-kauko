@@ -53,6 +53,8 @@ public:
 
     bool kaanna();
 
+    void lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
+
 protected:
     RaiteenPaa kanta_;
     RaiteenPaa vasen_;

@@ -1,25 +1,25 @@
-#include "kulkutienmuodostaja.h"
-#include "kulkutienmuodostajanelementti.h"
+#include "kulkutie.h"
 
 #include "raiteenpaa.h"
 #include "opastin.h"
 
-KulkutienMuodostaja::KulkutienMuodostaja(RaideTieto *mista, RaideTieto *minne)
+Kulkutie::Kulkutie(RaideTieto *mista, RaideTieto *minne)
     : mista_(mista), minne_(minne),
-      parasKulkutie_(0),
       lyhimmanKulkutienPituus_(20000),  // Kulkutien enimmäispituus 20 km
-      onkoLyhinToissijaisella_(true)
+      onkoLyhinToissijaisella_(true),
+      tila_(EIKULKUTIETA)
 {
 
 }
 
-KulkutienMuodostaja::~KulkutienMuodostaja()
+Kulkutie::~Kulkutie()
 {
 
 }
 
-void KulkutienMuodostaja::etsiKulkutie(KulkutienMuodostaja::Suunta suunnasta)
+void Kulkutie::etsiKulkutie(Kulkutie::Suunta suunnasta)
 {
+
     if( suunnasta == EISUUNTAA)
     {
         // Jos haetaan molemmista suunnista, hajotetaan kahdeksi hakupyynnöksi
@@ -47,43 +47,36 @@ void KulkutienMuodostaja::etsiKulkutie(KulkutienMuodostaja::Suunta suunnasta)
         return;
 
     // Tehdään etsintä upouudella rekursiivisella funktiolla
-
     kulkutienEtsija(paa->liitettyPaa(), 0, 0, false);
 
-    // Nyt lähdetään muodostamaan kulkuteitä elementin avulla
-    // Lopputuloksena parhaaksi kulkutieksi on tullut kulkutie,
-    // joka johtaa nopeiten perille asti
-    // new KulkutienMuodostajanElementti(paa, 0, this);
+    // Jos löytyi, vaihdetaan tilaa
+    if( loytyikoKulkutie())
+        tila_ = PERUSEHDOT;
 }
 
-void KulkutienMuodostaja::ollaanMaalissa(KulkutienMuodostajanElementti *elementti)
+void Kulkutie::lukitseKulkutielle()
 {
-    // Ensin tarkistetaan, että tämä kelpaa maaliraiteeksi
-    if( loppuEhdot(elementti->raiteenPaa()->aktiivinenVastapaa()))
+    if( tila() != PERUSEHDOT )
+        return;     // Pitää olla kulkutie valmiina
+
+    for( int i = 0; i < valmisKulkutie_.count()-1; i++)
     {
-        // Tämä on paras elementti tähän saakka
-        parasKulkutie_ = elementti;
+        // Lukitaan kaikki paitsi viimeinen kulkutielle
+        valmisKulkutie_.at(i)->raide()->lukitseKulkutielle(this, valmisKulkutie_.at(i), valmisKulkutie_.at(i+1)->liitettyPaa() );
     }
+    // Lukitaan vielä viimeinenkin kulkutielle
+    valmisKulkutie_.last()->raide()->lukitseKulkutielle(this, valmisKulkutie_.last(), valmisKulkutie_.last()->aktiivinenVastapaa());
+
+    // Nyt pitäisi laittaa tämä kulkutie valvontaan odottamaan, että kaikki vaihteet
+    // kääntyvät kulkutie-ehtojen mukaisiksi, jotta voidaan laittaa värejä opastimiin
+
+    tila_ = LUKITAAN;
+
+    laitaVarit();   // TODO:
 
 }
 
-
-
-
-bool KulkutienMuodostaja::ollaankoLyhimmalla(KulkutienMuodostajanElementti *elementti)
-{
-    if( !kulkutie())    // Jos ei vielä yhtään, niin ollaan aina
-        return true;
-    if( !kulkutie()->toissijainen() && elementti->toissijainen())
-        return false;   // Jos olisi toissijainen, ja ensisijainen löydetty jo
-    if( elementti->pituus() > kulkutie()->pituus())
-        return false;   // Ollaan jo pidemmällä kuin paras
-
-    return true;    // Vaikuttaa lupaavalta, kannattaa jatkaa.
-}
-
-
-void KulkutienMuodostaja::kulkutienEtsija(RaiteenPaa *paa, int taso, int pituus, bool toissijainen)
+void Kulkutie::kulkutienEtsija(RaiteenPaa *paa, int taso, int pituus, bool toissijainen)
 {
     // Kulkutietä etsivä rekursiivinen funktio, joka korvaa erilliset elementtioliot
 
@@ -140,7 +133,7 @@ void KulkutienMuodostaja::kulkutienEtsija(RaiteenPaa *paa, int taso, int pituus,
 
 }
 
-QString KulkutienMuodostaja::raiteet()
+QString Kulkutie::raiteet()
 {
     QString lista;
     foreach (RaiteenPaa* paa, valmisKulkutie_)

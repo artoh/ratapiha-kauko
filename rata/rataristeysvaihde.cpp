@@ -109,9 +109,9 @@ bool RataRisteysVaihde::onkoAktiivinenPaa(Kiskonpaa *paa) const
         return true;
     else if( paa == b_ && ( vaihteenTila() & 0x1))
         return true;
-    else if( paa == c_ && ( vaihteenTila() & 0x10))
+    else if( paa == c_ && ( vaihteenTila() & 0x08))
         return true;
-    else if( paa == d_ && ( vaihteenTila() & 0x8))
+    else if( paa == d_ && ( vaihteenTila() & 0x10))
         return true;
 
     return false;

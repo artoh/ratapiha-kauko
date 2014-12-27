@@ -28,7 +28,8 @@
 #include "risteysvaihde.h"
 #include "raideristeys.h"
 
-RaideTieto::RaideTieto()
+RaideTieto::RaideTieto() :
+    kulkutie_(0)
 {
 }
 
@@ -44,7 +45,7 @@ void RaideTieto::asetaTiedot(int raideId, const QString &liikennepaikka, int rai
 
 bool RaideTieto::voikoLukitaKulkutielle(RaideTieto::KulkutieTyyppi /* tyyppi */)
 {
-    return( !onkoLukittuKulkutielle() && !onkoAjonestoa() );
+    return( !onkoLukittuKulkutielle() && !onkoAjonestoa() && !kulkutie());
 }
 
 void RaideTieto::asetinLaiteSanoma(int laite, int sanoma)
@@ -104,4 +105,11 @@ QString RaideTieto::raideInfo() const
     else if( vapaanaOlo() == VIRHE)
         info += "VALVONTAVIRHE";
     return info;
+}
+
+void RaideTieto::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa * /*mista*/, RaiteenPaa * /*minne*/)
+{
+    // Perustilanteessa, eli ellei ole mitään käännettäviä elementtejä,
+    // sijoitetaan vain osaksi kulkutietä
+    kulkutie_ = kulkutie;
 }

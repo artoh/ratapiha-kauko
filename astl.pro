@@ -23,9 +23,8 @@ SOURCES += astl/main.cpp \
     astl/ratayhteys.cpp \
     astl/kaskytulkki.cpp \
     astl/kantaristeys.cpp \
-    astl/kulkutienmuodostaja.cpp \
-    astl/kulkutienmuodostajanelementti.cpp \
-    astl/junakulkutienmuodostaja.cpp
+    astl/kulkutie.cpp \
+    astl/junakulkutie.cpp
 
 HEADERS += \
     astl/raidetieto.h \
@@ -42,9 +41,8 @@ HEADERS += \
     astl/ratayhteys.h \
     astl/kaskytulkki.h \
     astl/kantaristeys.h \
-    astl/kulkutienmuodostaja.h \
-    astl/kulkutienmuodostajanelementti.h \
-    astl/junakulkutienmuodostaja.h
+    astl/kulkutie.h \
+    astl/junakulkutie.h
 
 FORMS += \
     astl/asetinlaitepaneeli.ui

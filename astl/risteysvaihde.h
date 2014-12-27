@@ -53,6 +53,7 @@ public:
     RaiteenPaa *aktiivinenVastapaa(RaiteenPaa *paalle);
     QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa *paalle, KulkutieTyyppi tyyppi);
 
+    void lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
 
     virtual QString raideInfo() const;
 

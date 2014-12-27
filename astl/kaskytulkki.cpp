@@ -29,7 +29,7 @@
 #include "raiteenpaa.h"
 #include "opastin.h"
 
-#include "junakulkutienmuodostaja.h"
+#include "junakulkutie.h"
 
 KaskyTulkki::KaskyTulkki(Asetinlaite *asetinlaite)
     : asetinlaite_(asetinlaite)
@@ -84,8 +84,9 @@ QString KaskyTulkki::komento(const QString &kasky)
 
         if( mista && minne)
         {
-            JunaKulkutienMuodostaja jktm(mista, minne);
-            jktm.etsiKulkutie(KulkutienMuodostaja::EISUUNTAA);
+            JunaKulkutie jktm(mista, minne);
+            jktm.etsiKulkutie(Kulkutie::EISUUNTAA);
+            jktm.lukitseKulkutielle();
             return jktm.raiteet();
         }
     }
@@ -107,7 +108,7 @@ QString KaskyTulkki::vaihteenKaanto(QString vaihdetunnus)
             return QString("VIRHE EiVaihdetta");
         bool tulos;
 
-        if( vaihdetunnus.endsWith('A'))
+        if( vaihdetunnus.endsWith('a'))
             tulos = vaihde->kaanna(true,false);
         else
             tulos = vaihde->kaanna(false, true);

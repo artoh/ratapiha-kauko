@@ -75,6 +75,11 @@ void Opastin::asetaOpaste(Opastin::Opaste opaste)
         else
             haeTaakseEsiopastintiedot();
     }
+    else if( opaste == AJAVAROVASTI)
+    {
+        pyydetytVarit_ = 0x80 | VALKOINEN;
+        Asetinlaite::instanssi()->lahetaSanoma( opastinId() , pyydetytVarit_);
+    }
 }
 
 void Opastin::aslViesti(int sanoma)

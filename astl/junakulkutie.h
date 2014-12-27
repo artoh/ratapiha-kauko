@@ -1,21 +1,31 @@
 #ifndef JUNAKULKUTIENMUODOSTAJA_H
 #define JUNAKULKUTIENMUODOSTAJA_H
 
-#include "kulkutienmuodostaja.h"
+#include "kulkutie.h"
 
 class RaiteenPaa;
 
-class JunaKulkutienMuodostaja : public KulkutienMuodostaja
+/**
+ * @brief Junakulkutie
+ *
+ * Tämä luokka esittelee erityisehdot junakulkuteille
+ */
+class JunaKulkutie : public Kulkutie
 {
 public:
-    JunaKulkutienMuodostaja(RaideTieto *mista, RaideTieto *minne);
-    ~JunaKulkutienMuodostaja();
+    JunaKulkutie(RaideTieto *mista, RaideTieto *minne);
+    ~JunaKulkutie();
 
     RaideTieto::KulkutieTyyppi tyyppi() const { return RaideTieto::JUNAKULKUTIE; }
+
+protected:
 
     bool alkuEhdot(RaiteenPaa *paa);
     bool kulkutieEhdot(RaiteenPaa *paa);
     bool loppuEhdot(RaiteenPaa *maaliPaa);
+
+    void laitaVarit();
+
 
 };
 

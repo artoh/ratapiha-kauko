@@ -5,14 +5,12 @@
 
 #include "raidetieto.h"
 
-class KulkutienMuodostajanElementti;
-
 /**
- * @brief Kantaluokka kulkuteiden muodostajille
+ * @brief Kantaluokka kulkuteille
  *
- * Kulkutie käyttää tätä apuluokkanaan
+ * Kulkutiet muodostetaan ja valvotaan tämän luokan kautta
  */
-class KulkutienMuodostaja
+class Kulkutie
 {
 public:
 
@@ -23,9 +21,19 @@ public:
         ETELAAN
     };
 
+    enum KulkutieTila
+    {
+        EIKULKUTIETA,
+        PERUSEHDOT,
+        LUKITAAN,
+        VALMIS,
+        KAYTOSSA,
+        PURETTU,
+        VIRHE
+    };
 
-    KulkutienMuodostaja(RaideTieto* mista, RaideTieto* minne);
-    ~KulkutienMuodostaja();
+    Kulkutie(RaideTieto* mista, RaideTieto* minne);
+    ~Kulkutie();
 
     /**
      * @brief Etsii parhaimman kulkutien (mutta ei lukitse sitä)
@@ -33,12 +41,28 @@ public:
      */
     void etsiKulkutie(Suunta suunnasta);
 
+    /**
+     * @brief Kun kulkutie on etsitty, lukitsee kulkutielle
+     */
+    void lukitseKulkutielle();
+
+
     RaideTieto *mista() { return mista_; }
     RaideTieto *minne() { return minne_; }
     virtual RaideTieto::KulkutieTyyppi tyyppi() const = 0;
 
-    KulkutienMuodostajanElementti *kulkutie() { return parasKulkutie_; }
 
+    bool loytyikoKulkutie() const { return !valmisKulkutie_.isEmpty(); }
+
+    /**
+     * @brief Kulkutiehen kuuluvien raiteiden tunnukset
+     * @return
+     */
+    QString raiteet();
+
+    KulkutieTila tila() const { return tila_; }
+
+protected:
     /**
      * @brief Täyttääkö alkuehdot (esim. vaadittava opastin)
      * @param paa Pää, josta kulkutie lähtee
@@ -61,19 +85,14 @@ public:
     virtual bool loppuEhdot( RaiteenPaa *maaliPaa) = 0;
 
     /**
-     * @brief Elementti on saapunut maaliraiteelle
-     * @param elementti
+     * @brief Laittaa ajon sallivat opasteet
+     *
+     * Kun kulkutie on lukittu, kutsutaan tätä laittamaan
+     * värit opastimiin
      */
-    void ollaanMaalissa(KulkutienMuodostajanElementti *elementti);
-
-    bool ollaankoLyhimmalla(KulkutienMuodostajanElementti *elementti);
+    virtual void laitaVarit() = 0;
 
 
-    bool loytyikoKulkutie() const { return !valmisKulkutie_.isEmpty(); }
-    QString raiteet();
-
-
-protected:
     /**
      * @brief Etsii kulkutien rekursiivisella funktiolla
      *
@@ -88,13 +107,13 @@ protected:
     RaideTieto* mista_;
     RaideTieto* minne_;
 
-    KulkutienMuodostajanElementti *parasKulkutie_;
-
     QList<RaiteenPaa*> tutkittavaKulkutie_;
     QList<RaiteenPaa*> valmisKulkutie_;
 
     int lyhimmanKulkutienPituus_;
     bool onkoLyhinToissijaisella_;
+
+    KulkutieTila tila_;
 
 
 };

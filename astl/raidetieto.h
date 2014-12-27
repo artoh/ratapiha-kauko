@@ -28,6 +28,8 @@
 
 #include "raiteenpaa.h"
 
+class Kulkutie;
+
 /**
  * @brief Raiteeseen liittyvät perustiedot
  */
@@ -120,6 +122,14 @@ public:
      */
     virtual QString raideInfo() const;
 
+    /**
+     * @brief Kulkutie, jolle raide lukittu
+     * @return
+     */
+    Kulkutie *kulkutie() { return kulkutie_; }
+
+    virtual void lukitseKulkutielle(Kulkutie* kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
+
 protected:
     int raideId_;
     QString liikennepaikka_;
@@ -130,6 +140,8 @@ protected:
     bool valvottu_;
 
     VapaanaoloTila vapaanaOlo_;
+
+    Kulkutie *kulkutie_;
 };
 
 #endif // RAIDETIETO_H

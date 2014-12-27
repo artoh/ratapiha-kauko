@@ -123,3 +123,14 @@ bool Vaihde::kaanna()
     Asetinlaite::instanssi()->lahetaSanoma(raideId(),0x0, pyydettyVaihdeTila_);
     return true;
 }
+
+void Vaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne)
+{
+    // Tässä pitää vain kääntää vaihdetta tarvittavaan asentoon
+    if(( mista == &vasen_ || minne == &vasen_ ) && vaihdeOikea() )
+        kaanna();
+    else if((mista == &oikea_ || minne == &oikea_) && vaihdeVasen())
+        kaanna();
+
+    kulkutie_ = kulkutie;
+}

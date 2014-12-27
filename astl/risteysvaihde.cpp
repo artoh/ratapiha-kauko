@@ -83,6 +83,31 @@ QPair<RaiteenPaa *, RaiteenPaa *> RisteysVaihde::mahdollisetVastapaat(RaiteenPaa
     return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0);
 }
 
+void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne)
+{
+    // Tässä vaiheessa vain ja ainoastaan käännetään vaihteet
+    // Tähän pitäisi lisätä sivusuojat
+    bool ab = false;
+    bool cd = false;
+
+    if( (mista == &paaA_ || minne == &paaA_) && vaihdeAVasen())
+        ab = true;
+    else if( (mista == &paaB_ || minne == &paaB_) && vaihdeAOikea() )
+        ab = true;
+
+
+    if( (mista == &paaD_ || minne == &paaD_) && vaihdeCVasen())
+        cd = true;
+    else if( (mista == &paaC_ || minne == &paaC_) && vaihdeCOikea() )
+        cd = true;
+
+    if( ab || cd)
+        kaanna(ab, cd);
+
+    kulkutie_ = kulkutie;
+
+}
+
 QString RisteysVaihde::raideInfo() const
 {
     QString info = RaideTieto::raideInfo();
@@ -135,7 +160,7 @@ bool RisteysVaihde::kaanna(bool ab, bool cd)
     }
     else
         // Ei muutosta a/b-vaihteen tilaan
-        pyydettyVaihdeTila_ = vaihdeTila() & 0x3;
+        pyydettyVaihdeTila_ |= vaihdeTila() & 0x3;
 
     if( cd )
     {
@@ -153,8 +178,8 @@ bool RisteysVaihde::kaanna(bool ab, bool cd)
 
     }
     else
-        // Ei muutosta a/b-vaihteen tilaan
-        pyydettyVaihdeTila_ = vaihdeTila() & 0x3;
+        // Ei muutosta c/d-vaihteen tilaan
+        pyydettyVaihdeTila_ |= vaihdeTila() & 0x38;
 
     // Lähetetään kääntöpyyntö
     Asetinlaite::instanssi()->lahetaSanoma(raideId(), 0x0, kaantoPyynto);
