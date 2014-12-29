@@ -61,8 +61,8 @@ void EsiOpastin::paint(QPainter *painter, const QStyleOptionGraphicsItem* , QWid
     piirraPimea(painter,2.0,4.0,1.6);
     piirraPimea(painter,2.0,12.0,1.6);
 
-    if( onkoVaria(0x8) )  // Vihreä välkkyvä
+    if( onkoVaria( Ratapiha::OPASTIN_VIHREA_VILKKU) )  // Vihreä välkkyvä
             piirraVari(painter, 2.0, 4.0, 1.6, 0, 255, 0, 50, 255, 50, valkkyyko() );
-     if( onkoVaria(0x40))  // Keltainen välkkyvä
+     if( onkoVaria( Ratapiha::OPASTIN_KELTAINEN_VILKKU))  // Keltainen välkkyvä
             piirraVari(painter, 2.0, 12.0, 1.6, 255, 255, 0, 255, 255, 50, valkkyyko());
 }

@@ -52,7 +52,7 @@ void JKVLaite::jatkaJkvPaivitysta(Kiskonpaa *edessaOlevaPaa)
 
     if( edessaOlevaPaa->vastakkainenPaa() == 0)     // esim. puskuri
         laskeJkvNopeudet(0);
-    else if( edessaOlevaPaa->opastin() != 0 && edessaOlevaPaa->opastin()->onkoVaria(0x2) )
+    else if( edessaOlevaPaa->opastin() != 0 && edessaOlevaPaa->opastin()->onkoVaria( Ratapiha::OPASTIN_PUNAINEN ) )
         laskeJkvNopeudet(0);    // Opastimessa punainen väri
     else
     {

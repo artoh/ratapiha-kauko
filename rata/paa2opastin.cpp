@@ -56,9 +56,9 @@ void Paa2Opastin::paint(QPainter *painter, const QStyleOptionGraphicsItem* , QWi
     piirraPimea(painter,2.0,2.0,1.6);
     piirraPimea(painter,2.0,6.0,1.6);
 
-    if( onkoVaria(0x1) )     // Vihreä
+    if( onkoVaria(Ratapiha::OPASTIN_VIHREA) )     // Vihreä
             piirraVari(painter, 2.0, 2.0, 1.6, 0, 255, 0, 50, 255, 50);
-    if( onkoVaria(0x2) ) // Punainen
+    if( onkoVaria(Ratapiha::OPASTIN_PUNAINEN) ) // Punainen
             piirraVari(painter, 2.0, 6.0, 1.6, 255, 0, 0, 255, 50, 50);
 
 }

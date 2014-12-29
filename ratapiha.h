@@ -19,28 +19,25 @@
 **
 **************************************************************************/
 
-
-#ifndef YHDISTELMAOPASTIN_H
-#define YHDISTELMAOPASTIN_H
-
-#include "rataopastin.h"
-
 /**
- * @brief Täydellinen yhdistelmäopastin
+ * Ratapihan yleisiä tyyppejä, vakioita jne.
  */
-class YhdistelmaOpastin : public RataOpastin
+namespace Ratapiha
 {
-public:
-    YhdistelmaOpastin(int laitetunnus, int laji, int raidetunnus);
+    enum OpastinVarit
+    {
+        OPASTIN_VIHREA = 0x1,
+        OPASTIN_PUNAINEN = 0x2,
+        OPASTIN_KELTAINEN = 0x4,
+        OPASTIN_VIHREA_VILKKU = 0x8,
+        OPASTIN_VALKOINEN = 0x10,
+        OPASTIN_SININEN = 0x20,
+        OPASTIN_KELTAINEN_VILKKU = 0x40
+    };
+}
 
-    QRectF boundingRect() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-private:
-    bool onkoLamppua(Ratapiha::OpastinVarit varibitti) { return laji_ & varibitti; }
+#ifndef RATAPIHA_H
+#define RATAPIHA_H
 
-    int laji_;
-    QString teksti_;
-};
-
-#endif // YHDISTELMAOPASTIN_H
+#endif // RATAPIHA_H

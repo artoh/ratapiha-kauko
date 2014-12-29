@@ -61,11 +61,11 @@ void RaideOpastin::paint(QPainter *painter, const QStyleOptionGraphicsItem* , QW
     piirraPimea(painter,2.0,8.0,1.6);
     piirraPimea(painter,2.0,12.0,1.6);
 
-    if( onkoVaria(0x2) ) // Punainen
+    if( onkoVaria( Ratapiha::OPASTIN_PUNAINEN) ) // Punainen
             piirraVari(painter, 2.0, 2.0, 1.6, 255, 0, 0, 255, 50, 50);
-    if( onkoVaria(0x10) )     // Valkoinen
+    if( onkoVaria( Ratapiha::OPASTIN_VALKOINEN) )     // Valkoinen
             piirraVari(painter, 2.0, 8.0, 1.6, 255, 255, 255, 255, 255, 255);
-    if( onkoVaria(0x20) )     // Sininen
+    if( onkoVaria( Ratapiha::OPASTIN_SININEN) )     // Sininen
             piirraVari(painter, 2.0, 12.0, 1.6, 31, 244, 255, 50, 50, 225);
 
 
