@@ -23,6 +23,8 @@
 #ifndef RATARISTEYSVAIHDE_H
 #define RATARISTEYSVAIHDE_H
 
+#include "ratapiha.h"
+
 #include "kiskoliitos.h"
 #include "ratalaite.h"
 
@@ -51,11 +53,27 @@ public:
 
 
 protected:
-    Kiskonpaa *a_, *b_, *c_, *d_;
-    int vaihteenTila_;
+    bool valvottu(Ratapiha::RisteysVaihteenPuoli puoli) const;
+    Ratapiha::VaihteenAsento asento(Ratapiha::RisteysVaihteenPuoli puoli) const;
+    Ratapiha::VaihteenAsento pyydettyAsento(Ratapiha::RisteysVaihteenPuoli puoli) const;
 
-    int vaihteenTila() const { return vaihteenTila_;  }
-    void ilmoitaTila() const;
+
+    Kiskonpaa *a_, *b_, *c_, *d_;
+
+    Ratapiha::VaihteenAsento vaihteenABasento_;
+    Ratapiha::VaihteenAsento vaihteenCDasento_;
+
+    Ratapiha::VaihteenAsento vaihteenABpyydettyAsento_;
+    Ratapiha::VaihteenAsento vaihteenCDpyydettyAsento_;
+
+    bool valvottuAB_;
+    bool valvottuCD_;
+
+    int vaihteenTila(Ratapiha::RisteysVaihteenPuoli puoli) const;
+
+    void ilmoitaTila(Ratapiha::RisteysVaihteenPuoli puoli) const;
+
+    void aukiaja(Ratapiha::RisteysVaihteenPuoli puoli, Ratapiha::VaihteenAsento asentoon );
 };
 
 #endif // RATARISTEYSVAIHDE_H

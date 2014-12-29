@@ -27,7 +27,10 @@
 
 RataVaihde::RataVaihde(int liitosId, int x, int y)
     : KiskoLiitos(liitosId, x, y), Ratalaite(0),
-      vasen_(0), oikea_(0), kanta_(0), vaihteenTila_(0x85)
+      vasen_(0), oikea_(0), kanta_(0),
+      vaihteenAsento_ (Ratapiha::ASENTO_VASEMMALLE),
+      pyydettyAsento_(Ratapiha::ASENTO_EITIEDOSSA),
+      valvottu_(true)
 {
 
 }
@@ -36,19 +39,19 @@ Kiskonpaa *RataVaihde::seuraava(Kiskonpaa *mista) const
 {
     if( mista == kanta_)
     {
-        if(( vaihteenTila() ) == ( VAIHDE_OK & VAIHDE_VALVOTTU & VAIHDE_VASEMMALLE ))
+        if( valvottu() && asento() == Ratapiha::ASENTO_VASEMMALLE)
             return vasen_;
-        else if(( vaihteenTila() )== (VAIHDE_OK & VAIHDE_VALVOTTU & VAIHDE_OIKEALLE))
+        else if( valvottu() && asento() == Ratapiha::ASENTO_OIKEALLE)
             return oikea_;
     }
     else if( mista == vasen_)
     {
-        if(( vaihteenTila() )== (VAIHDE_OK & VAIHDE_VALVOTTU & VAIHDE_VASEMMALLE))
+        if( valvottu() && asento() == Ratapiha::ASENTO_VASEMMALLE )
             return kanta_;
     }
     else if( mista == oikea_)
     {
-        if( vaihteenTila() == ( VAIHDE_OK & VAIHDE_VALVOTTU & VAIHDE_OIKEALLE))
+        if(  valvottu() && asento() == Ratapiha::ASENTO_OIKEALLE )
             return kanta_;
     }
     return 0;   // Vaihde ei kelvollisessa ja valvotussa asennossa kuljettavaksi läpi
@@ -58,30 +61,28 @@ Kiskonpaa *RataVaihde::siirrySeuraavalle(Kiskonpaa *mista)
 {
     if( mista == vasen_)
     {
-        if(( vaihteenTila() & VAIHDE_VASEMMALLE) == 0 )
+        if( asento() != Ratapiha::ASENTO_VASEMMALLE )
         {
             // Ei ole vasemmalle, eli tuloksena on aukiajo vasemmalle
             // Tuloksena vaihde ei ole OK eikä valvottu
-            vaihteenTila_ = VAIHDE_VASEMMALLE;
-            ilmoitaTila();
+            aukiAjo( Ratapiha::ASENTO_VASEMMALLE);
         }
         return kanta_;  // Joka tapauksessa päädytään kannalle
     }
     else if( mista == oikea_)
     {
-        if( ( vaihteenTila() & VAIHDE_OIKEALLE ) == 0 )
+        if( asento() != Ratapiha::ASENTO_OIKEALLE )
         {
-            vaihteenTila_ = VAIHDE_OIKEALLE;
-            ilmoitaTila();
+            aukiAjo( Ratapiha::ASENTO_OIKEALLE);
         }
         return kanta_;  // Joka tapauksessa päädytään kannalle
     }
     else if( mista == kanta_)
     {
         // Jos vaihde on pääteasennossa, mennään sen mukaan
-        if( vaihteenTila() & VAIHDE_VASEMMALLE)
+        if( asento() == Ratapiha::ASENTO_VASEMMALLE )
             return vasen_;
-        else if( vaihteenTila() & VAIHDE_OIKEALLE)
+        else if( asento() == Ratapiha::ASENTO_OIKEALLE )
             return oikea_;
         // Muuten ei osu vaihteen kieleen, vaan suistuu!
     }
@@ -92,9 +93,9 @@ bool RataVaihde::onkoAktiivinenPaa(Kiskonpaa *paa) const
 {
     if( paa == kanta_)  // Kanta piirretään aina aktiivisena
         return true;
-    if( paa == vasen_ && vaihteenTila() & VAIHDE_VASEMMALLE)
+    if( paa == vasen_ && asento() == Ratapiha::ASENTO_VASEMMALLE)
         return true;
-    if( paa == oikea_ && vaihteenTila() & VAIHDE_OIKEALLE)
+    if( paa == oikea_ && asento() == Ratapiha::ASENTO_OIKEALLE)
         return true;
     return false;
 }
@@ -128,36 +129,66 @@ void RataVaihde::komento(int komento)
 {
     qDebug() << " VAIHDEKOMENTO " << komento ;
 
-    if( komento & 0x80)
+    if( komento == Ratapiha::VAIHDEKOMENTO_VASEMMALLE && asento() != Ratapiha::ASENTO_VASEMMALLE)
     {
-        // Kääntökomento. Kääntökomentoa ei hyväksytä, jos on kääntymässä
-        if( vaihteenTila() & VAIHDE_KAANTYY )
-        {
-            // Kuitataan vikatilailmoituksella
-            lahetaViesti(VAIHDE_KAANTYY);
-            return;
-        }
-        else
-        {
-            // Kolmen sekunnin kuluttua vaihde kääntyy haluttuun asentoon
-            viiveToiminto(3, komento);
-            // Siihen saakka vaihteen tilana vaihde kääntyy
-            vaihteenTila_ = (VAIHDE_OK | VAIHDE_KAANTYY);
-        }
+        // Käännetään vasemmalle. Jos aiempi kääntö käynnissä, se hylätään
+        pyydettyAsento_ = Ratapiha::ASENTO_VASEMMALLE;
+        // Käännetään 4 sekunnin viiveellä
+        viiveToiminto(4, pyydettyAsento());
     }
+    else if( komento == Ratapiha::VAIHDEKOMENTO_OIKEALLE && asento() != Ratapiha::ASENTO_OIKEALLE)
+    {
+        pyydettyAsento_ = Ratapiha::ASENTO_OIKEALLE;
+        viiveToiminto(4, pyydettyAsento());
+    }
+
     ilmoitaTila();
 }
 
 void RataVaihde::viiveValmis(int viesti)
 {
     // Viive on valmis, eli vaihde siirtyy uuteen tilaan
-    vaihteenTila_ = ( viesti & 0xFF ) | 0x04;
+    // Viestinä on toivottu tila, jonka pitää olla sama kuin pyydetty
+    if( viesti == pyydettyAsento())
+    {
+        vaihteenAsento_ = pyydettyAsento();
+        pyydettyAsento_ = Ratapiha::ASENTO_EITIEDOSSA;
+        valvottu_ = true;
+    }
     ilmoitaTila();
-    qDebug() << "Vaihde valmis tilaan " << vaihteenTila();
+
+}
+
+int RataVaihde::vaihteenTila() const
+{
+    int tila = Ratapiha::VAIHDE_OK;
+
+    if( asento() == Ratapiha::ASENTO_VASEMMALLE)
+        tila |= Ratapiha::VAIHDE_VASEN;
+    else if( asento() == Ratapiha::ASENTO_OIKEALLE)
+        tila |= Ratapiha::VAIHDE_OIKEA;
+
+    if( valvottu() )
+        tila |= Ratapiha::VAIHDE_VALVOTTU;
+
+    if( pyydettyAsento() == Ratapiha::ASENTO_VASEMMALLE )
+        tila |= Ratapiha::VAIHDE_KAANTYY_VASEMMALLE;
+    else if( pyydettyAsento() == Ratapiha::ASENTO_OIKEALLE)
+        tila |= Ratapiha::VAIHDE_KAANTYY_OIKEALLE;
+
+    return tila;
 }
 
 
 void RataVaihde::ilmoitaTila() const
 {
     lahetaViesti(vaihteenTila());
+}
+
+void RataVaihde::aukiAjo(Ratapiha::VaihteenAsento asentoon)
+{
+    vaihteenAsento_ = asentoon; // Kääntyy yksikön alla
+    pyydettyAsento_ = Ratapiha::ASENTO_EITIEDOSSA;
+    valvottu_ = false;
+    ilmoitaTila();
 }

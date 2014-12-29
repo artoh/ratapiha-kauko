@@ -23,31 +23,38 @@
 #include "rataristeysvaihde.h"
 #include "kiskonpaa.h"
 
+using namespace Ratapiha;
+
 RataRisteysVaihde::RataRisteysVaihde(int liitosId, int x, int y)
     : KiskoLiitos(liitosId, x, y), Ratalaite(0),
-      vaihteenTila_(0xad)
+      vaihteenABasento_(ASENTO_VASEMMALLE),
+      vaihteenCDasento_(ASENTO_VASEMMALLE),
+      vaihteenABpyydettyAsento_(ASENTO_EITIEDOSSA),
+      vaihteenCDpyydettyAsento_(ASENTO_EITIEDOSSA),
+      valvottuAB_(true),
+      valvottuCD_(true)
 {
 }
 
 Kiskonpaa *RataRisteysVaihde::seuraava(Kiskonpaa *mista) const
 {
-    if( (vaihteenTila() & 0xa4) != 0xa4 )
-        return 0;   // Jos vaihde ei ole tilassa OK, VALVOTTU, VALVOTTU
 
     // Vaihteen pitää olla käännetty oikeaan tuloasentoon, jolloin
     // ilmoitetaan lähtöasento. Muuten ei kulkutietä eteenpäin.
-    if( (mista == a_ && vaihteenTila() & 0x2 ) || (mista == b_ && vaihteenTila() & 0x1 ))
+    if( (mista == a_ && asento(RISTEYSVAIHDE_AB) == ASENTO_OIKEALLE )
+            || (mista == b_ && asento(RISTEYSVAIHDE_AB) == ASENTO_VASEMMALLE ))
     {
-        if( vaihteenTila() & 0x10)
+        if( asento(RISTEYSVAIHDE_CD) == ASENTO_VASEMMALLE )
             return c_;
-        else if( vaihteenTila() & 0x8)
+        else if( asento(RISTEYSVAIHDE_CD) == ASENTO_OIKEALLE )
             return d_;
     }
-    else if(  (mista == c_ && vaihteenTila() & 0x10 ) || (mista == d_ && vaihteenTila() & 0x8))
+    else if(  (mista == c_ && asento(RISTEYSVAIHDE_CD) == ASENTO_VASEMMALLE  )
+              || (mista == d_ && asento(RISTEYSVAIHDE_CD) == ASENTO_OIKEALLE  ) )
     {
-        if( vaihteenTila() & 0x2)
+        if( asento(RISTEYSVAIHDE_AB) == ASENTO_OIKEALLE )
             return a_;
-        else if( vaihteenTila() & 0x1)
+        else if( asento(RISTEYSVAIHDE_AB) == ASENTO_VASEMMALLE)
             return b_;
     }
     return 0;       // Vaihteen molemmat päät ei kääntyneinä
@@ -58,45 +65,40 @@ Kiskonpaa *RataRisteysVaihde::siirrySeuraavalle(Kiskonpaa *mista)
     // Ensin etelästä
     if( mista == a_ || mista == b_)
     {
-        if( mista == a_ && ( (vaihteenTila() & 0x02) == 0 ) )
+        if( mista == a_ && asento(RISTEYSVAIHDE_AB) != ASENTO_VASEMMALLE)
         {
-            // Aukiajetaan
-            vaihteenTila_ = (vaihteenTila_ & 0x78 ) | 0x2;
-            ilmoitaTila();
+            aukiaja( RISTEYSVAIHDE_AB, ASENTO_VASEMMALLE);
         }
-        else if( mista == b_ && ( (vaihteenTila() & 0x01) == 0 ) )
+        else if( mista == b_ && asento(RISTEYSVAIHDE_AB) != ASENTO_OIKEALLE)
         {
             // Aukiajo
-            vaihteenTila_ = (vaihteenTila_ & 0x78 ) | 0x1;
-            ilmoitaTila();
+            aukiaja( RISTEYSVAIHDE_AB, ASENTO_OIKEALLE);
         }
 
         // Sitten mennään pohjoisen mukaan
-        if( vaihteenTila() & 0x10)
+        if( asento(RISTEYSVAIHDE_CD) == ASENTO_VASEMMALLE)
             return c_;
-        else if( vaihteenTila() & 0x8)
+        else if( asento(RISTEYSVAIHDE_CD) == ASENTO_OIKEALLE)
             return d_;
         // Ellei pääteasennosta, suistutaan
     }
     // Pohjoisesta tuleminen
     else if( mista == c_ || mista == d_)
     {
-        if( mista == c_ && ( (vaihteenTila() & 0x10) == 0 ) )
+        if( mista == c_ && asento(RISTEYSVAIHDE_CD) != ASENTO_VASEMMALLE )
         {
             // Aukiajetaan
-            vaihteenTila_ = (vaihteenTila_ & 0x47 ) | 0x10;
-            ilmoitaTila();
+            aukiaja(RISTEYSVAIHDE_CD, ASENTO_VASEMMALLE);
         }
-        else if( mista == d_ && ( (vaihteenTila() & 0x8) == 0 ) )
+        else if( mista == d_ && asento(RISTEYSVAIHDE_CD) != ASENTO_OIKEALLE )
         {
             // Aukiajetaan
-            vaihteenTila_ = (vaihteenTila_ & 0x47 ) | 0x8;
-            ilmoitaTila();
+            aukiaja(RISTEYSVAIHDE_CD, ASENTO_OIKEALLE);
         }
         // Sitten mennään eteläisen mukaan
-        if( vaihteenTila() & 0x2)
+        if( asento(RISTEYSVAIHDE_AB) == ASENTO_OIKEALLE)
             return a_;
-        else if( vaihteenTila() & 0x1)
+        else if( asento(RISTEYSVAIHDE_CD) == ASENTO_VASEMMALLE)
             return b_;
     }
     return 0;   // Suistutaan
@@ -105,13 +107,13 @@ Kiskonpaa *RataRisteysVaihde::siirrySeuraavalle(Kiskonpaa *mista)
 bool RataRisteysVaihde::onkoAktiivinenPaa(Kiskonpaa *paa) const
 {
     // Aktiivinen, jos vaihde kääntynyt ko. asentoa kohti
-    if( paa == a_ && ( vaihteenTila() & 0x2))
+    if( paa == a_ && asento(RISTEYSVAIHDE_AB) == ASENTO_OIKEALLE )
         return true;
-    else if( paa == b_ && ( vaihteenTila() & 0x1))
+    else if( paa == b_ &&  asento(RISTEYSVAIHDE_AB) == ASENTO_VASEMMALLE)
         return true;
-    else if( paa == c_ && ( vaihteenTila() & 0x08))
+    else if( paa == c_ && asento(RISTEYSVAIHDE_CD) == ASENTO_VASEMMALLE )
         return true;
-    else if( paa == d_ && ( vaihteenTila() & 0x10))
+    else if( paa == d_ && asento(RISTEYSVAIHDE_CD) == ASENTO_OIKEALLE)
         return true;
 
     return false;
@@ -137,43 +139,126 @@ void RataRisteysVaihde::lisaaPaa(Kiskonpaa *kiskonpaa, int raidetunnus)
 
 void RataRisteysVaihde::komento(int komento)
 {
-    if( (komento & 0x80 ) == 0)
+    if( komento == KOMENTO_KYSELY)
     {
         // Kysytään vain tilaa
-        ilmoitaTila();
+        ilmoitaTila(RISTEYSVAIHDE_AB);
+        ilmoitaTila(RISTEYSVAIHDE_CD);
         return;
     }
-    else if( vaihteenTila() & 0x40)
+
+    // Kääntökomennot
+    if( komento == ( VAIHDE_AB | VAIHDEKOMENTO_OIKEALLE ) && asento(RISTEYSVAIHDE_AB) != ASENTO_OIKEALLE )
     {
-        // Vaihde kääntyy
-        lahetaViesti( VAIHDE_KAANTYY);
-        return;
+        vaihteenABpyydettyAsento_ = ASENTO_OIKEALLE;
+        viiveToiminto(4, VAIHDE_AB | ASENTO_OIKEALLE);
+        ilmoitaTila(RISTEYSVAIHDE_AB);
     }
-    // Muuten tulee kääntökomento, kolmen sekunnin viive
-    viiveToiminto(3, komento);
-    if( komento & 0x3 )  // käännetään pohjoista puolta
-        vaihteenTila_ = vaihteenTila_ & 0x38;
-    else if(komento & 0x18) // käännetään eteläistä puolta
-        vaihteenTila_ = vaihteenTila_ & 0x7;
-    vaihteenTila_ = vaihteenTila_ | 0xc0; // Kääntyy
-    ilmoitaTila();
+    else if( komento == ( VAIHDE_AB | VAIHDEKOMENTO_VASEMMALLE ) && asento(RISTEYSVAIHDE_AB) != ASENTO_VASEMMALLE)
+    {
+        vaihteenABpyydettyAsento_ = ASENTO_VASEMMALLE;
+        viiveToiminto(4, VAIHDE_AB | ASENTO_VASEMMALLE);
+        ilmoitaTila(RISTEYSVAIHDE_AB);
+    }
+    else if( komento == ( VAIHDE_CD | VAIHDEKOMENTO_VASEMMALLE ) && asento(RISTEYSVAIHDE_CD) != ASENTO_VASEMMALLE)
+    {
+        vaihteenCDpyydettyAsento_ = ASENTO_VASEMMALLE;
+        viiveToiminto(4, VAIHDE_CD | ASENTO_VASEMMALLE);
+        ilmoitaTila(RISTEYSVAIHDE_CD);
+    }
+    else if( komento == ( VAIHDE_CD | VAIHDEKOMENTO_OIKEALLE ) && asento(RISTEYSVAIHDE_CD) != ASENTO_OIKEALLE)
+    {
+        vaihteenCDpyydettyAsento_ = ASENTO_OIKEALLE;
+        viiveToiminto(4, VAIHDE_CD | ASENTO_OIKEALLE);
+        ilmoitaTila(RISTEYSVAIHDE_CD);
+    }
 }
 
 void RataRisteysVaihde::viiveValmis(int viesti)
 {
-    // Kääntökomento valmis
-    if( viesti & 0x3)   // a/b
+    int asentoon = viesti & 0x3;    // Viimeisissä biteissä pyydetty vaihteen asento
+
+    if( ( viesti & VAIHDE_AB ) && asentoon == pyydettyAsento( RISTEYSVAIHDE_AB) )
     {
-        vaihteenTila_ = (vaihteenTila() & 0x38 ) | viesti | 0x4;
+        vaihteenABasento_ = pyydettyAsento(RISTEYSVAIHDE_AB);
+        vaihteenABpyydettyAsento_ = ASENTO_EITIEDOSSA;
+        valvottuAB_ = true;
+        ilmoitaTila(RISTEYSVAIHDE_AB);
     }
-    if( viesti & 0x18)
+    else if( (viesti & VAIHDE_CD) && asentoon == pyydettyAsento( RISTEYSVAIHDE_CD))
     {
-        vaihteenTila_ = (vaihteenTila() & 0x7) | viesti | 0x20;
+        vaihteenCDasento_ = pyydettyAsento(RISTEYSVAIHDE_CD);
+        vaihteenCDpyydettyAsento_ = ASENTO_EITIEDOSSA;
+        valvottuCD_ = true;
+        ilmoitaTila(RISTEYSVAIHDE_CD);
     }
-    ilmoitaTila();
 }
 
-void RataRisteysVaihde::ilmoitaTila() const
+bool RataRisteysVaihde::valvottu(Ratapiha::RisteysVaihteenPuoli puoli) const
 {
-    lahetaViesti(vaihteenTila());
+    if( puoli == RISTEYSVAIHDE_AB)
+        return valvottuAB_;
+    else
+        return valvottuCD_;
+}
+
+Ratapiha::VaihteenAsento RataRisteysVaihde::asento(Ratapiha::RisteysVaihteenPuoli puoli) const
+{
+    if( puoli == RISTEYSVAIHDE_AB)
+        return vaihteenABasento_;
+    else
+        return vaihteenCDasento_;
+}
+
+Ratapiha::VaihteenAsento RataRisteysVaihde::pyydettyAsento(Ratapiha::RisteysVaihteenPuoli puoli) const
+{
+    if( puoli == RISTEYSVAIHDE_AB)
+        return vaihteenABpyydettyAsento_;
+    else
+        return vaihteenCDpyydettyAsento_;
+}
+
+int RataRisteysVaihde::vaihteenTila(RisteysVaihteenPuoli puoli) const
+{
+    int tila = BITTI_OK;
+
+    if( asento(puoli) == Ratapiha::ASENTO_VASEMMALLE )
+        tila |= Ratapiha::VAIHDE_VASEN;
+    else if( asento(puoli) == Ratapiha::ASENTO_OIKEALLE)
+        tila |= Ratapiha::VAIHDE_OIKEA;
+
+    if( valvottu(puoli) )
+        tila |= Ratapiha::VAIHDE_VALVOTTU;
+
+    if( pyydettyAsento(puoli) == Ratapiha::ASENTO_VASEMMALLE )
+        tila |= Ratapiha::VAIHDE_KAANTYY_VASEMMALLE;
+    else if( pyydettyAsento(puoli) == Ratapiha::ASENTO_OIKEALLE)
+        tila |= Ratapiha::VAIHDE_KAANTYY_OIKEALLE;
+
+    return tila;
+}
+
+void RataRisteysVaihde::ilmoitaTila(Ratapiha::RisteysVaihteenPuoli puoli) const
+{
+    lahetaViesti(vaihteenTila(puoli));
+}
+
+
+void RataRisteysVaihde::aukiaja(Ratapiha::RisteysVaihteenPuoli puoli, Ratapiha::VaihteenAsento asentoon)
+{
+    if( puoli == RISTEYSVAIHDE_AB)
+    {
+        vaihteenABasento_ = asentoon;
+        valvottuAB_ = false;
+        vaihteenABpyydettyAsento_= ASENTO_EITIEDOSSA;
+        ilmoitaTila(RISTEYSVAIHDE_AB);
+    }
+   else if( puoli == RISTEYSVAIHDE_CD)
+   {
+       vaihteenCDasento_ = asentoon;
+       valvottuCD_ = false;
+       vaihteenCDpyydettyAsento_ = ASENTO_EITIEDOSSA;
+       ilmoitaTila(RISTEYSVAIHDE_CD);
+   }
+
 }

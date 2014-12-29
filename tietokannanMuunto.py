@@ -246,7 +246,7 @@ class Opastin(object) :
         if self.tyyppi & 0x1 :  # Vihreä - voi aloittaa junankulkutien
             tunnus |= 0b0010    # Pääopastin
         elif self.tyyppi & 0x10 :  # Voi aloittaa vaihtokulkutien
-            tunnus |= 0b0100    # Raideopastin
+            tunnus |= 0b0010    # Raideopastin
         elif self.tyyppi & 0x8 : # Voi antaa esiopasteen
             tunnus |= 0b0110    # Esiopastin
         return tunnus
@@ -391,7 +391,7 @@ kur = kon.cursor()
 
 print("Tallennetaan")
 
-if 1==1 :   # Hypätään yli
+if 0==1 :   # Hypätään yli
     # 1) Raiteet
     kysely = "insert into raide(raide,liikennepaikka,raidetunnus,raidetila,raidepituus) values (%s,%s,%s,%s,%s)"
 
@@ -400,14 +400,14 @@ if 1==1 :   # Hypätään yli
         param = ( raide.raideid, raide.liikennepaikka, raide.nro, raide.tila, raide.pituus)
         kur.execute(kysely, param)
 
-if 1==1 :
+if 0==1 :
     kysely = "insert into kiskoliitos(kiskoliitos,x,y,kiskoliitoslaji) values (%s,%s,%s,%s)"
     for liitosind in liitokset :
         liitos = liitokset[liitosind]
         param = ( liitos.nro, liitos.x, liitos.y, liitos.tila)
         kur.execute(kysely,param)
 
-if 1==1 :
+if 0==1 :
     kysely = "insert into kisko(kisko,raide,etela,pohjoinen,kiskotieto,sn,kiskopituus) values (%s,%s,%s,%s,%s,%s,%s)"
     for kisko in kiskot :
         tieto = kisko.tieto | kisko.etelapaa.liitosasento << 8 | kisko.pohjoispaa.liitosasento << 12
@@ -422,7 +422,7 @@ if 1 == 1 :
         if opastin.tyyppi != 0 :
             kur.execute(kysely, param)
 
-if 1 == 1 :
+if 0 == 1 :
     kysely = "insert into raideliitos(raiteelta,raiteelle,raideliitostila) values (%s,%s,%s)"
     for raideliitos in raideliitokset :
         param = ( raideliitos[0], raideliitos[1], raideliitokset[raideliitos])

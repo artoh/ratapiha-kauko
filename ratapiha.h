@@ -19,11 +19,32 @@
 **
 **************************************************************************/
 
+#ifndef RATAPIHA_H
+#define RATAPIHA_H
+
 /**
  * Ratapihan yleisiä tyyppejä, vakioita jne.
  */
 namespace Ratapiha
 {
+
+    enum
+    {
+        KOMENTO_KYSELY = 0x0,
+        BITTI_OK = 0x80
+    };
+
+
+
+    enum Laitetunnus
+    {
+        LAITE_OPASTIN = 0x2,
+        LAITE_ESIOPASTIN = 0x6,
+        LAITE_VAIHDE = 0x0,
+        LAITE_RAITEENSULKU = 0x8,
+        LAITE_VAPAANAOLO = 0xf
+    };
+
     enum OpastinVarit
     {
         OPASTIN_VIHREA = 0x1,
@@ -34,10 +55,47 @@ namespace Ratapiha
         OPASTIN_SININEN = 0x20,
         OPASTIN_KELTAINEN_VILKKU = 0x40
     };
+
+    enum OpastinTyyppiBitit
+    {
+        OPASTIN_SUOJASTUS = 0x80,
+        OPASTIN_ESIOPASTIN_KIINTEASTI_KYTKETTY = 0x100
+    };
+
+    enum VaihdeBitit
+    {
+        VAIHDE_VASEN = 0x1 /** Vaihde on vastavaihteeseen katsottuna vasemmalle */,
+        VAIHDE_OIKEA = 0x2 /** Vaihde on vastavaihteeseen katsottuna oikealle */,
+        VAIHDE_VALVOTTU = 0x4 /** Vaihde on valvotussa pääteasennossa */,
+        VAIHDE_KAANTYY_VASEMMALLE = 0x8 /** Vaihde on kääntymässä vasemmelle käskyn mukaan*/,
+        VAIHDE_KAANTYY_OIKEALLE = 0x10 /** Vaihde on kääntymässä oikealle käskyn mukaan*/,
+        VAIHDE_AB = 0x20 /** Koskaa risteysvaihteen eteläistä puoliskoa a/b */,
+        VAIHDE_CD = 0x40 /** Koskee risteysvaihteen pohjoista puoliskoa c/d*/,
+        VAIHDE_OK = BITTI_OK
+    };
+
+    enum Vaihdekomennot
+    {
+        VAIHDEKOMENTO_VASEMMALLE = BITTI_OK | VAIHDE_VASEN,
+        VAIHDEKOMENTO_OIKEALLE = BITTI_OK | VAIHDE_OIKEA
+    };
+
+    enum VaihteenAsento
+    {
+        ASENTO_EITIEDOSSA = 0,
+        ASENTO_VASEMMALLE = VAIHDE_VASEN,
+        ASENTO_OIKEALLE = VAIHDE_OIKEA
+    };
+
+    enum RisteysVaihteenPuoli
+    {
+        RISTEYSVAIHDE_AB = 1,
+        RISTEYSVAIHDE_CD = 2
+    };
+
 }
 
 
-#ifndef RATAPIHA_H
-#define RATAPIHA_H
+
 
 #endif // RATAPIHA_H

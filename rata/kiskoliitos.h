@@ -48,10 +48,10 @@ public:
     };
     enum VaihteenTilaBitit
     {
-        VAIHDE_VASEMMALLE = 0x01 /** Vaihde on vastavaihteeseen katsottuna vasemmalle */ ,
-        VAIHDE_OIKEALLE = 0x02 /** Vaihde on vastavaihteeseen katsottuna oikealle */,
-        VAIHDE_VALVOTTU = 0x04 /** Vaihde on valvotussa pääteasennossa */,
-        VAIHDE_KAANTYY = 0x40 /** Vaihde on kääntymässä käskyn mukaan*/,
+        VAIHDE_VASEMMALLE = 0x01  ,
+        VAIHDE_OIKEALLE = 0x02 ,
+        VAIHDE_VALVOTTU = 0x04 ,
+        VAIHDE_KAANTYY = 0x40 ,
         VAIHDE_OK = 0x80 /** Vaihdessa ei ole vikoja */
     };
 

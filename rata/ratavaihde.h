@@ -23,6 +23,7 @@
 #ifndef RATAVAIHDE_H
 #define RATAVAIHDE_H
 
+#include "ratapiha.h"
 
 #include "kiskoliitos.h"
 #include "ratalaite.h"
@@ -47,15 +48,21 @@ public:
     void viiveValmis(int viesti);
 
 protected:
+
+    bool valvottu() const { return valvottu_; }
+    Ratapiha::VaihteenAsento asento() const { return vaihteenAsento_; }
+    Ratapiha::VaihteenAsento pyydettyAsento() const { return pyydettyAsento_; }
+
     Kiskonpaa *vasen_, *oikea_, *kanta_;
-    /**
-     * @brief Onko vaihde jatkoksesta katsottuna etelän suuntaan
-     */
 
-    int vaihteenTila_;
+    Ratapiha::VaihteenAsento vaihteenAsento_;
+    Ratapiha::VaihteenAsento pyydettyAsento_;
+    bool valvottu_;
 
-    int vaihteenTila() const { return vaihteenTila_; }
+    int vaihteenTila() const;
     void ilmoitaTila() const;
+
+    void aukiAjo(Ratapiha::VaihteenAsento asentoon);
 };
 
 #endif // RATAVAIHDE_H

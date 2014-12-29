@@ -28,6 +28,7 @@
 #include "paa2opastin.h"
 #include "ratakisko.h"
 
+#include "ratapiha.h"
 
 RataOpastin::RataOpastin(int laitetunnus)
     : QGraphicsItem(0), Ratalaite(laitetunnus), opasteet_(0x2)
@@ -54,9 +55,9 @@ RataOpastin *RataOpastin::luoOpastin(int laitetunnus, int laji, int raidetunnus)
 {
     if( (laitetunnus & 0xe) == 0x6 )  // Esiopastin
         return new EsiOpastin(laitetunnus,raidetunnus);
-    else if(( laitetunnus & 0xe) == 0x4 ) // Raideopastin
+    else if( laji == ( Ratapiha::OPASTIN_PUNAINEN | Ratapiha::OPASTIN_VALKOINEN | Ratapiha::OPASTIN_SININEN) ) // Raideopastin
         return new RaideOpastin(laitetunnus,raidetunnus);
-    else if((laji & 0x7f) == 0x3)
+    else if((laji & 0x7f) == ( Ratapiha::OPASTIN_PUNAINEN | Ratapiha::OPASTIN_VIHREA ))
         return new Paa2Opastin(laitetunnus,raidetunnus);
 
     return new YhdistelmaOpastin(laitetunnus, laji, raidetunnus);
