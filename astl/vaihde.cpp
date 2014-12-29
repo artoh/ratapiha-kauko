@@ -25,8 +25,7 @@
 
 Vaihde::Vaihde()
     : RaideTieto(),
-      kanta_(this), vasen_(this), oikea_(this),
-      vaihdeTila_(0), pyydettyVaihdeTila_(0)
+      kanta_(this), vasen_(this), oikea_(this)
 {
 
 }
@@ -47,13 +46,7 @@ void Vaihde::laiteSanoma(int laite, int sanoma)
     // Käsittelee vaihdetta koskevat viestit
     if( laite == 0x0)
     {
-        vaihdeTila_ = sanoma;
-
-        if( sanoma == pyydettyVaihdeTila_)
-        {
-            // Kääntyi pyynnön mukaan
-            pyydettyVaihdeTila_ = 0;
-        }
+       vaihdeTila_.tilaSanomasta(sanoma);
     }
 }
 
@@ -97,11 +90,11 @@ QPair<RaiteenPaa *, RaiteenPaa *> Vaihde::mahdollisetVastapaat(RaiteenPaa *paall
 QString Vaihde::raideInfo() const
 {
     QString info = RaideTieto::raideInfo();
-    if( vaihdeVika() )
+    if( vaihdeTila_.vika() )
         info.append(" VIKA ");
-    if( !vaihdeValvottu() )
+    if( vaihdeTila_.valvottuAsento() == Ratapiha::ASENTO_EITIEDOSSA )
         info.append(" EI VALVOTTU ");
-    if( vaihdeKaantyy())
+    if( vaihdeTila_.kaantyyAsentoon() != Ratapiha::ASENTO_EITIEDOSSA)
         info.append(" KÄÄNTYY ");
     if( vaihdeVasen() )
         info.append(" - VASEMMALLE ");
@@ -113,14 +106,23 @@ QString Vaihde::raideInfo() const
 
 bool Vaihde::kaanna()
 {
-    if( !vaihdeValvottu() )
+    // Ei käännä, jos raide varattu
+    if( vapaanaOlo() != VAPAA)
         return false;
-    if( vaihdeVasen())
-        pyydettyVaihdeTila_ = 0x86;
-    else if( vaihdeOikea())
-        pyydettyVaihdeTila_ = 0x85;
 
-    Asetinlaite::instanssi()->lahetaSanoma(raideId(),0x0, pyydettyVaihdeTila_);
+    // Toistaiseksi kääntää kaikenlaiset vaihteet
+    if( vaihdeOikea())
+    {
+        // Käännetään vasemmalle
+        vaihdeTila_.kaannettava(Ratapiha::ASENTO_VASEMMALLE);
+        Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE, Ratapiha::VAIHDEKOMENTO_VASEMMALLE);
+    }
+    else
+    {
+        vaihdeTila_.kaannettava(Ratapiha::ASENTO_OIKEALLE);
+        Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE, Ratapiha::VAIHDEKOMENTO_OIKEALLE);
+    }
+
     return true;
 }
 

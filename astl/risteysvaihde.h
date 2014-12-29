@@ -24,6 +24,8 @@
 #define RISTEYSVAIHDE_H
 
 #include "kantaristeys.h"
+#include "kaannettavanelementintila.h"
+
 
 /**
  * @brief Risteysvaihde
@@ -37,18 +39,6 @@ public:
 
     void laiteSanoma(int laite, int sanoma);
 
-    int vaihdeTila() const { return vaihdeTila_; }
-
-    bool vaihdeVika() const { return !(vaihdeTila() & 0x80) ; }
-    bool vaihdeKaantyy() const { return vaihdeTila() & 0x40; }
-
-    bool vaihdeCValvottu() const { return vaihdeTila() & 0x20; }
-    bool vaihdeCOikea() const { return vaihdeTila() & 0x10; }
-    bool vaihdeCVasen() const { return vaihdeTila() & 0x08; }
-
-    bool vaihdeAValvottu() const { return vaihdeTila() & 0x4; }
-    bool vaihdeAOikea() const { return vaihdeTila() & 0x02; }
-    bool vaihdeAVasen() const { return vaihdeTila() & 0x01; }
 
     RaiteenPaa *aktiivinenVastapaa(RaiteenPaa *paalle);
     QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa *paalle, KulkutieTyyppi tyyppi);
@@ -67,8 +57,8 @@ public:
 
 
 protected:
-    int vaihdeTila_;
-    int pyydettyVaihdeTila_;
+    KaannettavanElementinTila vaihdeAB_;
+    KaannettavanElementinTila vaihdeCD_;
 
 };
 

@@ -151,24 +151,32 @@ void RataRisteysVaihde::komento(int komento)
     if( komento == ( VAIHDE_AB | VAIHDEKOMENTO_OIKEALLE ) && asento(RISTEYSVAIHDE_AB) != ASENTO_OIKEALLE )
     {
         vaihteenABpyydettyAsento_ = ASENTO_OIKEALLE;
+        vaihteenABasento_ = ASENTO_EITIEDOSSA;          // Käännön ajaksi vaihde epämääräisessä tilassa
+        valvottuAB_ = false;
         viiveToiminto(4, VAIHDE_AB | ASENTO_OIKEALLE);
         ilmoitaTila(RISTEYSVAIHDE_AB);
     }
     else if( komento == ( VAIHDE_AB | VAIHDEKOMENTO_VASEMMALLE ) && asento(RISTEYSVAIHDE_AB) != ASENTO_VASEMMALLE)
     {
         vaihteenABpyydettyAsento_ = ASENTO_VASEMMALLE;
+        vaihteenABasento_ = ASENTO_EITIEDOSSA;
+        valvottuAB_ = false;
         viiveToiminto(4, VAIHDE_AB | ASENTO_VASEMMALLE);
         ilmoitaTila(RISTEYSVAIHDE_AB);
     }
     else if( komento == ( VAIHDE_CD | VAIHDEKOMENTO_VASEMMALLE ) && asento(RISTEYSVAIHDE_CD) != ASENTO_VASEMMALLE)
     {
         vaihteenCDpyydettyAsento_ = ASENTO_VASEMMALLE;
+        vaihteenCDasento_ = ASENTO_EITIEDOSSA;
+        valvottuCD_ = false;
         viiveToiminto(4, VAIHDE_CD | ASENTO_VASEMMALLE);
         ilmoitaTila(RISTEYSVAIHDE_CD);
     }
     else if( komento == ( VAIHDE_CD | VAIHDEKOMENTO_OIKEALLE ) && asento(RISTEYSVAIHDE_CD) != ASENTO_OIKEALLE)
     {
         vaihteenCDpyydettyAsento_ = ASENTO_OIKEALLE;
+        vaihteenCDasento_ = ASENTO_EITIEDOSSA;
+        valvottuCD_ = false;
         viiveToiminto(4, VAIHDE_CD | ASENTO_OIKEALLE);
         ilmoitaTila(RISTEYSVAIHDE_CD);
     }
@@ -221,6 +229,11 @@ Ratapiha::VaihteenAsento RataRisteysVaihde::pyydettyAsento(Ratapiha::RisteysVaih
 int RataRisteysVaihde::vaihteenTila(RisteysVaihteenPuoli puoli) const
 {
     int tila = BITTI_OK;
+
+    if( puoli == RISTEYSVAIHDE_AB)
+        tila |= VAIHDE_AB;
+    else if( puoli == RISTEYSVAIHDE_CD)
+        tila |= VAIHDE_CD;
 
     if( asento(puoli) == Ratapiha::ASENTO_VASEMMALLE )
         tila |= Ratapiha::VAIHDE_VASEN;

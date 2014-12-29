@@ -23,8 +23,13 @@
 #include "risteysvaihde.h"
 #include "asetinlaite.h"
 
+using namespace Ratapiha;
+
+
 RisteysVaihde::RisteysVaihde()
-    : KantaRisteys()
+    : KantaRisteys(),
+      vaihdeAB_(),
+      vaihdeCD_()
 {
 }
 
@@ -32,13 +37,10 @@ void RisteysVaihde::laiteSanoma(int laite, int sanoma)
 {
     if( laite == 0x0)
     {
-        vaihdeTila_ = sanoma;
-
-        if( sanoma == pyydettyVaihdeTila_)
-        {
-            // Kääntyi pyynnön mukaan
-            pyydettyVaihdeTila_ = 0;
-        }
+        if( sanoma & VAIHDE_AB )
+            vaihdeAB_.tilaSanomasta(sanoma);
+        else if( sanoma & VAIHDE_CD)
+            vaihdeCD_.tilaSanomasta( sanoma );
     }
 
 }
@@ -49,20 +51,20 @@ RaiteenPaa *RisteysVaihde::aktiivinenVastapaa(RaiteenPaa *paalle)
     // Edellyttää, että vaihde on kääntynyt myös sitä päätä
     // kohden, josta kysely tulee
 
-    if( ( paalle == &paaA_ && vaihdeAOikea() ) ||
-         ( paalle == &paaB_ && vaihdeAVasen()) )
+    if( ( paalle == &paaA_ && vaihdeAB_.vaihdeOikea() ) ||
+         ( paalle == &paaB_ && vaihdeAB_.vaihdeVasen() ) )
     {
-        if( vaihdeCVasen())
+        if( vaihdeCD_.vaihdeVasen())
             return &paaC_;
-        else if( vaihdeCOikea())
+        else if( vaihdeCD_.vaihdeOikea() )
             return &paaD_;
     }
-    else if(( paalle == &paaC_ && vaihdeCVasen()) ||
-            ( paalle == &paaD_ && vaihdeCOikea()) )
+    else if(( paalle == &paaC_ && vaihdeCD_.vaihdeVasen() ) ||
+            ( paalle == &paaD_ && vaihdeCD_.vaihdeOikea() ) )
     {
-        if( vaihdeAVasen())
+        if( vaihdeAB_.vaihdeVasen() )
             return &paaB_;
-        else if( vaihdeAOikea())
+        else if( vaihdeAB_.vaihdeOikea() )
             return &paaA_;
     }
 
@@ -90,15 +92,15 @@ void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, Ra
     bool ab = false;
     bool cd = false;
 
-    if( (mista == &paaA_ || minne == &paaA_) && vaihdeAVasen())
+    if( (mista == &paaA_ || minne == &paaA_) && vaihdeAB_.vaihdeVasen() )
         ab = true;
-    else if( (mista == &paaB_ || minne == &paaB_) && vaihdeAOikea() )
+    else if( (mista == &paaB_ || minne == &paaB_) && vaihdeAB_.vaihdeOikea() )
         ab = true;
 
 
-    if( (mista == &paaD_ || minne == &paaD_) && vaihdeCVasen())
+    if( (mista == &paaD_ || minne == &paaD_) && vaihdeCD_.vaihdeVasen())
         cd = true;
-    else if( (mista == &paaC_ || minne == &paaC_) && vaihdeCOikea() )
+    else if( (mista == &paaC_ || minne == &paaC_) && vaihdeCD_.vaihdeOikea() )
         cd = true;
 
     if( ab || cd)
@@ -111,22 +113,8 @@ void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, Ra
 QString RisteysVaihde::raideInfo() const
 {
     QString info = RaideTieto::raideInfo();
-    if( vaihdeVika() )
-        info.append(" VIKA ");
-    if( !vaihdeCValvottu() || !vaihdeAValvottu() )
-        info.append(" EI VALVOTTU ");
-    if( vaihdeKaantyy())
-        info.append(" KÄÄNTYY ");
-    if( vaihdeAVasen() )
-        info.append(" -B ");
-    if( vaihdeAOikea() )
-        info.append(" +A ");
-    if( vaihdeCVasen() )
-        info.append(" C- ");
-    if( vaihdeCOikea() )
-        info.append(" D+ ");
-
-
+    info.append("a/b " + vaihdeAB_.vaihdeInfo());
+    info.append(" c/d " + vaihdeCD_.vaihdeInfo());
     return info;
 }
 
@@ -138,51 +126,38 @@ bool RisteysVaihde::kaanna(bool ab, bool cd)
     if( vapaanaOlo() == VARATTU)
         return false;   // Ei käännetä yksikön alta
 
-    if(!(  vaihdeAValvottu() && vaihdeCValvottu()) )
-        return false;   // Vaihteen oltava kokonaan valvottu
-
-    pyydettyVaihdeTila_ = 0x80 | 0x20 | 0x4;
-    int kaantoPyynto = 0x80;    // Kääntökomento
     if( ab )
     {
-        // Käännetään vasenta puolta
-        if( vaihdeAVasen())
+        if( vaihdeAB_.vaihdeOikea())
         {
-            pyydettyVaihdeTila_ |= 0x2; // Oikealle
-            kaantoPyynto |= 0x2;
+            vaihdeAB_.kaannettava( ASENTO_VASEMMALLE);
+            Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
+                                                   VAIHDEKOMENTO_VASEMMALLE | VAIHDE_AB);
         }
-        else if( vaihdeAOikea())
+        else
         {
-            pyydettyVaihdeTila_ |= 0x1; // Vasemmalle
-            kaantoPyynto |= 0x1;
+            vaihdeAB_.kaannettava( ASENTO_OIKEALLE);
+            Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
+                                                   VAIHDEKOMENTO_OIKEALLE | VAIHDE_AB);
         }
-
     }
-    else
-        // Ei muutosta a/b-vaihteen tilaan
-        pyydettyVaihdeTila_ |= vaihdeTila() & 0x3;
 
     if( cd )
     {
-        // Käännetään vasenta puolta
-        if( vaihdeCVasen())
+        if( vaihdeCD_.vaihdeOikea())
         {
-            pyydettyVaihdeTila_ |= 0x10; // Oikealle
-            kaantoPyynto |= 0x10;
+            vaihdeCD_.kaannettava( ASENTO_VASEMMALLE);
+            Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
+                                                   VAIHDEKOMENTO_VASEMMALLE | VAIHDE_CD);
         }
-        else if( vaihdeCOikea())
+        else
         {
-            pyydettyVaihdeTila_ |= 0x8; // Vasemmalle
-            kaantoPyynto |= 0x8;
+            vaihdeCD_.kaannettava( ASENTO_OIKEALLE);
+            Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
+                                                   VAIHDEKOMENTO_OIKEALLE | VAIHDE_CD);
         }
-
     }
-    else
-        // Ei muutosta c/d-vaihteen tilaan
-        pyydettyVaihdeTila_ |= vaihdeTila() & 0x38;
 
-    // Lähetetään kääntöpyyntö
-    Asetinlaite::instanssi()->lahetaSanoma(raideId(), 0x0, kaantoPyynto);
     return true;
 }
 

@@ -25,6 +25,8 @@
 
 #include "raidetieto.h"
 
+#include "kaannettavanelementintila.h"
+
 /**
  * @brief Yksinkertainen vaihde
  */
@@ -38,13 +40,6 @@ public:
 
     void laiteSanoma(int laite, int sanoma);
 
-    int vaihdeTila() const { return vaihdeTila_; }
-
-    bool vaihdeVika() const { return !(vaihdeTila() & 0x80) ; }
-    bool vaihdeKaantyy() const { return vaihdeTila() & 0x40; }
-    bool vaihdeValvottu() const { return vaihdeTila() & 0x4; }
-    bool vaihdeOikea() const { return vaihdeTila() & 0x02; }
-    bool vaihdeVasen() const { return vaihdeTila() & 0x01; }
 
     RaiteenPaa *aktiivinenVastapaa(RaiteenPaa *paalle);
     QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa *paalle, KulkutieTyyppi tyyppi);
@@ -56,12 +51,15 @@ public:
     void lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
 
 protected:
+    bool vaihdeVasen() const { return vaihdeTila_.valvottuAsento() == Ratapiha::ASENTO_VASEMMALLE; }
+    bool vaihdeOikea() const { return vaihdeTila_.valvottuAsento() == Ratapiha::ASENTO_OIKEALLE; }
+
     RaiteenPaa kanta_;
     RaiteenPaa vasen_;
     RaiteenPaa oikea_;
 
-    int vaihdeTila_;
-    int pyydettyVaihdeTila_;
+    KaannettavanElementinTila vaihdeTila_;
+
 };
 
 #endif // VAIHDE_H

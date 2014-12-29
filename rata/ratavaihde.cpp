@@ -133,12 +133,16 @@ void RataVaihde::komento(int komento)
     {
         // Käännetään vasemmalle. Jos aiempi kääntö käynnissä, se hylätään
         pyydettyAsento_ = Ratapiha::ASENTO_VASEMMALLE;
+        valvottu_ = false;
+        vaihteenAsento_ = Ratapiha::ASENTO_EITIEDOSSA;
         // Käännetään 4 sekunnin viiveellä
         viiveToiminto(4, pyydettyAsento());
     }
     else if( komento == Ratapiha::VAIHDEKOMENTO_OIKEALLE && asento() != Ratapiha::ASENTO_OIKEALLE)
     {
         pyydettyAsento_ = Ratapiha::ASENTO_OIKEALLE;
+        valvottu_ = false;
+        vaihteenAsento_ = Ratapiha::ASENTO_EITIEDOSSA;
         viiveToiminto(4, pyydettyAsento());
     }
 
