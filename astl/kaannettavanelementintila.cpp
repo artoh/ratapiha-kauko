@@ -29,7 +29,8 @@ KaannettavanElementinTila::KaannettavanElementinTila()
       kaantyyAsentoon_(ASENTO_EITIEDOSSA),
       pyydettyAsento_(ASENTO_VASEMMALLE),
       aukiajettu_(false),
-      vikatila_(false)
+      vikatila_(false),
+      lukitus_(ELEMENTTI_VAPAA)
 
 {
 }
@@ -45,6 +46,13 @@ void KaannettavanElementinTila::tilaSanomasta(int sanoma)
             valvottuAsento_ = ASENTO_VASEMMALLE;
         else if(( sanoma & VAIHDE_OIKEA) && pyydettyAsento() == ASENTO_OIKEALLE )
             valvottuAsento_ = ASENTO_OIKEALLE;
+
+        // Tarkistetaan, onko saavutettu lukittava tila
+        if( lukitus() == ELEMENTTI_LUKITAAN && pyydettyAsento() == valvottuAsento())
+        {
+            // Nyt saavutettu haluttu asento
+            lukitus_ = ELEMENTTI_LUKITTU;
+        }
     }
     else
     {
@@ -54,7 +62,6 @@ void KaannettavanElementinTila::tilaSanomasta(int sanoma)
             aukiajettu_ = true;
 
         valvottuAsento_ = ASENTO_EITIEDOSSA;
-
     }
 
     if( sanoma & VAIHDE_KAANTYY_OIKEALLE )
@@ -68,6 +75,21 @@ void KaannettavanElementinTila::tilaSanomasta(int sanoma)
 void KaannettavanElementinTila::kaannettava(VaihteenAsento asentoon)
 {
     pyydettyAsento_ = asentoon;
+}
+
+ElementinLukitus KaannettavanElementinTila::lukitse(VaihteenAsento asentoon)
+{
+    if( asentoon == valvottuAsento())
+    {
+        // Nyt on valmis ja lukittu
+        lukitus_ = ELEMENTTI_LUKITTU;
+    }
+    else if( asentoon == pyydettyAsento())
+    {
+        lukitus_ = ELEMENTTI_LUKITAAN;
+    }
+
+    return lukitus_;
 }
 
 QString KaannettavanElementinTila::vaihdeInfo() const

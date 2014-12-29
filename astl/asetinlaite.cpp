@@ -20,11 +20,13 @@
 **************************************************************************/
 
 #include <QDebug>
+#include <QTimer>
 
 #include "asetinlaite.h"
 #include "suoranraiteenpaa.h"
 
 #include "kaskytulkki.h"
+#include "junakulkutie.h"
 
 Asetinlaite::Asetinlaite(QObject *parent) :
     QObject(parent), simulaatioAika_(0)
@@ -32,6 +34,10 @@ Asetinlaite::Asetinlaite(QObject *parent) :
     // Asetinlaitteen tekstimuotoiset käskyt käsitellään erillisessä luokassa
     // tämän luokan yksinkertaistamiseksi
     tulkki_ = new KaskyTulkki(this);
+
+    QTimer *kulkutievalvonta = new QTimer(this);
+    connect(kulkutievalvonta, SIGNAL(timeout()), this, SLOT(valvoKulkutiet()));
+    kulkutievalvonta->start(5000);   // Valvonta 0.2 sekunnin välein
 }
 
 void Asetinlaite::sanomaAsetinlaitteelta(unsigned int sanoma)
@@ -42,6 +48,7 @@ void Asetinlaite::sanomaAsetinlaitteelta(unsigned int sanoma)
         // Aikasanoma
         simulaatioAika_ = sanoma & 0x7fffffff;
         emit simulaatioAikaMuutos(simulaatioAika());
+
     }
     else
     {
@@ -109,6 +116,33 @@ RaideTieto *Asetinlaite::raideTunnustekstilla(const QString &tunnusteksti)
 QString Asetinlaite::aslKomento(const QString &komento)
 {
     return tulkki_->komento(komento);
+}
+
+bool Asetinlaite::muodostaKulkutie(RaideTieto *mista, RaideTieto *minne, Ratapiha::KulkutieTyyppi tyyppi)
+{
+    if( tyyppi == Ratapiha::JUNAKULKUTIE)
+    {
+        JunaKulkutie *kulkutie = new JunaKulkutie(mista, minne);
+        kulkutie->etsiKulkutie(Kulkutie::EISUUNTAA);
+        if( kulkutie->tila() == Kulkutie::PERUSEHDOT)
+        {
+            kulkutie->lukitseKulkutielle();
+            kulkutiet_.append(kulkutie);
+            return true;
+        }
+        else
+            return false;   // Perusehdot eivät täyttyneet
+
+    }
+    return false;
+}
+
+void Asetinlaite::valvoKulkutiet()
+{
+    foreach (Kulkutie *kulkutie, kulkutiet_)
+    {
+        kulkutie->valvoKulkutie();
+    }
 }
 
 void Asetinlaite::rekisteroiInstanssi(Asetinlaite *instanssi)

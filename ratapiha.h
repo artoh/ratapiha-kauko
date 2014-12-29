@@ -93,6 +93,20 @@ namespace Ratapiha
         RISTEYSVAIHDE_CD = 2
     };
 
+    enum ElementinLukitus
+    {
+        ELEMENTTI_VAPAA = 0,
+        ELEMENTTI_LUKITAAN = 1,
+        ELEMENTTI_LUKITTU = 2
+    };
+
+    enum KulkutieTyyppi
+    {
+        EIKULKUTIETA,
+        JUNAKULKUTIE,
+        VAIHTOKULKUTIE
+    };
+
 }
 
 

@@ -41,6 +41,15 @@ public:
      */
     void kaannettava(Ratapiha::VaihteenAsento asentoon);
 
+    /**
+     * @brief Pyytää lukitsemaan elementin haluttuun asentoon, jonka pitää olla asetettu tai pyydetty
+     *
+     * Kääntökomento pitää antaa ennen lukituskomentoa, mutta kääntämisen ei tarvitse olla valmis
+     *
+     * @return Tila pyynnön jälkeen (VAPAA = ei voi lukita)
+     */
+    Ratapiha::ElementinLukitus lukitse(Ratapiha::VaihteenAsento asentoon);
+
     Ratapiha::VaihteenAsento pyydettyAsento() const { return pyydettyAsento_; }
     Ratapiha::VaihteenAsento valvottuAsento() const { return valvottuAsento_; }
     Ratapiha::VaihteenAsento kaantyyAsentoon() const { return kaantyyAsentoon_; }
@@ -49,6 +58,8 @@ public:
     bool aukiajettu() const { return aukiajettu_; }
     bool vaihdeVasen() const { return valvottuAsento() == Ratapiha::ASENTO_VASEMMALLE; }
     bool vaihdeOikea() const { return valvottuAsento() == Ratapiha::ASENTO_OIKEALLE; }
+
+    Ratapiha::ElementinLukitus lukitus() { return lukitus_; }
 
     QString vaihdeInfo() const;
 
@@ -64,6 +75,8 @@ protected:
 
     bool aukiajettu_;
     bool vikatila_;
+
+    Ratapiha::ElementinLukitus lukitus_;
 };
 
 #endif // KAANNETTAVANELEMENTINTILA_H

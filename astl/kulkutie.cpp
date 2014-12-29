@@ -72,7 +72,24 @@ void Kulkutie::lukitseKulkutielle()
 
     tila_ = LUKITAAN;
 
-    laitaVarit();   // TODO:
+}
+
+void Kulkutie::valvoKulkutie()
+{
+
+    bool kaikkiLukittu = true;
+    foreach (RaiteenPaa* paa, valmisKulkutie_)
+    {
+        if( paa->raide()->onkoLukittuKulkutielle() != Ratapiha::ELEMENTTI_LUKITTU)
+            kaikkiLukittu = false;
+    }
+
+    if( tila() == LUKITAAN && kaikkiLukittu)
+    {
+        // Nyt kulkutie on viimein valmis
+        tila_ = VALMIS;
+        laitaVarit();
+    }
 
 }
 

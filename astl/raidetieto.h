@@ -28,6 +28,8 @@
 
 #include "raiteenpaa.h"
 
+#include "ratapiha.h"
+
 class Kulkutie;
 
 /**
@@ -81,7 +83,6 @@ public:
      */
     virtual bool voikoLukitaKulkutielle(KulkutieTyyppi tyyppi);
 
-    virtual bool onkoLukittuKulkutielle() { return false; }
     virtual bool onkoAjonestoa() { return false; }
 
     /**
@@ -127,6 +128,12 @@ public:
      * @return
      */
     Kulkutie *kulkutie() { return kulkutie_; }
+
+    /**
+     * @brief Onko tämä raide lukittu osaksi kulkutietä
+     * @return
+     */
+    virtual Ratapiha::ElementinLukitus onkoLukittuKulkutielle();
 
     virtual void lukitseKulkutielle(Kulkutie* kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
 

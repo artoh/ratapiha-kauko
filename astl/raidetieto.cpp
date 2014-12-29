@@ -45,7 +45,7 @@ void RaideTieto::asetaTiedot(int raideId, const QString &liikennepaikka, int rai
 
 bool RaideTieto::voikoLukitaKulkutielle(RaideTieto::KulkutieTyyppi /* tyyppi */)
 {
-    return( !onkoLukittuKulkutielle() && !onkoAjonestoa() && !kulkutie());
+    return( onkoLukittuKulkutielle() == Ratapiha::ELEMENTTI_VAPAA && !onkoAjonestoa() && !kulkutie());
 }
 
 void RaideTieto::asetinLaiteSanoma(int laite, int sanoma)
@@ -105,6 +105,14 @@ QString RaideTieto::raideInfo() const
     else if( vapaanaOlo() == VIRHE)
         info += "VALVONTAVIRHE";
     return info;
+}
+
+Ratapiha::ElementinLukitus RaideTieto::onkoLukittuKulkutielle()
+{
+    if( kulkutie())
+        return Ratapiha::ELEMENTTI_LUKITTU;
+    else
+        return Ratapiha::ELEMENTTI_VAPAA;
 }
 
 void RaideTieto::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa * /*mista*/, RaiteenPaa * /*minne*/)

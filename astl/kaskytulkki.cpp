@@ -84,10 +84,10 @@ QString KaskyTulkki::komento(const QString &kasky)
 
         if( mista && minne)
         {
-            JunaKulkutie jktm(mista, minne);
-            jktm.etsiKulkutie(Kulkutie::EISUUNTAA);
-            jktm.lukitseKulkutielle();
-            return jktm.raiteet();
+            if( asl()->muodostaKulkutie(mista, minne))
+                return QString("Kulkutie muodostettu");
+            else
+                return QString("Kulkutietä ei voi muodostaa");
         }
     }
 

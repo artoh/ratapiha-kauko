@@ -128,11 +128,32 @@ bool Vaihde::kaanna()
 
 void Vaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne)
 {
-    // Tässä pitää vain kääntää vaihdetta tarvittavaan asentoon
-    if(( mista == &vasen_ || minne == &vasen_ ) && vaihdeOikea() )
-        kaanna();
-    else if((mista == &oikea_ || minne == &oikea_) && vaihdeVasen())
-        kaanna();
+    Ratapiha::VaihteenAsento tarvittavaAsento;
 
+    // Selvitetään vaihteelle tarvittava asento
+    if( mista == &vasen_ || minne == &vasen_)
+        tarvittavaAsento = Ratapiha::ASENTO_VASEMMALLE;
+    else
+        tarvittavaAsento = Ratapiha::ASENTO_OIKEALLE;
+
+    // Käännetään vaihde tarvittavaan asentoon
+    if( tarvittavaAsento != vaihdeTila_.valvottuAsento() )
+    {
+        vaihdeTila_.kaannettava(tarvittavaAsento);
+        Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE, Ratapiha::VAIHDEKOMENTO_OIKEALLE);
+    }
+
+    // Lukitaan vaihde kulkutielle
+    vaihdeTila_.lukitse(tarvittavaAsento);
+
+    // Vielä puuttuu sivusuojien hakeminen
+
+    // Lukitaan raide kulkutielle
     kulkutie_ = kulkutie;
+}
+
+Ratapiha::ElementinLukitus Vaihde::onkoLukittuKulkutielle()
+{
+    // Lukitus valmistuu, kun vaihde on lukittu ja käännetty
+    return vaihdeTila_.lukitus();
 }

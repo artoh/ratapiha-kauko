@@ -50,6 +50,8 @@ public:
 
     void lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
 
+    Ratapiha::ElementinLukitus onkoLukittuKulkutielle();
+
 protected:
     bool vaihdeVasen() const { return vaihdeTila_.valvottuAsento() == Ratapiha::ASENTO_VASEMMALLE; }
     bool vaihdeOikea() const { return vaihdeTila_.valvottuAsento() == Ratapiha::ASENTO_OIKEALLE; }

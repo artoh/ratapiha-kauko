@@ -28,6 +28,8 @@
 
 #include "raidetieto.h"
 
+#include "ratapiha.h"
+
 class KaskyTulkki;
 
 class Asetinlaite : public QObject
@@ -63,9 +65,22 @@ public:
      */
     QString aslKomento(const QString& komento);
 
+    /**
+     * @brief Muodostaa kulkutien
+     * @param mista
+     * @param minne
+     * @param tyyppi
+     * @return tosi, jos kulkutien perusehdot toteutuvat
+     */
+    bool muodostaKulkutie(RaideTieto* mista, RaideTieto *minne, Ratapiha::KulkutieTyyppi tyyppi=Ratapiha::JUNAKULKUTIE);
+
+private slots:
+    void valvoKulkutiet();
+
 protected:
     QHash<int,RaideTieto*> raiteet_;
     QHash<QString,RaideTieto*> raiteetTunnuksilla_;
+    QList<Kulkutie*> kulkutiet_;
 
     int simulaatioAika_;
 

@@ -47,6 +47,8 @@ public:
     void lukitseKulkutielle();
 
 
+    virtual void valvoKulkutie();
+
     RaideTieto *mista() { return mista_; }
     RaideTieto *minne() { return minne_; }
     virtual RaideTieto::KulkutieTyyppi tyyppi() const = 0;
