@@ -43,7 +43,7 @@ RaiteenPaa *RaideRisteys::aktiivinenVastapaa(RaiteenPaa *paalle)
     return 0;
 }
 
-QPair<RaiteenPaa *, RaiteenPaa *> RaideRisteys::mahdollisetVastapaat(RaiteenPaa *paalle, RaideTieto::KulkutieTyyppi tyyppi)
+QPair<RaiteenPaa *, RaiteenPaa *> RaideRisteys::mahdollisetVastapaat(RaiteenPaa *paalle, Ratapiha::KulkutieTyyppi tyyppi)
 {
     if( voikoLukitaKulkutielle(tyyppi))
         // Jos tämän raideristeyksen voi lukita kulkutielle,

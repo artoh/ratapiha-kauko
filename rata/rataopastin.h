@@ -46,7 +46,7 @@ public:
     static RataOpastin* luoOpastin(int laitetunnus, int laji, int raidetunnus);
 
     bool onkoPohjoiseen() const { return laitetunnus() & 0x1; }
-    bool onkoVaria(Ratapiha::OpastinVarit vari) { return opasteet_ & vari; }
+    bool onkoVaria(Ratapiha::OpastinVari vari) { return opasteet_ & vari; }
 
 protected:
     bool valkkyyko() { return valkky__; }

@@ -42,7 +42,7 @@ public:
 
 
     RaiteenPaa *aktiivinenVastapaa(RaiteenPaa *paalle);
-    QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa *paalle, KulkutieTyyppi tyyppi);
+    QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa *paalle, Ratapiha::KulkutieTyyppi tyyppi);
 
     virtual QString raideInfo() const;
 

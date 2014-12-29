@@ -37,7 +37,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
-    bool onkoLamppua(Ratapiha::OpastinVarit varibitti) { return laji_ & varibitti; }
+    bool onkoLamppua(Ratapiha::OpastinVari varibitti) { return laji_ & varibitti; }
 
     int laji_;
     QString teksti_;

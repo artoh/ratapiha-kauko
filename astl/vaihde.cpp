@@ -67,7 +67,7 @@ RaiteenPaa *Vaihde::aktiivinenVastapaa(RaiteenPaa *paalle)
     return 0;
 }
 
-QPair<RaiteenPaa *, RaiteenPaa *> Vaihde::mahdollisetVastapaat(RaiteenPaa *paalle, RaideTieto::KulkutieTyyppi tyyppi)
+QPair<RaiteenPaa *, RaiteenPaa *> Vaihde::mahdollisetVastapaat(RaiteenPaa *paalle, Ratapiha::KulkutieTyyppi tyyppi)
 {
     if( voikoLukitaKulkutielle(tyyppi))
     {

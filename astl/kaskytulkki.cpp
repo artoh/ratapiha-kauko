@@ -60,7 +60,7 @@ QString KaskyTulkki::komento(const QString &kasky)
             return QString("VIRHE EiRaidetta");
         RaiteenPaa *paa = raide->raiteenPaa(RaiteenPaa::P);
         if( paa && paa->opastin())
-            paa->opastin()->asetaOpaste(Opastin::SEIS);
+            paa->opastin()->asetaOpaste(Ratapiha::OPASTE_SEIS);
 
     }
 
@@ -72,7 +72,7 @@ QString KaskyTulkki::komento(const QString &kasky)
             return QString("VIRHE EiRaidetta");
         RaiteenPaa *paa = raide->raiteenPaa(RaiteenPaa::P);
         if( paa && paa->opastin())
-            paa->opastin()->asetaOpaste(Opastin::AJA);
+            paa->opastin()->asetaOpaste(Ratapiha::OPASTE_AJA);
 
     }
 

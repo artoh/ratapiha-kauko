@@ -25,6 +25,9 @@
 
 class SuoranRaiteenPaa;
 
+#include <QString>
+#include "ratapiha.h"
+
 /**
  * @brief Pää/Raideopastimen käsittely asetinlaitelogiikassa
  */
@@ -58,10 +61,13 @@ public:
     Opastin(SuoranRaiteenPaa *raiteenPaa, int opastintunnus, int tyyppitieto);
     int opastinId() const { return opastintunnus_; }
 
-    void asetaOpaste(Opaste opaste);
+    /**
+     * @brief Asettaa opastimeen pyydetyn opasteen
+     * @param opaste
+     * @return tosi, jos onnistuu
+     */
+    void asetaOpaste(Ratapiha::Opaste asetettavaOpaste);
 
-    int varit() const { return varit_; }
-    int pyydetytVarit() const { return pyydetytVarit_; }
     int tyyppitieto() const { return tyyppitieto_; }
     SuoranRaiteenPaa* raiteenPaa() { return raiteenPaa_; }
 
@@ -71,16 +77,29 @@ public:
      */
     void aslViesti(int sanoma);
 
+    Ratapiha::Opaste opaste() const { return opaste_; }
+    Ratapiha::Opaste asetettavaOpaste() const { return pyydettyOpaste_; }
+    Ratapiha::Opaste esiopaste() const { return esiopaste_; }
+
+    QString tilaTeksti() const;
+
 protected:
-    int esiopastinBititEdestapain();
-    void haeTaakseEsiopastintiedot();
-    void paivitaEsiopasteet(int esiopastinbitit);
+    void asetaVarit(Ratapiha::Opaste opaste);
+    void asetaEsiopaste(Ratapiha::Opaste opaste);
+
+    void naytaVarit();
+    void haeEsiopasteEdesta();
+    void vieTaakseEsiopastimeen();
+
 
 protected:
     SuoranRaiteenPaa *raiteenPaa_;
 
-    int varit_;
-    int pyydetytVarit_;
+    Ratapiha::Opaste opaste_;
+    Ratapiha::Opaste pyydettyOpaste_;
+    Ratapiha::Opaste esiopaste_;
+
+
 
     int opastintunnus_;
     int tyyppitieto_;

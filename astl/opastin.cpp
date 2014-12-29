@@ -27,127 +27,177 @@
 
 #include "raidetieto.h"
 
+using namespace Ratapiha;
+
 Opastin::Opastin(SuoranRaiteenPaa *raiteenPaa, int opastintunnus, int tyyppitieto)
-    : raiteenPaa_(raiteenPaa), varit_(0), pyydetytVarit_(0),
-      opastintunnus_(opastintunnus), tyyppitieto_(tyyppitieto)
+    : raiteenPaa_(raiteenPaa),
+      opaste_( OPASTE_PIMEA),
+      pyydettyOpaste_(OPASTE_SEIS),
+      esiopaste_(OPASTE_SEIS),
+      opastintunnus_(opastintunnus),
+      tyyppitieto_(tyyppitieto)
 {
 }
 
-void Opastin::asetaOpaste(Opastin::Opaste opaste)
+void Opastin::asetaOpaste(Ratapiha::Opaste asetettavaOpaste)
 {
-    if( opaste == AJA )
-    {
-        pyydetytVarit_ = 0x80 | VIHREA | esiopastinBititEdestapain();    // 0x80 = OK
-        Asetinlaite::instanssi()->lahetaSanoma( opastinId(), pyydetytVarit_);
+    // Ensin pitäisi selvittää esiopaste edestäpäin
+    if( asetettavaOpaste == OPASTE_AJA || asetettavaOpaste == OPASTE_AJASN)
+        haeEsiopasteEdesta();
 
-        if( tyyppitieto_ & KIINTEASTI_KYTKETTY_ESIOPASTIN )
-        {
-            // Annetaan odota-aja opaste esiopastimeen
-            Asetinlaite::instanssi()->lahetaSanoma( opastinId() | 0x6 , 0x80 | VIHREA_VILKKU  );
-        }
-        else
-            haeTaakseEsiopastintiedot();
-    }
-    else if( opaste == AJASN )
-    {
-        pyydetytVarit_ = 0x80 | VIHREA | KELTAINEN | esiopastinBititEdestapain();    // 0x80 = OK
-        // Taas syytä selvittää edestäpäin esiopastintieto
-        Asetinlaite::instanssi()->lahetaSanoma( opastinId(), pyydetytVarit_);
+    // Asetetaan pyydetyt värit
+    asetaVarit( asetettavaOpaste);
 
-        if( tyyppitieto_ & KIINTEASTI_KYTKETTY_ESIOPASTIN )
-        {
-            // Annetaan odota-ajasn opaste esiopastimeen
-            Asetinlaite::instanssi()->lahetaSanoma( opastinId() | 0x6 , 0x80 | VIHREA_VILKKU | KELTAINEN_VILKKU  );
-        }
-        else
-            haeTaakseEsiopastintiedot();
-    }
-    else if( opaste == SEIS )
-    {
-        pyydetytVarit_ = 0x80 | PUNAINEN;    // 0x80 = OK
-        Asetinlaite::instanssi()->lahetaSanoma( opastinId(), pyydetytVarit_);
-
-        if( tyyppitieto_ & KIINTEASTI_KYTKETTY_ESIOPASTIN )
-        {
-            // Annetaan odota-seis opaste esiopastimeen
-            Asetinlaite::instanssi()->lahetaSanoma( opastinId() | 0x6 , 0x80 | KELTAINEN_VILKKU  );
-        }
-        else
-            haeTaakseEsiopastintiedot();
-    }
-    else if( opaste == AJAVAROVASTI)
-    {
-        pyydetytVarit_ = 0x80 | VALKOINEN;
-        Asetinlaite::instanssi()->lahetaSanoma( opastinId() , pyydetytVarit_);
-    }
+    // Viedään esiopastintieto taakse
+    vieTaakseEsiopastimeen();
 }
+
+
 
 void Opastin::aslViesti(int sanoma)
 {
-    varit_ = sanoma;
+    // Luetaan merkitsevä opaste ilman esiopastinbittejä
+    int opastebitit = sanoma & 0x37;
+    switch ( opastebitit)
+    {
+    case OPASTIN_PUNAINEN:
+        opaste_ = OPASTE_SEIS;
+        break;
+    case OPASTIN_VIHREA :
+        opaste_ = OPASTE_AJA;
+        break;
+    case OPASTIN_VIHREA | OPASTIN_KELTAINEN :
+        opaste_ = OPASTE_AJASN;
+        break;
+    case OPASTIN_VALKOINEN:
+        opaste_ = OPASTE_AJAVAROVASTI;
+        break;
+    case OPASTIN_SININEN :
+        opaste_ = OPASTE_EIOPASTETTA;
+        break;
+    default:
+        // VIRHEELLINEN OPASTE !!!
+        opaste_ = OPASTE_PIMEA;
+        break;
+    }
 }
 
-int Opastin::esiopastinBititEdestapain()
+QString Opastin::tilaTeksti() const
 {
-    // Vain, jos tähän on yhdistetty esiopastin
-    if( !(tyyppitieto() & KELTAINEN_VILKKU) )
-        return 0;
+    QString tila;
+    if( opaste() == OPASTE_SEIS)
+        tila = "0";
+    else if( opaste() == OPASTE_AJASN)
+        tila = "1";
+    else if( opaste() == OPASTE_AJA)
+        tila = "2";
+    else if( opaste() == OPASTE_AJAVAROVASTI)
+        tila = "3";
+    else if( opaste() == OPASTE_EIOPASTETTA)
+        tila = "4";
 
+    return tila;
+}
+
+void Opastin::asetaVarit(Ratapiha::Opaste opaste)
+{
+    pyydettyOpaste_ = opaste;
+    naytaVarit();
+}
+
+void Opastin::asetaEsiopaste(Ratapiha::Opaste opaste)
+{
+    esiopaste_ = opaste;
+    if( asetettavaOpaste() == OPASTE_AJA || asetettavaOpaste() == OPASTE_AJASN)
+        naytaVarit();
+}
+
+void Opastin::naytaVarit()
+{
+
+    int varit = OPASTIN_PUNAINEN;
+
+    // Opastimen värit näkyviin
+    if( asetettavaOpaste() == OPASTE_AJASN && (tyyppitieto() & OPASTIN_KELTAINEN )
+            && ( tyyppitieto() & OPASTIN_VIHREA))
+        varit = OPASTIN_VIHREA | OPASTIN_KELTAINEN;
+    else if( asetettavaOpaste() == OPASTE_AJA && (tyyppitieto() & OPASTIN_VIHREA ))
+        varit = OPASTIN_VIHREA;
+
+    else if( asetettavaOpaste() == OPASTE_AJAVAROVASTI && (tyyppitieto() & OPASTIN_VALKOINEN ))
+        varit = OPASTIN_VALKOINEN;
+    else if( asetettavaOpaste() == OPASTE_EIOPASTETTA && (tyyppitieto() & OPASTIN_SININEN ))
+        varit = OPASTIN_SININEN;
+
+    // AJA ja AJASN -opasteihin liitetään esiopastinbitit edestäpäin
+    if( ( asetettavaOpaste() == OPASTE_AJA || asetettavaOpaste() == OPASTE_AJASN)
+            && (tyyppitieto() & OPASTIN_KELTAINEN_VILKKU))
+    {
+        if( esiopaste() == OPASTE_AJA )
+            varit |= OPASTIN_VIHREA_VILKKU;
+        else if( esiopaste() == OPASTE_AJASN)
+            varit |= OPASTIN_VIHREA_VILKKU | OPASTIN_KELTAINEN_VILKKU;
+        else
+            varit |= OPASTIN_KELTAINEN_VILKKU;
+    }
+
+    Asetinlaite::instanssi()->lahetaSanoma( opastinId(), BITTI_OK | varit);
+
+}
+
+void Opastin::haeEsiopasteEdesta()
+{
     RaiteenPaa *paa = raiteenPaa()->seuraavaRaiteenpaa();
-    qDebug() << "Etsitään opastetta " << raiteenPaa()->raide()->raidetunnus() << " seuraava " << paa;
+
     while( paa != 0)
     {
         Opastin *opastin = paa->opastin();
         // Esiopastetta ei näytetä raideopastimen valkoisesta
         // vaan vasta kulkutien päässä olevasta väristä
-        if( opastin && !(opastin->varit() & VALKOINEN))
+        if( opastin && opastin->opaste() != OPASTE_AJAVAROVASTI)
         {
-            qDebug() << " OP " << opastin->opastinId() << " : " << opastin->varit();
-            if( opastin->varit() & KELTAINEN)
-                return KELTAINEN_VILKKU | VIHREA_VILKKU;
-            else if( opastin->varit() & VIHREA)
-                return VIHREA_VILKKU;
+            if( opastin->opaste() == OPASTE_AJA)
+                esiopaste_ = OPASTE_AJA;
+            else if( opastin->opaste() == OPASTE_AJASN)
+                esiopaste_ = OPASTE_AJASN;
             else
-                return KELTAINEN_VILKKU;
+                esiopaste_ = OPASTE_SEIS;
+            return;
         }
         paa = paa->seuraavaRaiteenpaa();
 
     }
     // Päättyy raidepuskuriin tms. eli laitetaan seis-bitit
-    return KELTAINEN_VILKKU;
+    esiopaste_ = OPASTE_SEIS;
 }
 
-void Opastin::haeTaakseEsiopastintiedot()
+void Opastin::vieTaakseEsiopastimeen()
 {
-    RaiteenPaa *paa = raiteenPaa()->edellinenRaiteenpaa();
-    while( paa != 0)
+    if( tyyppitieto() & OPASTIN_ESIOPASTIN_KIINTEASTI_KYTKETTY)
     {
-        Opastin* opastin = paa->opastin();
-        // Jos takanapäin on opastin, joka voi näyttää
-        // esiopasteita (ohitetaan siis raideopastimet)
-        if( opastin && opastin->tyyppitieto() & KELTAINEN_VILKKU)
-        {
-            if( !(opastin->varit() & VIHREA ))
-                return;
-
-            int eobitit = 0;
-            if( pyydetytVarit() & VIHREA)
-                eobitit |= VIHREA_VILKKU;
-            if( (pyydetytVarit() & 0x7 ) != 0x1 )
-                eobitit |= KELTAINEN_VILKKU;
-
-            opastin->paivitaEsiopasteet(eobitit);
-            return;
-        }
-        paa = paa->edellinenRaiteenpaa();
+        // Esiopaste ilmaistaan kiinteästi kytketyllä esiopastimella
+        int varit = OPASTIN_KELTAINEN_VILKKU;
+        if( asetettavaOpaste() == OPASTE_AJA)
+            varit = OPASTIN_VIHREA_VILKKU;
+        else if( asetettavaOpaste() == OPASTE_AJASN)
+            varit = OPASTIN_VIHREA_VILKKU;
+        Asetinlaite::instanssi()->lahetaSanoma(opastinId() | LAITE_ESIOPASTIN, BITTI_OK | varit );
     }
-}
-
-void Opastin::paivitaEsiopasteet(int esiopastinbitit)
-{
-   if( !pyydetytVarit() )
-       pyydetytVarit_ = varit();
-
-   pyydetytVarit_ = 0x80 | ( pyydetytVarit_ & 0x37) | esiopastinbitit;
-   Asetinlaite::instanssi()->lahetaSanoma( opastinId(), pyydetytVarit_);
+    else
+    {
+        // Esiopastetiedot ilmaistaan edellisellä yhdistetyllä esiopastimella
+        RaiteenPaa *paa = raiteenPaa()->edellinenRaiteenpaa();
+        while( paa != 0)
+        {
+            Opastin* opastin = paa->opastin();
+            // Jos takanapäin on opastin, joka voi näyttää
+            // esiopasteita (ohitetaan siis raideopastimet)
+            if( opastin && opastin->tyyppitieto() & KELTAINEN_VILKKU)
+            {
+                opastin->asetaEsiopaste( asetettavaOpaste() );
+                return;
+            }
+            paa = paa->edellinenRaiteenpaa();
+        }
+    }
 }

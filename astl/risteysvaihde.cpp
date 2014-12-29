@@ -71,7 +71,7 @@ RaiteenPaa *RisteysVaihde::aktiivinenVastapaa(RaiteenPaa *paalle)
     return 0;
 }
 
-QPair<RaiteenPaa *, RaiteenPaa *> RisteysVaihde::mahdollisetVastapaat(RaiteenPaa *paalle, RaideTieto::KulkutieTyyppi tyyppi)
+QPair<RaiteenPaa *, RaiteenPaa *> RisteysVaihde::mahdollisetVastapaat(RaiteenPaa *paalle, Ratapiha::KulkutieTyyppi tyyppi)
 {
     // Molemmista haaroista tultaessa on aina kaksi mahdollista
     // jatkoa kulkuteille

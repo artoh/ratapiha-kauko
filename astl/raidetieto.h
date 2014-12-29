@@ -74,14 +74,14 @@ public:
      * @brief Vastakkaiset päät, joiden kautta voidaan muodostaa kulkutie
      * @return
      */
-    virtual QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa* paalle, KulkutieTyyppi tyyppi) = 0;
+    virtual QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa* paalle, Ratapiha::KulkutieTyyppi tyyppi) = 0;
 
     /**
      * @brief Voiko tämän raiteen lukita kulkutielle?
      * @param tyyppi
      * @return
      */
-    virtual bool voikoLukitaKulkutielle(KulkutieTyyppi tyyppi);
+    virtual bool voikoLukitaKulkutielle(Ratapiha::KulkutieTyyppi tyyppi);
 
     virtual bool onkoAjonestoa() { return false; }
 
@@ -122,6 +122,12 @@ public:
      * @return
      */
     virtual QString raideInfo() const;
+
+    /**
+     * @brief Raiteen tilasanoma asetinlaitteelle
+     * @return
+     */
+    virtual QString raideTila();
 
     /**
      * @brief Kulkutie, jolle raide lukittu

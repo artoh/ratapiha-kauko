@@ -45,7 +45,7 @@ namespace Ratapiha
         LAITE_VAPAANAOLO = 0xf
     };
 
-    enum OpastinVarit
+    enum OpastinVari
     {
         OPASTIN_VIHREA = 0x1,
         OPASTIN_PUNAINEN = 0x2,
@@ -56,13 +56,23 @@ namespace Ratapiha
         OPASTIN_KELTAINEN_VILKKU = 0x40
     };
 
-    enum OpastinTyyppiBitit
+    enum Opaste
+    {
+        OPASTE_PIMEA = 0,
+        OPASTE_SEIS = 1,
+        OPASTE_AJASN = 2,
+        OPASTE_AJA = 3,
+        OPASTE_AJAVAROVASTI = 5,
+        OPASTE_EIOPASTETTA = 6
+    };
+
+    enum OpastinTyyppiBitti
     {
         OPASTIN_SUOJASTUS = 0x80,
         OPASTIN_ESIOPASTIN_KIINTEASTI_KYTKETTY = 0x100
     };
 
-    enum VaihdeBitit
+    enum VaihdeBitti
     {
         VAIHDE_VASEN = 0x1 /** Vaihde on vastavaihteeseen katsottuna vasemmalle */,
         VAIHDE_OIKEA = 0x2 /** Vaihde on vastavaihteeseen katsottuna oikealle */,
@@ -74,7 +84,7 @@ namespace Ratapiha
         VAIHDE_OK = BITTI_OK
     };
 
-    enum Vaihdekomennot
+    enum Vaihdekomento
     {
         VAIHDEKOMENTO_VASEMMALLE = BITTI_OK | VAIHDE_VASEN,
         VAIHDEKOMENTO_OIKEALLE = BITTI_OK | VAIHDE_OIKEA

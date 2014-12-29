@@ -74,7 +74,7 @@ void AsetinlaitePaneeli::haeInfo()
     RaideTieto* raide = Asetinlaite::instanssi()->raideTunnustekstilla(raidetunnus);
     if( raide )
     {
-        QString teksti = raide->raideInfo();
+        QString teksti = raide->raideTila();
         ui->raideInfoLabel->setText( teksti);
     }
 

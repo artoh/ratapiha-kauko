@@ -16,7 +16,7 @@ public:
     JunaKulkutie(RaideTieto *mista, RaideTieto *minne);
     ~JunaKulkutie();
 
-    RaideTieto::KulkutieTyyppi tyyppi() const { return RaideTieto::JUNAKULKUTIE; }
+    Ratapiha::KulkutieTyyppi tyyppi() const { return Ratapiha::JUNAKULKUTIE; }
 
 protected:
 

@@ -46,14 +46,14 @@ RaiteenPaa *Raide::aktiivinenVastapaa(RaiteenPaa *paalle)
     return 0;
 }
 
-QPair<RaiteenPaa *, RaiteenPaa *> Raide::mahdollisetVastapaat(RaiteenPaa *paalle, RaideTieto::KulkutieTyyppi tyyppi)
+QPair<RaiteenPaa *, RaiteenPaa *> Raide::mahdollisetVastapaat(RaiteenPaa *paalle, Ratapiha::KulkutieTyyppi tyyppi)
 {
     // Jos tämän raiteen voi lukita kulkutielle, on ainoa mahdollinen vastapää
     // tämän raiteen toinen eli aktiivinen pää.
     if( voikoLukitaKulkutielle(tyyppi))
         return qMakePair( aktiivinenVastapaa(paalle), (RaiteenPaa*) 0 );
-    else
-        return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0);
+
+    return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0);
 }
 
 void Raide::laiteSanoma(int laite, int sanoma)
@@ -71,5 +71,23 @@ void Raide::laiteSanoma(int laite, int sanoma)
         if( pohjoisPaa_.opastin())
             pohjoisPaa_.opastin()->aslViesti(sanoma);
     }
+}
+
+QString Raide::raideTila()
+{
+    QString tila = RaideTieto::raideTila();
+    if( etelaPaa_.opastin())
+    {
+        tila.append(" E");
+        tila.append( etelaPaa_.opastin()->tilaTeksti());
+    }
+    if( pohjoisPaa_.opastin())
+    {
+        tila.append(" P");
+        tila.append( pohjoisPaa_.opastin()->tilaTeksti());
+    }
+
+
+    return tila;
 }
 

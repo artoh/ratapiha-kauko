@@ -39,7 +39,7 @@ public:
     int raideTyyppi() const { return RAIDERISTEYS; }
 
     RaiteenPaa *aktiivinenVastapaa(RaiteenPaa *paalle);
-    QPair<RaiteenPaa *, RaiteenPaa *> mahdollisetVastapaat(RaiteenPaa *paalle, KulkutieTyyppi tyyppi);
+    QPair<RaiteenPaa *, RaiteenPaa *> mahdollisetVastapaat(RaiteenPaa *paalle, Ratapiha::KulkutieTyyppi tyyppi);
 
 protected:
 

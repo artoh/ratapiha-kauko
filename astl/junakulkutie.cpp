@@ -62,7 +62,7 @@ void JunaKulkutie::laitaVarit()
             {
                 // Tämä on raideopastin
                 if( paa->raide() != minne())
-                    opastin->asetaOpaste(Opastin::AJAVAROVASTI);
+                    opastin->asetaOpaste( Ratapiha::OPASTE_AJAVAROVASTI);
             }
             else
             {
@@ -70,9 +70,9 @@ void JunaKulkutie::laitaVarit()
                 {
                     // Välissä oleva opastin
                     if( hidas)
-                        paaOpastin->asetaOpaste(Opastin::AJASN);
+                        paaOpastin->asetaOpaste(Ratapiha::OPASTE_AJASN);
                     else
-                        paaOpastin->asetaOpaste(Opastin::AJA);
+                        paaOpastin->asetaOpaste(Ratapiha::OPASTE_AJA);
                 }
                 hidas = false;
                 paaOpastin = opastin;
@@ -85,9 +85,9 @@ void JunaKulkutie::laitaVarit()
     {
         // Välissä oleva opastin
         if( hidas)
-            paaOpastin->asetaOpaste(Opastin::AJASN);
+            paaOpastin->asetaOpaste(Ratapiha::OPASTE_AJASN);
         else
-            paaOpastin->asetaOpaste(Opastin::AJA);
+            paaOpastin->asetaOpaste(Ratapiha::OPASTE_AJA);
     }
     // Nyt on värejä
 }

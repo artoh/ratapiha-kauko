@@ -27,6 +27,7 @@
 #include "vaihde.h"
 #include "risteysvaihde.h"
 #include "raideristeys.h"
+#include "kulkutie.h"
 
 RaideTieto::RaideTieto() :
     kulkutie_(0)
@@ -43,7 +44,7 @@ void RaideTieto::asetaTiedot(int raideId, const QString &liikennepaikka, int rai
     valvottu_ = valvottu;
 }
 
-bool RaideTieto::voikoLukitaKulkutielle(RaideTieto::KulkutieTyyppi /* tyyppi */)
+bool RaideTieto::voikoLukitaKulkutielle(Ratapiha::KulkutieTyyppi /* tyyppi */)
 {
     return( onkoLukittuKulkutielle() == Ratapiha::ELEMENTTI_VAPAA && !onkoAjonestoa() && !kulkutie());
 }
@@ -105,6 +106,26 @@ QString RaideTieto::raideInfo() const
     else if( vapaanaOlo() == VIRHE)
         info += "VALVONTAVIRHE";
     return info;
+}
+
+QString RaideTieto::raideTila()
+{
+    QString tila = raideTunnusTeksti() + " ";
+    if( vapaanaOlo() == VARATTU)
+        tila.append("X");
+    else if(vapaanaOlo() == VIRHE)
+        tila.append("!");
+
+    if( kulkutie())
+    {
+        if( kulkutie()->tyyppi() == Ratapiha::JUNAKULKUTIE )
+            tila.append("J");
+        if( onkoLukittuKulkutielle() == Ratapiha::ELEMENTTI_LUKITTU)
+            tila.append("L");
+    }
+
+
+    return tila;
 }
 
 Ratapiha::ElementinLukitus RaideTieto::onkoLukittuKulkutielle()

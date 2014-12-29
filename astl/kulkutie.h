@@ -51,7 +51,7 @@ public:
 
     RaideTieto *mista() { return mista_; }
     RaideTieto *minne() { return minne_; }
-    virtual RaideTieto::KulkutieTyyppi tyyppi() const = 0;
+    virtual Ratapiha::KulkutieTyyppi tyyppi() const = 0;
 
 
     bool loytyikoKulkutie() const { return !valmisKulkutie_.isEmpty(); }

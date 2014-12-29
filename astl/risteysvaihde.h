@@ -41,7 +41,7 @@ public:
 
 
     RaiteenPaa *aktiivinenVastapaa(RaiteenPaa *paalle);
-    QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa *paalle, KulkutieTyyppi tyyppi);
+    QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa *paalle, Ratapiha::KulkutieTyyppi tyyppi);
 
     void lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
 

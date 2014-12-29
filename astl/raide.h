@@ -38,9 +38,11 @@ public:
     RaiteenPaa* raiteenPaa(int paaKirjain);
 
     RaiteenPaa* aktiivinenVastapaa(RaiteenPaa *paalle);
-    QPair<RaiteenPaa *, RaiteenPaa *> mahdollisetVastapaat(RaiteenPaa *paalle, KulkutieTyyppi tyyppi);
+    QPair<RaiteenPaa *, RaiteenPaa *> mahdollisetVastapaat(RaiteenPaa *paalle, Ratapiha::KulkutieTyyppi tyyppi);
 
     void laiteSanoma(int laite, int sanoma);
+
+    QString raideTila();
 
 protected:
     SuoranRaiteenPaa etelaPaa_;
