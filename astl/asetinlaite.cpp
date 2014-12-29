@@ -37,7 +37,7 @@ Asetinlaite::Asetinlaite(QObject *parent) :
 
     QTimer *kulkutievalvonta = new QTimer(this);
     connect(kulkutievalvonta, SIGNAL(timeout()), this, SLOT(valvoKulkutiet()));
-    kulkutievalvonta->start(5000);   // Valvonta 0.2 sekunnin välein
+    kulkutievalvonta->start(200);   // Valvonta 0.2 sekunnin välein
 }
 
 void Asetinlaite::sanomaAsetinlaitteelta(unsigned int sanoma)
