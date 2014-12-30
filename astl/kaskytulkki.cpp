@@ -52,6 +52,25 @@ QString KaskyTulkki::komento(const QString &kasky)
 
     }
 
+    // ? - Raiteen tilan kysely
+    if( sanat.first() == "?")
+    {
+        QString vastaus;
+        for(int i=1; i<sanat.count(); i++ )
+        {
+            RaideTieto* raide = asl()->raideTunnustekstilla( sanat.at(i));
+            if( raide )
+            {
+                vastaus.append( raide->raideTila());
+
+                // Jos monta raidetta, vastaukset eri riveille
+                if( i != sanat.count() - 1)
+                    vastaus.append("\n");
+            }
+        }
+        return vastaus;
+    }
+
     if( sanat.first() == "OP" && sanat.count() == 2)
     {
         // Tilapäinen opastinkäsky

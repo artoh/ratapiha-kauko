@@ -19,6 +19,7 @@
 **
 **************************************************************************/
 
+#include <QScrollBar>
 
 #include "asetinlaitepaneeli.h"
 #include "ui_asetinlaitepaneeli.h"
@@ -33,7 +34,6 @@ AsetinlaitePaneeli::AsetinlaitePaneeli(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("Asetinlaite");
 
-    connect( ui->kysymysEdit, SIGNAL(returnPressed()), this, SLOT(haeInfo()));
     connect( ui->kaskyEdit, SIGNAL(returnPressed()), this, SLOT(aslKomento()));
 }
 
@@ -70,24 +70,28 @@ void AsetinlaitePaneeli::yhdistettyRataan(bool onko)
 
 void AsetinlaitePaneeli::kulkutiemaaraPaivitys(int kulkuteita)
 {
-    ui->kulkutiemaaraLabel->setText( QString::number(kulkuteita));
+    ui->kulkutiemaaraLabel->setText( tr("<font color=green>%1</font>").arg(kulkuteita)  );
 }
 
-void AsetinlaitePaneeli::haeInfo()
+void AsetinlaitePaneeli::asiakasmaaraPaivitys(int asiakkaita)
 {
-    QString raidetunnus = ui->kysymysEdit->text();
-    RaideTieto* raide = Asetinlaite::instanssi()->raideTunnustekstilla(raidetunnus);
-    if( raide )
-    {
-        QString teksti = raide->raideTila();
-        ui->raideInfoLabel->setText( teksti);
-    }
-
+    if( asiakkaita < 0)
+        ui->asiakasLabel->setText("<font color=red>PALVELIN</red>");
+    else if(asiakkaita == 0)
+        ui->asiakasLabel->setText("<font color=green>PALVELIN VALMIS</red>");
+    else
+        ui->asiakasLabel->setText( tr("<font color=green>%1 asiakasta</red>").arg(asiakkaita) );
 }
+
 
 void AsetinlaitePaneeli::aslKomento()
 {
     QString komento = ui->kaskyEdit->text();
     QString vastaus = Asetinlaite::instanssi()->aslKomento(komento);
-    ui->aslVastausLabel->setText(vastaus);
+    ui->vastausBrowser->insertPlainText(vastaus + "\n");
+
+    // Scrollataan loppuun, jotta näkyy viimeisin vastaus
+    QScrollBar *sb = ui->vastausBrowser->verticalScrollBar();
+    if( sb )
+        sb->setValue( sb->maximum());
 }

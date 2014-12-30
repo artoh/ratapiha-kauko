@@ -41,9 +41,9 @@ public slots:
     void ajanPaivitys(int simulaatioAika);
     void yhdistettyRataan(bool onko);
     void kulkutiemaaraPaivitys(int kulkuteita);
+    void asiakasmaaraPaivitys(int asiakkaita);
 
 private slots:
-    void haeInfo();
     void aslKomento();
 
 private:

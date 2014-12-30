@@ -43,8 +43,16 @@ Asetinlaite::Asetinlaite(QObject *parent) :
 
     palvelin_ = new QTcpServer;
     connect( palvelin_, SIGNAL(newConnection()), this, SLOT(uusiKaukoYhteys()));
-    palvelin_->listen(QHostAddress::Any, 6543);
 
+
+}
+
+void Asetinlaite::kaynnistaPalvelin(int portti)
+{
+    if(     palvelin_->listen(QHostAddress::Any, portti) )
+        emit asiakasMaaraMuutos(0);
+    else
+        emit asiakasMaaraMuutos(-1);
 }
 
 void Asetinlaite::sanomaAsetinlaitteelta(unsigned int sanoma)
@@ -141,6 +149,7 @@ void Asetinlaite::uusiKaukoYhteys()
 {
     QTcpSocket *soketti = palvelin_->nextPendingConnection();
     new KaukoYhteys(this, soketti);
+    emit asiakasMaaraMuutos(1);
 }
 
 void Asetinlaite::rekisteroiInstanssi(Asetinlaite *instanssi)

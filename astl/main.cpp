@@ -37,8 +37,12 @@ int main(int argc, char* argv[])
                       &asetinlaite, SLOT(yhdistettyRataan(bool)));
     QObject::connect( &asetinlaite, SIGNAL(kulkutiemaaraMuutos(int)),
                       &paneeli, SLOT(kulkutiemaaraPaivitys(int)));
+    QObject::connect( &asetinlaite, SIGNAL(asiakasMaaraMuutos(int)),
+                      &paneeli, SLOT(asiakasmaaraPaivitys(int)));
 
     paneeli.show();
+
+    asetinlaite.kaynnistaPalvelin(6543);
 
     qDebug("Time elapsed: %d ms", t.elapsed());
 

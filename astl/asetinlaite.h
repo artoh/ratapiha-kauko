@@ -38,10 +38,13 @@ class Asetinlaite : public QObject
 public:
     Asetinlaite(QObject *parent = 0);
 
+    void kaynnistaPalvelin(int portti);
+
 signals:
     void simulaatioAikaMuutos(int simulaatioAika);
     void sanomaAsetinlaitteelle(unsigned int sanoma);
     void kulkutiemaaraMuutos(int kulkuteita);
+    void asiakasMaaraMuutos(int asiakkaita);
 
 
 public slots:
