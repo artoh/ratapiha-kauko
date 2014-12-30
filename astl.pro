@@ -25,7 +25,8 @@ SOURCES += astl/main.cpp \
     astl/kantaristeys.cpp \
     astl/kulkutie.cpp \
     astl/junakulkutie.cpp \
-    astl/kaannettavanelementintila.cpp
+    astl/kaannettavanelementintila.cpp \
+    astl/kaukoyhteys.cpp
 
 HEADERS += \
     astl/raidetieto.h \
@@ -45,7 +46,8 @@ HEADERS += \
     astl/kulkutie.h \
     astl/junakulkutie.h \
     astl/kaannettavanelementintila.h \
-    ratapiha.h
+    ratapiha.h \
+    astl/kaukoyhteys.h
 
 FORMS += \
     astl/asetinlaitepaneeli.ui

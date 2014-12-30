@@ -28,6 +28,8 @@
 #include "kaskytulkki.h"
 #include "junakulkutie.h"
 
+#include "kaukoyhteys.h"
+
 Asetinlaite::Asetinlaite(QObject *parent) :
     QObject(parent), simulaatioAika_(0)
 {
@@ -38,6 +40,11 @@ Asetinlaite::Asetinlaite(QObject *parent) :
     QTimer *kulkutievalvonta = new QTimer(this);
     connect(kulkutievalvonta, SIGNAL(timeout()), this, SLOT(valvoKulkutiet()));
     kulkutievalvonta->start(200);   // Valvonta 0.2 sekunnin välein
+
+    palvelin_ = new QTcpServer;
+    connect( palvelin_, SIGNAL(newConnection()), this, SLOT(uusiKaukoYhteys()));
+    palvelin_->listen(QHostAddress::Any, 6543);
+
 }
 
 void Asetinlaite::sanomaAsetinlaitteelta(unsigned int sanoma)
@@ -110,6 +117,9 @@ bool Asetinlaite::muodostaKulkutie(RaideTieto *mista, RaideTieto *minne, Ratapih
         {
             kulkutie->lukitseKulkutielle();
             kulkutiet_.append(kulkutie);
+
+            emit kulkutiemaaraMuutos(kulkutiet_.count());
+
             return true;
         }
         else
@@ -125,6 +135,12 @@ void Asetinlaite::valvoKulkutiet()
     {
         kulkutie->valvoKulkutie();
     }
+}
+
+void Asetinlaite::uusiKaukoYhteys()
+{
+    QTcpSocket *soketti = palvelin_->nextPendingConnection();
+    new KaukoYhteys(this, soketti);
 }
 
 void Asetinlaite::rekisteroiInstanssi(Asetinlaite *instanssi)

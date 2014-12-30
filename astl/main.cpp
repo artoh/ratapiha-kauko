@@ -35,6 +35,8 @@ int main(int argc, char* argv[])
                       &yhteys, SLOT(lahetaSanoma(uint)));
     QObject::connect( &yhteys, SIGNAL(yhdistettyRataan(bool)),
                       &asetinlaite, SLOT(yhdistettyRataan(bool)));
+    QObject::connect( &asetinlaite, SIGNAL(kulkutiemaaraMuutos(int)),
+                      &paneeli, SLOT(kulkutiemaaraPaivitys(int)));
 
     paneeli.show();
 

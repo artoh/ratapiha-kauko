@@ -25,9 +25,9 @@
 
 #include <QObject>
 #include <QHash>
+#include <QTcpServer>
 
 #include "raidetieto.h"
-
 #include "ratapiha.h"
 
 class KaskyTulkki;
@@ -41,6 +41,7 @@ public:
 signals:
     void simulaatioAikaMuutos(int simulaatioAika);
     void sanomaAsetinlaitteelle(unsigned int sanoma);
+    void kulkutiemaaraMuutos(int kulkuteita);
 
 
 public slots:
@@ -50,6 +51,7 @@ public slots:
     void lahetaSanoma(int raide, int laite, int komento);
 
     void yhdistettyRataan(bool onko);
+
 
 public:
 
@@ -76,6 +78,7 @@ public:
 
 private slots:
     void valvoKulkutiet();
+    void uusiKaukoYhteys();
 
 protected:
     QHash<int,RaideTieto*> raiteet_;
@@ -91,6 +94,8 @@ public:
 private:
     static Asetinlaite *instanssi__;
     KaskyTulkki* tulkki_;
+
+    QTcpServer *palvelin_;
 };
 
 #endif // ASETINLAITE_H

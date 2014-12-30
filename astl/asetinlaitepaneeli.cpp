@@ -68,6 +68,11 @@ void AsetinlaitePaneeli::yhdistettyRataan(bool onko)
         ui->rataLabel->setText("<font color=red>RATA</font>");
 }
 
+void AsetinlaitePaneeli::kulkutiemaaraPaivitys(int kulkuteita)
+{
+    ui->kulkutiemaaraLabel->setText( QString::number(kulkuteita));
+}
+
 void AsetinlaitePaneeli::haeInfo()
 {
     QString raidetunnus = ui->kysymysEdit->text();

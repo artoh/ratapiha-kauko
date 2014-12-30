@@ -20,34 +20,25 @@
 **************************************************************************/
 
 
-#ifndef ASETINLAITEPANEELI_H
-#define ASETINLAITEPANEELI_H
+#include <QDebug>
 
-#include <QWidget>
+#include "kaukoyhteys.h"
 
-namespace Ui {
-class AsetinlaitePaneeli;
+KaukoYhteys::KaukoYhteys(Asetinlaite *asetinlaite, QTcpSocket *soketti) :
+    QObject(asetinlaite), soketti_(soketti), asetinlaite_(asetinlaite)
+{
+    connect( soketti_, SIGNAL(readyRead()), this, SLOT(kasitteleRivi()) );
 }
 
-class AsetinlaitePaneeli : public QWidget
+void KaukoYhteys::kasitteleRivi()
 {
-    Q_OBJECT
+    while( soketti_->canReadLine())
+    {
+        QString rivi = QString::fromLatin1( soketti_->readLine().simplified());
 
-public:
-    explicit AsetinlaitePaneeli(QWidget *parent = 0);
-    ~AsetinlaitePaneeli();
+        qDebug() << rivi << "--";
 
-public slots:
-    void ajanPaivitys(int simulaatioAika);
-    void yhdistettyRataan(bool onko);
-    void kulkutiemaaraPaivitys(int kulkuteita);
-
-private slots:
-    void haeInfo();
-    void aslKomento();
-
-private:
-    Ui::AsetinlaitePaneeli *ui;
-};
-
-#endif // ASETINLAITEPANEELI_H
+        QString vastaus = asetinlaite_->aslKomento(rivi) + "\n";
+        soketti_->write( vastaus.toLatin1() );
+    }
+}

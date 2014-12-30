@@ -20,34 +20,34 @@
 **************************************************************************/
 
 
-#ifndef ASETINLAITEPANEELI_H
-#define ASETINLAITEPANEELI_H
+#ifndef KAUKOYHTEYS_H
+#define KAUKOYHTEYS_H
 
-#include <QWidget>
+#include <QObject>
+#include <QTcpSocket>
 
-namespace Ui {
-class AsetinlaitePaneeli;
-}
+#include "asetinlaite.h"
 
-class AsetinlaitePaneeli : public QWidget
+/**
+ * @brief Yhteys asetinlaitteen ja kaukokäytölaitteen välillä
+ */
+class KaukoYhteys : public QObject
 {
     Q_OBJECT
-
 public:
-    explicit AsetinlaitePaneeli(QWidget *parent = 0);
-    ~AsetinlaitePaneeli();
+    KaukoYhteys(Asetinlaite *asetinlaite,QTcpSocket *soketti);
+
+signals:
 
 public slots:
-    void ajanPaivitys(int simulaatioAika);
-    void yhdistettyRataan(bool onko);
-    void kulkutiemaaraPaivitys(int kulkuteita);
 
 private slots:
-    void haeInfo();
-    void aslKomento();
+    void kasitteleRivi();
 
 private:
-    Ui::AsetinlaitePaneeli *ui;
+    QTcpSocket *soketti_;
+    Asetinlaite *asetinlaite_;
+
 };
 
-#endif // ASETINLAITEPANEELI_H
+#endif // KAUKOYHTEYS_H
