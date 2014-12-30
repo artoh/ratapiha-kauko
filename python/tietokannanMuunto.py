@@ -1,6 +1,5 @@
 # coding=utf-8
 
-# todo: sähköistämättömät, jne.
 
 import math
 
@@ -157,7 +156,6 @@ class Kisko(object) :
                 self.pohjoispaa.raiteensulku = True
         elif "EoP" in tieto:
             Opastin(self.raide.pohjoispaa, Opastin.EO).kiskonpaahan(self.pohjoispaa)
-
 
 
 
@@ -324,6 +322,59 @@ def haeRaideliitokset() :
 
     return rliit
 
+class NakymaKisko(object) :
+    EPAA = 0x1  # Eteläpää
+    EMIINUS = 0x2 # Etelässä vasen vaihde
+    EPLUS = 0x4
+    PPAA = 0x10
+    PMIINUS = 0x20
+    PPLUS = 0x40
+    LAITURI_VASEN = 0x100
+    LAITURI_OIKEA = 0x200
+    NAYTA_RAIDETUNNUS = 0x400
+    NAYTA_JUNATUNNUS = 0x800
+
+    def __init__(self, nakyma, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotietoteksti):
+
+        self.nakyma = nakyma
+        self.raide = raide
+        self.etela_x = etela_x
+        self.etela_y = etela_y
+        self.pohjoinen_x = pohjoinen_x
+        self.pohjoinen_y = pohjoinen_y
+
+        self.kiskotieto = 0
+        if "E*" in kiskotieto :
+            self.kiskotieto |= NakymaKisko.EPAA
+        elif "E-" in kiskotieto :
+            self.kiskotieto |= NakymaKisko.EMIINUS
+        elif "E+" in kiskotieto :
+            self.kiskotieto |= NakymaKisko.EPLUS
+
+        if "P*" in kiskotieto :
+            self.kiskotieto |= NakymaKisko.PPAA
+        elif "P-" in kiskotieto :
+            self.kiskotieto |= NakymaKisko.PMIINUS
+        elif "P+" in kiskotieto :
+            self.kiskotieto |= NakymaKisko.PPAA
+
+        if "Lv" in kiskotieto or "Lm" in kiskotieto :
+            self.kiskotieto |= NakymaKisko.LAITURI_VASEN
+        if "Lo" in kiskotieto or "Lo" in kiskotieto :
+            self.kiskotieto |= NakymaKisko.LAITURI_OIKEA
+        if "Nr" in kiskotieto :
+            self.kiskotieto |= NakymaKisko.NAYTA_RAIDETUNNUS
+        if "Nj" in kiskotieto :
+            self.kiskotieto |= NakymaKisko.NAYTA_JUNATUNNUS
+
+class NakymaTeksti(object) :
+
+    def __init__(self, nakyma, sijainti_x, sijainti_y, teksti) :
+        self.nakyma = nakyma
+        self.sijainti_x = sijainti_x
+        self.sijainti_y = sijainti_y
+        self.teksti = teksti
+
 
 liitokset = dict()
 raiteet = dict()
@@ -381,6 +432,36 @@ print (len(opastimet), "opastinta")
 for opastin in opastimet :
     opastin.optimoiOpastin()
 
+# Haetaan näkymät
+nakymat = dict()
+query = "SELECT nakyma,nakymanimi from nakyma order by nakymanimi"
+cur.execute(query)
+
+for( nakyma, nakymanimi ) in cur :
+    nakymat[nakyma] = nakymanimi
+print( len(nakymat), " näkymää")
+
+# Näkymien kiskot
+nakymakiskot = []
+
+query = "SELECT nakyma, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto, raideid FROM `kisko` \
+NATURAL JOIN raide WHERE nakyma >0"
+cur.execute(query)
+
+for( nakyma, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto, raideid) in cur :
+    if nakyma in nakymat and raideid in raiteet:
+        nakymakiskot.append( NakymaKisko(nakyma, raideid, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto) )
+print( len(nakymakiskot), " näkymäkiskoa ")
+
+# Näkymien tekstit
+nakymatekstit = []
+query = "SELECT nakyma,sijainti_x,sijainti_y,teksti from teksti"
+cur.execute(query)
+
+for( nakyma, sijainti_x, sijainti_y, teksti) in cur :
+    if nakyma in nakymat :
+        nakymatekstit.append(  NakymaTeksti(nakyma, sijainti_x, sijainti_y, teksti) )
+print( len(nakymatekstit), " näkymätekstiä")
 
 cnx.close()
 
@@ -414,7 +495,7 @@ if 0==1 :
         param = ( kisko.nro, kisko.raide.raideid, kisko.etelapaa.liitos.nro,
                   kisko.pohjoispaa.liitos.nro, tieto, kisko.sn, kisko.pituus )
         kur.execute(kysely, param)
-if 1 == 1 :
+if 0 == 1 :
     kysely = "insert into opastin(opastin,kisko,opastintyyppi) values (%s,%s,%s)"
     for opastin in opastimet :
         param = ( opastin.opastinTunnus(), opastin.kiskonpaa.kisko.nro, opastin.tyyppi)
@@ -427,6 +508,23 @@ if 0 == 1 :
     for raideliitos in raideliitokset :
         param = ( raideliitos[0], raideliitos[1], raideliitokset[raideliitos])
         kur.execute(kysely, param)
+
+if 1 == 0 :
+
+    kysely = "insert into nakymakisko(nakyma,raide,etela_x,etela_y,pohjoinen_x,pohjoinen_y,kiskotieto) \
+values (%s,%s,%s,%s,%s,%s,%s)"
+    for nakymakisko in nakymakiskot :
+        param = (nakymakisko.nakyma, nakymakisko.raide, nakymakisko.etela_x, nakymakisko.etela_y,
+        nakymakisko.pohjoinen_x, nakymakisko.pohjoinen_y, nakymakisko.kiskotieto)
+        kur.execute(kysely,param)
+
+if 1 == 1 :
+
+    kysely = "insert into nakymateksti(nakyma, sijainti_x, sijainti_y, teksti) values (%s, %s, %s, %s)"
+    for nakymateksti in nakymatekstit :
+        param = (nakymateksti.nakyma, nakymateksti.sijainti_x, nakymateksti.sijainti_y, nakymateksti.teksti)
+        kur.execute(kysely, param)
+
 
 kon.commit()
 kur.close()
