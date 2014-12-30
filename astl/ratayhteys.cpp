@@ -24,7 +24,7 @@
 #include <QTimer>
 
 RataYhteys::RataYhteys(QObject *parent) :
-    QObject(parent)
+    QObject(parent), nakyma_(0)
 {
 
     connect( &soketti_, SIGNAL(connected()), this, SLOT(yhteysMuodostettu()));
@@ -44,7 +44,9 @@ void RataYhteys::lahetaSanoma(unsigned int sanoma)
 
 void RataYhteys::yhteysMuodostettu()
 {
+
     emit yhdistettyRataan(true);
+
 }
 
 void RataYhteys::lueSanoma()

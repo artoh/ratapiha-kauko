@@ -27,6 +27,7 @@
 #include <QTcpSocket>
 
 #include "asetinlaite.h"
+#include "kaukokaytonnakyma.h"
 
 /**
  * @brief Yhteys asetinlaitteen ja kaukokäytölaitteen välillä
@@ -43,11 +44,17 @@ public slots:
 
 private slots:
     void kasitteleRivi();
+    void lahetaRaidetiedot();
+
+private:
+    void valitseNakyma(int nakyma);
+
 
 private:
     QTcpSocket *soketti_;
     Asetinlaite *asetinlaite_;
 
+    KaukokaytonNakyma *nakyma_;
 };
 
 #endif // KAUKOYHTEYS_H

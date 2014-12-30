@@ -21,13 +21,29 @@
 
 
 #include <QDebug>
+#include <QTimer>
 
 #include "kaukoyhteys.h"
 
 KaukoYhteys::KaukoYhteys(Asetinlaite *asetinlaite, QTcpSocket *soketti) :
-    QObject(asetinlaite), soketti_(soketti), asetinlaite_(asetinlaite)
+    QObject(asetinlaite), soketti_(soketti), asetinlaite_(asetinlaite),
+    nakyma_(0)
 {
     connect( soketti_, SIGNAL(readyRead()), this, SLOT(kasitteleRivi()) );
+
+    soketti_.write("RATAPIHA 5 ASETINLAITE");
+    foreach (QString nakymarivi, asetinlaite->kaukoNakymaLista() )
+    {
+        soketti_->write(nakymarivi.toLatin1());
+        soketti_->write("\n");
+    }
+    soketti_->write("VALMIS\n");
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(lahetaRaidetiedot()));
+
+    timer->start(250);
+
 }
 
 void KaukoYhteys::kasitteleRivi()
@@ -36,9 +52,50 @@ void KaukoYhteys::kasitteleRivi()
     {
         QString rivi = QString::fromLatin1( soketti_->readLine().simplified());
 
-        qDebug() << rivi << "--";
+        if( rivi.startsWith("NAKYMA"))
+        {
+            int nakyma = rivi.mid(6).toInt();
+            if( nakyma )
+                valitseNakyma(nakyma);
+        }
+        else
+        {
+            QString vastaus = asetinlaite_->aslKomento(rivi) + "\n";
+            soketti_->write( vastaus.toLatin1() );
+        }
+    }
+}
 
-        QString vastaus = asetinlaite_->aslKomento(rivi) + "\n";
-        soketti_->write( vastaus.toLatin1() );
+void KaukoYhteys::lahetaRaidetiedot()
+{
+    // Lähetetään 0.25 sekunnin välein kellonaika ja näkymän seurattavien raiteiden tiedot
+    // asiakkaille
+    if( nakyma_)
+    {
+        soketti_->write( QString("K %1\n").arg( asetinlaite_->simulaatioAika() ));
+        foreach ( RaideTieto *raide, nakyma_->raiteet() )
+        {
+            soketti_->write( raide->raideTila());
+            soketti_->write("\n");
+        }
+        soketti_->write("D VALMIS\n");
+    }
+}
+
+void KaukoYhteys::valitseNakyma(int nakyma)
+{
+    // Kun näkymä on valittu NAKYMA -komennolla, lähetetään sen raidekaaviot
+    KaukokaytonNakyma* uusinakyma = asetinlaite_->nakyma(nakyma);
+    if( uusinakyma )
+    {
+        // Vaihdetaan valittu näkymä, lähetetään näkymän kuvio kaukolaitteelle
+        nakyma_ = uusinakyma;
+        soketti_->write( QString("N %1 %2\n").arg(nakyma).arg(uusinakyma->nimi()).toLatin1());
+        foreach (QString rivi, uusinakyma->teksti() )
+        {
+            soketti_->write(rivi.toLatin1());
+            soketti_->write("\n");
+        }
+        soketti_->write("N VALMIS\n");
     }
 }

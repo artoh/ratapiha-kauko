@@ -30,6 +30,7 @@
 #include "raidetieto.h"
 #include "ratapiha.h"
 
+class KaukokaytonNakyma;
 class KaskyTulkki;
 
 class Asetinlaite : public QObject
@@ -62,6 +63,7 @@ public:
     int simulaatioAika() const { return simulaatioAika_; }
 
     RaideTieto* raideTunnustekstilla(const QString& tunnusteksti);
+    RaideTieto* raideNumerolla(int numero) { return raiteet_.value(numero); }
 
     /**
      * @brief Suorittaa asetinlaitekomennon
@@ -79,6 +81,17 @@ public:
      */
     bool muodostaKulkutie(RaideTieto* mista, RaideTieto *minne, Ratapiha::KulkutieTyyppi tyyppi=Ratapiha::JUNAKULKUTIE);
 
+    /**
+     * @brief Palauttaa listan kaukonäkymistä
+     *
+     * Tämä pitäisi sijoittaa palvelinluokkaan
+     *
+     * @return
+     */
+    QStringList kaukoNakymaLista();
+
+    KaukokaytonNakyma *nakyma(int nro) { return kaukoNakymat_.value(nro); }
+
 private slots:
     void valvoKulkutiet();
     void uusiKaukoYhteys();
@@ -87,6 +100,7 @@ protected:
     QHash<int,RaideTieto*> raiteet_;
     QHash<QString,RaideTieto*> raiteetTunnuksilla_;
     QList<Kulkutie*> kulkutiet_;
+    QMap<int,KaukokaytonNakyma*> kaukoNakymat_;
 
     int simulaatioAika_;
 

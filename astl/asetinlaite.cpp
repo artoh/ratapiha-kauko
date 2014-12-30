@@ -29,6 +29,7 @@
 #include "junakulkutie.h"
 
 #include "kaukoyhteys.h"
+#include "kaukokaytonnakyma.h"
 
 Asetinlaite::Asetinlaite(QObject *parent) :
     QObject(parent), simulaatioAika_(0)
@@ -135,6 +136,20 @@ bool Asetinlaite::muodostaKulkutie(RaideTieto *mista, RaideTieto *minne, Ratapih
 
     }
     return false;
+}
+
+QStringList Asetinlaite::kaukoNakymaLista()
+{
+    QStringList nakymalista;
+    QMapIterator<int,KaukokaytonNakyma*> i(kaukoNakymat_);
+    while( i.hasNext())
+    {
+        i.next();
+        KaukokaytonNakyma *nakyma = i.value();
+        if( nakyma)
+            nakymalista.append( QString("N %1 %2").arg(i.key()).arg( nakyma->nimi() ) );
+    }
+    return nakymalista;
 }
 
 void Asetinlaite::valvoKulkutiet()
