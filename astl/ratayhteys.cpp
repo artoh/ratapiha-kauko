@@ -24,7 +24,7 @@
 #include <QTimer>
 
 RataYhteys::RataYhteys(QObject *parent) :
-    QObject(parent), nakyma_(0)
+    QObject(parent)
 {
 
     connect( &soketti_, SIGNAL(connected()), this, SLOT(yhteysMuodostettu()));

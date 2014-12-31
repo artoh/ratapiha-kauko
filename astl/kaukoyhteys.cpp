@@ -31,7 +31,7 @@ KaukoYhteys::KaukoYhteys(Asetinlaite *asetinlaite, QTcpSocket *soketti) :
 {
     connect( soketti_, SIGNAL(readyRead()), this, SLOT(kasitteleRivi()) );
 
-    soketti_.write("RATAPIHA 5 ASETINLAITE");
+    soketti_->write("RATAPIHA 5 ASETINLAITE");
     foreach (QString nakymarivi, asetinlaite->kaukoNakymaLista() )
     {
         soketti_->write(nakymarivi.toLatin1());
@@ -42,7 +42,7 @@ KaukoYhteys::KaukoYhteys(Asetinlaite *asetinlaite, QTcpSocket *soketti) :
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(lahetaRaidetiedot()));
 
-    timer->start(250);
+    timer->start(5000);
 
 }
 
@@ -68,14 +68,15 @@ void KaukoYhteys::kasitteleRivi()
 
 void KaukoYhteys::lahetaRaidetiedot()
 {
-    // Lähetetään 0.25 sekunnin välein kellonaika ja näkymän seurattavien raiteiden tiedot
+    // Lähetetään 0.5 sekunnin välein kellonaika ja näkymän seurattavien raiteiden tiedot
     // asiakkaille
     if( nakyma_)
     {
-        soketti_->write( QString("K %1\n").arg( asetinlaite_->simulaatioAika() ));
+        soketti_->write( QString("K %1\n").arg( asetinlaite_->simulaatioAika() ).toLatin1());
         foreach ( RaideTieto *raide, nakyma_->raiteet() )
         {
-            soketti_->write( raide->raideTila());
+            soketti_->write("D ");
+            soketti_->write( raide->raideTila().toLatin1());
             soketti_->write("\n");
         }
         soketti_->write("D VALMIS\n");
@@ -91,6 +92,11 @@ void KaukoYhteys::valitseNakyma(int nakyma)
         // Vaihdetaan valittu näkymä, lähetetään näkymän kuvio kaukolaitteelle
         nakyma_ = uusinakyma;
         soketti_->write( QString("N %1 %2\n").arg(nakyma).arg(uusinakyma->nimi()).toLatin1());
+
+        // Ensin raidedata
+        lahetaRaidetiedot();
+
+        // Sitten kiskotiedot
         foreach (QString rivi, uusinakyma->teksti() )
         {
             soketti_->write(rivi.toLatin1());

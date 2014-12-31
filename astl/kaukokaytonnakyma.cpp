@@ -19,7 +19,9 @@ void KaukokaytonNakyma::lisaaTeksti(int x, int y, const QString &teksti)
 void KaukokaytonNakyma::lisaaKisko(RaideTieto *raide, int etelaX, int etelaY, int pohjoinenX, int pohjoinenY, int kiskotietokoodi)
 {
     QString teksti = QString("K %1 %2 %3 %4 %5 %6").arg(raide->raideTunnusTeksti()).arg(etelaX)
-            .arg(etelaY).arg(pohjoinenX).arg(pohjoinenY).arg(kiskokoodi);
+            .arg(etelaY).arg(pohjoinenX).arg(pohjoinenY).arg(kiskotietokoodi);
+
+    nakymaTeksti_.append(teksti);
 
     raiteet_.append(raide);
 }

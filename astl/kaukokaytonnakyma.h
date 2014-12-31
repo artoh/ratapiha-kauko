@@ -2,6 +2,7 @@
 #define KAUKOKAYTONNAKYMA_H
 
 #include <QString>
+#include <QStringList>
 #include <QList>
 
 #include "raidetieto.h"
