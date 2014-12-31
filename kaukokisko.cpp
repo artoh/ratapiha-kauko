@@ -27,18 +27,18 @@
 #include "kaukokisko.h"
 #include "kaukoraide.h"
 
-KaukoKisko::KaukoKisko(KaukoRaide *raide, int kiskotieto, qreal pituus)
-    : raide_(raide), kiskotieto_(kiskotieto), pituus_(pituus)
+KaukoKisko::KaukoKisko(KaukoRaide *raide, const QStringList &kiskotieto, qreal pituus)
+    : raide_(raide), pituus_(pituus)
 {
-
+    naytaRaidenumero_ = kiskotieto.contains("Nr");
 }
 
-void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem * /* option */, QWidget * /* widget */)
 {
     painter->setPen( QPen(QBrush(Qt::magenta),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
     painter->drawLine(0.8, 0.0, pituus()-0.8, 0.0);
 
-    if( kiskotieto_ & 0x400)
+    if( naytaRaidenumero_ )
     {
         painter->setFont( QFont("Helvetica",4,QFont::Bold));
         painter->setPen( QPen(Qt::black));

@@ -32,7 +32,7 @@ KaukoYhteys::KaukoYhteys(KaukoPalvelin *kaukopalvelin, QTcpSocket *soketti) :
 {
     connect( soketti_, SIGNAL(readyRead()), this, SLOT(kasitteleRivi()) );
 
-    soketti_->write("RATAPIHA 5 ASETINLAITE");
+    soketti_->write("RATAPIHA 5 ASETINLAITE\n");
     soketti_->write( kaukopalvelin_->nakymaLista().toLatin1() );
 
     QTimer *timer = new QTimer(this);

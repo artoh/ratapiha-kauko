@@ -42,6 +42,7 @@ bool KaukoPalvelin::kaynnistaPalvelin(int portti)
 {
     if( palvelin_->listen(QHostAddress::Any, portti) )
     {
+        asiakkaat_ = 0;
         emit asiakasMaaraMuutos(0);
         return true;
     }
@@ -107,7 +108,9 @@ void KaukoPalvelin::uusiYhteys()
 {
     QTcpSocket *soketti = palvelin_->nextPendingConnection();
     new KaukoYhteys(this, soketti);
+
     asiakkaat_ = asiakkaat_ + 1;
     emit asiakasMaaraMuutos(asiakkaat_);
+
     connect( soketti, SIGNAL(disconnected()),this, SLOT(yhteysSuljettu()));
 }

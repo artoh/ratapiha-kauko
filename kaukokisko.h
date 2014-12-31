@@ -30,7 +30,7 @@
 class KaukoKisko : public QGraphicsItem
 {
 public:
-    KaukoKisko(KaukoRaide *raide,int kiskotieto, qreal pituus);
+    KaukoKisko(KaukoRaide *raide, const QStringList &kiskotieto, qreal pituus);
 
     enum { Type = UserType + 1 } ;
     int type() const { return Type; }
@@ -42,8 +42,9 @@ public:
 
 private:
     KaukoRaide *raide_;
-    int kiskotieto_;
     qreal pituus_;
+
+    bool naytaRaidenumero_;
 };
 
 #endif // KAUKOKISKO_H

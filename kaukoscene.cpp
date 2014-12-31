@@ -22,6 +22,10 @@
 #include <QStringList>
 #include <QLineF>
 
+#include <QGraphicsSimpleTextItem>
+#include <QFont>
+#include <QBrush>
+
 #include "kaukoscene.h"
 #include "kaukokisko.h"
 
@@ -32,6 +36,8 @@ KaukoScene::KaukoScene(QObject *parent) :
     connect( &soketti_, SIGNAL(readyRead()), this, SLOT(lueRivi()));
 
     soketti_.connectToHost( "localhost", 6543 );
+
+    setBackgroundBrush( QBrush(Qt::gray));
 }
 
 void KaukoScene::lisaaNayttoon(const QString &rivi)
@@ -50,7 +56,7 @@ void KaukoScene::lisaaNayttoon(const QString &rivi)
             int etelaY = 0-listana.at(3).toInt();
             int pohjoinenX = listana.at(4).toInt();
             int pohjoinenY = 0-listana.at(5).toInt();
-            int kiskotieto = listana.at(6).toInt();
+            QStringList kiskotieto = listana.mid(6);
 
             QLineF viiva(etelaX, etelaY, pohjoinenX, pohjoinenY);
 
@@ -58,6 +64,21 @@ void KaukoScene::lisaaNayttoon(const QString &rivi)
             kisko->setPos(etelaX, etelaY);
             kisko->setRotation(0.0 - viiva.angle());
             addItem(kisko);
+        }
+    }
+    else if( rivi.startsWith('T'))
+    {
+        QStringList listana = rivi.split(' ');
+        if( listana.count() > 3)
+        {
+            int x = listana.at(1).toInt();
+            int y = listana.at(2).toInt();
+
+            QStringList tekstia = listana.mid(3);
+
+            QGraphicsSimpleTextItem* tItem = addSimpleText( tekstia.join(' ') , QFont("Helvetica",8));
+            tItem->setPos( x, y );
+
         }
     }
 }
@@ -95,7 +116,7 @@ void KaukoScene::lueRivi()
     while( soketti_.canReadLine())
     {
         QString rivi = QString::fromLatin1( soketti_.readLine()).simplified();
-        if( rivi.startsWith('K'))
+        if( rivi.startsWith('K') || rivi.startsWith('T'))
             lisaaNayttoon(rivi);
         else if(rivi.startsWith('D'))
             paivitaData(rivi);
