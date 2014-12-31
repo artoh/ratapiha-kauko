@@ -166,47 +166,4 @@ void SqlAsetinlaite::lataaRata()
     }
     qDebug() << opastimet << " opastinta";
 
-    // Lataa näkymät
-    kysely.exec("select nakyma,nakymanimi from nakyma");
-    while(kysely.next())
-    {
-        int nakymaid = kysely.value(0).toInt();
-        QString nimi = kysely.value(1).toString();
-        kaukoNakymat_.insert(nakymaid, new KaukokaytonNakyma(nimi));
-    }
-
-    // Kiskot näkymiin
-    // Moni asia olisi ollut helpompaa, jos tietokantaan tallennettaisiin suoraan
-    // näkymien piirtämiseen annettavat tekstit
-    kysely.exec("select nakyma,raide,etela_x,etela_y,pohjoinen_x,pohjoinen_y,kiskotieto from nakymakisko");
-    while( kysely.next())
-    {
-        int nakymaid = kysely.value(0).toInt();
-        int raideId = kysely.value(1).toInt();
-        int etela_x = kysely.value(2).toInt();
-        int etela_y = kysely.value(3).toInt();
-        int pohjoinen_x = kysely.value(4).toInt();
-        int pohjoinen_y = kysely.value(5).toInt();
-        int kiskotieto =  kysely.value(6).toInt();
-
-        KaukokaytonNakyma *nakyma = kaukoNakymat_.value(nakymaid);
-        RaideTieto *raide = raideNumerolla(raideId);
-        if( nakyma && raide )
-        {
-            nakyma->lisaaKisko(raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto);
-        }
-    }
-    // Tekstit näkymiin
-    kysely.exec("select nakyma,sijainti_x,sijainti_y,teksti from nakymateksti");
-    while( kysely.next())
-    {
-        int nakymaid = kysely.value(0).toInt();
-        int sijainti_x = kysely.value(1).toInt();
-        int sijainti_y = kysely.value(2).toInt();
-        QString teksti = kysely.value(3).toString();
-
-        KaukokaytonNakyma *nakyma = kaukoNakymat_.value(nakymaid);
-        if( nakyma )
-            nakyma->lisaaTeksti(sijainti_x, sijainti_y, teksti);
-    }
 }

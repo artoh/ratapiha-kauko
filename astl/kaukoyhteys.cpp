@@ -24,20 +24,16 @@
 #include <QTimer>
 
 #include "kaukoyhteys.h"
+#include "kaukopalvelin.h"
 
-KaukoYhteys::KaukoYhteys(Asetinlaite *asetinlaite, QTcpSocket *soketti) :
-    QObject(asetinlaite), soketti_(soketti), asetinlaite_(asetinlaite),
+KaukoYhteys::KaukoYhteys(KaukoPalvelin *kaukopalvelin, QTcpSocket *soketti) :
+    QObject(kaukopalvelin), soketti_(soketti), kaukopalvelin_(kaukopalvelin),
     nakyma_(0)
 {
     connect( soketti_, SIGNAL(readyRead()), this, SLOT(kasitteleRivi()) );
 
     soketti_->write("RATAPIHA 5 ASETINLAITE");
-    foreach (QString nakymarivi, asetinlaite->kaukoNakymaLista() )
-    {
-        soketti_->write(nakymarivi.toLatin1());
-        soketti_->write("\n");
-    }
-    soketti_->write("VALMIS\n");
+    soketti_->write( kaukopalvelin_->nakymaLista().toLatin1() );
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(lahetaRaidetiedot()));
@@ -60,7 +56,7 @@ void KaukoYhteys::kasitteleRivi()
         }
         else
         {
-            QString vastaus = asetinlaite_->aslKomento(rivi) + "\n";
+            QString vastaus = asetinlaite()->aslKomento(rivi) + "\n";
             soketti_->write( vastaus.toLatin1() );
         }
     }
@@ -72,7 +68,7 @@ void KaukoYhteys::lahetaRaidetiedot()
     // asiakkaille
     if( nakyma_)
     {
-        soketti_->write( QString("K %1\n").arg( asetinlaite_->simulaatioAika() ).toLatin1());
+        soketti_->write( QString("K %1\n").arg( asetinlaite()->simulaatioAika() ).toLatin1());
         foreach ( RaideTieto *raide, nakyma_->raiteet() )
         {
             soketti_->write("D ");
@@ -86,7 +82,7 @@ void KaukoYhteys::lahetaRaidetiedot()
 void KaukoYhteys::valitseNakyma(int nakyma)
 {
     // Kun näkymä on valittu NAKYMA -komennolla, lähetetään sen raidekaaviot
-    KaukokaytonNakyma* uusinakyma = asetinlaite_->nakyma(nakyma);
+    KaukokaytonNakyma* uusinakyma = kaukopalvelin_->nakyma(nakyma);
     if( uusinakyma )
     {
         // Vaihdetaan valittu näkymä, lähetetään näkymän kuvio kaukolaitteelle
@@ -97,11 +93,7 @@ void KaukoYhteys::valitseNakyma(int nakyma)
         lahetaRaidetiedot();
 
         // Sitten kiskotiedot
-        foreach (QString rivi, uusinakyma->teksti() )
-        {
-            soketti_->write(rivi.toLatin1());
-            soketti_->write("\n");
-        }
+        soketti_->write( nakyma_->teksti().toLatin1());
         soketti_->write("N VALMIS\n");
     }
 }

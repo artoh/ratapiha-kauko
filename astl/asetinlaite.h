@@ -25,10 +25,11 @@
 
 #include <QObject>
 #include <QHash>
-#include <QTcpServer>
 
 #include "raidetieto.h"
 #include "ratapiha.h"
+
+#include "kaukopalvelin.h"
 
 class KaukokaytonNakyma;
 class KaskyTulkki;
@@ -81,26 +82,14 @@ public:
      */
     bool muodostaKulkutie(RaideTieto* mista, RaideTieto *minne, Ratapiha::KulkutieTyyppi tyyppi=Ratapiha::JUNAKULKUTIE);
 
-    /**
-     * @brief Palauttaa listan kaukonäkymistä
-     *
-     * Tämä pitäisi sijoittaa palvelinluokkaan
-     *
-     * @return
-     */
-    QStringList kaukoNakymaLista();
-
-    KaukokaytonNakyma *nakyma(int nro) { return kaukoNakymat_.value(nro); }
 
 private slots:
     void valvoKulkutiet();
-    void uusiKaukoYhteys();
 
 protected:
     QHash<int,RaideTieto*> raiteet_;
     QHash<QString,RaideTieto*> raiteetTunnuksilla_;
     QList<Kulkutie*> kulkutiet_;
-    QMap<int,KaukokaytonNakyma*> kaukoNakymat_;
 
     int simulaatioAika_;
 
@@ -112,7 +101,7 @@ private:
     static Asetinlaite *instanssi__;
     KaskyTulkki* tulkki_;
 
-    QTcpServer *palvelin_;
+    KaukoPalvelin *kaukopalvelin_;
 };
 
 #endif // ASETINLAITE_H

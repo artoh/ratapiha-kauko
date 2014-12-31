@@ -20,43 +20,53 @@
 **************************************************************************/
 
 
-#ifndef KAUKOYHTEYS_H
-#define KAUKOYHTEYS_H
+#ifndef KAUKOPALVELIN_H
+#define KAUKOPALVELIN_H
+
 
 #include <QObject>
-#include <QTcpSocket>
+#include <QList>
 
-#include "kaukopalvelin.h"
-#include "kaukokaytonnakyma.h"
-#include "asetinlaite.h"
+#include <QTcpServer>
+
+class Asetinlaite;
+class KaukokaytonNakyma;
 
 /**
- * @brief Yhteys asetinlaitteen ja kaukokäytölaitteen välillä
+ * @brief Palvelin kaukokäyttöyhteyksiä varten
  */
-class KaukoYhteys : public QObject
+class KaukoPalvelin : public QObject
 {
     Q_OBJECT
 public:
-    KaukoYhteys(KaukoPalvelin *kaukopalvelin,QTcpSocket *soketti);
+    KaukoPalvelin(Asetinlaite *asetinlaite);
+
+    bool kaynnistaPalvelin(int portti);
+
+    void lataaSql();
+
+    QString nakymaLista() const { return nakymaLista_; }
+    KaukokaytonNakyma *nakyma(int nakymaid);
+
+    Asetinlaite *asetinlaite() { return asetinlaite_; }
 
 signals:
+    void asiakasMaaraMuutos(int asiakkaita);
 
 public slots:
+    void yhteysSuljettu();
 
 private slots:
-    void kasitteleRivi();
-    void lahetaRaidetiedot();
+    void uusiYhteys();
 
 private:
-    void valitseNakyma(int nakyma);
+    Asetinlaite* asetinlaite_;
+    QList<KaukokaytonNakyma*> nakymat_;
+    QString nakymaLista_;
+    int asiakkaat_;
 
-    Asetinlaite *asetinlaite() { return kaukopalvelin_->asetinlaite(); }
+    QTcpServer *palvelin_;
 
-private:
-    QTcpSocket *soketti_;
-    KaukoPalvelin *kaukopalvelin_;
-
-    KaukokaytonNakyma *nakyma_;
 };
 
-#endif // KAUKOYHTEYS_H
+#endif // KAUKOPALVELIN_H

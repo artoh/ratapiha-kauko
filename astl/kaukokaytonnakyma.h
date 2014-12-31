@@ -3,6 +3,9 @@
 
 #include <QString>
 #include <QStringList>
+
+#include <QByteArray>
+
 #include <QList>
 
 #include "raidetieto.h"
@@ -15,32 +18,25 @@ class KaukokaytonNakyma
 public:  
 
     KaukokaytonNakyma(const QString& nimi);
+
+    KaukokaytonNakyma(int nakymaId, const QString& nimi, const QString& tekstit);
+
     ~KaukokaytonNakyma();
 
-    void lisaaTeksti(int x, int y, const QString& teksti);
-    void lisaaKisko(RaideTieto *raide, int etelaX, int etelaY, int pohjoinenX, int pohjoinenY, int kiskotietokoodi);
-
+    int nakymaId() const { return nakymaId_; }
     QString nimi() const { return nakymaNimi_; }
-    QStringList teksti() const { return nakymaTeksti_; }
+    QString teksti() const { return nakymaTeksti_; }
+
+    void lisaaRaide(RaideTieto *raide);
+
     QList<RaideTieto*> raiteet() const { return raiteet_; }
 
 protected:
-    enum NakymaKiskoBitit
-    {
-        EPAA = 0x1,
-        EMIINUS = 0x2,
-        EPLUS = 0x4,
-        PPAA = 0x10,
-        PMIINUS = 0x20,
-        PPLUS = 0x40,
-        LAITURI_VASEN = 0x100,
-        LAITURI_OIKEA = 0x200,
-        NAYTA_RAIDETUNNUS = 0x400,
-        NAYTA_JUNATUNNUS = 0x800
-    };
 
+    int nakymaId_;
     QString nakymaNimi_;
-    QStringList nakymaTeksti_;
+    QString nakymaTeksti_;
+
     QList<RaideTieto*> raiteet_;
 
 };

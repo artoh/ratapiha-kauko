@@ -334,7 +334,7 @@ class NakymaKisko(object) :
     NAYTA_RAIDETUNNUS = 0x400
     NAYTA_JUNATUNNUS = 0x800
 
-    def __init__(self, nakyma, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotietoteksti):
+    def __init__(self, nakyma, raide, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto):
 
         self.nakyma = nakyma
         self.raide = raide
@@ -374,6 +374,29 @@ class NakymaTeksti(object) :
         self.sijainti_x = sijainti_x
         self.sijainti_y = sijainti_y
         self.teksti = teksti
+
+
+class Nakyma(object) :
+    def __init__(self, nakymaid, nimi) :
+        self.nakymaid = nakymaid
+        self.nimi = nimi
+        self.nakymateksti = ""
+        self.raiteet = []
+
+    def lisaaRaide(self, raide,  etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto):
+
+        # Lisätään raideen kirjoittamisteksti
+        tekstina = "K %s%03d %d %d %d %d %s\n" % ( raide.liikennepaikka, raide.nro, etela_x,
+        etela_y, pohjoinen_x, pohjoinen_y, kiskotieto)
+
+        self.nakymateksti = self.nakymateksti + tekstina;
+
+        #Lisätään raidetunnus
+        self.raiteet.append(raide.raideid);
+
+    def lisaaTeksti(self, sijainti_x, sijainti_y, teksti):
+        tekstina = "T %d %d %s\n" % (sijainti_x, sijainti_y, teksti)
+        self.nakymateksti = self.nakymateksti + tekstina;
 
 
 liitokset = dict()
@@ -438,7 +461,7 @@ query = "SELECT nakyma,nakymanimi from nakyma order by nakymanimi"
 cur.execute(query)
 
 for( nakyma, nakymanimi ) in cur :
-    nakymat[nakyma] = nakymanimi
+    nakymat[nakyma] = Nakyma(nakyma, nakymanimi)
 print( len(nakymat), " näkymää")
 
 # Näkymien kiskot
@@ -450,7 +473,10 @@ cur.execute(query)
 
 for( nakyma, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto, raideid) in cur :
     if nakyma in nakymat and raideid in raiteet:
-        nakymakiskot.append( NakymaKisko(nakyma, raideid, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto) )
+        raide = raiteet[raideid]
+        nakymat[nakyma].lisaaRaide( raide,  etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto)
+
+        # nakymakiskot.append( NakymaKisko(nakyma, raideid, etela_x, etela_y, pohjoinen_x, pohjoinen_y, kiskotieto) )
 print( len(nakymakiskot), " näkymäkiskoa ")
 
 # Näkymien tekstit
@@ -460,7 +486,8 @@ cur.execute(query)
 
 for( nakyma, sijainti_x, sijainti_y, teksti) in cur :
     if nakyma in nakymat :
-        nakymatekstit.append(  NakymaTeksti(nakyma, sijainti_x, sijainti_y, teksti) )
+        nakymat[nakyma].lisaaTeksti(sijainti_x, sijainti_y, teksti)
+        # nakymatekstit.append(  NakymaTeksti(nakyma, sijainti_x, sijainti_y, teksti) )
 print( len(nakymatekstit), " näkymätekstiä")
 
 cnx.close()
@@ -509,7 +536,7 @@ if 0 == 1 :
         param = ( raideliitos[0], raideliitos[1], raideliitokset[raideliitos])
         kur.execute(kysely, param)
 
-if 1 == 0 :
+if 0 == 0 :
 
     kysely = "insert into nakymakisko(nakyma,raide,etela_x,etela_y,pohjoinen_x,pohjoinen_y,kiskotieto) \
 values (%s,%s,%s,%s,%s,%s,%s)"
@@ -518,12 +545,24 @@ values (%s,%s,%s,%s,%s,%s,%s)"
         nakymakisko.pohjoinen_x, nakymakisko.pohjoinen_y, nakymakisko.kiskotieto)
         kur.execute(kysely,param)
 
-if 1 == 1 :
+if 0 == 1 :
 
     kysely = "insert into nakymateksti(nakyma, sijainti_x, sijainti_y, teksti) values (%s, %s, %s, %s)"
     for nakymateksti in nakymatekstit :
         param = (nakymateksti.nakyma, nakymateksti.sijainti_x, nakymateksti.sijainti_y, nakymateksti.teksti)
         kur.execute(kysely, param)
+
+
+if 1 == 1 :
+    kysely = "insert into nakyma(nakyma, nakymanimi, nakymateksti) values (%s, %s, %s)"
+    raidelisays = "insert into nakymaraide(nakyma,raide) values(%s, %s)"
+    for nakymaid in nakymat :
+        nakyma = nakymat[nakymaid]
+        param = (nakyma.nakymaid, nakyma.nimi, nakyma.nakymateksti)
+        kur.execute(kysely, param)
+        for raide in nakyma.raiteet :
+            param = ( nakymaid, raide)
+            kur.execute(raidelisays, param)
 
 
 kon.commit()

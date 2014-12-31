@@ -42,18 +42,14 @@ Asetinlaite::Asetinlaite(QObject *parent) :
     connect(kulkutievalvonta, SIGNAL(timeout()), this, SLOT(valvoKulkutiet()));
     kulkutievalvonta->start(200);   // Valvonta 0.2 sekunnin välein
 
-    palvelin_ = new QTcpServer;
-    connect( palvelin_, SIGNAL(newConnection()), this, SLOT(uusiKaukoYhteys()));
-
-
+    kaukopalvelin_ = new KaukoPalvelin(this);
+    connect( kaukopalvelin_, SIGNAL(asiakasMaaraMuutos(int)), this, SIGNAL(asiakasMaaraMuutos(int)));
 }
 
 void Asetinlaite::kaynnistaPalvelin(int portti)
 {
-    if(     palvelin_->listen(QHostAddress::Any, portti) )
-        emit asiakasMaaraMuutos(0);
-    else
-        emit asiakasMaaraMuutos(-1);
+    kaukopalvelin_->lataaSql();
+    kaukopalvelin_->kaynnistaPalvelin(portti);
 }
 
 void Asetinlaite::sanomaAsetinlaitteelta(unsigned int sanoma)
@@ -138,19 +134,6 @@ bool Asetinlaite::muodostaKulkutie(RaideTieto *mista, RaideTieto *minne, Ratapih
     return false;
 }
 
-QStringList Asetinlaite::kaukoNakymaLista()
-{
-    QStringList nakymalista;
-    QMapIterator<int,KaukokaytonNakyma*> i(kaukoNakymat_);
-    while( i.hasNext())
-    {
-        i.next();
-        KaukokaytonNakyma *nakyma = i.value();
-        if( nakyma)
-            nakymalista.append( QString("N %1 %2").arg(i.key()).arg( nakyma->nimi() ) );
-    }
-    return nakymalista;
-}
 
 void Asetinlaite::valvoKulkutiet()
 {
@@ -158,13 +141,6 @@ void Asetinlaite::valvoKulkutiet()
     {
         kulkutie->valvoKulkutie();
     }
-}
-
-void Asetinlaite::uusiKaukoYhteys()
-{
-    QTcpSocket *soketti = palvelin_->nextPendingConnection();
-    new KaukoYhteys(this, soketti);
-    emit asiakasMaaraMuutos(1);
 }
 
 void Asetinlaite::rekisteroiInstanssi(Asetinlaite *instanssi)
