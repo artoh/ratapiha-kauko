@@ -70,7 +70,7 @@ namespace Ratapiha
 
     enum OpastinLaji
     {
-        OPASTIN_PUUTTU = 0,
+        OPASTIN_PUUTTUU = 0,
         OPASTIN_PAAOPASTIN = 1,
         OPASTIN_RAIDEOPASTIN = 2,
         OPASTIN_YHDISTELMAOPASTIN = 3
@@ -142,6 +142,21 @@ namespace Ratapiha
         RAIDE_VAIHDE,
         RAIDE_RISTEYSVAIHDE,
         RAIDE_RAIDERISTEYS
+    };
+
+    enum SuojastusTila
+    {
+        SUOJASTUS_EISUOJASTUSTA,
+        SUOJASTUS_EIMAARITELTY,
+        SUOJASTUS_VALMIS,
+        SUOJASTUS_VARATTU
+    };
+
+    enum SuojastusSuunta
+    {
+        SUOJASTUS_EISUUNTAA,
+        SUOJASTUS_SISAAN,
+        SUOJASTUS_ULOS
     };
 
 }

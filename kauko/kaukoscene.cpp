@@ -35,9 +35,13 @@ KaukoScene::KaukoScene(QObject *parent) :
     connect( &soketti_, SIGNAL(connected()), this, SLOT(yhdistetty()));
     connect( &soketti_, SIGNAL(readyRead()), this, SLOT(lueRivi()));
 
-    soketti_.connectToHost( "localhost", 6543 );
-
     setBackgroundBrush( QBrush(Qt::gray));
+}
+
+void KaukoScene::vaihdaNakyma(int nakyma)
+{
+    clear();
+    soketti_.write( QString("NAKYMA %1\n").arg(nakyma).toLatin1());
 }
 
 void KaukoScene::lisaaNayttoon(const QString &rivi)
@@ -107,9 +111,15 @@ void KaukoScene::paivitaData(const QString &rivi)
     }
 }
 
+bool KaukoScene::yhdistaAsetinlaitteeseen()
+{
+    return soketti_.connectToHost( "localhost", 6543 );
+}
+
 void KaukoScene::yhdistetty()
 {
     soketti_.write("NAKYMA 8\n");
+
 }
 
 void KaukoScene::lueRivi()
@@ -121,5 +131,20 @@ void KaukoScene::lueRivi()
             lisaaNayttoon(rivi);
         else if(rivi.startsWith('D'))
             paivitaData(rivi);
+        else if( rivi.startsWith('N'))
+        {
+            // Luettelossa näkymien nimiä ja tunnuksia listaan laitettaviksi
+            QStringList listana = rivi.split(' ');
+            if( listana.count() > 2)
+            {
+                int nakymaid = listana.at(1).toInt();
+                QStringList loput = listana.mid(2);
+                emit nakymaListaan(nakymaid, loput.join(' '));
+            }
+        }
+        else if( rivi.startsWith('T'))  // Time - aikaviesti
+        {
+            emit kellonpaivitys( rivi.mid(2));
+        }
     }
 }

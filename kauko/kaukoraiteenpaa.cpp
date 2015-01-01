@@ -26,7 +26,9 @@ using namespace Ratapiha;
 
 KaukoRaiteenpaa::KaukoRaiteenpaa()
     : opaste_(Ratapiha::OPASTE_PIMEA),
-      opastinlaji_(Ratapiha::OPASTIN_PUUTTU)
+      opastinlaji_(Ratapiha::OPASTIN_PUUTTUU),
+      suojastusTila_(SUOJASTUS_EISUOJASTUSTA),
+      suojastusSuunta_(SUOJASTUS_EISUUNTAA)
 {
 }
 
@@ -53,5 +55,31 @@ void KaukoRaiteenpaa::paivita(const QString tieto)
             opaste_ = Ratapiha::OPASTE_AJAVAROVASTI;
     else if( tieto.contains('4'))
             opaste_= Ratapiha::OPASTE_EIOPASTETTA;
+
+    if( tieto.contains('s'))
+    {
+        suojastusTila_ = SUOJASTUS_EIMAARITELTY;
+    }
+    else if( tieto.contains('i'))
+    {
+        suojastusTila_ = SUOJASTUS_VALMIS;
+        suojastusSuunta_ = SUOJASTUS_SISAAN;
+    }
+    else if( tieto.contains('I'))
+    {
+        suojastusTila_ = SUOJASTUS_VARATTU;
+        suojastusSuunta_ = SUOJASTUS_SISAAN;
+    }
+    else if( tieto.contains('o'))
+    {
+        suojastusTila_ = SUOJASTUS_VALMIS;
+        suojastusSuunta_ = SUOJASTUS_ULOS;
+    }
+    else if( tieto.contains('O'))
+    {
+        suojastusTila_ = SUOJASTUS_VARATTU;
+        suojastusSuunta_ = SUOJASTUS_ULOS;
+    }
+
 
 }

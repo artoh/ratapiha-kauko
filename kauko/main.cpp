@@ -20,18 +20,15 @@
 **************************************************************************/
 
 #include <QApplication>
-#include <QGraphicsView>
 
-#include "kaukoscene.h"
+#include "kaukoikkuna.h"
 
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
 
-    KaukoScene *skene = new KaukoScene();
-    QGraphicsView *view = new QGraphicsView(skene);
-    view->show();
-    view->scale(2.0, 2.0);
+    KaukoIkkuna ikkuna;
+    ikkuna.show();
 
     return a.exec();
 }

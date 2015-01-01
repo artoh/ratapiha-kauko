@@ -33,10 +33,16 @@ using namespace Ratapiha;
 
 KaukoKisko::KaukoKisko(KaukoRaide *raide, const QString &kiskotieto, qreal pituus)
     : raide_(raide), pituus_(pituus),
-      laituriVasemmalla_(false),
-      laituriOikealla_(false)
+
+
 {
     naytaRaidenumero_ = kiskotieto.contains("Nr");
+    laituriVasemmalla_ = kiskotieto.contains("Lv");
+    laituriOikealla_ = kiskotieto.contains("Lo");
+    silta_ = kiskotieto.contains("Silta");
+
+    if(silta_)
+        setZValue(100); // Sillan pitää olla vähän ylempänä
 
     if( kiskotieto.contains("E*"))
         etelaPaa_ = PAASSA;
@@ -112,6 +118,17 @@ QColor KaukoKisko::opastevari(Opaste opaste)
 
 void KaukoKisko::piirraRaide(QPainter *painter)
 {
+
+    if( silta_)
+    {
+        painter->setBrush( Qt::gray);
+        painter->setPen(Qt::NoPen);
+        painter->drawRect(QRectF(0.0, -3.0, pituus(),  6.0));
+        painter->setPen( QPen(QBrush(Qt::black),0.7, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->drawLine( QLineF(4.0, -3.0, pituus()-4.0, -3.0));
+        painter->drawLine( QLineF(4.0, 3.0, pituus()-4.0, 3.0));
+    }
+
     // Piirtää suoran raiteen
     qreal alku = 0.0;
     qreal loppu = pituus();
@@ -162,6 +179,42 @@ void KaukoKisko::piirraRaide(QPainter *painter)
             alku += 8.25;
         }
 
+        // Suojastusnuolia
+        if( raide()->etela()->suojastusTila() != SUOJASTUS_EISUOJASTUSTA)
+        {
+            QColor sisaannuoli(Qt::white);
+            QColor ulosnuoli(Qt::white);
+
+            if( raide()->etela()->suojastusSuunta() == SUOJASTUS_SISAAN)
+            {
+                ulosnuoli = Qt::gray;
+                if( raide()->etela()->suojastusTila() == SUOJASTUS_VALMIS)
+                    sisaannuoli = Qt::green;
+                else if( raide()->etela()->suojastusTila() == SUOJASTUS_VARATTU)
+                    sisaannuoli = Qt::yellow;
+            }
+            else if( raide()->etela()->suojastusSuunta() == SUOJASTUS_ULOS)
+            {
+                sisaannuoli = Qt::gray;
+                if( raide()->etela()->suojastusTila() == SUOJASTUS_VALMIS)
+                    ulosnuoli = Qt::yellow;
+                else if( raide()->etela()->suojastusTila() == SUOJASTUS_VARATTU)
+                    ulosnuoli = Qt::red;
+            }
+
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(QBrush( sisaannuoli ));
+            QPolygonF kuvio;
+            kuvio << QPointF( alku+2, -7.0) << QPointF(alku + 18.0, -3.0) << QPointF( alku + 18.0, -11.0);
+            painter->drawPolygon(kuvio);
+
+            kuvio.clear();
+            painter->setBrush( QBrush( ulosnuoli));
+            kuvio << QPointF( alku+2, 3.0) << QPointF( alku + 18.0, -7.0) << QPointF(alku + 2.0, -11.0);
+            painter->drawPolygon(kuvio);
+
+        }
+
 
     }
 
@@ -210,6 +263,41 @@ void KaukoKisko::piirraRaide(QPainter *painter)
             painter->setBrush( Qt::NoBrush);
             painter->drawPolyline( kuvio);
             loppu -= 8.25;
+        }
+        // Suojastusnuolia
+        if( raide()->pohjoinen()->suojastusTila() != SUOJASTUS_EISUOJASTUSTA)
+        {
+            QColor sisaannuoli(Qt::white);
+            QColor ulosnuoli(Qt::white);
+
+            if( raide()->pohjoinen()->suojastusSuunta() == SUOJASTUS_SISAAN)
+            {
+                ulosnuoli = Qt::gray;
+                if( raide()->pohjoinen()->suojastusTila() == SUOJASTUS_VALMIS)
+                    sisaannuoli = Qt::green;
+                else if( raide()->pohjoinen()->suojastusTila() == SUOJASTUS_VARATTU)
+                    sisaannuoli = Qt::yellow;
+            }
+            else if( raide()->etela()->suojastusSuunta() == SUOJASTUS_ULOS)
+            {
+                sisaannuoli = Qt::gray;
+                if( raide()->pohjoinen()->suojastusTila() == SUOJASTUS_VALMIS)
+                    ulosnuoli = Qt::yellow;
+                else if( raide()->pohjoinen()->suojastusTila() == SUOJASTUS_VARATTU)
+                    ulosnuoli = Qt::red;
+            }
+
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(QBrush( sisaannuoli ));
+            QPolygonF kuvio;
+            kuvio << QPointF( loppu - 2, -7.0) << QPointF(loppu - 18.0, -3.0) << QPointF( loppu - 18.0, -11.0);
+            painter->drawPolygon(kuvio);
+
+            kuvio.clear();
+            painter->setBrush( QBrush( ulosnuoli));
+            kuvio << QPointF( loppu - 2, 3.0) << QPointF( loppu - 18.0, -7.0) << QPointF(loppu - 2.0, -11.0);
+            painter->drawPolygon(kuvio);
+
         }
 
     }

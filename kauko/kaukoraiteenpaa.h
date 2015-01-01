@@ -37,9 +37,15 @@ public:
     Ratapiha::Opaste opaste() const { return opaste_; }
     Ratapiha::OpastinLaji opastinlaji() const { return opastinlaji_; }
 
+    Ratapiha::SuojastusTila suojastusTila() const { return suojastusTila_; }
+    Ratapiha::SuojastusSuunta suojastusSuunta() const { return suojastusSuunta_; }
+
 private:
     Ratapiha::Opaste opaste_;
     Ratapiha::OpastinLaji opastinlaji_;
+
+    Ratapiha::SuojastusTila suojastusTila_;
+    Ratapiha::SuojastusSuunta suojastusSuunta_;
 
 };
 

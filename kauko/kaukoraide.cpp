@@ -98,7 +98,8 @@ void KaukoRaide::paivita(const QStringList& dataLista)
             etelaPaa_.paivita(tieto.mid(1));
         else if( tieto.startsWith("P"))
             pohjoisPaa_.paivita(tieto.mid(1));
-        else if( tieto.startsWith('V') || tieto.startsWith('A'))
+        else if( tieto.startsWith('V') || tieto.startsWith('A') ||
+                 tieto.startsWith("R"))
             vaihdeAB_.paivita(tieto.mid(1));
         else if( tieto.startsWith('C'))
             vaihdeCD_.paivita(tieto.mid(1));

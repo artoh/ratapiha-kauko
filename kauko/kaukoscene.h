@@ -34,10 +34,18 @@ class KaukoScene : public QGraphicsScene
     Q_OBJECT
 public:
     explicit KaukoScene(QObject *parent = 0);
+    bool yhdistaAsetinlaitteeseen();
 
 signals:
+    void nakymaListaan(int nro, const QString& nimi);
+    void kellonpaivitys(const QString& aika);
 
 public slots:
+    /**
+     * @brief Vaihtaa näytöllä olevaa näkymää
+     * @param nakyma
+     */
+    void vaihdaNakyma(int nakyma);
     void lisaaNayttoon(const QString& rivi);
     void paivitaData(const QString& rivi);
 

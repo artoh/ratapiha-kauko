@@ -1,12 +1,15 @@
 #ifndef KAUKOVIEW_H
 #define KAUKOVIEW_H
 
-#include <QObject>
+#include <QGraphicsView>
+
+#include "kaukoscene.h"
 
 class KaukoView : public QGraphicsView
 {
+    Q_OBJECT
 public:
-    KaukoView();
+    KaukoView(KaukoScene *scene);
     ~KaukoView();
 };
 

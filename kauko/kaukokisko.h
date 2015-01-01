@@ -57,9 +57,23 @@ public:
 
 private:
 
+
     QColor raidevari();
     QColor opastevari(Ratapiha::Opaste opaste);
+
     void piirraRaide(QPainter *painter);
+    void piirraVaihde(QPainter* painter);
+    void piirraRaideRisteys(QPainter *painter);
+
+    enum PaanPiirtoOhje
+    {
+        VARILLA,
+        VALKKYEN_VARI,
+        VALKKYEN_KOKONAAN,
+        PIMEA_VALKOINEN
+    };
+
+    PaanPiirtoOhje paanPiirtoOhje( PaanTila paantila, KaukoraideVaihde *vaihde );
 
     KaukoRaide* raide() { return raide_; }
 
@@ -67,6 +81,9 @@ private:
     qreal pituus_;
 
     bool naytaRaidenumero_;
+    bool laituriVasemmalla_;
+    bool laituriOikealla_;
+    bool silta_;
 
     PaanTila etelaPaa_;
     PaanTila pohjoisPaa_;
