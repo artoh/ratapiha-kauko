@@ -110,13 +110,6 @@ void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, Ra
 
 }
 
-QString RisteysVaihde::raideInfo() const
-{
-    QString info = RaideTieto::raideInfo();
-    info.append("a/b " + vaihdeAB_.vaihdeInfo());
-    info.append(" c/d " + vaihdeCD_.vaihdeInfo());
-    return info;
-}
 
 bool RisteysVaihde::kaanna(bool ab, bool cd)
 {

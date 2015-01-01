@@ -45,8 +45,6 @@ public:
 
     void lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
 
-    virtual QString raideInfo() const;
-
     /**
      * @brief Vaihteen kääntökäsky
      * @param ab Käännetään eteläinen a/b

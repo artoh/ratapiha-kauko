@@ -30,7 +30,7 @@
 class KaukoKisko : public QGraphicsItem
 {
 public:
-    KaukoKisko(KaukoRaide *raide, const QStringList &kiskotieto, qreal pituus);
+    KaukoKisko(KaukoRaide *raide, const QString &kiskotieto, qreal pituus);
 
     enum { Type = UserType + 1 } ;
     int type() const { return Type; }
@@ -40,11 +40,38 @@ public:
 
     qreal pituus() const { return pituus_; }
 
+    enum PaanTila
+    {
+        KESKELLA = 0,
+        PAASSA = 1,
+        KANTA = 2,
+        VASEN = 3,
+        OIKEA = 4
+    };
+
+    PaanTila etelaPaassa() const { return etelaPaa_; }
+    PaanTila pohjoisPaassa() const { return pohjoisPaa_; }
+
+    static bool valkkyyko() { return valkky__; }
+    static void valkky();
+
 private:
+
+    QColor raidevari();
+    QColor opastevari(Ratapiha::Opaste opaste);
+    void piirraRaide(QPainter *painter);
+
+    KaukoRaide* raide() { return raide_; }
+
     KaukoRaide *raide_;
     qreal pituus_;
 
     bool naytaRaidenumero_;
+
+    PaanTila etelaPaa_;
+    PaanTila pohjoisPaa_;
+
+    static bool valkky__;
 };
 
 #endif // KAUKOKISKO_H

@@ -260,10 +260,10 @@ class Raiteenpaa(object) :
         self.opastin = None
         self.pohjoiseen = pohjoiseen
 
-        if "V" in tila :
-            self.tila |= Raiteenpaa.VAIHDE
+        if "V" in tila and "Va" not in tila :
+            self.tila = Raiteenpaa.VAIHDE
         if "RR" in tila :
-            self.tila |= Raiteenpaa.RAIDERISTEYS
+            self.tila = Raiteenpaa.RAIDERISTEYS
         if "RP" in tila :
             self.tila |= Raiteenpaa.RAIDEPUSKURI
 

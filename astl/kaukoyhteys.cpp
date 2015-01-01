@@ -38,7 +38,7 @@ KaukoYhteys::KaukoYhteys(KaukoPalvelin *kaukopalvelin, QTcpSocket *soketti) :
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(lahetaRaidetiedot()));
 
-    timer->start(5000);
+    timer->start(500);
 
 }
 

@@ -61,7 +61,7 @@ public:
 
     Ratapiha::ElementinLukitus lukitus() { return lukitus_; }
 
-    QString vaihdeInfo() const;
+    QString vaihdeTila();
 
 
 protected:

@@ -27,6 +27,7 @@
 
 #include "ratapiha.h"
 #include "kaukoraiteenpaa.h"
+#include "kaukoraidevaihde.h"
 
 /**
  * @brief Raiteen tiedot
@@ -37,15 +38,35 @@ public:
     KaukoRaide(const QString& datarivi);
 
     QString raidenumeroteksti() const { return numeroTekstina_;  }
-    void paivita(const QString datarivi);
+    void paivita(const QStringList &dataLista);
 
     KaukoRaiteenpaa* etela() { return &etelaPaa_; }
+    KaukoRaiteenpaa* pohjoinen() { return &pohjoisPaa_; }
+
+    KaukoraideVaihde *vaihdeAB() { return &vaihdeAB_; }
+    KaukoraideVaihde *vaihdeCD() { return &vaihdeCD_; }
+
+    Ratapiha::RaideTyyppi tyyppi() const { return tyyppi_; }
+    Ratapiha::RaideVapaana vapaana() const { return vapaana_; }
+
+    Ratapiha::KulkutieTyyppi kulkutieTyyppi() { return kulkutieTyyppi_; }
+    Ratapiha::ElementinLukitus elementinLukitus() { return elementinLukitus_; }
+
 
 protected:
     KaukoRaiteenpaa etelaPaa_;
     KaukoRaiteenpaa pohjoisPaa_;
 
+    KaukoraideVaihde vaihdeAB_;
+    KaukoraideVaihde vaihdeCD_;
+
     QString numeroTekstina_;
+
+    Ratapiha::RaideTyyppi tyyppi_;
+    Ratapiha::RaideVapaana vapaana_;
+
+    Ratapiha::KulkutieTyyppi kulkutieTyyppi_;
+    Ratapiha::ElementinLukitus elementinLukitus_;
 };
 
 #endif // KAUKORAIDE_H

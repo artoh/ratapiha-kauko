@@ -92,22 +92,29 @@ ElementinLukitus KaannettavanElementinTila::lukitse(VaihteenAsento asentoon)
     return lukitus_;
 }
 
-QString KaannettavanElementinTila::vaihdeInfo() const
+QString KaannettavanElementinTila::vaihdeTila()
 {
-    QString info;
+    QString info;    
+
     if( vika())
-        info.append("VIKA ");
+        info.append('!');
     if( aukiajettu())
-        info.append("AUKIAJETTU ");
+        info.append('a');
+
     if( valvottuAsento() == ASENTO_VASEMMALLE)
-        info.append("VASEN- ");
+        info.append('-');
     else if( valvottuAsento() == ASENTO_OIKEALLE)
-        info.append("OIKEA+ ");
+        info.append('+');
 
     if( kaantyyAsentoon() == ASENTO_VASEMMALLE)
-        info.append("kääntyy vasemmalle ");
+        info.append('v');
     else if( kaantyyAsentoon() == ASENTO_OIKEALLE)
-        info.append("kääntyy oikealle ");
+        info.append('o');
+
+    if( lukitus() == ELEMENTTI_LUKITAAN )
+        info.append('l');
+    else if( lukitus() == ELEMENTTI_LUKITTU)
+        info.append('L');
 
     return info;
 }

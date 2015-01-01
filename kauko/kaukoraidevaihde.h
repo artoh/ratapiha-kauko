@@ -20,24 +20,39 @@
 **************************************************************************/
 
 
-#ifndef KAUKORAITEENPAA_H
-#define KAUKORAITEENPAA_H
+#ifndef KAUKORAIDEVAIHDE_H
+#define KAUKORAIDEVAIHDE_H
 
 #include <QString>
 
 #include "ratapiha.h"
 
-class KaukoRaiteenpaa
+class KaukoraideVaihde
 {
 public:
-    KaukoRaiteenpaa();
+    KaukoraideVaihde();
 
-    void paivita(const QString tieto);
+    enum VaihteenTila
+    {
+        EIVALVOTTU = 0,
+        VALVOTTU = 1,
+        KAANTYY = 2,
+        AUKIAJETTU = 3,
+        VIKATILA = 4
+    };
 
-    Ratapiha::Opaste opaste() const { return opaste_; }
-private:
-    Ratapiha::Opaste opaste_;
+    void paivita(const QString& data);
+
+    Ratapiha::VaihteenAsento asento() const { return vaihteenAsento_; }
+    VaihteenTila tila() const { return vaihteentila_; }
+    Ratapiha::ElementinLukitus lukitus() const { return lukitus_; }
+
+protected:
+    Ratapiha::VaihteenAsento vaihteenAsento_;
+    VaihteenTila vaihteentila_;
+    Ratapiha::ElementinLukitus lukitus_;
+
 
 };
 
-#endif // KAUKORAITEENPAA_H
+#endif // KAUKORAIDEVAIHDE_H

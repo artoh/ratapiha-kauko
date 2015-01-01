@@ -8,16 +8,18 @@ TEMPLATE = app
 
 
 SOURCES += \ 
-    kaukoraide.cpp \
-    kaukoraiteenpaa.cpp \
-    kaukokisko.cpp \
-    kaukoscene.cpp \
-    main.cpp
+    kauko/kaukoraide.cpp \
+    kauko/kaukoraiteenpaa.cpp \
+    kauko/kaukokisko.cpp \
+    kauko/kaukoscene.cpp \
+    kauko/main.cpp \
+    kauko/kaukoraidevaihde.cpp
 
 HEADERS += ratapiha.h \
-    kaukoraide.h \
-    kaukoraiteenpaa.h \
-    kaukokisko.h \
-    kaukoscene.h
+    kauko/kaukoraide.h \
+    kauko/kaukoraiteenpaa.h \
+    kauko/kaukokisko.h \
+    kauko/kaukoscene.h \
+    kauko/kaukoraidevaihde.h
 
 RESOURCES +=

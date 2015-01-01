@@ -25,16 +25,33 @@
 using namespace Ratapiha;
 
 KaukoRaiteenpaa::KaukoRaiteenpaa()
-    : opaste_(Ratapiha::OPASTE_PIMEA)
+    : opaste_(Ratapiha::OPASTE_PIMEA),
+      opastinlaji_(Ratapiha::OPASTIN_PUUTTU)
 {
 }
 
 void KaukoRaiteenpaa::paivita(const QString tieto)
 {
-    if( tieto=="0")
-        opaste_ = OPASTE_SEIS;
-    else if( tieto == "1")
-        opaste_ = OPASTE_AJASN;
-    else if( tieto == "2")
-        opaste_ = OPASTE_AJA;
+    // Opastimen laji
+
+    if( tieto.contains('p'))
+        opastinlaji_ = Ratapiha::OPASTIN_PAAOPASTIN;
+    else if( tieto.contains('r'))
+        opastinlaji_ = Ratapiha::OPASTIN_RAIDEOPASTIN;
+    else if( tieto.contains('y'))
+        opastinlaji_ = Ratapiha::OPASTIN_YHDISTELMAOPASTIN;
+
+
+    // Opaste
+    if( tieto.contains('0'))
+            opaste_ = Ratapiha::OPASTE_SEIS;
+    else if( tieto.contains('1'))
+            opaste_ = Ratapiha::OPASTE_AJASN;
+    else if( tieto.contains('2'))
+            opaste_ = Ratapiha::OPASTE_AJA;
+    else if( tieto.contains('3'))
+            opaste_ = Ratapiha::OPASTE_AJAVAROVASTI;
+    else if( tieto.contains('4'))
+            opaste_= Ratapiha::OPASTE_EIOPASTETTA;
+
 }

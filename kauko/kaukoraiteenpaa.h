@@ -19,39 +19,28 @@
 **
 **************************************************************************/
 
-#include <QStringList>
 
-#include "kaukoraide.h"
+#ifndef KAUKORAITEENPAA_H
+#define KAUKORAITEENPAA_H
 
+#include <QString>
 
+#include "ratapiha.h"
 
-KaukoRaide::KaukoRaide(const QString &datarivi)
+class KaukoRaiteenpaa
 {
-    QStringList listana = datarivi.split(" ");
+public:
+    KaukoRaiteenpaa();
 
-    QString tunnus = listana.at(1);
-    for(int i=0; i< tunnus.length(); i++)
-    {
-        if( tunnus[i].isDigit())
-        {
-            numeroTekstina_ = tunnus.mid(i);
-            break;
-        }
-    }
+    void paivita(const QString tieto);
 
-    paivita(datarivi);
+    Ratapiha::Opaste opaste() const { return opaste_; }
+    Ratapiha::OpastinLaji opastinlaji() const { return opastinlaji_; }
 
-}
+private:
+    Ratapiha::Opaste opaste_;
+    Ratapiha::OpastinLaji opastinlaji_;
 
-void KaukoRaide::paivita(const QString datarivi)
-{
-    QStringList listana = datarivi.split(" ");
-    foreach (QString tieto, listana)
-    {
-        if( tieto.startsWith("E"))
-            etelaPaa_.paivita(tieto.mid(1));
-        else if( tieto.startsWith("P"))
-            pohjoisPaa_.paivita(tieto.mid(1));
-    }
+};
 
-}
+#endif // KAUKORAITEENPAA_H

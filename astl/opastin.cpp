@@ -85,16 +85,25 @@ void Opastin::aslViesti(int sanoma)
 QString Opastin::tilaTeksti() const
 {
     QString tila;
+
+    if( (tyyppitieto() & OPASTIN_VIHREA  ) && ( tyyppitieto() & OPASTIN_VALKOINEN) )
+        tila = "y";      // Yhdistelmäopastin
+    else if( tyyppitieto() & OPASTIN_VIHREA)
+        tila = "p";     // Pääopastin
+    else if( tyyppitieto() & OPASTIN_VALKOINEN)
+        tila = "r";     // Raideopastin
+
+
     if( opaste() == OPASTE_SEIS)
-        tila = "0";
+        tila += "0";
     else if( opaste() == OPASTE_AJASN)
-        tila = "1";
+        tila += "1";
     else if( opaste() == OPASTE_AJA)
-        tila = "2";
+        tila += "2";
     else if( opaste() == OPASTE_AJAVAROVASTI)
-        tila = "3";
+        tila += "3";
     else if( opaste() == OPASTE_EIOPASTETTA)
-        tila = "4";
+        tila += "4";
 
     return tila;
 }

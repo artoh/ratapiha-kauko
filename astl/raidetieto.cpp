@@ -111,19 +111,33 @@ QString RaideTieto::raideInfo() const
 QString RaideTieto::raideTila()
 {
     QString tila = raideTunnusTeksti() + " ";
-    if( vapaanaOlo() == VARATTU)
-        tila.append("X");
-    else if(vapaanaOlo() == VIRHE)
-        tila.append("!");
+
+    switch (raideTyyppi())
+    {
+        case RAIDE: tila.append('-'); break;
+        case VAIHDE: tila.append('v'); break;
+        case RISTEYSVAIHDE: tila.append('x'); break;
+        case RAIDERISTEYS: tila.append('r'); break;
+        default: break;
+    }
+
+    switch (vapaanaOlo())
+    {
+        case VARATTU: tila.append('X'); break;
+        case VAPAA: tila.append('O'); break;
+        default: tila.append('!'); break;
+    }
 
     if( kulkutie())
     {
         if( kulkutie()->tyyppi() == Ratapiha::JUNAKULKUTIE )
             tila.append("J");
+
         if( onkoLukittuKulkutielle() == Ratapiha::ELEMENTTI_LUKITTU)
             tila.append("L");
+        else if( onkoLukittuKulkutielle() == Ratapiha::ELEMENTTI_LUKITAAN)
+            tila.append('l');
     }
-
 
     return tila;
 }

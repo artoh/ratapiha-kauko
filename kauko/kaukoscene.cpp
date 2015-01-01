@@ -60,7 +60,7 @@ void KaukoScene::lisaaNayttoon(const QString &rivi)
 
             QLineF viiva(etelaX, etelaY, pohjoinenX, pohjoinenY);
 
-            KaukoKisko *kisko = new KaukoKisko(raide, kiskotieto, viiva.length());
+            KaukoKisko *kisko = new KaukoKisko(raide, rivi, viiva.length());
             kisko->setPos(etelaX, etelaY);
             kisko->setRotation(0.0 - viiva.angle());
             addItem(kisko);
@@ -90,6 +90,7 @@ void KaukoScene::paivitaData(const QString &rivi)
     if( tunnus == "VALMIS")
     {
         // Päivitetään näytölle...
+        KaukoKisko::valkky();
         invalidate(sceneRect());
         return;
     }
@@ -97,7 +98,7 @@ void KaukoScene::paivitaData(const QString &rivi)
     KaukoRaide *raide = raiteet_.value(tunnus);
     if(raide)
     {
-        raide->paivita(rivi);
+        raide->paivita(listana);
     }
     else
     {

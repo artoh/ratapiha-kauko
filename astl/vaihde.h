@@ -46,6 +46,8 @@ public:
 
     virtual QString raideInfo() const;
 
+    virtual QString raideTila();
+
     bool kaanna();
 
     void lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);

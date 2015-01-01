@@ -58,12 +58,22 @@ namespace Ratapiha
 
     enum Opaste
     {
-        OPASTE_PIMEA = 0,
-        OPASTE_SEIS = 1,
-        OPASTE_AJASN = 2,
-        OPASTE_AJA = 3,
-        OPASTE_AJAVAROVASTI = 5,
-        OPASTE_EIOPASTETTA = 6
+        OPASTE_SEIS = 0,
+        OPASTE_AJASN = 1,
+        OPASTE_AJA = 2,
+        OPASTE_AJAVAROVASTI = 3,
+        OPASTE_EIOPASTETTA = 4,
+        OPASTE_PUUTTUU = 10,
+        OPASTE_PIMEA = 11,
+        OPASTE_TIEDONSIIRTOVIKA = 12
+    };
+
+    enum OpastinLaji
+    {
+        OPASTIN_PUUTTU = 0,
+        OPASTIN_PAAOPASTIN = 1,
+        OPASTIN_RAIDEOPASTIN = 2,
+        OPASTIN_YHDISTELMAOPASTIN = 3
     };
 
     enum OpastinTyyppiBitti
@@ -115,6 +125,23 @@ namespace Ratapiha
         EIKULKUTIETA,
         JUNAKULKUTIE,
         VAIHTOKULKUTIE
+    };
+
+    enum RaideVapaana
+    {
+        RAIDE_VIKATILA = 0,
+        RAIDE_VARATTU = 1,
+        RAIDE_VAPAA = 2,
+        RAIDE_TIEDONSIIRTOVIRHE = 3
+    };
+
+    enum RaideTyyppi
+    {
+        RAIDE_TUNTEMATONTYYPPI,
+        RAIDE_RAIDE,
+        RAIDE_VAIHDE,
+        RAIDE_RISTEYSVAIHDE,
+        RAIDE_RAIDERISTEYS
     };
 
 }

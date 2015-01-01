@@ -104,6 +104,14 @@ QString Vaihde::raideInfo() const
     return info;
 }
 
+QString Vaihde::raideTila()
+{
+    QString info = RaideTieto::raideTila();
+    info.append(" V");
+    info.append(vaihdeTila_.vaihdeTila());
+    return info;
+}
+
 bool Vaihde::kaanna()
 {
     // Ei käännä, jos raide varattu
