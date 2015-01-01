@@ -147,8 +147,8 @@ void Vaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPa
     // Käännetään vaihde tarvittavaan asentoon
     if( tarvittavaAsento != vaihdeTila_.valvottuAsento() )
     {
-        vaihdeTila_.kaannettava(tarvittavaAsento);
-        Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE, Ratapiha::VAIHDEKOMENTO_OIKEALLE);
+        Asetinlaite::instanssi()->lahetaSanoma(raideId(),
+                     Ratapiha::LAITE_VAIHDE, vaihdeTila_.kaannettava(tarvittavaAsento) );
     }
 
     // Lukitaan vaihde kulkutielle

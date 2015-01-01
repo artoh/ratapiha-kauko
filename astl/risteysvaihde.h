@@ -53,6 +53,9 @@ public:
      */
     bool kaanna(bool ab, bool cd);
 
+    QString raideTila();
+
+    Ratapiha::ElementinLukitus onkoLukittuKulkutielle();
 
 protected:
     KaannettavanElementinTila vaihdeAB_;

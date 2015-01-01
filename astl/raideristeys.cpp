@@ -23,7 +23,8 @@
 #include "raideristeys.h"
 
 RaideRisteys::RaideRisteys()
-    : KantaRisteys()
+    : KantaRisteys(),
+      asento_(Ratapiha::ASENTO_EITIEDOSSA)
 {
 }
 
@@ -53,4 +54,28 @@ QPair<RaiteenPaa *, RaiteenPaa *> RaideRisteys::mahdollisetVastapaat(RaiteenPaa 
         // Muuten ei ole mahdollista vastapäätä
         return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0);
 
+}
+
+void RaideRisteys::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne)
+{
+    // Laittaa loogisen asennon oikein
+    if( mista == &paaA_ || minne == &paaA_)
+        asento_ = Ratapiha::ASENTO_OIKEALLE;
+    else
+        asento_ = Ratapiha::ASENTO_VASEMMALLE;
+
+    kulkutie_ = kulkutie;
+}
+
+QString RaideRisteys::raideTila()
+{
+    QString tila = RaideTieto::raideTila();
+    if( asento_ == Ratapiha::ASENTO_VASEMMALLE)
+        tila.append(" RR-");
+    else if(asento_ == Ratapiha::ASENTO_OIKEALLE)
+        tila.append(" RR-");
+    else
+        tila.append(" RR");
+
+    return tila;
 }

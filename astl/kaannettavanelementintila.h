@@ -38,8 +38,9 @@ public:
     /**
      * @brief Annettu kääntökäsky
      * @param asentoon
+     * @return Tähän asentoon tarvittava kääntökäsky
      */
-    void kaannettava(Ratapiha::VaihteenAsento asentoon);
+    int kaannettava(Ratapiha::VaihteenAsento asentoon);
 
     /**
      * @brief Pyytää lukitsemaan elementin haluttuun asentoon, jonka pitää olla asetettu tai pyydetty

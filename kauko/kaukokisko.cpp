@@ -312,6 +312,19 @@ void KaukoKisko::piirraRaide(QPainter *painter)
         painter->setPen( QPen(Qt::black));
         painter->drawText(QRectF(-10.0, -9.0, pituus()+20, 5.0), raide_->raidenumeroteksti() , QTextOption(Qt::AlignCenter));
 
+        // Lukitusneliö. Vilkkuva neliö tarkoittaa, että on lukittumassa ja kiinteä, että on lukittu
+        // Risteysvaihteelle piirretään molempien puoliskojen alle
+        painter->setBrush( Qt::NoBrush);
+        painter->setPen( Qt::NoPen);
+
+        if( raide()->elementinLukitus() == ELEMENTTI_LUKITTU )
+            painter->setBrush( QBrush(Qt::green));
+        else if( raide()->elementinLukitus() == ELEMENTTI_LUKITAAN && valkkyyko() )
+            painter->setBrush( QBrush(Qt::green));
+
+        painter->drawRect( pituus() / 2.0 - 0.5, 2.0, 1.5, 1.5 );
+
+
     }
     if( laituriVasemmalla_)
     {
@@ -391,8 +404,37 @@ void KaukoKisko::piirraVaihde(QPainter *painter)
         painter->setFont( QFont("Helvetica",4,QFont::Bold));
         painter->setPen( QPen(Qt::blue));
         painter->drawText(QRectF(-10.0, -9.0, pituus()+20, 5.0), raide_->raidenumeroteksti() , QTextOption(Qt::AlignCenter));
-
     }
+
+
+    // Vaihteen lukitusneliö. Vilkkuva neliö tarkoittaa, että on lukittumassa ja kiinteä, että on lukittu
+    // Risteysvaihteelle piirretään molempien puoliskojen alle
+    if(( ( raide()->tyyppi() == RAIDE_VAIHDE && ( etelaPaassa() == KANTA || pohjoisPaassa() == KANTA) )) ||
+         ( raide()->tyyppi() == RAIDE_RISTEYSVAIHDE &&  etelaPaassa() == PAASSA && pohjoisPaassa() == VASEN ))
+    {
+        painter->setBrush( Qt::NoBrush);
+        painter->setPen( Qt::NoPen);
+
+        if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITTU )
+            painter->setBrush( QBrush(Qt::green));
+        else if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITAAN && valkkyyko() )
+            painter->setBrush( QBrush(Qt::green));
+
+        painter->drawRect( pituus() / 2.0 - 0.5, 2.0, 1.5, 1.5 );
+    }
+    else if( raide()->tyyppi() == RAIDE_RISTEYSVAIHDE &&  pohjoisPaassa() == PAASSA && etelaPaassa() == OIKEA )
+    {
+        painter->setBrush( Qt::NoBrush);
+        painter->setPen( Qt::NoPen);
+
+        if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITTU )
+            painter->setBrush( QBrush(Qt::green));
+        else if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITAAN && valkkyyko() )
+            painter->setBrush( QBrush(Qt::green));
+
+        painter->drawRect( pituus() / 2.0 - 0.5, 2.0, 1.5, 1.5 );
+    }
+
 
 
 }
@@ -440,6 +482,13 @@ void KaukoKisko::piirraRaideRisteys(QPainter *painter)
             painter->setPen( QPen(QBrush(Qt::white),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
 
         painter->drawLine(0.0, 4.0, pituus() , 0.0);
+
+    }
+    if( naytaRaidenumero_ )
+    {
+        painter->setFont( QFont("Helvetica",4,QFont::Bold));
+        painter->setPen( QPen(Qt::blue));
+        painter->drawText(QRectF(-10.0, -9.0, pituus()+20, 5.0), raide_->raidenumeroteksti() , QTextOption(Qt::AlignCenter));
 
     }
 

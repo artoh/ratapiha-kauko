@@ -24,6 +24,7 @@
 #define RAIDERISTEYS_H
 
 #include "kantaristeys.h"
+#include "ratapiha.h"
 
 /**
  * @brief Kahden raiteen raideristeys
@@ -41,7 +42,12 @@ public:
     RaiteenPaa *aktiivinenVastapaa(RaiteenPaa *paalle);
     QPair<RaiteenPaa *, RaiteenPaa *> mahdollisetVastapaat(RaiteenPaa *paalle, Ratapiha::KulkutieTyyppi tyyppi);
 
+    void lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
+
+    QString raideTila();
+
 protected:
+    Ratapiha::VaihteenAsento asento_;
 
 };
 

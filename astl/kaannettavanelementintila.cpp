@@ -72,9 +72,15 @@ void KaannettavanElementinTila::tilaSanomasta(int sanoma)
         kaantyyAsentoon_ = ASENTO_EITIEDOSSA;
 }
 
-void KaannettavanElementinTila::kaannettava(VaihteenAsento asentoon)
+int KaannettavanElementinTila::kaannettava(VaihteenAsento asentoon)
 {
     pyydettyAsento_ = asentoon;
+
+    if( asentoon == ASENTO_VASEMMALLE)
+        return VAIHDEKOMENTO_VASEMMALLE;
+    else if(asentoon == ASENTO_OIKEALLE)
+        return VAIHDEKOMENTO_OIKEALLE;
+    return 0;
 }
 
 ElementinLukitus KaannettavanElementinTila::lukitse(VaihteenAsento asentoon)

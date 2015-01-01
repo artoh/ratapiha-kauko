@@ -87,24 +87,29 @@ QPair<RaiteenPaa *, RaiteenPaa *> RisteysVaihde::mahdollisetVastapaat(RaiteenPaa
 
 void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne)
 {
-    // Tässä vaiheessa vain ja ainoastaan käännetään vaihteet
-    // Tähän pitäisi lisätä sivusuojat
-    bool ab = false;
-    bool cd = false;
+    Ratapiha::VaihteenAsento tarvittavaAB, tarvittavaCB;
 
-    if( (mista == &paaA_ || minne == &paaA_) && vaihdeAB_.vaihdeVasen() )
-        ab = true;
-    else if( (mista == &paaB_ || minne == &paaB_) && vaihdeAB_.vaihdeOikea() )
-        ab = true;
+    if( mista == &paaA_ || minne == &paaA_)
+        tarvittavaAB = Ratapiha::ASENTO_OIKEALLE;
+    else
+        tarvittavaAB = Ratapiha::ASENTO_VASEMMALLE;
 
+    if( mista == &paaC_ || minne == &paaC_)
+        tarvittavaCB = Ratapiha::ASENTO_OIKEALLE;
 
-    if( (mista == &paaD_ || minne == &paaD_) && vaihdeCD_.vaihdeVasen())
-        cd = true;
-    else if( (mista == &paaC_ || minne == &paaC_) && vaihdeCD_.vaihdeOikea() )
-        cd = true;
-
-    if( ab || cd)
-        kaanna(ab, cd);
+    // Tarvittaessa annetaan kääntökomennot
+    if( tarvittavaAB != vaihdeAB_.valvottuAsento())
+    {
+        Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
+                                               vaihdeAB_.kaannettava(tarvittavaAB) | VAIHDE_AB);
+    }
+    if( tarvittavaCB != vaihdeCD_.valvottuAsento())
+    {
+        Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
+                                               vaihdeCD_.kaannettava(tarvittavaCD) | VAIHDE_CD);
+    }
+    vaihdeAB_.lukitse(tarvittavaAB);
+    vaihdeCD_.lukitse(tarvittavaCD);
 
     kulkutie_ = kulkutie;
 
@@ -152,5 +157,29 @@ bool RisteysVaihde::kaanna(bool ab, bool cd)
     }
 
     return true;
+}
+
+QString RisteysVaihde::raideTila()
+{
+    QString tila = RaideTieto::raideTila();
+    tila.append(" A");
+    tila.append( vaihdeAB_.vaihdeTila());
+    tila.append(" C");
+    tila.append( vaihdeCD_.vaihdeTila());
+    return tila;
+}
+
+ElementinLukitus RisteysVaihde::onkoLukittuKulkutielle()
+{
+    // Molemmat puolet pitää lukita kulkutielle
+
+    if( vaihdeAB_.lukitus() == Ratapiha::ELEMENTTI_LUKITTU &&
+        vaihdeCD_.lukitse() == Ratapiha::ELEMENTTI_LUKITTU)
+        return Ratapiha::ELEMENTTI_LUKITTU;
+    else if( vaihdeAB_.lukitus() == Ratapiha::ELEMENTTI_VAPAA &&
+                 vaihdeCD_.lukitse() == Ratapiha::ELEMENTTI_VAPAA )
+        return Ratapiha::ELEMENTTI_VAPAA;
+
+    return Ratapiha::ELEMENTTI_LUKITAAN;
 }
 
