@@ -315,8 +315,8 @@ void KaukoKisko::piirraRaide(QPainter *painter)
         painter->drawText(QRectF(-10.0, -9.0, pituus()+20, 5.0), raide_->raidenumeroteksti() , QTextOption(Qt::AlignCenter));
 
         // Lukitusneliö. Vilkkuva neliö tarkoittaa, että on lukittumassa ja kiinteä, että on lukittu
-        // Risteysvaihteelle piirretään molempien puoliskojen alle
-        painter->setBrush( Qt::NoBrush);
+        // Myöhemmin: punainen vilkkuva vikatilaa, punainen hätävaraista purkamista
+        painter->setBrush( Qt::gray);
         painter->setPen( Qt::NoPen);
 
         if( raide()->elementinLukitus() == ELEMENTTI_LUKITTU )
@@ -324,7 +324,7 @@ void KaukoKisko::piirraRaide(QPainter *painter)
         else if( raide()->elementinLukitus() == ELEMENTTI_LUKITAAN && valkkyyko() )
             painter->setBrush( QBrush(Qt::green));
 
-        painter->drawRect( pituus() / 2.0 - 0.5, 2.0, 1.5, 1.5 );
+        painter->drawRect( pituus() / 2.0 - 0.5, 2.0, 2.5, 2.5 );
 
 
     }
@@ -355,25 +355,22 @@ void KaukoKisko::piirraVaihde(QPainter *painter)
 
     PaanPiirtoOhje ohje = VARILLA;
 
+    // Kumpaa vaihdetta tämä kisko kuvaa
+    KaukoraideVaihde *vaihde = raide()->vaihdeAB();
+    if( raide()->tyyppi() == RAIDE_RISTEYSVAIHDE && pohjoisPaassa() == PAASSA )
+        vaihde = raide()->vaihdeCD();
+
+
     // Etsitään "piirto-ohje", joka kuvaa, miten tämä haara piirretään
     if( etelaPaassa() == PAASSA )
     {
         // Vaihde on kiskon pohjoispäässä
-        ohje = paanPiirtoOhje(pohjoisPaassa(), raide()->vaihdeAB());
+        ohje = paanPiirtoOhje(pohjoisPaassa(), vaihde );
         alku = 0.8;
     }
     else
     {
-        if( raide()->tyyppi() == RAIDE_VAIHDE )
-        {
-            // Normaali vaihde
-            ohje = paanPiirtoOhje(etelaPaassa(), raide()->vaihdeAB());
-        }
-        else
-        {
-            // Risteysvaihde, pohjoinen puolisko
-            ohje = paanPiirtoOhje(etelaPaassa(), raide()->vaihdeCD());
-        }
+        ohje = paanPiirtoOhje(etelaPaassa(), vaihde );
         loppu = pituus()-0.8;
     }
 
@@ -419,35 +416,22 @@ void KaukoKisko::piirraVaihde(QPainter *painter)
     }
 
 
+    QColor lukitusvari(Qt::gray);
+    if( vaihde->lukitus() == ELEMENTTI_LUKITTU || (vaihde->lukitus()==ELEMENTTI_LUKITAAN && !valkkyyko() ) )
+        lukitusvari = Qt::green;
+
     // Vaihteen lukitusneliö. Vilkkuva neliö tarkoittaa, että on lukittumassa ja kiinteä, että on lukittu
-    // Risteysvaihteelle piirretään molempien puoliskojen alle
-    if(( ( raide()->tyyppi() == RAIDE_VAIHDE && ( etelaPaassa() == KANTA || pohjoisPaassa() == KANTA) )) ||
-         ( raide()->tyyppi() == RAIDE_RISTEYSVAIHDE &&  etelaPaassa() == PAASSA && pohjoisPaassa() == VASEN ))
+    // Risteysvaihteelle piirretään molempien puoliskojen alle, aktiiviselle puoliskolle
+    if(( ( (raide()->tyyppi() == RAIDE_VAIHDE) && ( etelaPaassa() == KANTA || pohjoisPaassa() == KANTA) )) ||
+         ( (raide()->tyyppi() == RAIDE_RISTEYSVAIHDE) &&
+               (( ( (etelaPaassa() == VASEN) || (pohjoisPaassa() == VASEN) )  && vaihde->asento()==ASENTO_VASEMMALLE) ||
+               ( ( (etelaPaassa() == OIKEA) || (pohjoisPaassa() == OIKEA) ) && vaihde->asento() == ASENTO_OIKEALLE) ) ))
     {
-        painter->setBrush( QBrush(Qt::gray));
+        painter->setBrush( QBrush( lukitusvari ));
         painter->setPen( Qt::NoPen);
-
-        if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITTU )
-            painter->setBrush( QBrush(Qt::green));
-        else if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITAAN && valkkyyko() )
-            painter->setBrush( QBrush(Qt::green));
 
         painter->drawRect( pituus() / 2.0 - 0.5, 2.0, 2.5, 2.5 );
     }
-    else if( raide()->tyyppi() == RAIDE_RISTEYSVAIHDE &&  pohjoisPaassa() == PAASSA && etelaPaassa() == OIKEA )
-    {
-        painter->setBrush( QBrush(Qt::gray));
-        painter->setPen( Qt::NoPen);
-
-        if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITTU )
-            painter->setBrush( QBrush(Qt::green));
-        else if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITAAN && valkkyyko() )
-            painter->setBrush( QBrush(Qt::green));
-
-        painter->drawRect( pituus() / 2.0 - 0.5, 2.0, 2.5, 2.5 );
-    }
-
-
 
 }
 

@@ -114,8 +114,8 @@ QString Vaihde::raideTila()
 
 bool Vaihde::kaanna()
 {
-    // Ei käännä, jos raide varattu
-    if( vapaanaOlo() != VAPAA)
+    // Ei käännä, jos raide varattu tai lukittu
+    if( vapaanaOlo() != VAPAA || vaihdeTila_.lukitus() != Ratapiha::ELEMENTTI_VAPAA)
         return false;
 
     // Toistaiseksi kääntää kaikenlaiset vaihteet

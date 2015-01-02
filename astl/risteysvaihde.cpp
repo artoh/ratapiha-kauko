@@ -87,7 +87,7 @@ QPair<RaiteenPaa *, RaiteenPaa *> RisteysVaihde::mahdollisetVastapaat(RaiteenPaa
 
 void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne)
 {
-    Ratapiha::VaihteenAsento tarvittavaAB, tarvittavaCB;
+    Ratapiha::VaihteenAsento tarvittavaAB, tarvittavaCD;
 
     if( mista == &paaA_ || minne == &paaA_)
         tarvittavaAB = Ratapiha::ASENTO_OIKEALLE;
@@ -95,9 +95,9 @@ void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, Ra
         tarvittavaAB = Ratapiha::ASENTO_VASEMMALLE;
 
     if( mista == &paaC_ || minne == &paaC_)
-        tarvittavaCB = Ratapiha::ASENTO_VASEMMALLE;
+        tarvittavaCD = Ratapiha::ASENTO_VASEMMALLE;
     else
-        tarvittavaCB = Ratapiha::ASENTO_OIKEALLE;
+        tarvittavaCD = Ratapiha::ASENTO_OIKEALLE;
 
     // Tarvittaessa annetaan kääntökomennot
     if( tarvittavaAB != vaihdeAB_.valvottuAsento())
@@ -105,13 +105,13 @@ void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, Ra
         Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
                                                vaihdeAB_.kaannettava(tarvittavaAB) | VAIHDE_AB);
     }
-    if( tarvittavaCB != vaihdeCD_.valvottuAsento())
+    if( tarvittavaCD != vaihdeCD_.valvottuAsento())
     {
         Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
-                                               vaihdeCD_.kaannettava( tarvittavaCB ) | VAIHDE_CD);
+                                               vaihdeCD_.kaannettava( tarvittavaCD ) | VAIHDE_CD);
     }
     vaihdeAB_.lukitse(tarvittavaAB);
-    vaihdeCD_.lukitse( tarvittavaCB );
+    vaihdeCD_.lukitse( tarvittavaCD );
 
     kulkutie_ = kulkutie;
 
@@ -126,7 +126,7 @@ bool RisteysVaihde::kaanna(bool ab, bool cd)
     if( vapaanaOlo() == VARATTU)
         return false;   // Ei käännetä yksikön alta
 
-    if( ab )
+    if( ab && vaihdeAB_.lukitus() == ELEMENTTI_VAPAA)
     {
         if( vaihdeAB_.vaihdeOikea())
         {
@@ -142,7 +142,7 @@ bool RisteysVaihde::kaanna(bool ab, bool cd)
         }
     }
 
-    if( cd )
+    if( cd && vaihdeCD_.lukitus() == ELEMENTTI_VAPAA)
     {
         if( vaihdeCD_.vaihdeOikea())
         {
