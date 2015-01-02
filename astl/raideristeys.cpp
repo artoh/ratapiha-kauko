@@ -73,7 +73,7 @@ QString RaideRisteys::raideTila()
     if( asento_ == Ratapiha::ASENTO_VASEMMALLE)
         tila.append(" RR-");
     else if(asento_ == Ratapiha::ASENTO_OIKEALLE)
-        tila.append(" RR-");
+        tila.append(" RR+");
     else
         tila.append(" RR");
 

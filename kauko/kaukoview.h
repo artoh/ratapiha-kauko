@@ -11,6 +11,8 @@ class KaukoView : public QGraphicsView
 public:
     KaukoView(KaukoScene *scene);
     ~KaukoView();
+protected:
+    void wheelEvent(QWheelEvent *event);
 };
 
 #endif // KAUKOVIEW_H

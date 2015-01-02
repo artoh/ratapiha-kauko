@@ -95,6 +95,8 @@ void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, Ra
         tarvittavaAB = Ratapiha::ASENTO_VASEMMALLE;
 
     if( mista == &paaC_ || minne == &paaC_)
+        tarvittavaCB = Ratapiha::ASENTO_VASEMMALLE;
+    else
         tarvittavaCB = Ratapiha::ASENTO_OIKEALLE;
 
     // Tarvittaessa annetaan kääntökomennot
@@ -106,10 +108,10 @@ void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, Ra
     if( tarvittavaCB != vaihdeCD_.valvottuAsento())
     {
         Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
-                                               vaihdeCD_.kaannettava(tarvittavaCD) | VAIHDE_CD);
+                                               vaihdeCD_.kaannettava( tarvittavaCB ) | VAIHDE_CD);
     }
     vaihdeAB_.lukitse(tarvittavaAB);
-    vaihdeCD_.lukitse(tarvittavaCD);
+    vaihdeCD_.lukitse( tarvittavaCB );
 
     kulkutie_ = kulkutie;
 
@@ -174,10 +176,10 @@ ElementinLukitus RisteysVaihde::onkoLukittuKulkutielle()
     // Molemmat puolet pitää lukita kulkutielle
 
     if( vaihdeAB_.lukitus() == Ratapiha::ELEMENTTI_LUKITTU &&
-        vaihdeCD_.lukitse() == Ratapiha::ELEMENTTI_LUKITTU)
+        vaihdeCD_.lukitus() == Ratapiha::ELEMENTTI_LUKITTU)
         return Ratapiha::ELEMENTTI_LUKITTU;
     else if( vaihdeAB_.lukitus() == Ratapiha::ELEMENTTI_VAPAA &&
-                 vaihdeCD_.lukitse() == Ratapiha::ELEMENTTI_VAPAA )
+                 vaihdeCD_.lukitus() == Ratapiha::ELEMENTTI_VAPAA )
         return Ratapiha::ELEMENTTI_VAPAA;
 
     return Ratapiha::ELEMENTTI_LUKITAAN;

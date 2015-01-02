@@ -32,7 +32,7 @@
 using namespace Ratapiha;
 
 KaukoKisko::KaukoKisko(KaukoRaide *raide, const QString &kiskotieto, qreal pituus)
-    : raide_(raide), pituus_(pituus),
+    : raide_(raide), pituus_(pituus)
 
 
 {
@@ -71,6 +71,8 @@ void KaukoKisko::paint(QPainter *painter, const QStyleOptionGraphicsItem * /* op
         piirraRaide(painter);
     else if( raide()->tyyppi() == RAIDE_VAIHDE || raide()->tyyppi() == RAIDE_RISTEYSVAIHDE)
         piirraVaihde(painter);
+    else if( raide()->tyyppi() == RAIDE_RAIDERISTEYS)
+        piirraRaideRisteys(painter);
 
 
 }
@@ -259,7 +261,7 @@ void KaukoKisko::piirraRaide(QPainter *painter)
             Ratapiha::Opaste opaste = raide()->pohjoinen()->opaste();
             QPolygonF kuvio;
             kuvio << QPointF(loppu - 8.0, 4.0) << QPointF(loppu - 0, 0.0) << QPointF(loppu - 8.0, -4.0);
-            painter->setPen(opastevari(opastin));
+            painter->setPen(opastevari(opaste));
             painter->setBrush( Qt::NoBrush);
             painter->drawPolyline( kuvio);
             loppu -= 8.25;
@@ -328,14 +330,14 @@ void KaukoKisko::piirraRaide(QPainter *painter)
     }
     if( laituriVasemmalla_)
     {
-        painter->setPen( QPen(QBrush(Qt::black)), 1.0, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
+        painter->setPen( QPen(QBrush(Qt::black), 1.0, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin) );
         QPolygonF laituriViiva;
         laituriViiva << QPointF(10.0, -7.0) << QPointF(10.0, -4.0) << QPointF( pituus()-10.0, -4.0) << QPointF( pituus()-10.0, -7.0);
         painter->drawPolyline(laituriViiva);
     }
     if( laituriOikealla_)
     {
-        painter->setPen( QPen(QBrush(Qt::black)), 1.0, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
+        painter->setPen( QPen(QBrush(Qt::black), 1.0, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin) );
         QPolygonF laituriViiva;
         laituriViiva << QPointF(10.0, 7.0) << QPointF(10.0, 4.0) << QPointF( pituus()-10.0, 4.0) << QPointF( pituus()-10.0, 7.0);
         painter->drawPolyline(laituriViiva);
@@ -351,7 +353,7 @@ void KaukoKisko::piirraVaihde(QPainter *painter)
     qreal loppu = pituus();
 
 
-    PaanPiirtoOhje ohje = varilla;
+    PaanPiirtoOhje ohje = VARILLA;
 
     // Etsitään "piirto-ohje", joka kuvaa, miten tämä haara piirretään
     if( etelaPaassa() == PAASSA )
@@ -384,9 +386,19 @@ void KaukoKisko::piirraVaihde(QPainter *painter)
     {
         // Vaihteenpuoleista viivaa ei piirretä
         if( etelaPaassa() == PAASSA )
-            loppu -= 10.0;
+        {
+            if( pituus() > 15)
+                loppu -= 10.0;
+            else
+                loppu -= pituus() / 2 ;  // Jotta lyhyeenkin jäisi vähän piirrettävää
+        }
         else
-            alku += 10.0;
+        {
+            if( pituus() > 15)
+                alku += 10.0;
+            else
+                alku += pituus() / 2 ;
+        }
 
         if( ohje == PIMEA_VALKOINEN)
             vari = Qt::white;
@@ -396,7 +408,7 @@ void KaukoKisko::piirraVaihde(QPainter *painter)
 
 
 
-    painter->setPen( QPen(QBrush(raidevari()),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    painter->setPen( QPen(QBrush( vari ),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
     painter->drawLine(alku, 0.0, loppu , 0.0);
 
     if( naytaRaidenumero_ )
@@ -412,7 +424,7 @@ void KaukoKisko::piirraVaihde(QPainter *painter)
     if(( ( raide()->tyyppi() == RAIDE_VAIHDE && ( etelaPaassa() == KANTA || pohjoisPaassa() == KANTA) )) ||
          ( raide()->tyyppi() == RAIDE_RISTEYSVAIHDE &&  etelaPaassa() == PAASSA && pohjoisPaassa() == VASEN ))
     {
-        painter->setBrush( Qt::NoBrush);
+        painter->setBrush( QBrush(Qt::gray));
         painter->setPen( Qt::NoPen);
 
         if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITTU )
@@ -420,11 +432,11 @@ void KaukoKisko::piirraVaihde(QPainter *painter)
         else if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITAAN && valkkyyko() )
             painter->setBrush( QBrush(Qt::green));
 
-        painter->drawRect( pituus() / 2.0 - 0.5, 2.0, 1.5, 1.5 );
+        painter->drawRect( pituus() / 2.0 - 0.5, 2.0, 2.5, 2.5 );
     }
     else if( raide()->tyyppi() == RAIDE_RISTEYSVAIHDE &&  pohjoisPaassa() == PAASSA && etelaPaassa() == OIKEA )
     {
-        painter->setBrush( Qt::NoBrush);
+        painter->setBrush( QBrush(Qt::gray));
         painter->setPen( Qt::NoPen);
 
         if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITTU )
@@ -432,7 +444,7 @@ void KaukoKisko::piirraVaihde(QPainter *painter)
         else if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITAAN && valkkyyko() )
             painter->setBrush( QBrush(Qt::green));
 
-        painter->drawRect( pituus() / 2.0 - 0.5, 2.0, 1.5, 1.5 );
+        painter->drawRect( pituus() / 2.0 - 0.5, 2.0, 2.5, 2.5 );
     }
 
 
@@ -444,12 +456,15 @@ void KaukoKisko::piirraRaideRisteys(QPainter *painter)
 
     bool aktiivihaara = false;
 
-    if( raide()->vaihdeAB()->lukitus() == ELEMENTTI_LUKITTU)
+    if( 1==1 )
     {
         if( raide()->vaihdeAB()->asento() == ASENTO_VASEMMALLE &&
                 (etelaPaassa()==VASEN || pohjoisPaassa() == VASEN ))
             // Ollaan aktiivihaarassa
             aktiivihaara = true;
+        else if( raide()->vaihdeAB()->asento() == ASENTO_OIKEALLE &&
+                 (etelaPaassa()==OIKEA  || pohjoisPaassa()==OIKEA))
+                 aktiivihaara = true;
     }
 
     if( etelaPaassa() == PAASSA)
@@ -464,7 +479,7 @@ void KaukoKisko::piirraRaideRisteys(QPainter *painter)
         if( aktiivihaara || raide()->vaihdeAB()->asento() == ASENTO_EITIEDOSSA)
         {
             painter->setPen( QPen(QBrush(raidevari()),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
-            painter->drawLine(pituus()-3.2, 0.0, pituus(), 0.0);
+            painter->drawLine(pituus()-3.5, 0.0, pituus(), 0.0);
         }
 
     }
@@ -474,14 +489,14 @@ void KaukoKisko::piirraRaideRisteys(QPainter *painter)
         if( aktiivihaara || raide()->vaihdeAB()->asento() == ASENTO_EITIEDOSSA)
         {
             painter->setPen( QPen(QBrush(raidevari()),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
-            painter->drawLine(0.0, 0.0, 3.2, 0.0);
+            painter->drawLine(-1.0, 0.0, 3.5, 0.0);
         }
         if( aktiivihaara)
             painter->setPen( QPen(QBrush(raidevari()),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
         else
             painter->setPen( QPen(QBrush(Qt::white),2.0, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
 
-        painter->drawLine(0.0, 4.0, pituus() , 0.0);
+        painter->drawLine(4.0, 0.0, pituus() , 0.0);
 
     }
     if( naytaRaidenumero_ )
@@ -494,7 +509,7 @@ void KaukoKisko::piirraRaideRisteys(QPainter *painter)
 
 }
 
-bool KaukoKisko::paanPiirtoOhje(KaukoKisko::PaanTila paantila, KaukoraideVaihde *vaihde)
+KaukoKisko::PaanPiirtoOhje KaukoKisko::paanPiirtoOhje(KaukoKisko::PaanTila paantila, KaukoraideVaihde *vaihde)
 {
     // Tutkii, ollaanko kyseisellä pään tilalla aktiivisessa haarassa
     // Valvottu vaihde : käännetty tätä kohti

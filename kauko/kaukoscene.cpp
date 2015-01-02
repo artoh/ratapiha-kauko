@@ -111,14 +111,14 @@ void KaukoScene::paivitaData(const QString &rivi)
     }
 }
 
-bool KaukoScene::yhdistaAsetinlaitteeseen()
+void KaukoScene::yhdistaAsetinlaitteeseen()
 {
-    return soketti_.connectToHost( "localhost", 6543 );
+    soketti_.connectToHost( "localhost", 6543 );
 }
 
 void KaukoScene::yhdistetty()
 {
-    soketti_.write("NAKYMA 8\n");
+    ;
 
 }
 

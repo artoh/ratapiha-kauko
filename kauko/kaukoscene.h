@@ -34,7 +34,7 @@ class KaukoScene : public QGraphicsScene
     Q_OBJECT
 public:
     explicit KaukoScene(QObject *parent = 0);
-    bool yhdistaAsetinlaitteeseen();
+    void yhdistaAsetinlaitteeseen();
 
 signals:
     void nakymaListaan(int nro, const QString& nimi);
