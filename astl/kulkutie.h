@@ -38,7 +38,7 @@ public:
     void lukitseKulkutielle();
 
 
-    virtual void valvoKulkutie();
+    virtual void valvoKulkutie() = 0;
 
     RaideTieto *mista() { return mista_; }
     RaideTieto *minne() { return minne_; }
@@ -53,13 +53,39 @@ public:
      */
     QString raiteet();
 
-    Ratapiha::KulkutieTila tila() const { return tila_; }
+    virtual Ratapiha::KulkutieTila tila() const { return tila_; }
 
     /**
      * @brief KPER-komento (Kulkutien purkaminen)
      * @return onnistuiko
      */
-    virtual bool PuraKulkutie() = 0;
+    virtual bool PeruKulkutie() = 0;
+
+    /**
+     * @brief Hätävarainen komento kulkutien purkamiseksi
+     * @return
+     */
+    virtual bool PuraKulkutie(int kellonaika) = 0;
+
+    /**
+     * @brief Kulkutiehen kuuluva raide varautuu
+     * @param raide
+     */
+    virtual void raideVarautuu(RaideTieto *raide) = 0;
+
+    /**
+     * @brief Kulkutiehen kuuluva raide vapautuu
+     * @param raide
+     */
+    virtual void raideVapautuu(RaideTieto *raide) = 0;
+
+    /**
+     * @brief Asettaa kulkutien vikatilaan, mikä pitää purkaa
+     * hätävaraisella komennolla
+     */
+    void kulkutieVikatilaan();
+
+    int pituus() const { return valmisKulkutie_.count(); }
 
 protected:
     /**

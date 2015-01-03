@@ -56,12 +56,23 @@ void RaideTieto::asetinLaiteSanoma(int laite, int sanoma)
     {
         // Vapaanaolon valvontaa koskeva sanoma
         if( sanoma == 0x81)
+        {
             vapaanaOlo_ = Ratapiha::RAIDE_VARATTU;
+            if( kulkutie())
+                kulkutie()->raideVarautuu(this);
+        }
         else if( sanoma == 0x82)
+        {
             vapaanaOlo_ = Ratapiha::RAIDE_VAPAA;
+            if( kulkutie())
+                kulkutie()->raideVapautuu(this);
+        }
         else
+        {
             vapaanaOlo_ = Ratapiha::RAIDE_VIKATILA;
-        // Sitten tehdään vapaanaoloon liittyvät herätteet
+            if( kulkutie())
+                kulkutie()->kulkutieVikatilaan();
+        }
 
     }
     else
@@ -128,6 +139,11 @@ QString RaideTieto::raideTila()
             tila.append("L");
         else if( onkoLukittuKulkutielle() == Ratapiha::ELEMENTTI_LUKITAAN)
             tila.append('l');
+
+        if( kulkutie()->tila() == Ratapiha::KULKUTIE_VIRHE)
+            tila.append('V');
+        else if( kulkutie()->tila() == Ratapiha::KULKUTIE_PURETAAN)
+            tila.append('H');
     }
 
     return tila;

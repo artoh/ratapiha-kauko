@@ -65,14 +65,14 @@ Kiskonpaa *RataRisteysVaihde::siirrySeuraavalle(Kiskonpaa *mista)
     // Ensin etelästä
     if( mista == a_ || mista == b_)
     {
-        if( mista == a_ && asento(RISTEYSVAIHDE_AB) != ASENTO_VASEMMALLE)
+        if( mista == a_ && asento(RISTEYSVAIHDE_AB) != ASENTO_OIKEALLE)
         {
-            aukiaja( RISTEYSVAIHDE_AB, ASENTO_VASEMMALLE);
+            aukiaja( RISTEYSVAIHDE_AB, ASENTO_OIKEALLE);
         }
-        else if( mista == b_ && asento(RISTEYSVAIHDE_AB) != ASENTO_OIKEALLE)
+        else if( mista == b_ && asento(RISTEYSVAIHDE_AB) != ASENTO_VASEMMALLE)
         {
             // Aukiajo
-            aukiaja( RISTEYSVAIHDE_AB, ASENTO_OIKEALLE);
+            aukiaja( RISTEYSVAIHDE_AB, ASENTO_VASEMMALLE);
         }
 
         // Sitten mennään pohjoisen mukaan

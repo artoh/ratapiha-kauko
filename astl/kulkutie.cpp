@@ -74,24 +74,6 @@ void Kulkutie::lukitseKulkutielle()
 
 }
 
-void Kulkutie::valvoKulkutie()
-{
-
-    bool kaikkiLukittu = true;
-    foreach (RaiteenPaa* paa, valmisKulkutie_)
-    {
-        if( paa->raide()->onkoLukittuKulkutielle() != Ratapiha::ELEMENTTI_LUKITTU)
-            kaikkiLukittu = false;
-    }
-
-    if( tila() == Ratapiha::KULKUTIE_LUKITAAN && kaikkiLukittu)
-    {
-        // Nyt kulkutie on viimein valmis
-        tila_ = Ratapiha::KULKUTIE_VALMIS;
-        laitaVarit();
-    }
-
-}
 
 void Kulkutie::kulkutienEtsija(RaiteenPaa *paa, int taso, int pituus, bool toissijainen)
 {
@@ -158,6 +140,17 @@ QString Kulkutie::raiteet()
         lista.append(paa->raide()->raideTunnusTeksti() + " ");
     }
     return lista;
+}
+
+void Kulkutie::kulkutieVikatilaan()
+{
+    tila_ = Ratapiha::KULKUTIE_VIRHE;
+    // Asetetaan kaikki kulkutielle kuuluvat opastimet näyttämään SEIS-opastetta
+    foreach (RaiteenPaa* rpaa, valmisKulkutie_)
+    {
+        if( rpaa->liitettyPaa() && rpaa->liitettyPaa()->opastin())
+            rpaa->liitettyPaa()->opastin()->asetaOpaste(Ratapiha::OPASTE_SEIS);
+    }
 }
 
 

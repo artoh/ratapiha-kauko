@@ -52,6 +52,8 @@ public:
     Ratapiha::KulkutieTyyppi kulkutieTyyppi() { return kulkutieTyyppi_; }
     Ratapiha::ElementinLukitus elementinLukitus() { return elementinLukitus_; }
 
+    bool kulkutieVikatilassa() const { return kulkutieVikatilassa_; }
+    bool kulkutiePuretaan() const { return kulkutiePuretaan_; }
 
 protected:
     KaukoRaiteenpaa etelaPaa_;
@@ -67,6 +69,9 @@ protected:
 
     Ratapiha::KulkutieTyyppi kulkutieTyyppi_;
     Ratapiha::ElementinLukitus elementinLukitus_;
+
+    bool kulkutieVikatilassa_;
+    bool kulkutiePuretaan_;
 };
 
 #endif // KAUKORAIDE_H

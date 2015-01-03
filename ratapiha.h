@@ -168,7 +168,8 @@ namespace Ratapiha
         KULKUTIE_LUKITAAN,
         KULKUTIE_VALMIS,
         KULKUTIE_KAYTOSSA,
-        KULKUTIE_VIRHE
+        KULKUTIE_VIRHE,
+        KULKUTIE_PURETAAN
     };
 }
 

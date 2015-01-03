@@ -315,10 +315,16 @@ void KaukoKisko::piirraRaide(QPainter *painter)
         painter->drawText(QRectF(-10.0, -9.0, pituus()+20, 5.0), raide_->raidenumeroteksti() , QTextOption(Qt::AlignCenter));
 
         // Lukitusneliö. Vilkkuva neliö tarkoittaa, että on lukittumassa ja kiinteä, että on lukittu
-        // Myöhemmin: punainen vilkkuva vikatilaa, punainen hätävaraista purkamista
         painter->setBrush( Qt::gray);
         painter->setPen( Qt::NoPen);
 
+        if( raide()->kulkutieVikatilassa())
+        {
+            if( valkkyyko())
+                painter->setBrush(Qt::red);
+        }
+        else if( raide()->kulkutiePuretaan())
+            painter->setBrush(Qt::red);
         if( raide()->elementinLukitus() == ELEMENTTI_LUKITTU )
             painter->setBrush( QBrush(Qt::green));
         else if( raide()->elementinLukitus() == ELEMENTTI_LUKITAAN && valkkyyko() )
@@ -422,7 +428,16 @@ void KaukoKisko::piirraVaihde(QPainter *painter)
 
     // Vaihteen lukitusneliö. Vilkkuva neliö tarkoittaa, että on lukittumassa ja kiinteä, että on lukittu
     // Risteysvaihteelle piirretään molempien puoliskojen alle, aktiiviselle puoliskolle
-    if(( ( (raide()->tyyppi() == RAIDE_VAIHDE) && ( etelaPaassa() == KANTA || pohjoisPaassa() == KANTA) )) ||
+
+    // Punainen = hätävarainen purku käynnissä, punainen vilkku = kulkutie vikatilassa
+    if( raide()->kulkutieVikatilassa())
+    {
+        if( valkkyyko())
+            painter->setBrush(Qt::red);
+    }
+    else if( raide()->kulkutiePuretaan())
+        painter->setBrush(Qt::red);
+    else if(( ( (raide()->tyyppi() == RAIDE_VAIHDE) && ( etelaPaassa() == KANTA || pohjoisPaassa() == KANTA) )) ||
          ( (raide()->tyyppi() == RAIDE_RISTEYSVAIHDE) &&
                (( ( (etelaPaassa() == VASEN) || (pohjoisPaassa() == VASEN) )  && vaihde->asento()==ASENTO_VASEMMALLE) ||
                ( ( (etelaPaassa() == OIKEA) || (pohjoisPaassa() == OIKEA) ) && vaihde->asento() == ASENTO_OIKEALLE) ) ))

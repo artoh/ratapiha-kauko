@@ -22,6 +22,9 @@
 
 #include <QStringList>
 #include <QTimer>
+#include <QPixmap>
+#include <QPainter>
+#include <QFont>
 
 #include "ajopoyta.h"
 #include "ui_ajopoyta.h"
@@ -54,6 +57,10 @@ void AjoPoyta::paivita()
     {
         bool poyta1 = false;
         bool poyta2 = false;
+        int jkvNopeus;
+        int jkvMatka;
+        int nopeus;
+        QString tyyppi;
 
         QString rivi = soketti_.readLine().simplified();
         QStringList lista = rivi.split(' ');
@@ -69,16 +76,32 @@ void AjoPoyta::paivita()
             }
             else if( sana.startsWith("N") )
             {
-                int nopeus = sana.mid(1).toInt();
+                nopeus = sana.mid(1).toInt();
                 ui->nopeusLabel->setText(QString("%1 km/h").arg(nopeus));
             }
             else if( sana.startsWith("T"))
             {
-                int nopeus = sana.mid(1).toInt();
-                ui->nopeusSlider->setValue(nopeus);
+                int tavoitenopeus = sana.mid(1).toInt();
+                ui->nopeusSlider->setValue(tavoitenopeus);
+            }
+            else if( sana.startsWith('J'))
+            {
+                jkvNopeus = sana.mid(1).toInt();
+            }
+            else if( sana.startsWith('M'))
+            {
+                jkvMatka = sana.mid(1).toInt();
             }
 
             // PITÄISI VIELÄ TEHDÄ JKV-TIETOJEN NÄYTTÖ NÄYTTÖRUUDULLE
+            // Nyt laittaa vain tekstiä, myöhemmin hieno näyttö, kuinkas muutenkaan
+            QPixmap kuva(200,400);
+            QPainter painter(&kuva);
+
+            painter.setFont( QFont("Helvetica",18));
+            painter.drawText(10,10,180,20, QString("%1 km/h").arg(jkvNopeus));
+            painter.drawText(10,40,180,60, QString("%1 m").arg(jkvMatka ));
+            ui->naytto->setPixmap(kuva);
 
         }
         ui->poyta1Nappi->setChecked(poyta1);

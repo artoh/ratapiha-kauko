@@ -18,8 +18,15 @@ public:
 
     Ratapiha::KulkutieTyyppi tyyppi() const { return Ratapiha::JUNAKULKUTIE; }
 
-    bool PuraKulkutie();
+    bool PeruKulkutie();
+    bool PuraKulkutie(int kellonaika);
 
+    void raideVarautuu(RaideTieto *raide);
+    void raideVapautuu(RaideTieto *raide);
+
+    virtual Ratapiha::KulkutieTila tila() const;
+
+    void valvoKulkutie(int kellonaika);
 protected:
 
     bool alkuEhdot(RaiteenPaa *paa);
@@ -27,7 +34,7 @@ protected:
     bool loppuEhdot(RaiteenPaa *maaliPaa);
 
     void laitaVarit();
-
+    int purkamisenAjastin_;
 
 };
 

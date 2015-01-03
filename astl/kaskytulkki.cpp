@@ -83,7 +83,7 @@ QString KaskyTulkki::komento(const QString &kasky)
         if( !kulkutie)
             return QString("VIRHE EiKulkutieta");
 
-        if( kulkutie->PuraKulkutie())
+        if( kulkutie->PeruKulkutie())
             return QString("OK");
         else
             return QString("VIRHE EiVoiPurkaa");

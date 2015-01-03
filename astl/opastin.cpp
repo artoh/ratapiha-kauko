@@ -81,6 +81,11 @@ void Opastin::aslViesti(int sanoma)
         break;
 
     }
+    // Turvatoiminta
+    // Jos opaste jostain syystä muu kuin asetinlaitteen asettama (esim. asetinlaitteen uudelleenkäynnistyksen takia),
+    // niin opastin punaiselle.
+    if( opaste() != asetettavaOpaste())
+        asetaOpaste(Ratapiha::OPASTE_SEIS);
 }
 
 QString Opastin::tilaTeksti() const

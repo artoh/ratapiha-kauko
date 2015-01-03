@@ -128,7 +128,10 @@ bool Asetinlaite::muodostaKulkutie(RaideTieto *mista, RaideTieto *minne, Ratapih
             return true;
         }
         else
+        {
+            delete kulkutie;
             return false;   // Perusehdot eivät täyttyneet
+        }
 
     }
     return false;
@@ -137,10 +140,27 @@ bool Asetinlaite::muodostaKulkutie(RaideTieto *mista, RaideTieto *minne, Ratapih
 
 void Asetinlaite::valvoKulkutiet()
 {
+    QList<Kulkutie*> puretut;
+
+    // Valvoo kaikkia voimassa olevia kulkuteitä elementtien lukituksen suhteen.
+    // Vapaanaoloja valvotaan akselinlaskennan sanomien avulla
     foreach (Kulkutie *kulkutie, kulkutiet_)
     {
-        kulkutie->valvoKulkutie();
+        if( kulkutie->pituus())
+            kulkutie->valvoKulkutie(simulaatioAika());
+        else
+            puretut.append(kulkutie);
     }
+
+    // Poistetaan puretut kulkutiet, eli kulkutiet, joissa ei ole enää yhtään
+    // elementtiä jäljellä.
+    foreach (Kulkutie *purettu, puretut)
+    {
+        kulkutiet_.removeOne(purettu);
+        delete purettu;
+    }
+    if( !puretut.isEmpty())
+        emit kulkutiemaaraMuutos(kulkutiet_.count());
 }
 
 void Asetinlaite::rekisteroiInstanssi(Asetinlaite *instanssi)

@@ -2,7 +2,8 @@
 #include "opastin.h"
 
 JunaKulkutie::JunaKulkutie(RaideTieto *mista, RaideTieto *minne)
-    : Kulkutie(mista, minne)
+    : Kulkutie(mista, minne),
+      purkamisenAjastin_(0)
 {
 
 }
@@ -12,7 +13,7 @@ JunaKulkutie::~JunaKulkutie()
 
 }
 
-bool JunaKulkutie::PuraKulkutie()
+bool JunaKulkutie::PeruKulkutie()
 {
     // Alkuehdot
     if( tila()!= Ratapiha::KULKUTIE_LUKITAAN && tila()!=Ratapiha::KULKUTIE_VALMIS
@@ -39,13 +40,128 @@ bool JunaKulkutie::PuraKulkutie()
     {
         paa->raide()->vapautaKulkutielta(this);
 
+        // Kulkutiehen kuuluvat opasteet SEIS-asentoon
         if( tila() == Ratapiha::KULKUTIE_VALMIS && paa->liitettyPaa() && paa->liitettyPaa()->opastin() &&
                 paa->liitettyPaa()->opastin()->opaste() != Ratapiha::OPASTE_SEIS)
             paa->liitettyPaa()->opastin()->asetaOpaste(Ratapiha::OPASTE_SEIS);
     }
-    tila_ = Ratapiha::KULKUTIE_EIKULKUTIETA;
+    valmisKulkutie_.clear();    // Tyhjennetään kulkutie-elementtien lista
     return true;
 
+}
+
+void JunaKulkutie::valvoKulkutie(int kellonaika)
+{
+    // Jos purkuviive valmistuu
+    if(purkamisenAjastin_ && purkamisenAjastin_ > kellonaika)
+    {
+        // Puretaan kulkutie
+        // Kulkutie saadaan purkaa
+        foreach (RaiteenPaa* paa, valmisKulkutie_)
+        {
+            paa->raide()->vapautaKulkutielta(this);
+        }
+        valmisKulkutie_.clear();    // Tyhjennetään kulkutie-elementtien lista
+        return;
+    }
+
+    bool kaikkiLukittu = true;
+    foreach (RaiteenPaa* paa, valmisKulkutie_)
+    {
+        if( paa->raide()->onkoLukittuKulkutielle() != Ratapiha::ELEMENTTI_LUKITTU)
+            kaikkiLukittu = false;
+    }
+
+    if( tila() == Ratapiha::KULKUTIE_LUKITAAN && kaikkiLukittu)
+    {
+        // Nyt kulkutie on viimein valmis
+        tila_ = Ratapiha::KULKUTIE_VALMIS;
+        laitaVarit();
+    }
+    else if(( tila()==Ratapiha::KULKUTIE_KAYTOSSA || tila()==Ratapiha::KULKUTIE_VALMIS ) && !kaikkiLukittu )
+    {
+        // Jos valvotussa kulkutiessä elementit eivät pysy oikein lukittuina (syynä vaikka aukiajo), on
+        // välittömänä seurauksena kulkutien siirtyminen vikatilaan
+        kulkutieVikatilaan();
+    }
+
+}
+
+bool JunaKulkutie::PuraKulkutie(int kellonaika)
+{
+    // Purkaa kulkutien hätävaraisesti, vaikka se olisi vikatilassa tai osittain tai kokonaan käytössä
+
+    foreach (RaiteenPaa *paa, valmisKulkutie_)
+    {
+        if( paa->liitettyPaa() && paa->liitettyPaa()->opastin())
+            paa->liitettyPaa()->opastin()->asetaOpaste(Ratapiha::OPASTE_SEIS);
+    }
+    purkamisenAjastin_ = kellonaika + 60;
+    return true;
+}
+
+void JunaKulkutie::raideVarautuu(RaideTieto *raide)
+{
+    // Jos purku käynnissä..
+    if( purkamisenAjastin_)
+    {
+        if( tila() == Ratapiha::KULKUTIE_VALMIS && raide == valmisKulkutie_.first()->raide())
+        {
+            // Jos juna ajoi purettavalle kulkutielle, annetaan sen edetä kulkutiellä ja
+            // purkaa kulkutie automaattisesti
+            tila_ = Ratapiha::KULKUTIE_VALMIS;
+            purkamisenAjastin_ = 0;
+        }
+    }
+
+    // Jos kulkutie oli VALMIS-tilassa, siirtyy se KÄYTÖSSÄ-tilaan
+    if( tila() == Ratapiha::KULKUTIE_VALMIS)
+        tila_ = Ratapiha::KULKUTIE_KAYTOSSA;
+
+    // Etsitään kyseinen raiteenpää
+    // Kulkutien tulee olla varautunut tähän raiteeseen saakka
+    foreach (RaiteenPaa *paa, valmisKulkutie_)
+    {
+        if( paa->raide() == raide )
+        {
+            // Löydettiin varautunut raide
+            // Mahdollinen opaste näyttämään SEIS
+            if( paa->liitettyPaa() && paa->liitettyPaa()->opastin())
+                paa->liitettyPaa()->opastin()->asetaOpaste(Ratapiha::OPASTE_SEIS);
+            break;
+        }
+        // Valvotaan varautumisen järjestystä sillä, että kaikkien tätä edeltävien elementtien
+        // pitää olla myös varattuja
+        if( paa->raide()->vapaanaOlo() != Ratapiha::RAIDE_VARATTU)
+            kulkutieVikatilaan();
+    }
+}
+
+void JunaKulkutie::raideVapautuu(RaideTieto *raide)
+{
+    if( tila() == Ratapiha::KULKUTIE_KAYTOSSA)
+    {
+
+        // Jos kulkutiessä ensimmäisenä oleva raide vapautuu, niin silloin se puretaan kulkutieltä
+        if( raide == valmisKulkutie_.first()->raide())
+        {
+            raide->vapautaKulkutielta();
+            valmisKulkutie_.removeFirst();
+        }
+        else
+        {
+            // Muuten vapautumisen suunta on väärä, ja kulkutie merkitään vikatilaan
+            kulkutieVikatilaan();
+        }
+    }
+}
+
+Ratapiha::KulkutieTila JunaKulkutie::tila() const
+{
+    if( purkamisenAjastin_)
+        return Ratapiha::KULKUTIE_PURETAAN;
+    else
+        return tila_;
 }
 
 bool JunaKulkutie::alkuEhdot(RaiteenPaa *paa)

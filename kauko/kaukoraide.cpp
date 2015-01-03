@@ -91,6 +91,9 @@ void KaukoRaide::paivita(const QStringList& dataLista)
     else if( ekatieto.contains('l'))
         elementinLukitus_ = ELEMENTTI_LUKITAAN;
 
+    kulkutieVikatilassa_ = ekatieto.contains('V');
+    kulkutiePuretaan_ = ekatieto.contains('H');
+
 
     for(int i=3; i < dataLista.count(); i++)
     {
