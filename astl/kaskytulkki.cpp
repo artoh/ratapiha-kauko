@@ -71,6 +71,24 @@ QString KaskyTulkki::komento(const QString &kasky)
         return vastaus;
     }
 
+    if( sanat.first() == "KPER")
+    {
+        if( sanat.count() != 2)
+            return QString("VIRHE Syntaksi");
+
+        RaideTieto* raide = asl()->raideTunnustekstilla( sanat.at(1));
+        if( !raide )
+            return QString("VIRHE EiRaidetta");
+        Kulkutie *kulkutie = raide->kulkutie();
+        if( !kulkutie)
+            return QString("VIRHE EiKulkutieta");
+
+        if( kulkutie->PuraKulkutie())
+            return QString("OK");
+        else
+            return QString("VIRHE EiVoiPurkaa");
+    }
+
     if( sanat.first() == "OP" && sanat.count() == 2)
     {
         // Tilapäinen opastinkäsky

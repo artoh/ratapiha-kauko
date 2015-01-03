@@ -79,6 +79,7 @@ void Opastin::aslViesti(int sanoma)
         // VIRHEELLINEN OPASTE !!!
         opaste_ = OPASTE_PIMEA;
         break;
+
     }
 }
 

@@ -24,6 +24,7 @@
 #include "veturi.h"
 #include "ratascene.h"
 #include "moottori.h"
+#include "jkvlaite.h"
 
 Veturi::Veturi(RataScene *skene, const QString &tyyppi, int veturiNumero)
     : Vaunu(skene, tyyppi), veturiNumero_(veturiNumero), moottori_(0)
@@ -98,4 +99,26 @@ Veturi::Ajopoyta Veturi::ajopoyta()
         return AJOPOYTA_TAKANA;
 
     return EI_AJOPOYTAA;
+}
+
+QString Veturi::veturiTila()
+{
+    QString tila = QString("V%1 %2 ").arg(veturiNumero())
+            .arg( vaununTyyppi() );
+
+    if( ajopoyta() == AJOPOYTA_EDESSA)
+        tila.append("A1 ");
+    else if( ajopoyta() == AJOPOYTA_TAKANA)
+        tila.append("A2 ");
+
+    Moottori *moottorini = moottori();
+    if( moottorini )
+    {
+        tila.append( QString("N%1 T%2 J%3 M%4 ")
+                     .arg((int) moottorini->nopeusKmH())
+                     .arg((int) moottorini->tavoiteNopeusKmH())
+                     .arg((int) moottorini->jkv()->jkvNopeusKmh())
+                     .arg((int) moottorini->jkv()->jkvMatka()));
+    }
+    return tila;
 }

@@ -4,6 +4,7 @@
 #include <QList>
 
 #include "raidetieto.h"
+#include "ratapiha.h"
 
 /**
  * @brief Kantaluokka kulkuteille
@@ -21,16 +22,6 @@ public:
         ETELAAN
     };
 
-    enum KulkutieTila
-    {
-        EIKULKUTIETA,
-        PERUSEHDOT,
-        LUKITAAN,
-        VALMIS,
-        KAYTOSSA,
-        PURETTU,
-        VIRHE
-    };
 
     Kulkutie(RaideTieto* mista, RaideTieto* minne);
     ~Kulkutie();
@@ -62,7 +53,13 @@ public:
      */
     QString raiteet();
 
-    KulkutieTila tila() const { return tila_; }
+    Ratapiha::KulkutieTila tila() const { return tila_; }
+
+    /**
+     * @brief KPER-komento (Kulkutien purkaminen)
+     * @return onnistuiko
+     */
+    virtual bool PuraKulkutie() = 0;
 
 protected:
     /**
@@ -95,6 +92,8 @@ protected:
     virtual void laitaVarit() = 0;
 
 
+
+
     /**
      * @brief Etsii kulkutien rekursiivisella funktiolla
      *
@@ -115,7 +114,7 @@ protected:
     int lyhimmanKulkutienPituus_;
     bool onkoLyhinToissijaisella_;
 
-    KulkutieTila tila_;
+    Ratapiha::KulkutieTila tila_;
 
 
 };

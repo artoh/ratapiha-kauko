@@ -18,6 +18,8 @@ public:
 
     Ratapiha::KulkutieTyyppi tyyppi() const { return Ratapiha::JUNAKULKUTIE; }
 
+    bool PuraKulkutie();
+
 protected:
 
     bool alkuEhdot(RaiteenPaa *paa);

@@ -27,8 +27,12 @@
 
 #include "ratasoketti.h"
 
-RataSoketti::RataSoketti(QTcpSocket *soketti, QObject *parent) :
-    QObject(parent), socket_(soketti)
+#include "moottori.h"
+
+RataSoketti::RataSoketti(QTcpSocket *soketti, RataScene *parent) :
+    QObject(parent), socket_(soketti),
+    moodi_(VETURISOKETTI), skene_(parent),
+    veturi_(0)
 {
     connect( socket_, SIGNAL(readyRead()), this, SLOT(lueSanoma()));
 }
@@ -38,38 +42,88 @@ void RataSoketti::lueSanoma()
     QDataStream in( socket_ );
     in.setVersion(QDataStream::Qt_4_0);
 
-    // Tilapäisesti teksiprotokolla
 
-    //forever
-    while( socket_->canReadLine())
+    if( moodi_ == ASETINLAITESOKETTI)
     {
-        if( (unsigned) socket_->bytesAvailable() < sizeof(quint32))
-            break;
+        forever
+        {
+            if( (unsigned) socket_->bytesAvailable() < sizeof(quint32))
+                break;
+            quint32 sanoma;
+            in >> sanoma;
+            if( sanoma > 0)
+                emit saapunutSanoma(sanoma);
+        }
 
-        quint32 sanoma;
-//        in >> sanoma;
-        QString rivi;
-        rivi = QString::fromLatin1( socket_->readLine() ).simplified();
-        sanoma = rivi.toUInt();
-        if( sanoma > 0)
-            emit saapunutSanoma(sanoma);
+    }
+    else
+    {
+
+        while( socket_->canReadLine())
+        {
+            QString rivi = socket_->readLine().simplified();
+            if( rivi == "ASETINLAITE")
+            {
+                moodi_ = ASETINLAITESOKETTI;
+                connect( skene_, SIGNAL(astlViesti(uint)), this, SLOT(lahetaSanoma(uint)));
+                connect( this, SIGNAL(saapunutSanoma(quint32)), skene_, SLOT(sanoma(quint32)));
+
+                skene_->lahetaKaikkiTilatiedot();
+                return;
+            }
+
+            veturiKasky(rivi);
+        }
+        // Lähetetään aktiivisen veturin tietopaketti
+        if( veturi_)
+        {
+            Veturi *veturi = skene_->veturi(veturi_);
+            if( veturi )
+                socket_->write( QString( veturi->veturiTila() + "\n" ).toLatin1() );
+        }
     }
 }
 
 
 void RataSoketti::lahetaSanoma(quint32 sanoma)
 {
-//    qDebug() << " L.SAN " << sanoma;
 
-    // Muokataan myöhemmin lähettämään 256 sanoman blokkeja
-    /*
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0 );
     out << sanoma;
 
     socket_->write(block);
-    */
-    QString teksti = QString::number(sanoma) + "\n";
-    socket_->write(teksti.toLatin1());
+
+}
+
+void RataSoketti::veturiKasky(const QString &kasky)
+{
+
+    QStringList listana = kasky.split(" ");
+    foreach (QString sana, listana)
+    {
+        // VETURIN VALINTA
+        if( sana.startsWith('V'))
+        {
+            int nro = sana.mid(1).toInt();
+            Veturi *veturi = skene_->veturi( nro );
+            if( veturi )
+                veturi_ = nro;
+        }
+        // AJOPÖYTÄ
+        else if( sana == "A1")
+            skene_->asetaAjoPoyta(veturi_, Veturi::AJOPOYTA_EDESSA);
+        else if( sana == "A2")
+            skene_->asetaAjoPoyta(veturi_, Veturi::AJOPOYTA_TAKANA);
+        else if( sana.startsWith("T"))
+        {
+            int numero = sana.mid(1).toInt();
+            Veturi *veturi = skene_->veturi(veturi_);
+            if( veturi && veturi->moottori())
+                veturi->moottori()->asetaTavoiteNopeusKmh(numero);
+        }
+
+    }
+
 }

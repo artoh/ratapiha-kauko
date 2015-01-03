@@ -159,6 +159,17 @@ namespace Ratapiha
         SUOJASTUS_ULOS
     };
 
+
+    enum KulkutieTila
+    {
+
+        KULKUTIE_EIKULKUTIETA,
+        KULKUTIE_PERUSEHDOT,
+        KULKUTIE_LUKITAAN,
+        KULKUTIE_VALMIS,
+        KULKUTIE_KAYTOSSA,
+        KULKUTIE_VIRHE
+    };
 }
 
 

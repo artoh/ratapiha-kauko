@@ -51,6 +51,11 @@ public:
      */
     Ratapiha::ElementinLukitus lukitse(Ratapiha::VaihteenAsento asentoon);
 
+    /**
+     * @brief Vapauttaa elementin kulkutielukitus
+     */
+    void vapautaKulkutieLukitus();
+
     Ratapiha::VaihteenAsento pyydettyAsento() const { return pyydettyAsento_; }
     Ratapiha::VaihteenAsento valvottuAsento() const { return valvottuAsento_; }
     Ratapiha::VaihteenAsento kaantyyAsentoon() const { return kaantyyAsentoon_; }

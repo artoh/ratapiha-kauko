@@ -1,4 +1,4 @@
-/**************************************************************************
+ /**************************************************************************
 **
 **  Ratapiha
 **
@@ -19,29 +19,14 @@
 **
 **************************************************************************/
 
+#include <QApplication>
+#include "ajopoyta.h"
 
-#include "ratapalvelin.h"
-
-#include "ratascene.h"
-#include "ratasoketti.h"
-
-#include <QDebug>
-
-RataPalvelin::RataPalvelin(RataScene *skene)
-    : QTcpServer(skene),
-      skene_(skene)
+int main(int argc, char* argv[])
 {
-    connect( this, SIGNAL(newConnection()), this, SLOT(yhteys()));
-}
-
-void RataPalvelin::yhteys()
-{
-    QTcpSocket* soketti = nextPendingConnection();
-    new RataSoketti(soketti, skene_);
-
-
-    // Alustetaan ilmoittamalla kaikki tilatiedot
-    // Myöhemmin osaa toimia eri moodeissa (astl/veturilaite)
-    // skene_->lahetaKaikkiTilatiedot();
+    QApplication a(argc, argv);
+    AjoPoyta ajopoyta;
+    ajopoyta.show();
+    return a.exec();
 }
 

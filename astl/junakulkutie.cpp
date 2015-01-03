@@ -12,6 +12,42 @@ JunaKulkutie::~JunaKulkutie()
 
 }
 
+bool JunaKulkutie::PuraKulkutie()
+{
+    // Alkuehdot
+    if( tila()!= Ratapiha::KULKUTIE_LUKITAAN && tila()!=Ratapiha::KULKUTIE_VALMIS
+            && tila()!=Ratapiha::KULKUTIE_PERUSEHDOT)
+        return false;
+
+    if( tila() == Ratapiha::KULKUTIE_VALMIS)
+    {
+        // Valmiissa kulkutiessä ei saa olla junaa lähestymismatkalla (1200 m)
+        int matka = 0;
+        RaiteenPaa *paa = valmisKulkutie_.first()->liitettyPaa();
+
+        while( paa && (matka < 1200))
+        {
+            if( paa->raide()->vapaanaOlo() != Ratapiha::RAIDE_VAPAA)
+                return false;      // Raide on varattu
+            matka += paa->raide()->pituus();
+            paa = paa->seuraavaRaiteenpaa();
+        }
+    }
+
+    // Kulkutie saadaan purkaa
+    foreach (RaiteenPaa* paa, valmisKulkutie_)
+    {
+        paa->raide()->vapautaKulkutielta(this);
+
+        if( tila() == Ratapiha::KULKUTIE_VALMIS && paa->liitettyPaa() && paa->liitettyPaa()->opastin() &&
+                paa->liitettyPaa()->opastin()->opaste() != Ratapiha::OPASTE_SEIS)
+            paa->liitettyPaa()->opastin()->asetaOpaste(Ratapiha::OPASTE_SEIS);
+    }
+    tila_ = Ratapiha::KULKUTIE_EIKULKUTIETA;
+    return true;
+
+}
+
 bool JunaKulkutie::alkuEhdot(RaiteenPaa *paa)
 {
     // Opastimen pitää pystyä näyttämään AJA-opaste

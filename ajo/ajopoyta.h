@@ -20,28 +20,37 @@
 **************************************************************************/
 
 
-#include "ratapalvelin.h"
+#ifndef AJOPOYTA_H
+#define AJOPOYTA_H
 
-#include "ratascene.h"
-#include "ratasoketti.h"
+#include <QWidget>
 
-#include <QDebug>
+#include <QTcpSocket>
 
-RataPalvelin::RataPalvelin(RataScene *skene)
-    : QTcpServer(skene),
-      skene_(skene)
-{
-    connect( this, SIGNAL(newConnection()), this, SLOT(yhteys()));
+namespace Ui {
+class AjoPoyta;
 }
 
-void RataPalvelin::yhteys()
+class AjoPoyta : public QWidget
 {
-    QTcpSocket* soketti = nextPendingConnection();
-    new RataSoketti(soketti, skene_);
+    Q_OBJECT
 
+public:
+    explicit AjoPoyta(QWidget *parent = 0);
+    ~AjoPoyta();
 
-    // Alustetaan ilmoittamalla kaikki tilatiedot
-    // Myöhemmin osaa toimia eri moodeissa (astl/veturilaite)
-    // skene_->lahetaKaikkiTilatiedot();
-}
+private slots:
+    void paivita();
 
+    void ajoPoytaYksi(bool onko);
+    void valitseVeturi();
+    void muutaNopeus(int nopeus);
+    void pyydaTiedot();
+
+private:
+    Ui::AjoPoyta *ui;
+
+    QTcpSocket soketti_;
+};
+
+#endif // AJOPOYTA_H

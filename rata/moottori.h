@@ -56,6 +56,7 @@ public:
     void asetaTavoiteNopeusKmh(int nopeusKmh);
 
     Akseli* akseli() { return akseli_; }
+    JKVLaite *jkv() { return jkv_; }
 
 protected:
     Veturi* veturi_;

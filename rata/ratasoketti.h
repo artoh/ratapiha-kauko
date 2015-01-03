@@ -25,11 +25,13 @@
 
 #include <QTcpSocket>
 
+#include "ratascene.h"
+
 class RataSoketti : public QObject
 {
     Q_OBJECT
 public:
-    explicit RataSoketti(QTcpSocket *soketti, QObject *parent=0);
+    RataSoketti(QTcpSocket *soketti, RataScene *parent=0);
 
 signals:
     void saapunutSanoma( quint32 sanoma);
@@ -43,6 +45,18 @@ public slots:
 
 private:
     QTcpSocket *socket_;
+
+    void veturiKasky( const QString& kasky);
+
+    enum SokettiMoodi
+    {
+        VETURISOKETTI,
+        ASETINLAITESOKETTI
+    };
+
+    SokettiMoodi moodi_;
+    RataScene *skene_;
+    int veturi_;
 
 };
 

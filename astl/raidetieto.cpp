@@ -30,7 +30,7 @@
 #include "kulkutie.h"
 
 RaideTieto::RaideTieto() :
-    kulkutie_(0)
+    vapaanaOlo_(Ratapiha::RAIDE_VIKATILA) , kulkutie_(0)
 {
 }
 
@@ -56,11 +56,11 @@ void RaideTieto::asetinLaiteSanoma(int laite, int sanoma)
     {
         // Vapaanaolon valvontaa koskeva sanoma
         if( sanoma == 0x81)
-            vapaanaOlo_ = VARATTU;
+            vapaanaOlo_ = Ratapiha::RAIDE_VARATTU;
         else if( sanoma == 0x82)
-            vapaanaOlo_ = VAPAA;
+            vapaanaOlo_ = Ratapiha::RAIDE_VAPAA;
         else
-            vapaanaOlo_ = VIRHE;
+            vapaanaOlo_ = Ratapiha::RAIDE_VIKATILA;
         // Sitten tehdään vapaanaoloon liittyvät herätteet
 
     }
@@ -98,15 +98,6 @@ QString RaideTieto::raideTunnusTeksti() const
     return QString("%1%2").arg(liikennepaikka() ).arg( raidetunnus() ,3,10,QChar('0'));
 }
 
-QString RaideTieto::raideInfo() const
-{
-    QString info = raideTunnusTeksti() + " " + QString::number(raideId()) + "\n";
-    if( vapaanaOlo() == VARATTU)
-        info += "VARATTU ";
-    else if( vapaanaOlo() == VIRHE)
-        info += "VALVONTAVIRHE";
-    return info;
-}
 
 QString RaideTieto::raideTila()
 {
@@ -123,8 +114,8 @@ QString RaideTieto::raideTila()
 
     switch (vapaanaOlo())
     {
-        case VARATTU: tila.append('X'); break;
-        case VAPAA: tila.append('O'); break;
+        case Ratapiha::RAIDE_VARATTU: tila.append('X'); break;
+        case Ratapiha::RAIDE_VAPAA: tila.append('O'); break;
         default: tila.append('!'); break;
     }
 
@@ -155,4 +146,10 @@ void RaideTieto::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa * /*mista*/, 
     // Perustilanteessa, eli ellei ole mitään käännettäviä elementtejä,
     // sijoitetaan vain osaksi kulkutietä
     kulkutie_ = kulkutie;
+}
+
+void RaideTieto::vapautaKulkutielta(Kulkutie *kulkutielta)
+{
+    if( kulkutielta == kulkutie())
+        kulkutie_ = 0;
 }

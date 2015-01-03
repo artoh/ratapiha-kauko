@@ -79,11 +79,13 @@ void KaukoRaide::paivita(const QStringList& dataLista)
     else if( ekatieto.contains('!'))
         vapaana_ = RAIDE_VIKATILA;
 
+    kulkutieTyyppi_ = EIKULKUTIETA;
     if( ekatieto.contains('J'))
         kulkutieTyyppi_ = JUNAKULKUTIE;
     else if( ekatieto.contains('V'))
         kulkutieTyyppi_ = VAIHTOKULKUTIE;
 
+    elementinLukitus_ = ELEMENTTI_VAPAA;
     if( ekatieto.contains('L'))
         elementinLukitus_ = ELEMENTTI_LUKITTU;
     else if( ekatieto.contains('l'))

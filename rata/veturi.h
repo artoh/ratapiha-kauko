@@ -70,6 +70,8 @@ public:
     Moottori* asetaAjopoyta( Ajopoyta ajopoyta);
     Ajopoyta ajopoyta();
 
+    QString veturiTila();
+
 protected:
     int veturiNumero_;
     Moottori* moottori_;

@@ -44,6 +44,7 @@ public:
     QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa *paalle, Ratapiha::KulkutieTyyppi tyyppi);
 
     void lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
+    void vapautaKulkutielta(Kulkutie *kulkutielta);
 
     /**
      * @brief Vaihteen kääntökäsky

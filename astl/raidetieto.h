@@ -46,13 +46,6 @@ public:
         RAIDERISTEYS = 20
     };
 
-    enum VapaanaoloTila
-    {
-        VIRHE = 0,
-        VARATTU = 1,
-        VAPAA = 2
-    };
-
     enum KulkutieTyyppi
     {
         EIKULKUTIETA,
@@ -111,17 +104,11 @@ public:
     bool onkoSahkoistetty() const { return sahkoistetty_; }
     bool onkoValvottu() const { return valvottu_; }
 
-    VapaanaoloTila vapaanaOlo() const { return vapaanaOlo_; }
+    Ratapiha::RaideVapaana vapaanaOlo() const { return vapaanaOlo_; }
 
     static RaideTieto* luoRaide(RaideTyyppi tyyppi);
 
     QString raideTunnusTeksti() const;
-
-    /**
-     * @brief Tilapäinen (?) funktio, joka kertoo raiteesta
-     * @return
-     */
-    virtual QString raideInfo() const;
 
     /**
      * @brief Raiteen tilasanoma asetinlaitteelle
@@ -142,6 +129,7 @@ public:
     virtual Ratapiha::ElementinLukitus onkoLukittuKulkutielle();
 
     virtual void lukitseKulkutielle(Kulkutie* kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
+    virtual void vapautaKulkutielta(Kulkutie* kulkutielta);
 
 protected:
     int raideId_;
@@ -152,7 +140,7 @@ protected:
     bool sahkoistetty_;
     bool valvottu_;
 
-    VapaanaoloTila vapaanaOlo_;
+    Ratapiha::RaideVapaana vapaanaOlo_;
 
     Kulkutie *kulkutie_;
 };

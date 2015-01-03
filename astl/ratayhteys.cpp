@@ -38,19 +38,42 @@ RataYhteys::RataYhteys(QObject *parent) :
 
 void RataYhteys::lahetaSanoma(unsigned int sanoma)
 {
-    QString teksti = QString::number(sanoma) + "\n";
-    soketti_.write(teksti.toLatin1());
+    // QString teksti = QString::number(sanoma) + "\n";
+    // soketti_.write(teksti.toLatin1());
+
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0 );
+    out << (quint32) sanoma;
+qDebug() << "L " << sanoma;
+    soketti_.write(block);
 }
 
 void RataYhteys::yhteysMuodostettu()
 {
 
+    soketti_.write( QString("ASETINLAITE\n").toLatin1());
     emit yhdistettyRataan(true);
 
 }
 
 void RataYhteys::lueSanoma()
 {
+    QDataStream in(&soketti_);
+    in.setVersion(QDataStream::Qt_4_0);
+    forever
+    {
+        if( (unsigned) soketti_.bytesAvailable() < sizeof(quint32))
+            break;
+        quint32 sanoma;
+        in >> sanoma;
+
+        if( sanoma > 0)
+            emit sanomaSaapunut(sanoma);
+    }
+
+    return;
+
     // Toistaiseksi tekstillä
     while( soketti_.canReadLine())
     {

@@ -118,7 +118,7 @@ bool Asetinlaite::muodostaKulkutie(RaideTieto *mista, RaideTieto *minne, Ratapih
     {
         JunaKulkutie *kulkutie = new JunaKulkutie(mista, minne);
         kulkutie->etsiKulkutie(Kulkutie::EISUUNTAA);
-        if( kulkutie->tila() == Kulkutie::PERUSEHDOT)
+        if( kulkutie->tila() == Ratapiha::KULKUTIE_PERUSEHDOT)
         {
             kulkutie->lukitseKulkutielle();
             kulkutiet_.append(kulkutie);

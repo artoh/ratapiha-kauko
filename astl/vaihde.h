@@ -44,13 +44,12 @@ public:
     RaiteenPaa *aktiivinenVastapaa(RaiteenPaa *paalle);
     QPair<RaiteenPaa*, RaiteenPaa*> mahdollisetVastapaat(RaiteenPaa *paalle, Ratapiha::KulkutieTyyppi tyyppi);
 
-    virtual QString raideInfo() const;
-
     virtual QString raideTila();
 
     bool kaanna();
 
     void lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
+    void vapautaKulkutielta(Kulkutie *kulkutielta);
 
     Ratapiha::ElementinLukitus onkoLukittuKulkutielle();
 

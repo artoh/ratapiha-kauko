@@ -117,13 +117,23 @@ void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, Ra
 
 }
 
+void RisteysVaihde::vapautaKulkutielta(Kulkutie *kulkutielta)
+{
+    if( kulkutielta == kulkutie())
+    {
+        vaihdeAB_.vapautaKulkutieLukitus();
+        vaihdeCD_.vapautaKulkutieLukitus();
+        kulkutie_ = 0;
+    }
+}
+
 
 bool RisteysVaihde::kaanna(bool ab, bool cd)
 {
     if( !( ab || cd))
         return false;   // Ei kääntöpyyntöä lainkaan
 
-    if( vapaanaOlo() == VARATTU)
+    if( vapaanaOlo() != Ratapiha::RAIDE_VAPAA)
         return false;   // Ei käännetä yksikön alta
 
     if( ab && vaihdeAB_.lukitus() == ELEMENTTI_VAPAA)

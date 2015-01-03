@@ -7,7 +7,7 @@ Kulkutie::Kulkutie(RaideTieto *mista, RaideTieto *minne)
     : mista_(mista), minne_(minne),
       lyhimmanKulkutienPituus_(20000),  // Kulkutien enimmäispituus 20 km
       onkoLyhinToissijaisella_(true),
-      tila_(EIKULKUTIETA)
+      tila_(Ratapiha::KULKUTIE_EIKULKUTIETA)
 {
 
 }
@@ -51,12 +51,12 @@ void Kulkutie::etsiKulkutie(Kulkutie::Suunta suunnasta)
 
     // Jos löytyi, vaihdetaan tilaa
     if( loytyikoKulkutie())
-        tila_ = PERUSEHDOT;
+        tila_ = Ratapiha::KULKUTIE_PERUSEHDOT;
 }
 
 void Kulkutie::lukitseKulkutielle()
 {
-    if( tila() != PERUSEHDOT )
+    if( tila() != Ratapiha::KULKUTIE_PERUSEHDOT )
         return;     // Pitää olla kulkutie valmiina
 
     for( int i = 0; i < valmisKulkutie_.count()-1; i++)
@@ -70,7 +70,7 @@ void Kulkutie::lukitseKulkutielle()
     // Nyt pitäisi laittaa tämä kulkutie valvontaan odottamaan, että kaikki vaihteet
     // kääntyvät kulkutie-ehtojen mukaisiksi, jotta voidaan laittaa värejä opastimiin
 
-    tila_ = LUKITAAN;
+    tila_ = Ratapiha::KULKUTIE_LUKITAAN;
 
 }
 
@@ -84,10 +84,10 @@ void Kulkutie::valvoKulkutie()
             kaikkiLukittu = false;
     }
 
-    if( tila() == LUKITAAN && kaikkiLukittu)
+    if( tila() == Ratapiha::KULKUTIE_LUKITAAN && kaikkiLukittu)
     {
         // Nyt kulkutie on viimein valmis
-        tila_ = VALMIS;
+        tila_ = Ratapiha::KULKUTIE_VALMIS;
         laitaVarit();
     }
 

@@ -87,22 +87,6 @@ QPair<RaiteenPaa *, RaiteenPaa *> Vaihde::mahdollisetVastapaat(RaiteenPaa *paall
     return qMakePair( (RaiteenPaa*) 0, (RaiteenPaa*) 0);
 }
 
-QString Vaihde::raideInfo() const
-{
-    QString info = RaideTieto::raideInfo();
-    if( vaihdeTila_.vika() )
-        info.append(" VIKA ");
-    if( vaihdeTila_.valvottuAsento() == Ratapiha::ASENTO_EITIEDOSSA )
-        info.append(" EI VALVOTTU ");
-    if( vaihdeTila_.kaantyyAsentoon() != Ratapiha::ASENTO_EITIEDOSSA)
-        info.append(" KÄÄNTYY ");
-    if( vaihdeVasen() )
-        info.append(" - VASEMMALLE ");
-    if( vaihdeOikea() )
-        info.append(" + OIKEALLE ");
-
-    return info;
-}
 
 QString Vaihde::raideTila()
 {
@@ -115,7 +99,7 @@ QString Vaihde::raideTila()
 bool Vaihde::kaanna()
 {
     // Ei käännä, jos raide varattu tai lukittu
-    if( vapaanaOlo() != VAPAA || vaihdeTila_.lukitus() != Ratapiha::ELEMENTTI_VAPAA)
+    if( vapaanaOlo() != Ratapiha::RAIDE_VAPAA || vaihdeTila_.lukitus() != Ratapiha::ELEMENTTI_VAPAA)
         return false;
 
     // Toistaiseksi kääntää kaikenlaiset vaihteet
@@ -158,6 +142,15 @@ void Vaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPa
 
     // Lukitaan raide kulkutielle
     kulkutie_ = kulkutie;
+}
+
+void Vaihde::vapautaKulkutielta(Kulkutie *kulkutielta)
+{
+    if( kulkutielta == kulkutie())
+    {
+        vaihdeTila_.vapautaKulkutieLukitus();
+        kulkutie_ = 0;
+    }
 }
 
 Ratapiha::ElementinLukitus Vaihde::onkoLukittuKulkutielle()

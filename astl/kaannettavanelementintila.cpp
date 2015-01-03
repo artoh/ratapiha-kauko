@@ -98,6 +98,11 @@ ElementinLukitus KaannettavanElementinTila::lukitse(VaihteenAsento asentoon)
     return lukitus_;
 }
 
+void KaannettavanElementinTila::vapautaKulkutieLukitus()
+{
+    lukitus_ = ELEMENTTI_VAPAA;
+}
+
 QString KaannettavanElementinTila::vaihdeTila()
 {
     QString info;    
