@@ -14,7 +14,7 @@ class JunaKulkutie : public Kulkutie
 {
 public:
     JunaKulkutie(RaideTieto *mista, RaideTieto *minne);
-    ~JunaKulkutie();
+    virtual ~JunaKulkutie();
 
     Ratapiha::KulkutieTyyppi tyyppi() const { return Ratapiha::JUNAKULKUTIE; }
 
@@ -26,7 +26,7 @@ public:
 
     virtual Ratapiha::KulkutieTila tila() const;
 
-    void valvoKulkutie(int kellonaika);
+    void valvoKulkutie(int kello);
 protected:
 
     bool alkuEhdot(RaiteenPaa *paa);

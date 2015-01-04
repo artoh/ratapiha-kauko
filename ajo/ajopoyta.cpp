@@ -57,9 +57,9 @@ void AjoPoyta::paivita()
     {
         bool poyta1 = false;
         bool poyta2 = false;
-        int jkvNopeus;
-        int jkvMatka;
-        int nopeus;
+        int jkvNopeus = 0;
+        int jkvMatka = 0;
+        int nopeus = 0;
         QString tyyppi;
 
         QString rivi = soketti_.readLine().simplified();
@@ -97,10 +97,14 @@ void AjoPoyta::paivita()
             // Nyt laittaa vain tekstiä, myöhemmin hieno näyttö, kuinkas muutenkaan
             QPixmap kuva(200,400);
             QPainter painter(&kuva);
+            painter.setBrush( QBrush(Qt::black));
+            painter.drawRect(0,0,200,400);
+
+            painter.setPen( QPen(QBrush(Qt::yellow), 2));
 
             painter.setFont( QFont("Helvetica",18));
-            painter.drawText(10,10,180,20, QString("%1 km/h").arg(jkvNopeus));
-            painter.drawText(10,40,180,60, QString("%1 m").arg(jkvMatka ));
+            painter.drawText( QPoint(10,40), QString("%1 km/h").arg(jkvNopeus));
+            painter.drawText( QPointF(10,60), QString("%1 m").arg(jkvMatka ));
             ui->naytto->setPixmap(kuva);
 
         }

@@ -14,7 +14,7 @@ public:
 
     Liitostyyppi tyyppi() const { return AKSELINLASKENTA; }
 
-    Kiskonpaa* siirrySeuraavalle(Kiskonpaa *mista) const ;
+    Kiskonpaa* siirrySeuraavalle(Kiskonpaa *mista) ;
     void lisaaPaa(Kiskonpaa* kiskonpaa, int raidetunnus = 0);
 
 private:

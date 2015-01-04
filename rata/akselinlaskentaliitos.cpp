@@ -9,7 +9,7 @@ AkselinlaskentaLiitos::AkselinlaskentaLiitos(int liitosId, int x, int y)
 
 }
 
-Kiskonpaa *AkselinlaskentaLiitos::siirrySeuraavalle(Kiskonpaa *mista) const
+Kiskonpaa *AkselinlaskentaLiitos::siirrySeuraavalle(Kiskonpaa *mista)
 {
     // Lähetettävä akselinlaskentaviesti on raiteen liitosasento
     // eli tämän kisko toisen pään asentotunnus

@@ -145,7 +145,7 @@ void JunaKulkutie::raideVapautuu(RaideTieto *raide)
         // Jos kulkutiessä ensimmäisenä oleva raide vapautuu, niin silloin se puretaan kulkutieltä
         if( raide == valmisKulkutie_.first()->raide())
         {
-            raide->vapautaKulkutielta();
+            raide->vapautaKulkutielta(this);
             valmisKulkutie_.removeFirst();
         }
         else

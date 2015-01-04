@@ -24,7 +24,7 @@ public:
 
 
     Kulkutie(RaideTieto* mista, RaideTieto* minne);
-    ~Kulkutie();
+    virtual ~Kulkutie();
 
     /**
      * @brief Etsii parhaimman kulkutien (mutta ei lukitse sitä)
@@ -38,7 +38,7 @@ public:
     void lukitseKulkutielle();
 
 
-    virtual void valvoKulkutie() = 0;
+    virtual void valvoKulkutie(int kello) = 0;
 
     RaideTieto *mista() { return mista_; }
     RaideTieto *minne() { return minne_; }
