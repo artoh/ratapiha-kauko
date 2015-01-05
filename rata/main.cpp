@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     RataIkkuna *ikkuna = new RataIkkuna(skene);
     ikkuna->show();
 
-    skene->asetaNopeus(0);
+    skene->asetaNopeus(1);
 
     qDebug("Time elapsed: %d ms", t.elapsed());
     splash->finish(ikkuna);
