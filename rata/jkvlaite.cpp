@@ -30,7 +30,8 @@
 #include "rataopastin.h"
 
 JKVLaite::JKVLaite(Akseli *akseli, double hidastuvuus)
-    : akseli_(akseli), hidastuvuus_(hidastuvuus), jkvNopeusMs_(0.0), jkvMatka_(0)
+    : akseli_(akseli), hidastuvuus_(hidastuvuus), jkvNopeusMs_(0.0), jkvMatka_(0), opastin_(0),
+      jkvOhitus_(0)
 {
 }
 
@@ -42,7 +43,24 @@ void JKVLaite::paivitaJkv()
     // Alustetaan matka matkana edessä olevaan liitokseen
     jkvMatka_ = akseli_->matkaEteen();
 
+    opastin_ = 0;
+
     jatkaJkvPaivitysta(akseli_->edessa());
+}
+
+Ratapiha::Opaste JKVLaite::opaste() const
+{
+    if( !opastin_)
+        return Ratapiha::OPASTE_PUUTTUU;
+
+    if( opastin_->onkoVaria( Ratapiha::OPASTIN_KELTAINEN))
+        return Ratapiha::OPASTE_AJASN;
+    else if( opastin_->onkoVaria( Ratapiha::OPASTIN_VIHREA))
+        return Ratapiha::OPASTE_AJA;
+    else if( opastin_->onkoVaria( Ratapiha::OPASTIN_PUNAINEN))
+        return Ratapiha::OPASTE_SEIS;
+
+    return Ratapiha::OPASTE_PUUTTUU;
 }
 
 void JKVLaite::jatkaJkvPaivitysta(Kiskonpaa *edessaOlevaPaa)
@@ -50,12 +68,22 @@ void JKVLaite::jatkaJkvPaivitysta(Kiskonpaa *edessaOlevaPaa)
     // Jatketaan päivitystä tästä päästä, joka on oikeaan suuntaan
     // matka tähän asti on jo lisätty jkvmatkaan
 
+    // Lähinnä oleva opastin
+    if( !opastin_ && edessaOlevaPaa->opastin() && jkvMatka() < 1200 )
+    {
+        opastin_ = edessaOlevaPaa->opastin();
+    }
+
     if( edessaOlevaPaa->vastakkainenPaa() == 0)     // esim. puskuri
         laskeJkvNopeudet(0);
-    else if( edessaOlevaPaa->opastin() != 0 && edessaOlevaPaa->opastin()->onkoVaria( Ratapiha::OPASTIN_PUNAINEN ) )
+    else if( edessaOlevaPaa->opastin() != 0 && edessaOlevaPaa->opastin()->onkoVaria( Ratapiha::OPASTIN_PUNAINEN ) &&
+             edessaOlevaPaa->opastin() != jkvOhitus_ )
         laskeJkvNopeudet(0);    // Opastimessa punainen väri
     else
     {
+        if( edessaOlevaPaa->opastin() && edessaOlevaPaa->opastin() == jkvOhitus_)
+            laskeJkvNopeudet(20);   // Jos opastin ohitetaan, valvontanopeus on 20 km/h
+
         // Merkitsee jkv-nopeuden uudelle nopeusrajoitukselle
         laskeJkvNopeudet( edessaOlevaPaa->vastakkainenPaa()->kiskotieto()->sn() );
         // Lisää uuden kiskon pituuden
@@ -82,7 +110,7 @@ void JKVLaite::laskeJkvNopeudet(int nopeudelle)
 
 
     qreal nopeusMs = nopeudelle / 3.6;   // Nopeus muutetaan metreiksi sekunnissa
-    qreal matka = jkvMatka() - 12.0;     // Matkasta vähennetään 12 metrin vara
+    qreal matka = jkvMatka() - 10.0;     // Matkasta vähennetään 12 metrin vara
 
     qreal jkvNopeus;    // Tämän pisteen mukaan laskettava jkv-nopeus
 
@@ -98,4 +126,12 @@ void JKVLaite::laskeJkvNopeudet(int nopeudelle)
     if(  jkvNopeus < jkvNopeusMs() )
         jkvNopeusMs_ = jkvNopeus;
 
+}
+
+void JKVLaite::ohitaSeisOpastin(bool ohitetaanko)
+{
+    if( ohitetaanko )
+        jkvOhitus_ = opastin_;
+    else
+        jkvOhitus_ = 0;
 }

@@ -25,8 +25,12 @@
 
 #include <QtGlobal>
 
+#include "ratapiha.h"
+
 class Akseli;
 class Kiskonpaa;
+
+class RataOpastin;
 
 /**
  * @brief Moottoriin liitettävä kulunvalvonnan toiminnallisuus
@@ -64,6 +68,17 @@ public:
 
     qreal hidastuvuus() const { return hidastuvuus_; }
 
+    /**
+     * @brief Seuraava opaste
+     * @return
+     */
+    Ratapiha::Opaste opaste() const;
+
+    void ohitaSeisOpastin(bool ohitetaanko);
+
+    bool ohitetaankoSeis() const { return jkvOhitus_ != 0 ; }
+
+
 protected:
     Akseli *akseli_;
     qreal hidastuvuus_;
@@ -85,6 +100,14 @@ protected:
      * @param nopeudelle Enimmäisnopeus nykyisestä paikasta km/h
      */
     void laskeJkvNopeudet(int nopeudelle);
+
+
+
+
+    /** Lähin opastin */
+    RataOpastin* opastin_;
+    /** Ohitettava opastin*/
+    RataOpastin* jkvOhitus_;
 };
 
 #endif // JKVLAITE_H

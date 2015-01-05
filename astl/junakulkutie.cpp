@@ -134,7 +134,16 @@ void JunaKulkutie::raideVarautuu(RaideTieto *raide)
         // pitää olla myös varattuja
         if( paa->raide()->vapaanaOlo() != Ratapiha::RAIDE_VARATTU)
             kulkutieVikatilaan();
+
     }
+
+    // Jos tämä oli ainoa eli maaliraide, puretaan
+    if( valmisKulkutie_.count() == 1)
+    {
+        valmisKulkutie_.first()->raide()->vapautaKulkutielta(this);
+        valmisKulkutie_.removeFirst();
+    }
+
 }
 
 void JunaKulkutie::raideVapautuu(RaideTieto *raide)

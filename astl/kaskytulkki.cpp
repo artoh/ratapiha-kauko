@@ -71,7 +71,7 @@ QString KaskyTulkki::komento(const QString &kasky)
         return vastaus;
     }
 
-    if( sanat.first() == "KPER")
+    if( sanat.first() == "KPER" || sanat.first() == "HP")
     {
         if( sanat.count() != 2)
             return QString("VIRHE Syntaksi");
@@ -83,7 +83,14 @@ QString KaskyTulkki::komento(const QString &kasky)
         if( !kulkutie)
             return QString("VIRHE EiKulkutieta");
 
-        if( kulkutie->PeruKulkutie())
+        bool paluuarvo = false;
+
+        if( sanat.first()=="KPER")      // Kulkutien tavanomainen peruminen
+            paluuarvo = kulkutie->PeruKulkutie();
+        else if(sanat.first()=="HP")    // Kulkutien hätävarainen purkaminen
+            paluuarvo = kulkutie->PuraKulkutie(asl()->simulaatioAika());
+
+        if( paluuarvo )
             return QString("OK");
         else
             return QString("VIRHE EiVoiPurkaa");

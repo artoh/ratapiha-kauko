@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/ajo">
         <file>pic/stop.png</file>
+        <file>jkvkuvat/poAja.png</file>
+        <file>jkvkuvat/poAjaSn.png</file>
+        <file>jkvkuvat/poSeis.png</file>
     </qresource>
 </RCC>

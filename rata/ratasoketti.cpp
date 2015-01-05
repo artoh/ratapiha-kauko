@@ -28,6 +28,7 @@
 #include "ratasoketti.h"
 
 #include "moottori.h"
+#include "jkvlaite.h"
 
 RataSoketti::RataSoketti(QTcpSocket *soketti, RataScene *parent) :
     QObject(parent), socket_(soketti),
@@ -123,7 +124,12 @@ void RataSoketti::veturiKasky(const QString &kasky)
             if( veturi && veturi->moottori())
                 veturi->moottori()->asetaTavoiteNopeusKmh(numero);
         }
-
+        else if( sana == "JKVSEISOHITUS")
+        {
+            Veturi *veturi = skene_->veturi(veturi_);
+            if( veturi && veturi->moottori())
+                veturi->moottori()->jkv()->ohitaSeisOpastin(true);
+        }
     }
 
 }

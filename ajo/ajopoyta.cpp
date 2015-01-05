@@ -29,6 +29,8 @@
 #include "ajopoyta.h"
 #include "ui_ajopoyta.h"
 
+#include "ratapiha.h"
+
 AjoPoyta::AjoPoyta(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AjoPoyta)
@@ -40,6 +42,7 @@ AjoPoyta::AjoPoyta(QWidget *parent) :
     connect( &soketti_, SIGNAL(readyRead()), this, SLOT(paivita()));
     connect( ui->poyta1Nappi, SIGNAL(clicked(bool)), this, SLOT(ajoPoytaYksi(bool)));
     connect( ui->nopeusSlider, SIGNAL(sliderMoved(int)), this, SLOT(muutaNopeus(int)));
+    connect( ui->SeisOhitusNappi, SIGNAL(clicked(bool)), this, SLOT(seisOhitus(bool)));
 
     QTimer *kyselin = new QTimer(this);
     connect( kyselin, SIGNAL(timeout()), this, SLOT(pyydaTiedot()));
@@ -53,15 +56,18 @@ AjoPoyta::~AjoPoyta()
 
 void AjoPoyta::paivita()
 {
+
+    bool poyta1 = false;
+    bool poyta2 = false;
+    int jkvNopeus = 0;
+    int jkvMatka = 0;
+    int nopeus = 0;
+    int maxNopeus = 120;
+    QString tyyppi;
+    Ratapiha::Opaste opaste = Ratapiha::OPASTE_PUUTTUU;
+
     while( soketti_.canReadLine())
     {
-        bool poyta1 = false;
-        bool poyta2 = false;
-        int jkvNopeus = 0;
-        int jkvMatka = 0;
-        int nopeus = 0;
-        QString tyyppi;
-
         QString rivi = soketti_.readLine().simplified();
         QStringList lista = rivi.split(' ');
         foreach (QString sana, lista)
@@ -92,22 +98,104 @@ void AjoPoyta::paivita()
             {
                 jkvMatka = sana.mid(1).toInt();
             }
-
-            // PITÄISI VIELÄ TEHDÄ JKV-TIETOJEN NÄYTTÖ NÄYTTÖRUUDULLE
-            // Nyt laittaa vain tekstiä, myöhemmin hieno näyttö, kuinkas muutenkaan
-            QPixmap kuva(200,400);
-            QPainter painter(&kuva);
-            painter.setBrush( QBrush(Qt::black));
-            painter.drawRect(0,0,200,400);
-
-            painter.setPen( QPen(QBrush(Qt::yellow), 2));
-
-            painter.setFont( QFont("Helvetica",18));
-            painter.drawText( QPoint(10,40), QString("%1 km/h").arg(jkvNopeus));
-            painter.drawText( QPointF(10,60), QString("%1 m").arg(jkvMatka ));
-            ui->naytto->setPixmap(kuva);
+            else if( sana.startsWith('O'))
+            {
+                if( sana == "OSEIS")
+                    opaste = Ratapiha::OPASTE_SEIS;
+                else if(sana == "OAJA")
+                    opaste = Ratapiha::OPASTE_AJA;
+                else if( sana == "OSN")
+                    opaste = Ratapiha::OPASTE_AJASN;
+            }
 
         }
+
+    }
+
+    // PITÄISI VIELÄ TEHDÄ JKV-TIETOJEN NÄYTTÖ NÄYTTÖRUUDULLE
+    // Nyt laittaa vain tekstiä, myöhemmin hieno näyttö, kuinkas muutenkaan
+    QPixmap kuva(200,400);
+    QPainter painter(&kuva);
+
+    painter.setBrush( QBrush(Qt::black));
+    painter.drawRect(0,0,200,400);
+
+    QTextOption textOption;
+    textOption.setAlignment(Qt::AlignCenter);
+
+    qreal kmhAste = ( 270.0 / maxNopeus);
+
+
+    for(int n=0; n<maxNopeus+1; n=n+5)
+    {
+        painter.save();
+        painter.translate(100,100);
+        painter.rotate(45 + n * kmhAste);
+
+        if( n % 20 == 0)
+            painter.setPen(QPen(Qt::red));
+        else
+            painter.setPen(QPen(Qt::white));
+
+        painter.drawLine(0, 70, 0, 80);
+
+        if( n % 20 == 0)
+        {
+            painter.translate(0,90);
+            painter.rotate(-180);
+            painter.setFont( QFont("Helvetica",10));
+            painter.drawText(QRectF( -10, -15,20,30), QString::number(n), textOption);
+        }
+
+        painter.restore();
+
+        painter.save();
+        painter.translate(100,100);
+        painter.rotate(45 + (qreal) jkvNopeus * kmhAste);
+
+        painter.setPen(QPen(QBrush(Qt::green),2.0));
+        painter.drawLine(QLine(0,20,0,90));
+        painter.rotate(0-jkvNopeus * kmhAste);
+
+        painter.rotate( nopeus * kmhAste);
+
+        painter.setPen(Qt::NoPen);
+        painter.setBrush( QBrush(Qt::white));
+        QPolygon viisari;
+        viisari << QPoint(-5,0) << QPoint(5,0) << QPoint(0,75);
+        painter.drawPolygon(viisari);
+
+        painter.restore();
+
+        painter.setPen(QPen(Qt::red));
+        painter.setFont( QFont("Helvetica",18));
+        painter.drawEllipse(QPointF(100,100),25,25);
+        painter.drawText( QRect(80,90,40,20), QString::number(jkvNopeus), textOption);
+
+
+        if( jkvMatka < 600 )
+            painter.setPen( QPen(Qt::red));
+        else if( jkvMatka < 1200)
+            painter.setPen( QPen(Qt::yellow));
+        else if( jkvMatka < 4900)
+            painter.setPen( QPen(Qt::green));
+
+        if( jkvMatka < 4900)
+        {
+            painter.setFont( QFont("Helvetica",16));
+            painter.drawText( QRectF(50,160,100,20), QString("%1 m").arg(jkvMatka), textOption);
+        }
+
+        if( opaste == Ratapiha::OPASTE_SEIS)
+            painter.drawPixmap(80,190, QPixmap(":/ajo/jkvkuvat/poSeis.png"));
+        else if( opaste == Ratapiha::OPASTE_AJASN)
+            painter.drawPixmap(80,190, QPixmap(":/ajo/jkvkuvat/poAjaSn.png"));
+        else if( opaste == Ratapiha::OPASTE_AJA)
+            painter.drawPixmap(80,190, QPixmap(":/ajo/jkvkuvat/poAja.png"));
+
+        ui->naytto->setPixmap(kuva);
+
+
         ui->poyta1Nappi->setChecked(poyta1);
         ui->poyta2Nappi->setChecked(poyta2);
     }
@@ -127,6 +215,14 @@ void AjoPoyta::valitseVeturi()
 void AjoPoyta::muutaNopeus(int nopeus)
 {
     soketti_.write( QString("T%1\n").arg(nopeus).toLatin1());
+}
+
+void AjoPoyta::seisOhitus(bool onko)
+{
+    if( onko )
+        soketti_.write("JKVSEISOHITUS\n");
+    else
+        soketti_.write("JKVON");
 }
 
 void AjoPoyta::pyydaTiedot()

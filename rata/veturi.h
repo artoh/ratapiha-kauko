@@ -47,7 +47,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     
     qreal kiihtyvyys() const { return 0.8; }
-    qreal hidastuvuus() const { return 1.0; }
+    qreal hidastuvuus() const { return 0.8; }
 
     Moottori* moottori() { return moottori_; }
 

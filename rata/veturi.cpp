@@ -119,6 +119,13 @@ QString Veturi::veturiTila()
                      .arg((int) moottorini->tavoiteNopeusKmH())
                      .arg((int) moottorini->jkv()->jkvNopeusKmh())
                      .arg((int) moottorini->jkv()->jkvMatka()));
+
+        if( moottorini->jkv()->opaste() == Ratapiha::OPASTE_SEIS)
+            tila.append("OSEIS ");
+        else if( moottorini->jkv()->opaste() == Ratapiha::OPASTE_AJASN)
+            tila.append("OSN ");
+        else if( moottorini->jkv()->opaste() == Ratapiha::OPASTE_AJA)
+            tila.append("OAJA ");
     }
     return tila;
 }

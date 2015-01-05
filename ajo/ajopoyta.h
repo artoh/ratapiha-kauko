@@ -45,6 +45,7 @@ private slots:
     void ajoPoytaYksi(bool onko);
     void valitseVeturi();
     void muutaNopeus(int nopeus);
+    void seisOhitus(bool onko);
     void pyydaTiedot();
 
 private:
