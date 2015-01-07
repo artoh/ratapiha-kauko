@@ -33,7 +33,8 @@
 
 AjoPoyta::AjoPoyta(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::AjoPoyta)
+    ui(new Ui::AjoPoyta),
+    valkky_(false)
 {
     ui->setupUi(this);
     soketti_.connectToHost("localhost",5432);
@@ -41,12 +42,15 @@ AjoPoyta::AjoPoyta(QWidget *parent) :
     connect( ui->veturiValintaEdit, SIGNAL(returnPressed()), this, SLOT(valitseVeturi()));
     connect( &soketti_, SIGNAL(readyRead()), this, SLOT(paivita()));
     connect( ui->poyta1Nappi, SIGNAL(clicked(bool)), this, SLOT(ajoPoytaYksi(bool)));
+    connect( ui->poyta2Nappi, SIGNAL(clicked(bool)), this, SLOT(ajoPoytaKaksi(bool)));
     connect( ui->nopeusSlider, SIGNAL(sliderMoved(int)), this, SLOT(muutaNopeus(int)));
     connect( ui->SeisOhitusNappi, SIGNAL(clicked(bool)), this, SLOT(seisOhitus(bool)));
 
     QTimer *kyselin = new QTimer(this);
     connect( kyselin, SIGNAL(timeout()), this, SLOT(pyydaTiedot()));
     kyselin->start(200);
+
+    setWindowTitle("Ajopöytä");
 }
 
 AjoPoyta::~AjoPoyta()
@@ -62,9 +66,12 @@ void AjoPoyta::paivita()
     int jkvNopeus = 0;
     int jkvMatka = 0;
     int nopeus = 0;
+    int veturiId = 0;
     int maxNopeus = 120;
     QString tyyppi;
     Ratapiha::Opaste opaste = Ratapiha::OPASTE_PUUTTUU;
+    bool ohitaSeis = false;
+    valkky_ = !valkky_;
 
     while( soketti_.canReadLine())
     {
@@ -100,17 +107,27 @@ void AjoPoyta::paivita()
             }
             else if( sana.startsWith('O'))
             {
-                if( sana == "OSEIS")
+                if( sana == "OSEIS" )
                     opaste = Ratapiha::OPASTE_SEIS;
                 else if(sana == "OAJA")
                     opaste = Ratapiha::OPASTE_AJA;
                 else if( sana == "OSN")
                     opaste = Ratapiha::OPASTE_AJASN;
             }
+            else if( sana == "SEISOHITUS")
+                ohitaSeis = true;
+            else if( sana.startsWith('m'))
+                maxNopeus = sana.mid(1).toInt();
+            else if( sana.startsWith('t'))
+                tyyppi = sana.mid(1);
+            else if( sana.startsWith('V'))
+                veturiId = sana.mid(1).toInt();
 
         }
 
     }
+
+
 
     // PITÄISI VIELÄ TEHDÄ JKV-TIETOJEN NÄYTTÖ NÄYTTÖRUUDULLE
     // Nyt laittaa vain tekstiä, myöhemmin hieno näyttö, kuinkas muutenkaan
@@ -123,34 +140,39 @@ void AjoPoyta::paivita()
     QTextOption textOption;
     textOption.setAlignment(Qt::AlignCenter);
 
-    qreal kmhAste = ( 270.0 / maxNopeus);
-
-
-    for(int n=0; n<maxNopeus+1; n=n+5)
+    if( poyta1 || poyta2)
     {
-        painter.save();
-        painter.translate(100,100);
-        painter.rotate(45 + n * kmhAste);
+       qreal kmhAste = ( 270.0 / (maxNopeus + 20) );
 
-        if( n % 20 == 0)
-            painter.setPen(QPen(Qt::red));
-        else
-            painter.setPen(QPen(Qt::white));
 
-        painter.drawLine(0, 70, 0, 80);
-
-        if( n % 20 == 0)
+        for(int n=0; n<maxNopeus+21; n=n+5)
         {
-            painter.translate(0,90);
-            painter.rotate(-180);
-            painter.setFont( QFont("Helvetica",10));
-            painter.drawText(QRectF( -10, -15,20,30), QString::number(n), textOption);
+            painter.save();
+            painter.translate(100,100);
+            painter.rotate(45 + n * kmhAste);
+
+            if( n % 20 == 0)
+                painter.setPen(QPen(Qt::red));
+            else
+                painter.setPen(QPen(Qt::white));
+
+            painter.drawLine(0, 70, 0, 80);
+
+            if( n % 20 == 0)
+            {
+                painter.translate(0,90);
+                painter.rotate(-180);
+                painter.setFont( QFont("Helvetica",10));
+                painter.drawText(QRectF( -10, -15,20,30), QString::number(n), textOption);
+            }
+
+            painter.restore();
         }
 
-        painter.restore();
-
         painter.save();
         painter.translate(100,100);
+        if( jkvNopeus > maxNopeus)
+            jkvNopeus = maxNopeus;
         painter.rotate(45 + (qreal) jkvNopeus * kmhAste);
 
         painter.setPen(QPen(QBrush(Qt::green),2.0));
@@ -167,7 +189,13 @@ void AjoPoyta::paivita()
 
         painter.restore();
 
-        painter.setPen(QPen(Qt::red));
+        if( jkvNopeus + 1 < nopeus)
+            painter.setPen(QPen(Qt::red));
+        else if( jkvNopeus > nopeus + 1 )
+            painter.setPen(QPen(Qt::green));
+        else
+            painter.setPen(QPen(Qt::white));
+
         painter.setFont( QFont("Helvetica",18));
         painter.drawEllipse(QPointF(100,100),25,25);
         painter.drawText( QRect(80,90,40,20), QString::number(jkvNopeus), textOption);
@@ -186,25 +214,45 @@ void AjoPoyta::paivita()
             painter.drawText( QRectF(50,160,100,20), QString("%1 m").arg(jkvMatka), textOption);
         }
 
-        if( opaste == Ratapiha::OPASTE_SEIS)
+        if( opaste == Ratapiha::OPASTE_SEIS && (!ohitaSeis || valkky_))  // Välkkyy, jos ohitetaan SEIS-opastetta
             painter.drawPixmap(80,190, QPixmap(":/ajo/jkvkuvat/poSeis.png"));
         else if( opaste == Ratapiha::OPASTE_AJASN)
             painter.drawPixmap(80,190, QPixmap(":/ajo/jkvkuvat/poAjaSn.png"));
         else if( opaste == Ratapiha::OPASTE_AJA)
             painter.drawPixmap(80,190, QPixmap(":/ajo/jkvkuvat/poAja.png"));
 
-        ui->naytto->setPixmap(kuva);
 
-
-        ui->poyta1Nappi->setChecked(poyta1);
-        ui->poyta2Nappi->setChecked(poyta2);
     }
+    ui->naytto->setPixmap(kuva);
+
+
+    ui->poyta1Nappi->setChecked(poyta1);
+    ui->poyta2Nappi->setChecked(poyta2);
+    ui->SeisOhitusNappi->setChecked(ohitaSeis);
+
+    if( maxNopeus)
+        ui->nopeusSlider->setMaximum(maxNopeus + 20);
+
+    if( veturiId)
+        setWindowTitle(tr("%1 # %2").arg(tyyppi).arg(veturiId));
+    else
+        setWindowTitle("Ajopöytä");
 }
 
 void AjoPoyta::ajoPoytaYksi(bool onko)
 {
     if( onko )
         soketti_.write("A1\n");
+    else
+        soketti_.write("A0\n");
+}
+
+void AjoPoyta::ajoPoytaKaksi(bool onko)
+{
+    if( onko)
+        soketti_.write("A2\n");
+    else
+        soketti_.write("A0\n");
 }
 
 void AjoPoyta::valitseVeturi()

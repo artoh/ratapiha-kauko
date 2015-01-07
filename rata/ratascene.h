@@ -183,7 +183,7 @@ protected:
 
     QTimer kelloTimer_;
 
-    static const int MOOTTORI_PAIVITYS_KERROIN = 5;
+    static const int MOOTTORI_PAIVITYS_KERROIN = 10;
 };
 
 #endif // RATASCENE_H

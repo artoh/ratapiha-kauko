@@ -48,6 +48,7 @@ public:
     
     qreal kiihtyvyys() const { return 0.8; }
     qreal hidastuvuus() const { return 0.8; }
+    int maxNopeus() const { return 140; }
 
     Moottori* moottori() { return moottori_; }
 

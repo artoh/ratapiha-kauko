@@ -103,7 +103,7 @@ Veturi::Ajopoyta Veturi::ajopoyta()
 
 QString Veturi::veturiTila()
 {
-    QString tila = QString("V%1 %2 ").arg(veturiNumero())
+    QString tila = QString("V%1 t%2 ").arg(veturiNumero())
             .arg( vaununTyyppi() );
 
     if( ajopoyta() == AJOPOYTA_EDESSA)
@@ -114,11 +114,12 @@ QString Veturi::veturiTila()
     Moottori *moottorini = moottori();
     if( moottorini )
     {
-        tila.append( QString("N%1 T%2 J%3 M%4 ")
+        tila.append( QString("N%1 T%2 J%3 M%4 m%5 ")
                      .arg((int) moottorini->nopeusKmH())
                      .arg((int) moottorini->tavoiteNopeusKmH())
                      .arg((int) moottorini->jkv()->jkvNopeusKmh())
-                     .arg((int) moottorini->jkv()->jkvMatka()));
+                     .arg((int) moottorini->jkv()->jkvMatka())
+                     .arg(maxNopeus() ));
 
         if( moottorini->jkv()->opaste() == Ratapiha::OPASTE_SEIS)
             tila.append("OSEIS ");
@@ -126,6 +127,8 @@ QString Veturi::veturiTila()
             tila.append("OSN ");
         else if( moottorini->jkv()->opaste() == Ratapiha::OPASTE_AJA)
             tila.append("OAJA ");
+        if( moottorini->jkv()->ohitetaankoSeis())
+            tila.append(" SEISOHITUS");
     }
     return tila;
 }

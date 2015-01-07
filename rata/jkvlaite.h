@@ -76,7 +76,7 @@ public:
 
     void ohitaSeisOpastin(bool ohitetaanko);
 
-    bool ohitetaankoSeis() const { return jkvOhitus_ != 0 ; }
+    bool ohitetaankoSeis() const;
 
 
 protected:

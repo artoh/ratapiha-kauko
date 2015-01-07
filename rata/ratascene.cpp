@@ -23,7 +23,7 @@
 
 #include <QVariant>
 #include <QDebug>
-
+#include <QTime>
 
 #include "ratascene.h"
 #include "veturi.h"
@@ -121,8 +121,11 @@ void RataScene::lisaaVeturi(Veturi *veturi)
 void RataScene::asetaAjoPoyta(int veturiId, Veturi::Ajopoyta ajopoyta)
 {
     Veturi* veturi = veturit_.value(veturiId);
-    if( veturi )
+    if( veturi)
     {
+        if( veturi->moottori() && veturi->moottori()->nopeusMs() > 1)
+            return;     // Liikkuvassa veturissa ei saa asettaa ajopöytää !!!
+
         if( ajopoyta == Veturi::EI_AJOPOYTAA)
         {
             moottorit_.removeOne( veturi->moottori());
@@ -206,6 +209,9 @@ void RataScene::ajaVetureilla()
     if( nopeuskerroin())    // Ei ajeta, jos simulaatio pysäytetty
     {
 
+        QTime t;
+        t.start();
+
         qreal kerroin = (qreal) nopeuskerroin() / (qreal) MOOTTORI_PAIVITYS_KERROIN;
 
         foreach (Moottori* moottori, moottorit_)
@@ -215,7 +221,13 @@ void RataScene::ajaVetureilla()
 
         invalidate(sceneRect());    // Päivitetään näyttö
 
+        if( t.elapsed() > 50)
+            qDebug() << "Päivitys " << t.elapsed();
+
     }
+
+
+
 }
 
 const int RataScene::MOOTTORI_PAIVITYS_KERROIN;

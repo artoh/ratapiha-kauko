@@ -30,9 +30,21 @@
 #include "rataopastin.h"
 
 JKVLaite::JKVLaite(Akseli *akseli, double hidastuvuus)
-    : akseli_(akseli), hidastuvuus_(hidastuvuus), jkvNopeusMs_(0.0), jkvMatka_(0), opastin_(0),
+    : akseli_(akseli), jkvNopeusMs_(0.0), jkvMatka_(0), opastin_(0),
       jkvOhitus_(0)
 {
+
+    // Lisätään varmuusvaraa laskennalliseen hidastuvuuteen
+
+    if( hidastuvuus > 0.6)
+        hidastuvuus_ = hidastuvuus - 0.2;
+    else if( hidastuvuus > 0.4)
+        hidastuvuus_ = hidastuvuus - 0.1;
+    else if( hidastuvuus > 0.1)
+        hidastuvuus_ = hidastuvuus - 0.05;
+    else
+        hidastuvuus_ = hidastuvuus;
+
 }
 
 void JKVLaite::paivitaJkv()
@@ -69,7 +81,7 @@ void JKVLaite::jatkaJkvPaivitysta(Kiskonpaa *edessaOlevaPaa)
     // matka tähän asti on jo lisätty jkvmatkaan
 
     // Lähinnä oleva opastin
-    if( !opastin_ && edessaOlevaPaa->opastin() && jkvMatka() < 1200 )
+    if( !opastin_ && edessaOlevaPaa->opastin() && jkvMatka() < 2400 )
     {
         opastin_ = edessaOlevaPaa->opastin();
     }
@@ -110,7 +122,12 @@ void JKVLaite::laskeJkvNopeudet(int nopeudelle)
 
 
     qreal nopeusMs = nopeudelle / 3.6;   // Nopeus muutetaan metreiksi sekunnissa
-    qreal matka = jkvMatka() - 10.0;     // Matkasta vähennetään 12 metrin vara
+
+    qreal matka = jkvMatka() - 10.0;     // Matkasta vähennetään 10 ... 20 m vara
+    if( matka > 30 )
+        matka -= 20;
+    else if( matka > 20)
+        matka = 20;
 
     qreal jkvNopeus;    // Tämän pisteen mukaan laskettava jkv-nopeus
 
@@ -122,6 +139,7 @@ void JKVLaite::laskeJkvNopeudet(int nopeudelle)
     if (jkvNopeus < 1.1)  // Nollataan pienet nopeudet aritmetiikan turvaamiseksi
         jkvNopeus = 0.0;
 
+
     // Jos näin saadaan rajoittavampi nopeus, jää se voimaan
     if(  jkvNopeus < jkvNopeusMs() )
         jkvNopeusMs_ = jkvNopeus;
@@ -130,8 +148,13 @@ void JKVLaite::laskeJkvNopeudet(int nopeudelle)
 
 void JKVLaite::ohitaSeisOpastin(bool ohitetaanko)
 {
-    if( ohitetaanko )
+    if( ohitetaanko && jkvMatka() < 600)
         jkvOhitus_ = opastin_;
     else
         jkvOhitus_ = 0;
+}
+
+bool JKVLaite::ohitetaankoSeis() const
+{
+    return( jkvOhitus_ && jkvOhitus_ == opastin_);
 }

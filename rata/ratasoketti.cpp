@@ -117,18 +117,23 @@ void RataSoketti::veturiKasky(const QString &kasky)
             skene_->asetaAjoPoyta(veturi_, Veturi::AJOPOYTA_EDESSA);
         else if( sana == "A2")
             skene_->asetaAjoPoyta(veturi_, Veturi::AJOPOYTA_TAKANA);
-        else if( sana.startsWith("T"))
-        {
-            int numero = sana.mid(1).toInt();
-            Veturi *veturi = skene_->veturi(veturi_);
-            if( veturi && veturi->moottori())
-                veturi->moottori()->asetaTavoiteNopeusKmh(numero);
-        }
-        else if( sana == "JKVSEISOHITUS")
+        else if( sana == "A0")
+            skene_->asetaAjoPoyta(veturi_, Veturi::EI_AJOPOYTAA);
+        else
         {
             Veturi *veturi = skene_->veturi(veturi_);
             if( veturi && veturi->moottori())
-                veturi->moottori()->jkv()->ohitaSeisOpastin(true);
+            {
+                if( sana.startsWith("T"))   // TAVOITENOPEUDEN ASETTAMINEN
+                {
+                    int numero = sana.mid(1).toInt();
+                    veturi->moottori()->asetaTavoiteNopeusKmh(numero);
+                }
+                else if( sana == "JKVSEISOHITUS")
+                    veturi->moottori()->jkv()->ohitaSeisOpastin(true);
+                else if( sana == "JKVON")
+                    veturi->moottori()->jkv()->ohitaSeisOpastin(false);
+            }
         }
     }
 

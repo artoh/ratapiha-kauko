@@ -43,6 +43,7 @@ private slots:
     void paivita();
 
     void ajoPoytaYksi(bool onko);
+    void ajoPoytaKaksi(bool onko);
     void valitseVeturi();
     void muutaNopeus(int nopeus);
     void seisOhitus(bool onko);
@@ -52,6 +53,7 @@ private:
     Ui::AjoPoyta *ui;
 
     QTcpSocket soketti_;
+    bool valkky_;
 };
 
 #endif // AJOPOYTA_H

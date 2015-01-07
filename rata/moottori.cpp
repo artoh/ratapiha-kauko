@@ -49,13 +49,14 @@ void Moottori::aja(qreal nopeutusKerroin)
     // TODO : jkv-tiedot
     jkv_->paivitaJkv();
 
-qDebug() << " JKV " << jkv_->jkvNopeusKmh() << " km/h " << jkv_->jkvMatka() << " m ";
 
     qreal tavoite = tavoiteNopeusMs();
 
+    qreal rajoittavaJkv = jkv_->jkvNopeusMs() * 1.1;
+
     // Ajetaan jkv-nopeuden mukaan, jos rajoittaa
-    if( tavoite > jkv_->jkvNopeusMs())
-        tavoite = jkv_->jkvNopeusMs();
+    if( tavoite > rajoittavaJkv)
+        tavoite = rajoittavaJkv;
 
     if( tavoite > nopeusMs())
     {
