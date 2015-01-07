@@ -1,3 +1,6 @@
+
+#include <QAction>
+
 #include "kaukoikkuna.h"
 
 KaukoIkkuna::KaukoIkkuna(QWidget *parent) : QMainWindow(parent)
@@ -6,6 +9,7 @@ KaukoIkkuna::KaukoIkkuna(QWidget *parent) : QMainWindow(parent)
     scene_ = new KaukoScene;
     view_ = new KaukoView(scene_);
 
+    luoAktiot();
     luoTyokalupalkit();
 
     setCentralWidget(view_);
@@ -32,6 +36,21 @@ void KaukoIkkuna::nakymanVaihto(int valintaIndeksi)
     setWindowTitle(tr("Ratapiha5 - %1").arg( nakymaCombo_->currentText() ));
 }
 
+void KaukoIkkuna::luoAktiot()
+{
+    aslAktiot_ = new QActionGroup(this);
+    aslAktiot_->setExclusive(false);
+
+    junakulkutieAktio_ = new QAction( this );
+    junakulkutieAktio_->setData(KaukoView::JUNAKULKUTIE_ALKAA);
+    junakulkutieAktio_->setIcon(QIcon(":/kauko/pic/vihrea.png"));
+    junakulkutieAktio_->setCheckable(true);
+    aslAktiot_->addAction(junakulkutieAktio_);
+
+    connect( aslAktiot_, SIGNAL(triggered(QAction*)), this, SLOT(vaihdaTila(QAction*)));
+
+}
+
 void KaukoIkkuna::luoTyokalupalkit()
 {
     hallintaToolBar_ = addToolBar( tr("Näkymä"));
@@ -39,5 +58,13 @@ void KaukoIkkuna::luoTyokalupalkit()
     hallintaToolBar_->addWidget(nakymaCombo_);
 
     connect(nakymaCombo_, SIGNAL(currentIndexChanged(int)), this, SLOT(nakymanVaihto(int)));
+
+    aslToolBar_ = addToolBar( tr("Asetinlaitekomennot"));
+    aslToolBar_->addActions( aslAktiot_->actions() );
+}
+
+void KaukoIkkuna::vaihdaTila(QAction *action)
+{
+    view_->valitseTila( action->data().toInt() );
 }
 

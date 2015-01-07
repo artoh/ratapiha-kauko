@@ -26,4 +26,5 @@ HEADERS += ratapiha.h \
     kauko/kaukoikkuna.h \
     kauko/kaukoview.h
 
-RESOURCES +=
+RESOURCES += \
+    kauko.qrc

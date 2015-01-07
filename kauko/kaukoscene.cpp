@@ -26,6 +26,8 @@
 #include <QFont>
 #include <QBrush>
 
+#include <QDebug>
+
 #include "kaukoscene.h"
 #include "kaukokisko.h"
 
@@ -109,6 +111,12 @@ void KaukoScene::paivitaData(const QString &rivi)
         raide = new KaukoRaide(rivi);
         raiteet_.insert(tunnus, raide);
     }
+}
+
+void KaukoScene::kasky(const QString &kasky)
+{
+    soketti_.write( QString(kasky + "\n").toLatin1());
+    qDebug() << kasky;
 }
 
 void KaukoScene::yhdistaAsetinlaitteeseen()

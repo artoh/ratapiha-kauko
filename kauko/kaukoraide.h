@@ -38,6 +38,7 @@ public:
     KaukoRaide(const QString& datarivi);
 
     QString raidenumeroteksti() const { return numeroTekstina_;  }
+    QString raidetunnusteksti() const { return raideTunnusTeksti_; }
     void paivita(const QStringList &dataLista);
 
     KaukoRaiteenpaa* etela() { return &etelaPaa_; }
@@ -63,6 +64,7 @@ protected:
     KaukoraideVaihde vaihdeCD_;
 
     QString numeroTekstina_;
+    QString raideTunnusTeksti_;
 
     Ratapiha::RaideTyyppi tyyppi_;
     Ratapiha::RaideVapaana vapaana_;

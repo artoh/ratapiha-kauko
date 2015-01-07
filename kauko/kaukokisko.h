@@ -55,6 +55,8 @@ public:
     static bool valkkyyko() { return valkky__; }
     static void valkky();
 
+    QString raidetunnus() { return raide_->raidetunnusteksti(); }
+
 private:
 
 

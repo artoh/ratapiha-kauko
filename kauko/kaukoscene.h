@@ -48,6 +48,7 @@ public slots:
     void vaihdaNakyma(int nakyma);
     void lisaaNayttoon(const QString& rivi);
     void paivitaData(const QString& rivi);
+    void kasky(const QString& kasky);
 
 private slots:
     void yhdistetty();

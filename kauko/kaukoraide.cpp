@@ -33,12 +33,12 @@ KaukoRaide::KaukoRaide(const QString &datarivi)
 {
     QStringList listana = datarivi.split(" ");
 
-    QString tunnus = listana.at(1);
-    for(int i=0; i< tunnus.length(); i++)
+    raideTunnusTeksti_ = listana.at(1);
+    for(int i=0; i< raideTunnusTeksti_.length(); i++)
     {
-        if( tunnus[i].isDigit())
+        if( raideTunnusTeksti_[i].isDigit())
         {
-            numeroTekstina_ = tunnus.mid(i);
+            numeroTekstina_ = raideTunnusTeksti_.mid(i);
             break;
         }
     }

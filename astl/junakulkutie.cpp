@@ -137,13 +137,6 @@ void JunaKulkutie::raideVarautuu(RaideTieto *raide)
 
     }
 
-    // Jos tämä oli ainoa eli maaliraide, puretaan
-    if( valmisKulkutie_.count() == 1)
-    {
-        valmisKulkutie_.first()->raide()->vapautaKulkutielta(this);
-        valmisKulkutie_.removeFirst();
-    }
-
 }
 
 void JunaKulkutie::raideVapautuu(RaideTieto *raide)
@@ -161,6 +154,13 @@ void JunaKulkutie::raideVapautuu(RaideTieto *raide)
         {
             // Muuten vapautumisen suunta on väärä, ja kulkutie merkitään vikatilaan
             kulkutieVikatilaan();
+        }
+
+        // Jos juna on kokonaan maaliraiteella, puretaan kulkutie
+        if( valmisKulkutie_.count() == 1)
+        {
+            valmisKulkutie_.first()->raide()->vapautaKulkutielta(this);
+            valmisKulkutie_.removeFirst();
         }
     }
 }

@@ -5,6 +5,7 @@
 
 #include <QToolBar>
 #include <QComboBox>
+#include <QActionGroup>
 
 #include "kaukoscene.h"
 #include "kaukoview.h"
@@ -24,7 +25,11 @@ public slots:
     void nakymanVaihto(int valintaIndeksi);
 
 protected:
+    void luoAktiot();
     void luoTyokalupalkit();
+
+private slots:
+    void vaihdaTila(QAction *action);
 
 private:
     KaukoScene *scene_;
@@ -32,6 +37,11 @@ private:
 
     QToolBar *hallintaToolBar_;
     QComboBox *nakymaCombo_;
+
+    QToolBar *aslToolBar_;
+
+    QAction *junakulkutieAktio_;
+    QActionGroup *aslAktiot_;
 
 };
 

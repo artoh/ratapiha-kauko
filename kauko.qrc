@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/kauko">
+        <file>pic/junakulkutienkursori.png</file>
+        <file>pic/junakulkutieloppuunkursori.png</file>
+        <file>pic/vihrea.png</file>
+    </qresource>
+</RCC>
