@@ -319,13 +319,10 @@ void KaukoKisko::piirraRaide(QPainter *painter)
         painter->setPen( Qt::NoPen);
 
         if( raide()->kulkutieVikatilassa())
-        {
-            if( valkkyyko())
-                painter->setBrush(Qt::red);
-        }
-        else if( raide()->kulkutiePuretaan())
+            painter->setBrush( Qt::red);
+        else if( raide()->kulkutiePuretaan() && valkkyyko() )
             painter->setBrush(Qt::red);
-        if( raide()->elementinLukitus() == ELEMENTTI_LUKITTU )
+        else if( raide()->elementinLukitus() == ELEMENTTI_LUKITTU )
             painter->setBrush( QBrush(Qt::green));
         else if( raide()->elementinLukitus() == ELEMENTTI_LUKITAAN && valkkyyko() )
             painter->setBrush( QBrush(Qt::green));
@@ -423,21 +420,19 @@ void KaukoKisko::piirraVaihde(QPainter *painter)
 
 
     QColor lukitusvari(Qt::gray);
-    if( vaihde->lukitus() == ELEMENTTI_LUKITTU || (vaihde->lukitus()==ELEMENTTI_LUKITAAN && !valkkyyko() ) )
+    if( raide()->kulkutiePuretaan() && valkkyyko())
+        lukitusvari = Qt::red;
+    else if( raide()->kulkutieVikatilassa() )
+        lukitusvari = Qt::red;
+    else if( vaihde->lukitus() == ELEMENTTI_LUKITTU || (vaihde->lukitus()==ELEMENTTI_LUKITAAN && !valkkyyko() ) )
         lukitusvari = Qt::green;
+    else if( vaihde->sivusuoja() == ELEMENTTI_LUKITTU || ( vaihde->sivusuoja() == ELEMENTTI_LUKITAAN && !valkkyyko()))
+        lukitusvari = Qt::white;    // Lukittu sivusuojaksi
 
     // Vaihteen lukitusneliö. Vilkkuva neliö tarkoittaa, että on lukittumassa ja kiinteä, että on lukittu
     // Risteysvaihteelle piirretään molempien puoliskojen alle, aktiiviselle puoliskolle
 
-    // Punainen = hätävarainen purku käynnissä, punainen vilkku = kulkutie vikatilassa
-    if( raide()->kulkutieVikatilassa())
-    {
-        if( valkkyyko())
-            painter->setBrush(Qt::red);
-    }
-    else if( raide()->kulkutiePuretaan())
-        painter->setBrush(Qt::red);
-    else if(( ( (raide()->tyyppi() == RAIDE_VAIHDE) && ( etelaPaassa() == KANTA || pohjoisPaassa() == KANTA) )) ||
+    if(( ( (raide()->tyyppi() == RAIDE_VAIHDE) && ( etelaPaassa() == KANTA || pohjoisPaassa() == KANTA) )) ||
          ( (raide()->tyyppi() == RAIDE_RISTEYSVAIHDE) &&
                (( ( (etelaPaassa() == VASEN) || (pohjoisPaassa() == VASEN) )  && vaihde->asento()==ASENTO_VASEMMALLE) ||
                ( ( (etelaPaassa() == OIKEA) || (pohjoisPaassa() == OIKEA) ) && vaihde->asento() == ASENTO_OIKEALLE) ) ))

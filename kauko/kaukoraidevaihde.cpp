@@ -27,7 +27,8 @@ using namespace Ratapiha;
 KaukoraideVaihde::KaukoraideVaihde()
     : vaihteenAsento_(ASENTO_EITIEDOSSA),
       vaihteentila_(EIVALVOTTU),
-      lukitus_(ELEMENTTI_VAPAA)
+      lukitus_(ELEMENTTI_VAPAA),
+      sivusuoja_(ELEMENTTI_VAPAA)
 {
 }
 
@@ -70,4 +71,13 @@ void KaukoraideVaihde::paivita(const QString &data)
         lukitus_ = ELEMENTTI_LUKITAAN;
     else
         lukitus_ = ELEMENTTI_VAPAA;
+
+    if( data.contains('S'))
+        sivusuoja_ = ELEMENTTI_LUKITTU;
+    else if( data.contains('s'))
+        sivusuoja_ = ELEMENTTI_LUKITAAN;
+    else
+        sivusuoja_ = ELEMENTTI_VAPAA;
+
+
 }

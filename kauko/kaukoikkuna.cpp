@@ -17,6 +17,8 @@ KaukoIkkuna::KaukoIkkuna(QWidget *parent) : QMainWindow(parent)
     connect(scene_, SIGNAL(nakymaListaan(int,QString)), this, SLOT(lisaaNakymaListaan(int,QString)));
 
     scene_->yhdistaAsetinlaitteeseen();
+
+    setGeometry(10,10,800,400);
 }
 
 KaukoIkkuna::~KaukoIkkuna()
@@ -41,11 +43,26 @@ void KaukoIkkuna::luoAktiot()
     aslAktiot_ = new QActionGroup(this);
     aslAktiot_->setExclusive(false);
 
-    junakulkutieAktio_ = new QAction( this );
-    junakulkutieAktio_->setData(KaukoView::JUNAKULKUTIE_ALKAA);
-    junakulkutieAktio_->setIcon(QIcon(":/kauko/pic/vihrea.png"));
-    junakulkutieAktio_->setCheckable(true);
-    aslAktiot_->addAction(junakulkutieAktio_);
+    QAction *vieritaAktio = new QAction( this );
+    vieritaAktio->setData(KaukoView::VIERITA);
+    vieritaAktio->setIcon(QIcon(":/kauko/pic/scroll.png"));
+    aslAktiot_->addAction(vieritaAktio);
+
+
+    QAction *junakulkutieAktio = new QAction( this );
+    junakulkutieAktio->setData(KaukoView::JUNAKULKUTIE_ALKAA);
+    junakulkutieAktio->setIcon(QIcon(":/kauko/pic/vihrea.png"));
+    aslAktiot_->addAction(junakulkutieAktio);
+
+    QAction *kperAktio = new QAction( this );
+    kperAktio->setData(KaukoView::KULKUTIENPERUMINEN);
+    kperAktio->setIcon(QIcon(":/kauko/pic/kulkutienpurku.png"));
+    aslAktiot_->addAction(kperAktio);
+
+    QAction *hpAktio = new QAction( this );
+    hpAktio->setData(KaukoView::HATAKULKUTIENPURKU);
+    hpAktio->setIcon(QIcon(":/kauko/pic/hatakulkutienpurku.png"));
+    aslAktiot_->addAction(hpAktio);
 
     connect( aslAktiot_, SIGNAL(triggered(QAction*)), this, SLOT(vaihdaTila(QAction*)));
 

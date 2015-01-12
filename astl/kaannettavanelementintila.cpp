@@ -30,7 +30,8 @@ KaannettavanElementinTila::KaannettavanElementinTila()
       pyydettyAsento_(ASENTO_VASEMMALLE),
       aukiajettu_(false),
       vikatila_(false),
-      lukitus_(ELEMENTTI_VAPAA)
+      lukitus_(ELEMENTTI_VAPAA),
+      sivusuojaLukitus_(ELEMENTTI_VAPAA)
 
 {
 }
@@ -53,6 +54,16 @@ void KaannettavanElementinTila::tilaSanomasta(int sanoma)
             // Nyt saavutettu haluttu asento
             lukitus_ = ELEMENTTI_LUKITTU;
         }
+
+        // Tarkistetaan, onko saavutettu sivusuojaksi lukittava tila
+        if( sivusuoja() == ELEMENTTI_LUKITAAN && pyydettyAsento() == valvottuAsento())
+        {
+            // Nyt saavutettu haluttu asento
+            sivusuojaLukitus_ = ELEMENTTI_LUKITTU;
+        }
+
+
+
     }
     else
     {
@@ -98,9 +109,29 @@ ElementinLukitus KaannettavanElementinTila::lukitse(VaihteenAsento asentoon)
     return lukitus_;
 }
 
+ElementinLukitus KaannettavanElementinTila::lukitseSivusuojaksi(VaihteenAsento asentoon)
+{
+    if( asentoon == valvottuAsento())
+    {
+        // Nyt on valmis ja lukittu
+        sivusuojaLukitus_ = ELEMENTTI_LUKITTU;
+    }
+    else if( asentoon == pyydettyAsento())
+    {
+        sivusuojaLukitus_ = ELEMENTTI_LUKITAAN;
+    }
+
+    return sivusuojaLukitus_;
+}
+
 void KaannettavanElementinTila::vapautaKulkutieLukitus()
 {
     lukitus_ = ELEMENTTI_VAPAA;
+}
+
+void KaannettavanElementinTila::vapautaSivusuoja()
+{
+    sivusuojaLukitus_ = ELEMENTTI_VAPAA;
 }
 
 QString KaannettavanElementinTila::vaihdeTila()
@@ -126,6 +157,10 @@ QString KaannettavanElementinTila::vaihdeTila()
         info.append('l');
     else if( lukitus() == ELEMENTTI_LUKITTU)
         info.append('L');
+    if( sivusuoja() == ELEMENTTI_LUKITAAN)
+        info.append('s');
+    else if( sivusuoja() == ELEMENTTI_LUKITTU)
+        info.append('S');
 
     return info;
 }

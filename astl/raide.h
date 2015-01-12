@@ -42,6 +42,9 @@ public:
 
     void laiteSanoma(int laite, int sanoma);
 
+    bool lukitseSivusuojaksi(RaiteenPaa *mille);
+    void vapautaSivusuojasta(RaiteenPaa *mille);
+
     QString raideTila();
 
 protected:

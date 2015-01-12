@@ -53,6 +53,9 @@ public:
 
     Ratapiha::ElementinLukitus onkoLukittuKulkutielle();
 
+    bool lukitseSivusuojaksi(RaiteenPaa *mille);
+    void vapautaSivusuojasta(RaiteenPaa *mille);
+
 protected:
     bool vaihdeVasen() const { return vaihdeTila_.valvottuAsento() == Ratapiha::ASENTO_VASEMMALLE; }
     bool vaihdeOikea() const { return vaihdeTila_.valvottuAsento() == Ratapiha::ASENTO_OIKEALLE; }
@@ -62,6 +65,8 @@ protected:
     RaiteenPaa oikea_;
 
     KaannettavanElementinTila vaihdeTila_;
+
+    bool haettuDynaaminenSivusuoja_;
 
 };
 

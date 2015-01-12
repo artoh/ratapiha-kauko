@@ -40,7 +40,6 @@ private:
 
     QToolBar *aslToolBar_;
 
-    QAction *junakulkutieAktio_;
     QActionGroup *aslAktiot_;
 
 };

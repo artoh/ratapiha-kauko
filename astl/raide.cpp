@@ -73,6 +73,33 @@ void Raide::laiteSanoma(int laite, int sanoma)
     }
 }
 
+bool Raide::lukitseSivusuojaksi(RaiteenPaa *mille)
+{
+    if( mille == &etelaPaa_)
+    {
+        // Jos päässä on opastin (tai raiteensulku), se kelpaa
+        if( etelaPaa_.opastin() && etelaPaa_.opastin()->opaste() == Ratapiha::OPASTE_SEIS)
+            return true;
+        else return pohjoisPaa_.lukitseSivusuojaksi();
+    }
+    else
+    {
+        // Jos päässä on opastin (tai raiteensulku), se kelpaa
+        if( pohjoisPaa_.opastin() && pohjoisPaa_.opastin()->opaste() == Ratapiha::OPASTE_SEIS)
+            return true;
+        else return etelaPaa_.lukitseSivusuojaksi();
+    }
+}
+
+void Raide::vapautaSivusuojasta(RaiteenPaa *mille)
+{
+    // Jos päässä on opastin, on se tarjonnut sivusuoja ja se siitä.
+    if( mille == &etelaPaa_ && !etelaPaa_.opastin())
+        pohjoisPaa_.vapautaSivusuoja();
+    else if( mille == &pohjoisPaa_ && !pohjoisPaa_.opastin())
+        etelaPaa_.vapautaSivusuoja();
+}
+
 QString Raide::raideTila()
 {
     QString tila = RaideTieto::raideTila();

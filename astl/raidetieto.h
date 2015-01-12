@@ -131,6 +131,15 @@ public:
     virtual void lukitseKulkutielle(Kulkutie* kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
     virtual void vapautaKulkutielta(Kulkutie* kulkutielta);
 
+    /**
+     * @brief Lukitsee tämän elementin tarjoamaan sivusuojaa
+     * @param mille RaiteenPää, mille suunnalle pitää tarjota sivusuojaa
+     * @return
+     */
+    virtual bool lukitseSivusuojaksi(RaiteenPaa *mille) = 0;
+
+    virtual void vapautaSivusuojasta(RaiteenPaa *mille) = 0;
+
 protected:
     int raideId_;
     QString liikennepaikka_;

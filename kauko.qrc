@@ -3,5 +3,10 @@
         <file>pic/junakulkutienkursori.png</file>
         <file>pic/junakulkutieloppuunkursori.png</file>
         <file>pic/vihrea.png</file>
+        <file>pic/kulkutienpurku.png</file>
+        <file>pic/kulkutienpurkukursori.png</file>
+        <file>pic/hatakulkutienpurku.png</file>
+        <file>pic/hatakulkutienpurkukursori.png</file>
+        <file>pic/scroll.png</file>
     </qresource>
 </RCC>

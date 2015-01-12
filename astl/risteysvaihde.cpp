@@ -113,6 +113,17 @@ void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, Ra
     vaihdeAB_.lukitse(tarvittavaAB);
     vaihdeCD_.lukitse( tarvittavaCD );
 
+    // Haetaan sivusuojat
+    if( tarvittavaAB == Ratapiha::ASENTO_VASEMMALLE)
+        paaA_.lukitseSivusuojaksi();
+    else
+        paaB_.lukitseSivusuojaksi();
+
+    if( tarvittavaCD == Ratapiha::ASENTO_VASEMMALLE)
+        paaD_.lukitseSivusuojaksi();
+    else
+        paaC_.lukitseSivusuojaksi();
+
     kulkutie_ = kulkutie;
 
 }
@@ -193,5 +204,55 @@ ElementinLukitus RisteysVaihde::onkoLukittuKulkutielle()
         return Ratapiha::ELEMENTTI_VAPAA;
 
     return Ratapiha::ELEMENTTI_LUKITAAN;
+}
+
+bool RisteysVaihde::lukitseSivusuojaksi(RaiteenPaa *mille)
+{
+    // Käännetään turvalliseen asentoon
+    Ratapiha::VaihteenAsento tarvittavaAsento = Ratapiha::ASENTO_EITIEDOSSA;
+
+    if( mille == &paaA_ || mille == &paaB_)
+    {
+        if( mille == &paaB_)
+            tarvittavaAsento = Ratapiha::ASENTO_OIKEALLE;
+        else
+            tarvittavaAsento = Ratapiha::ASENTO_VASEMMALLE;
+
+        if( tarvittavaAsento != Ratapiha::ASENTO_EITIEDOSSA && tarvittavaAsento != vaihdeAB_.valvottuAsento())
+        {
+            if( vaihdeAB_.lukitus() == Ratapiha::ELEMENTTI_VAPAA)
+            {
+                Asetinlaite::instanssi()->lahetaSanoma(raideId(),
+                             Ratapiha::LAITE_VAIHDE, vaihdeAB_.kaannettava(tarvittavaAsento) | VAIHDE_AB );
+            }
+        }
+    }
+    else
+    {
+        if( mille == &paaC_)
+            tarvittavaAsento = Ratapiha::ASENTO_OIKEALLE;
+        else
+            tarvittavaAsento = Ratapiha::ASENTO_VASEMMALLE;
+
+        if( tarvittavaAsento != Ratapiha::ASENTO_EITIEDOSSA && tarvittavaAsento != vaihdeCD_.valvottuAsento())
+        {
+            if( vaihdeCD_.lukitus() == Ratapiha::ELEMENTTI_VAPAA)
+            {
+                Asetinlaite::instanssi()->lahetaSanoma(raideId(),
+                             Ratapiha::LAITE_VAIHDE, vaihdeCD_.kaannettava(tarvittavaAsento) | VAIHDE_CD );
+            }
+        }
+    }
+
+    return true;
+}
+
+void RisteysVaihde::vapautaSivusuojasta(RaiteenPaa *mille)
+{
+    // Ei vielä dynaamista sivusuojaa...
+    if( mille == &paaA_ || mille == &paaB_)
+        vaihdeAB_.vapautaSivusuoja();
+    else
+        vaihdeCD_.vapautaSivusuoja();
 }
 

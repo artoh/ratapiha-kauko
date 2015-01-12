@@ -53,7 +53,7 @@ bool JunaKulkutie::PeruKulkutie()
 void JunaKulkutie::valvoKulkutie(int kellonaika)
 {
     // Jos purkuviive valmistuu
-    if(purkamisenAjastin_ && purkamisenAjastin_ > kellonaika)
+    if(purkamisenAjastin_ && purkamisenAjastin_ < kellonaika)
     {
         // Puretaan kulkutie
         // Kulkutie saadaan purkaa

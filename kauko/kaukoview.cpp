@@ -1,5 +1,6 @@
 #include <QWheelEvent>
 #include <cmath>
+#include <QMessageBox>
 
 #include "kaukoview.h"
 #include "kaukokisko.h"
@@ -7,8 +8,8 @@
 KaukoView::KaukoView(KaukoScene *scene)
     : QGraphicsView(scene), skene_(scene), tila_(VIERITA)
 {
-    setDragMode( ScrollHandDrag);
     scale(2.5, 2.5);
+    valitseTila( VIERITA);
 }
 
 KaukoView::~KaukoView()
@@ -25,13 +26,19 @@ void KaukoView::valitseTila(int tila)
     switch (tila) {
     case VIERITA:
         setCursor( Qt::ArrowCursor);
-        setDragMode( ScrollHandDrag);
+        setDragMode( ScrollHandDrag );
         break;
     case JUNAKULKUTIE_ALKAA:
         setCursor( QCursor( QPixmap(":/kauko/pic/junakulkutienkursori.png"),9,0));
         break;
     case JUNAKULKUTIE_PAATTYY :
         setCursor( QCursor( QPixmap(":/kauko/pic/junakulkutieloppuunkursori.png"),11,0));
+        break;
+    case KULKUTIENPERUMINEN :
+        setCursor( QCursor( QPixmap(":/kauko/pic/kulkutienpurkukursori.png"),9,0));
+        break;
+    case HATAKULKUTIENPURKU :
+        setCursor( QCursor( QPixmap(":/kauko/pic/hatakulkutienpurkukursori.png"),9,0));
         break;
     default:
         break;
@@ -52,7 +59,14 @@ void KaukoView::wheelEvent(QWheelEvent *event)
 
 void KaukoView::mousePressEvent(QMouseEvent *event)
 {
+    // Tunnus, jossa mukana pää: Hki001e, Hki001p, Hki001x
     QString klikattuTunnus = raiteenPaaPisteessa( event->pos());
+
+    QString raidetunnus;    // Valitun raiteen tunnus Hki001
+    if( klikattuTunnus.length() > 3)
+        raidetunnus = klikattuTunnus.left( klikattuTunnus.length()-1);
+
+
     switch (tila_) {
     case JUNAKULKUTIE_ALKAA:
         if( !klikattuTunnus.isEmpty())
@@ -62,15 +76,36 @@ void KaukoView::mousePressEvent(QMouseEvent *event)
         }
         break;
     case JUNAKULKUTIE_PAATTYY :
-        if( !klikattuTunnus.isEmpty())
+        if( !raidetunnus.isEmpty())
         {
             skene_->kasky( QString("JK %1 %2")
                            .arg( alkaaTunnuksesta_.left( alkaaTunnuksesta_.length() -1 ) )
-                           .arg( klikattuTunnus.left( klikattuTunnus.length() - 1 )));
+                           .arg( raidetunnus ) );
             valitseTila( JUNAKULKUTIE_ALKAA);
         }
-    default:
         break;
+    case KULKUTIENPERUMINEN:
+        if( !raidetunnus.isEmpty())
+        {
+            skene_->kasky( QString("KPER %1").arg( raidetunnus));
+        }
+        break;
+    case HATAKULKUTIENPURKU :
+        if( !klikattuTunnus.isEmpty())
+        {
+            if( QMessageBox::question(this, tr("Kriittinen komento"),
+                                      tr("Vahvista kulkutien hätävarainen purku raiteella %1")
+                                      .arg(raidetunnus),
+                                      QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok )
+            {
+                skene_->kasky( QString("HP %1").arg( raidetunnus ));
+            }
+            valitseTila(VIERITA);
+        }
+        break;
+    default:
+        // Oletuksena vuodetaan oletuskäsittelijälle (näin toimii vieritys)
+        QGraphicsView::mousePressEvent(event);
     }
 }
 

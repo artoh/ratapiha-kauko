@@ -58,6 +58,9 @@ public:
 
     Ratapiha::ElementinLukitus onkoLukittuKulkutielle();
 
+    bool lukitseSivusuojaksi(RaiteenPaa *mille);
+    void vapautaSivusuojasta(RaiteenPaa *mille);
+
 protected:
     KaannettavanElementinTila vaihdeAB_;
     KaannettavanElementinTila vaihdeCD_;

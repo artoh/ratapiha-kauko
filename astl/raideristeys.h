@@ -44,6 +44,9 @@ public:
 
     void lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne);
 
+    bool lukitseSivusuojaksi(RaiteenPaa *mille);
+    void vapautaSivusuojasta(RaiteenPaa* mille);
+
     QString raideTila();
 
 protected:

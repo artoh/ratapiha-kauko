@@ -89,6 +89,14 @@ public:
 
     virtual Opastin* opastin() { return 0; }
 
+    /**
+     * @brief Lukitsee sivusuojaksi niin, että tämä haara suojataan
+     * @return
+     */
+    virtual bool lukitseSivusuojaksi();
+
+    virtual void vapautaSivusuoja();
+
 protected:
 
     RaideTieto *raide_;

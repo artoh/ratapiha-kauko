@@ -65,3 +65,21 @@ void RaiteenPaa::asetaKulkutieLajit(RaiteenPaa::KulkutieLajit lajit)
 {
     kulkutieLajit_ = lajit;
 }
+
+bool RaiteenPaa::lukitseSivusuojaksi()
+{
+    if( liitettyPaa())
+    {
+        return liitettyPaa()->raide()->lukitseSivusuojaksi(liitettyPaa());
+    }
+    else
+    {
+        return true;    // Jos raide päättyy (turvavaihde), niin sieltä ei tule junaa
+    }
+}
+
+void RaiteenPaa::vapautaSivusuoja()
+{
+    if( liitettyPaa())
+        liitettyPaa()->raide()->vapautaSivusuojasta(liitettyPaa());
+}

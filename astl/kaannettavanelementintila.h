@@ -51,10 +51,13 @@ public:
      */
     Ratapiha::ElementinLukitus lukitse(Ratapiha::VaihteenAsento asentoon);
 
+    Ratapiha::ElementinLukitus lukitseSivusuojaksi(Ratapiha::VaihteenAsento asentoon);
+
     /**
      * @brief Vapauttaa elementin kulkutielukitus
      */
     void vapautaKulkutieLukitus();
+    void vapautaSivusuoja();
 
     Ratapiha::VaihteenAsento pyydettyAsento() const { return pyydettyAsento_; }
     Ratapiha::VaihteenAsento valvottuAsento() const { return valvottuAsento_; }
@@ -66,6 +69,7 @@ public:
     bool vaihdeOikea() const { return valvottuAsento() == Ratapiha::ASENTO_OIKEALLE; }
 
     Ratapiha::ElementinLukitus lukitus() { return lukitus_; }
+    Ratapiha::ElementinLukitus sivusuoja() { return sivusuojaLukitus_; }
 
     QString vaihdeTila();
 
@@ -83,6 +87,7 @@ protected:
     bool vikatila_;
 
     Ratapiha::ElementinLukitus lukitus_;
+    Ratapiha::ElementinLukitus sivusuojaLukitus_;
 };
 
 #endif // KAANNETTAVANELEMENTINTILA_H

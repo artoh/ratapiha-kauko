@@ -46,11 +46,13 @@ public:
     Ratapiha::VaihteenAsento asento() const { return vaihteenAsento_; }
     VaihteenTila tila() const { return vaihteentila_; }
     Ratapiha::ElementinLukitus lukitus() const { return lukitus_; }
+    Ratapiha::ElementinLukitus sivusuoja() const { return sivusuoja_; }
 
 protected:
     Ratapiha::VaihteenAsento vaihteenAsento_;
     VaihteenTila vaihteentila_;
     Ratapiha::ElementinLukitus lukitus_;
+    Ratapiha::ElementinLukitus sivusuoja_;
 
 
 };

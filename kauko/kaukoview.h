@@ -13,7 +13,9 @@ public:
     {
         VIERITA,
         JUNAKULKUTIE_ALKAA,
-        JUNAKULKUTIE_PAATTYY
+        JUNAKULKUTIE_PAATTYY,
+        KULKUTIENPERUMINEN,
+        HATAKULKUTIENPURKU
     };
 
 

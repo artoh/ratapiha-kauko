@@ -67,6 +67,17 @@ void RaideRisteys::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, Rai
     kulkutie_ = kulkutie;
 }
 
+bool RaideRisteys::lukitseSivusuojaksi(RaiteenPaa *mille)
+{
+    // Jos raideristeykseen tulee sivusuojapyyntö, annetaan se vastapäälle
+    return aktiivinenVastapaa(mille)->lukitseSivusuojaksi();
+}
+
+void RaideRisteys::vapautaSivusuojasta(RaiteenPaa *mille)
+{
+    aktiivinenVastapaa(mille)->vapautaSivusuoja();
+}
+
 QString RaideRisteys::raideTila()
 {
     QString tila = RaideTieto::raideTila();
