@@ -193,6 +193,9 @@ bool Vaihde::lukitseSivusuojaksi(RaiteenPaa *mille)
     {
         // Jos ei voida lukita haluttuun asentoon, tarvitaan dynaamista sivusuojaa
         haettuDynaaminenSivusuoja_ = true;
+        // Vapautetaan tämä lukitus
+        vaihdeTila_.vapautaSivusuoja();
+
         return kanta_.lukitseSivusuojaksi();
     }
 
@@ -218,9 +221,28 @@ void Vaihde::vapautaSivusuojasta(RaiteenPaa *mille)
 
     if( haettuDynaaminenSivusuoja_)
     {
-        // Ensin vapautetaan dynaaminen sivusuoja
+        // Tälle vaihteelle on haettu kauempaa dynaaminen sivusuoja
+
+        // Lukitaan tämä sivusuoja
+        Ratapiha::VaihteenAsento tarvittavaAsento;
+        if( mille == &vasen_)
+            tarvittavaAsento = Ratapiha::ASENTO_VASEMMALLE;
+        else
+            tarvittavaAsento = Ratapiha::ASENTO_OIKEALLE;
+
+        // Jos tarpeen, käännetään
+        if( vaihdeTila_.valvottuAsento() != tarvittavaAsento)
+        {
+            Asetinlaite::instanssi()->lahetaSanoma(raideId(),
+                Ratapiha::LAITE_VAIHDE, vaihdeTila_.kaannettava(tarvittavaAsento) );
+        }
+        // Lukitaan tämä suojaavaan sivusuojan asentoon
+        vaihdeTila_.lukitseSivusuojaksi(tarvittavaAsento);
+
+        // Vapautetaan dynaaminen sivusuoja
         kanta_.vapautaSivusuoja();
         haettuDynaaminenSivusuoja_ = false;
+
     }
     else
     {

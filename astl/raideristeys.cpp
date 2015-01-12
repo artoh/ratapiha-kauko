@@ -58,13 +58,40 @@ QPair<RaiteenPaa *, RaiteenPaa *> RaideRisteys::mahdollisetVastapaat(RaiteenPaa 
 
 void RaideRisteys::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, RaiteenPaa *minne)
 {
-    // Laittaa loogisen asennon oikein
+    // Laittaa loogisen asennon oikein, ja lukitsee sivusuojat
     if( mista == &paaA_ || minne == &paaA_)
+    {
         asento_ = Ratapiha::ASENTO_OIKEALLE;
+        paaB_.lukitseSivusuojaksi();
+        paaC_.lukitseSivusuojaksi();
+    }
     else
+    {
         asento_ = Ratapiha::ASENTO_VASEMMALLE;
+        paaA_.lukitseSivusuojaksi();
+        paaD_.lukitseSivusuojaksi();
+    }
 
     kulkutie_ = kulkutie;
+}
+
+void RaideRisteys::vapautaKulkutielta(Kulkutie *kulkutielta)
+{
+    if( kulkutie() == kulkutielta)
+        {
+
+        if( asento_ == Ratapiha::ASENTO_OIKEALLE)
+        {
+            paaB_.vapautaSivusuoja();
+            paaC_.vapautaSivusuoja();
+        }
+        else if( asento_ == Ratapiha::ASENTO_VASEMMALLE )
+        {
+            paaA_.vapautaSivusuoja();
+            paaD_.vapautaSivusuoja();
+        }
+        kulkutie_ = 0;
+    }
 }
 
 bool RaideRisteys::lukitseSivusuojaksi(RaiteenPaa *mille)
