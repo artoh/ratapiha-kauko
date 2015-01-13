@@ -82,6 +82,11 @@ void Asetinlaite::sanomaAsetinlaitteelta(unsigned int sanoma)
     }
 }
 
+void Asetinlaite::lahetaSanoma(unsigned int sanoma)
+{
+    emit sanomaAsetinlaitteelle(sanoma);
+}
+
 void Asetinlaite::lahetaSanoma(int laite, int komento)
 {
     unsigned int sanoma = 0xf0000000 | ( komento << 20) | laite ;

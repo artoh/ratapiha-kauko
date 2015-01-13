@@ -65,6 +65,8 @@ protected:
     KaannettavanElementinTila vaihdeAB_;
     KaannettavanElementinTila vaihdeCD_;
 
+    void tiedotAsetettu(int raideid);
+
 };
 
 #endif // RISTEYSVAIHDE_H

@@ -102,13 +102,11 @@ void RisteysVaihde::lukitseKulkutielle(Kulkutie *kulkutie, RaiteenPaa *mista, Ra
     // Tarvittaessa annetaan kääntökomennot
     if( tarvittavaAB != vaihdeAB_.valvottuAsento())
     {
-        Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
-                                               vaihdeAB_.kaannettava(tarvittavaAB) | VAIHDE_AB);
+        vaihdeAB_.kaanna( tarvittavaAB);
     }
     if( tarvittavaCD != vaihdeCD_.valvottuAsento())
     {
-        Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
-                                               vaihdeCD_.kaannettava( tarvittavaCD ) | VAIHDE_CD);
+        vaihdeCD_.kaanna( tarvittavaCD);
     }
     vaihdeAB_.lukitse(tarvittavaAB);
     vaihdeCD_.lukitse( tarvittavaCD );
@@ -132,8 +130,23 @@ void RisteysVaihde::vapautaKulkutielta(Kulkutie *kulkutielta)
 {
     if( kulkutielta == kulkutie())
     {
+
+        // Vapautetaan sivusuojat
+        if( vaihdeAB_.valvottuAsento() == Ratapiha::ASENTO_VASEMMALLE)
+            paaA_.vapautaSivusuoja();
+        else
+            paaB_.vapautaSivusuoja();
+
+        if( vaihdeCD_.valvottuAsento() == Ratapiha::ASENTO_VASEMMALLE)
+            paaD_.vapautaSivusuoja();
+        else
+            paaC_.vapautaSivusuoja();
+
+        // Vapautetaan vaihteet
         vaihdeAB_.vapautaKulkutieLukitus();
         vaihdeCD_.vapautaKulkutieLukitus();
+
+        // Irroitetaan kulkutieltä
         kulkutie_ = 0;
     }
 }
@@ -151,15 +164,11 @@ bool RisteysVaihde::kaanna(bool ab, bool cd)
     {
         if( vaihdeAB_.vaihdeOikea())
         {
-            vaihdeAB_.kaannettava( ASENTO_VASEMMALLE);
-            Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
-                                                   VAIHDEKOMENTO_VASEMMALLE | VAIHDE_AB);
+            vaihdeAB_.kaanna( ASENTO_VASEMMALLE);
         }
         else
         {
-            vaihdeAB_.kaannettava( ASENTO_OIKEALLE);
-            Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
-                                                   VAIHDEKOMENTO_OIKEALLE | VAIHDE_AB);
+            vaihdeAB_.kaanna( ASENTO_OIKEALLE);
         }
     }
 
@@ -167,15 +176,11 @@ bool RisteysVaihde::kaanna(bool ab, bool cd)
     {
         if( vaihdeCD_.vaihdeOikea())
         {
-            vaihdeCD_.kaannettava( ASENTO_VASEMMALLE);
-            Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
-                                                   VAIHDEKOMENTO_VASEMMALLE | VAIHDE_CD);
+            vaihdeCD_.kaanna( ASENTO_VASEMMALLE);
         }
         else
         {
-            vaihdeCD_.kaannettava( ASENTO_OIKEALLE);
-            Asetinlaite::instanssi()->lahetaSanoma(raideId(), Ratapiha::LAITE_VAIHDE,
-                                                   VAIHDEKOMENTO_OIKEALLE | VAIHDE_CD);
+            vaihdeCD_.kaanna( ASENTO_OIKEALLE);
         }
     }
 
@@ -218,14 +223,23 @@ bool RisteysVaihde::lukitseSivusuojaksi(RaiteenPaa *mille)
         else
             tarvittavaAsento = Ratapiha::ASENTO_VASEMMALLE;
 
-        if( tarvittavaAsento != Ratapiha::ASENTO_EITIEDOSSA && tarvittavaAsento != vaihdeAB_.valvottuAsento())
+        if( (vaihdeAB_.lukitus() != Ratapiha::ELEMENTTI_VAPAA || vaihdeAB_.paikallislukittu())
+                && tarvittavaAsento != vaihdeAB_.valvottuAsento() )
+            return false;   // Ei voi lukita sivusuojaa!
+
+        if( vaihdeAB_.sivusuoja() != Ratapiha::ELEMENTTI_VAPAA && tarvittavaAsento != vaihdeAB_.sivusuojaAsento())
         {
-            if( vaihdeAB_.lukitus() == Ratapiha::ELEMENTTI_VAPAA)
-            {
-                Asetinlaite::instanssi()->lahetaSanoma(raideId(),
-                             Ratapiha::LAITE_VAIHDE, vaihdeAB_.kaannettava(tarvittavaAsento) | VAIHDE_AB );
-            }
+            // Tarvitaan dynaaminen sivusuoja
+            vaihdeAB_.haeDynaaminenSivusuoja();
+            return( paaC_.lukitseSivusuojaksi() && paaD_.lukitseSivusuojaksi());
         }
+
+        if( vaihdeAB_.valvottuAsento() != tarvittavaAsento)
+            vaihdeAB_.kaanna(tarvittavaAsento);
+        vaihdeAB_.lukitseSivusuojaksi(tarvittavaAsento);
+
+        return true;
+
     }
     else
     {
@@ -234,25 +248,77 @@ bool RisteysVaihde::lukitseSivusuojaksi(RaiteenPaa *mille)
         else
             tarvittavaAsento = Ratapiha::ASENTO_VASEMMALLE;
 
-        if( tarvittavaAsento != Ratapiha::ASENTO_EITIEDOSSA && tarvittavaAsento != vaihdeCD_.valvottuAsento())
+        if( (vaihdeCD_.lukitus() != Ratapiha::ELEMENTTI_VAPAA || vaihdeCD_.paikallislukittu())
+                && tarvittavaAsento != vaihdeCD_.valvottuAsento() )
+            return false;   // Ei voi lukita sivusuojaa!
+
+        if( vaihdeCD_.sivusuoja() != Ratapiha::ELEMENTTI_VAPAA && tarvittavaAsento != vaihdeCD_.sivusuojaAsento())
         {
-            if( vaihdeCD_.lukitus() == Ratapiha::ELEMENTTI_VAPAA)
-            {
-                Asetinlaite::instanssi()->lahetaSanoma(raideId(),
-                             Ratapiha::LAITE_VAIHDE, vaihdeCD_.kaannettava(tarvittavaAsento) | VAIHDE_CD );
-            }
+            // Tarvitaan dynaaminen sivusuoja
+            vaihdeCD_.haeDynaaminenSivusuoja();
+            return( paaA_.lukitseSivusuojaksi() && paaB_.lukitseSivusuojaksi());
         }
-    }
+
+        if( vaihdeCD_.valvottuAsento() != tarvittavaAsento)
+            vaihdeCD_.kaanna(tarvittavaAsento);
+        vaihdeCD_.lukitseSivusuojaksi(tarvittavaAsento);
 
     return true;
+    }
 }
 
 void RisteysVaihde::vapautaSivusuojasta(RaiteenPaa *mille)
-{
-    // Ei vielä dynaamista sivusuojaa...
+{   
     if( mille == &paaA_ || mille == &paaB_)
-        vaihdeAB_.vapautaSivusuoja();
+    {
+        if( vaihdeAB_.dynaaminenSivusuoja())
+        {
+            // Haettu kauempaa dynaaminen sivusuoja, joka nyt palautetaan
+            Ratapiha::VaihteenAsento tarvittavaAsento;
+            if( mille == &paaB_)
+                tarvittavaAsento = Ratapiha::ASENTO_VASEMMALLE;
+            else
+                tarvittavaAsento = Ratapiha::ASENTO_OIKEALLE;
+
+            vaihdeAB_.palautaDynaamiseltaSivusuojalta(tarvittavaAsento);
+
+            // Vapautetaan dynaaminen sivusuoja
+            paaC_.vapautaSivusuoja();
+            paaD_.vapautaSivusuoja();
+        }
+        else
+        {
+            vaihdeAB_.vapautaSivusuoja();
+        }
+    }
     else
-        vaihdeCD_.vapautaSivusuoja();
+    {
+        if( vaihdeCD_.dynaaminenSivusuoja())
+        {
+            // Haettu kauempaa dynaaminen sivusuoja, joka nyt palautetaan
+            Ratapiha::VaihteenAsento tarvittavaAsento;
+            if( mille == &paaC_)
+                tarvittavaAsento = Ratapiha::ASENTO_VASEMMALLE;
+            else
+                tarvittavaAsento = Ratapiha::ASENTO_OIKEALLE;
+
+            vaihdeCD_.palautaDynaamiseltaSivusuojalta(tarvittavaAsento);
+
+            // Vapautetaan dynaaminen sivusuoja
+            paaA_.vapautaSivusuoja();
+            paaB_.vapautaSivusuoja();
+        }
+        else
+        {
+            vaihdeCD_.vapautaSivusuoja();
+        }
+    }
+
+}
+
+void RisteysVaihde::tiedotAsetettu(int raideid)
+{
+    vaihdeAB_.asetaKaantoKomento(raideid, Ratapiha::LAITE_VAIHDE, Ratapiha::VAIHDE_AB);
+    vaihdeCD_.asetaKaantoKomento(raideid, Ratapiha::LAITE_VAIHDE, Ratapiha::VAIHDE_CD);
 }
 

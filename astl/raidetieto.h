@@ -58,6 +58,7 @@ public:
     void asetaTiedot(int raideId, const QString& liikennepaikka, int raideTunnus,
                      int raidepituus, bool sahkoistetty=true, bool valvottu=true);
 
+
     virtual int raideTyyppi() const = 0;
 
     virtual RaiteenPaa* raiteenPaa(int paaKirjain) = 0;
@@ -152,6 +153,12 @@ protected:
     Ratapiha::RaideVapaana vapaanaOlo_;
 
     Kulkutie *kulkutie_;
+
+    /**
+     * @brief Kun tiedot on asetettu, kutsutaan tätä (tarvitaan vaihteiden tunnusten asettamiseen)
+     * @param raideId
+     */
+    virtual void tiedotAsetettu(int raideId);
 };
 
 #endif // RAIDETIETO_H

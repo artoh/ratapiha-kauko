@@ -52,6 +52,7 @@ signals:
 public slots:
     void sanomaAsetinlaitteelta(unsigned int sanoma);
 
+    void lahetaSanoma(unsigned int sanoma);
     void lahetaSanoma(int laite, int komento);
     void lahetaSanoma(int raide, int laite, int komento);
 

@@ -42,6 +42,8 @@ void RaideTieto::asetaTiedot(int raideId, const QString &liikennepaikka, int rai
     raidepituus_ = raidepituus;
     sahkoistetty_ = sahkoistetty;
     valvottu_ = valvottu;
+
+    tiedotAsetettu(raideId);
 }
 
 bool RaideTieto::voikoLukitaKulkutielle(Ratapiha::KulkutieTyyppi /* tyyppi */)
@@ -168,4 +170,9 @@ void RaideTieto::vapautaKulkutielta(Kulkutie *kulkutielta)
 {
     if( kulkutielta == kulkutie())
         kulkutie_ = 0;
+}
+
+void RaideTieto::tiedotAsetettu(int /* raideId */)
+{
+
 }

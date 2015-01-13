@@ -23,8 +23,9 @@
 #ifndef KAANNETTAVANELEMENTINTILA_H
 #define KAANNETTAVANELEMENTINTILA_H
 
-#include "ratapiha.h"
+
 #include <QString>
+#include "ratapiha.h"
 
 /**
  * @brief Vaihteen tai raiteensulun tilatieto
@@ -32,7 +33,8 @@
 class KaannettavanElementinTila
 {
 public:
-    KaannettavanElementinTila();
+    KaannettavanElementinTila(int raide = 0, int laite = 0, int kaantokomento = 0);
+    void asetaKaantoKomento(int raide, int laite = Ratapiha::LAITE_VAIHDE, int kaantokomento=0);
 
     void tilaSanomasta(int sanoma);
     /**
@@ -62,19 +64,44 @@ public:
     Ratapiha::VaihteenAsento pyydettyAsento() const { return pyydettyAsento_; }
     Ratapiha::VaihteenAsento valvottuAsento() const { return valvottuAsento_; }
     Ratapiha::VaihteenAsento kaantyyAsentoon() const { return kaantyyAsentoon_; }
+    Ratapiha::VaihteenAsento sivusuojaAsento() const { return sivusuojaAsento_; }
 
     bool vika() const { return vikatila_; }
     bool aukiajettu() const { return aukiajettu_; }
+    bool paikallislukittu() const { return paikallislukitus_; }
     bool vaihdeVasen() const { return valvottuAsento() == Ratapiha::ASENTO_VASEMMALLE; }
     bool vaihdeOikea() const { return valvottuAsento() == Ratapiha::ASENTO_OIKEALLE; }
 
-    Ratapiha::ElementinLukitus lukitus() { return lukitus_; }
-    Ratapiha::ElementinLukitus sivusuoja() { return sivusuojaLukitus_; }
+    Ratapiha::ElementinLukitus lukitus() const  { return lukitus_; }
+    Ratapiha::ElementinLukitus sivusuoja() const { return sivusuojaLukitus_; }
+
+    /**
+     * @brief Onko vaihde lukittu (kulkutielle, sivusuojaksi, paikallislukituksella) niin, ettei voi kääntää
+     * @return
+     */
+    bool onkoLukittu() const;
 
     QString vaihdeTila();
 
+    /**
+     * @brief Kääntää elementin, jos se on sallittua lukituksen osalta. Ei voi tarkistaa elementin vapaana oloa.
+     * @param asentoon
+     * @param hatavarainen Kääntää myös aukiajetun vaihteen
+     * @return
+     */
+    bool kaanna( Ratapiha::VaihteenAsento asentoon, bool hatavarainen = false);
+    bool kaanna( bool hatavarainen = false);
+
+    void haeDynaaminenSivusuoja();
+    void palautaDynaamiseltaSivusuojalta(Ratapiha::VaihteenAsento asentoon);
+    bool dynaaminenSivusuoja() const { return dynaaminenSivusuoja_; }
 
 protected:
+    /**
+     * @brief Kääntösanomassa on laitetunnus niin, että siihen lisätään vain kääntöasento
+     */
+    unsigned int kaantosanoma_;
+
     Ratapiha::VaihteenAsento valvottuAsento_;
     Ratapiha::VaihteenAsento kaantyyAsentoon_;
 
@@ -83,8 +110,12 @@ protected:
      */
     Ratapiha::VaihteenAsento pyydettyAsento_;
 
+    Ratapiha::VaihteenAsento sivusuojaAsento_;
+
     bool aukiajettu_;
     bool vikatila_;
+    bool paikallislukitus_;
+    bool dynaaminenSivusuoja_;
 
     Ratapiha::ElementinLukitus lukitus_;
     Ratapiha::ElementinLukitus sivusuojaLukitus_;

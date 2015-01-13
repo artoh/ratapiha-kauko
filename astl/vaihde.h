@@ -35,6 +35,7 @@ class Vaihde : public RaideTieto
 public:
     Vaihde();
 
+
     int raideTyyppi() const { return VAIHDE; }
     RaiteenPaa* raiteenPaa(int paaKirjain);
 
@@ -57,16 +58,16 @@ public:
     void vapautaSivusuojasta(RaiteenPaa *mille);
 
 protected:
-    bool vaihdeVasen() const { return vaihdeTila_.valvottuAsento() == Ratapiha::ASENTO_VASEMMALLE; }
-    bool vaihdeOikea() const { return vaihdeTila_.valvottuAsento() == Ratapiha::ASENTO_OIKEALLE; }
+    bool vaihdeVasen() const { return vaihde_.valvottuAsento() == Ratapiha::ASENTO_VASEMMALLE; }
+    bool vaihdeOikea() const { return vaihde_.valvottuAsento() == Ratapiha::ASENTO_OIKEALLE; }
 
     RaiteenPaa kanta_;
     RaiteenPaa vasen_;
     RaiteenPaa oikea_;
 
-    KaannettavanElementinTila vaihdeTila_;
+    KaannettavanElementinTila vaihde_;
 
-    bool haettuDynaaminenSivusuoja_;
+    void tiedotAsetettu(int raideId);
 
 };
 

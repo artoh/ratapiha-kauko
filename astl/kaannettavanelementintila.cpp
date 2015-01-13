@@ -21,19 +21,31 @@
 
 
 #include "kaannettavanelementintila.h"
+#include "asetinlaite.h"
+
+#include <QDebug>
 
 using namespace Ratapiha;
 
-KaannettavanElementinTila::KaannettavanElementinTila()
+KaannettavanElementinTila::KaannettavanElementinTila(int raide, int laite, int kaantokomento)
     : valvottuAsento_(ASENTO_EITIEDOSSA),
       kaantyyAsentoon_(ASENTO_EITIEDOSSA),
-      pyydettyAsento_(ASENTO_VASEMMALLE),
+      pyydettyAsento_(ASENTO_EITIEDOSSA),
+      sivusuojaAsento_(ASENTO_EITIEDOSSA),
       aukiajettu_(false),
       vikatila_(false),
+      paikallislukitus_(false),
+      dynaaminenSivusuoja_(false),
       lukitus_(ELEMENTTI_VAPAA),
       sivusuojaLukitus_(ELEMENTTI_VAPAA)
 
 {
+    asetaKaantoKomento(raide, laite, kaantokomento);
+}
+
+void KaannettavanElementinTila::asetaKaantoKomento(int raide, int laite, int kaantokomento)
+{
+    kaantosanoma_ = 0xf0000000 | ( kaantokomento << 20) | ( raide << 4 )| laite ;
 }
 
 void KaannettavanElementinTila::tilaSanomasta(int sanoma)
@@ -43,9 +55,10 @@ void KaannettavanElementinTila::tilaSanomasta(int sanoma)
 
     if( sanoma & VAIHDE_VALVOTTU )
     {
-        if(( sanoma & VAIHDE_VASEN) && pyydettyAsento() == ASENTO_VASEMMALLE)
+        // Asento on "ei tiedossa" kun asetinlaite käynnistetään, näin ollen päätyy heti valvottuun tilaan
+        if(( sanoma & VAIHDE_VASEN) && (pyydettyAsento() == ASENTO_VASEMMALLE || pyydettyAsento() == ASENTO_EITIEDOSSA ) )
             valvottuAsento_ = ASENTO_VASEMMALLE;
-        else if(( sanoma & VAIHDE_OIKEA) && pyydettyAsento() == ASENTO_OIKEALLE )
+        else if(( sanoma & VAIHDE_OIKEA) && (pyydettyAsento() == ASENTO_OIKEALLE || pyydettyAsento() == ASENTO_EITIEDOSSA ))
             valvottuAsento_ = ASENTO_OIKEALLE;
 
         // Tarkistetaan, onko saavutettu lukittava tila
@@ -56,13 +69,11 @@ void KaannettavanElementinTila::tilaSanomasta(int sanoma)
         }
 
         // Tarkistetaan, onko saavutettu sivusuojaksi lukittava tila
-        if( sivusuoja() == ELEMENTTI_LUKITAAN && pyydettyAsento() == valvottuAsento())
+        if( sivusuoja() == ELEMENTTI_LUKITAAN && sivusuojaAsento() == valvottuAsento())
         {
             // Nyt saavutettu haluttu asento
             sivusuojaLukitus_ = ELEMENTTI_LUKITTU;
         }
-
-
 
     }
     else
@@ -111,6 +122,8 @@ ElementinLukitus KaannettavanElementinTila::lukitse(VaihteenAsento asentoon)
 
 ElementinLukitus KaannettavanElementinTila::lukitseSivusuojaksi(VaihteenAsento asentoon)
 {
+    sivusuojaAsento_ = asentoon;
+
     if( asentoon == valvottuAsento())
     {
         // Nyt on valmis ja lukittu
@@ -132,6 +145,12 @@ void KaannettavanElementinTila::vapautaKulkutieLukitus()
 void KaannettavanElementinTila::vapautaSivusuoja()
 {
     sivusuojaLukitus_ = ELEMENTTI_VAPAA;
+    sivusuojaAsento_ = ASENTO_EITIEDOSSA;
+}
+
+bool KaannettavanElementinTila::onkoLukittu() const
+{
+    return ( paikallislukittu() || lukitus() != Ratapiha::ELEMENTTI_VAPAA || sivusuoja() != Ratapiha::ELEMENTTI_VAPAA );
 }
 
 QString KaannettavanElementinTila::vaihdeTila()
@@ -162,5 +181,54 @@ QString KaannettavanElementinTila::vaihdeTila()
     else if( sivusuoja() == ELEMENTTI_LUKITTU)
         info.append('S');
 
+    if( paikallislukittu() )
+        info.append('P');
+    if( dynaaminenSivusuoja_)
+        info.append('D');
+
     return info;
+}
+
+bool KaannettavanElementinTila::kaanna(VaihteenAsento asentoon, bool hatavarainen)
+{
+    if( onkoLukittu() )
+        return false;
+    if( !hatavarainen && aukiajettu())
+        return false;
+
+    if( asentoon == valvottuAsento() && asentoon == pyydettyAsento())
+        return true;    // On jo pyydetyssä asennossa
+
+    pyydettyAsento_ = asentoon;
+
+    if( asentoon == ASENTO_VASEMMALLE)
+    {
+         qDebug() << (kaantosanoma_ | (Ratapiha::VAIHDEKOMENTO_VASEMMALLE << 20));
+         Asetinlaite::instanssi()->lahetaSanoma( kaantosanoma_ | (Ratapiha::VAIHDEKOMENTO_VASEMMALLE << 20 ));
+    }
+    else if( asentoon == ASENTO_OIKEALLE)
+        Asetinlaite::instanssi()->lahetaSanoma( kaantosanoma_ | (Ratapiha::VAIHDEKOMENTO_OIKEALLE << 20 ));
+
+    return true;
+}
+
+bool KaannettavanElementinTila::kaanna(bool hatavarainen)
+{
+    if( valvottuAsento() == ASENTO_VASEMMALLE)
+        return kaanna( ASENTO_OIKEALLE, hatavarainen);
+    else
+        return kaanna( ASENTO_VASEMMALLE, hatavarainen);
+}
+
+void KaannettavanElementinTila::haeDynaaminenSivusuoja()
+{
+    dynaaminenSivusuoja_ = true;
+    vapautaSivusuoja();
+}
+
+void KaannettavanElementinTila::palautaDynaamiseltaSivusuojalta(VaihteenAsento asentoon)
+{
+    kaanna(asentoon);
+    lukitseSivusuojaksi(asentoon);
+    dynaaminenSivusuoja_ = false;
 }
