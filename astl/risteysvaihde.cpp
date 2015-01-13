@@ -38,9 +38,25 @@ void RisteysVaihde::laiteSanoma(int laite, int sanoma)
     if( laite == 0x0)
     {
         if( sanoma & VAIHDE_AB )
+        {
             vaihdeAB_.tilaSanomasta(sanoma);
+            if( vaihdeAB_.dynaamisenSivusuojantila() == Ratapiha::DYNSS_PURETTU)
+            {
+                // Dynaaminen sivusuoja vapautetaan vasta tässä vaiheessa, jotta
+                // purkaminen ei aiheuta hetkeksikään tilaa, jossa ei ole sivusuojaa lainkaan
+                vaihdeCD_.vapautaSivusuoja();
+                vaihdeAB_.dynaamisenSivusuojanpalautusValmis();
+            }
+        }
         else if( sanoma & VAIHDE_CD)
+        {
             vaihdeCD_.tilaSanomasta( sanoma );
+            if( vaihdeCD_.dynaamisenSivusuojantila() == Ratapiha::DYNSS_PURETTU)
+            {
+                vaihdeAB_.vapautaSivusuoja();
+                vaihdeCD_.dynaamisenSivusuojanpalautusValmis();
+            }
+        }
     }
 
 }
@@ -282,9 +298,6 @@ void RisteysVaihde::vapautaSivusuojasta(RaiteenPaa *mille)
 
             vaihdeAB_.palautaDynaamiseltaSivusuojalta(tarvittavaAsento);
 
-            // Vapautetaan dynaaminen sivusuoja
-            paaC_.vapautaSivusuoja();
-            paaD_.vapautaSivusuoja();
         }
         else
         {
@@ -304,9 +317,6 @@ void RisteysVaihde::vapautaSivusuojasta(RaiteenPaa *mille)
 
             vaihdeCD_.palautaDynaamiseltaSivusuojalta(tarvittavaAsento);
 
-            // Vapautetaan dynaaminen sivusuoja
-            paaA_.vapautaSivusuoja();
-            paaB_.vapautaSivusuoja();
         }
         else
         {

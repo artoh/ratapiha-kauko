@@ -94,7 +94,15 @@ public:
 
     void haeDynaaminenSivusuoja();
     void palautaDynaamiseltaSivusuojalta(Ratapiha::VaihteenAsento asentoon);
-    bool dynaaminenSivusuoja() const { return dynaaminenSivusuoja_; }
+    bool dynaaminenSivusuoja() const { return dynaaminenSivusuoja_ != Ratapiha::DYNSS_EI; }
+    Ratapiha::DynaaminenSivusuoja dynaamisenSivusuojantila() const { return dynaaminenSivusuoja_; }
+
+    /*
+     * @brief Kun dynaamisesti siirretyn sivusuojan palauttamisen yhteydessä tämä elementti
+     * on lukittu vaadittuun tilaan ja siirretyn sivusuojan elementit on vapautettu, kutsutaan
+     * tätä sivusuoja purkamiseksi
+     */
+    void dynaamisenSivusuojanpalautusValmis();
 
 protected:
     /**
@@ -115,7 +123,7 @@ protected:
     bool aukiajettu_;
     bool vikatila_;
     bool paikallislukitus_;
-    bool dynaaminenSivusuoja_;
+    Ratapiha::DynaaminenSivusuoja dynaaminenSivusuoja_;
 
     Ratapiha::ElementinLukitus lukitus_;
     Ratapiha::ElementinLukitus sivusuojaLukitus_;

@@ -120,6 +120,14 @@ namespace Ratapiha
         ELEMENTTI_LUKITTU = 2
     };
 
+    enum DynaaminenSivusuoja
+    {
+        DYNSS_EI = 0,
+        DYNSS_HAETTU = 1,
+        DYNSS_PURETAAN = 2,
+        DYNSS_PURETTU = 3
+    };
+
     enum KulkutieTyyppi
     {
         EIKULKUTIETA,

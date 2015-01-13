@@ -35,7 +35,7 @@ KaannettavanElementinTila::KaannettavanElementinTila(int raide, int laite, int k
       aukiajettu_(false),
       vikatila_(false),
       paikallislukitus_(false),
-      dynaaminenSivusuoja_(false),
+      dynaaminenSivusuoja_(DYNSS_EI),
       lukitus_(ELEMENTTI_VAPAA),
       sivusuojaLukitus_(ELEMENTTI_VAPAA)
 
@@ -68,12 +68,18 @@ void KaannettavanElementinTila::tilaSanomasta(int sanoma)
             lukitus_ = ELEMENTTI_LUKITTU;
         }
 
+        if( sivusuojaAsento() == valvottuAsento() && dynaamisenSivusuojantila() == DYNSS_PURETAAN )
+                dynaaminenSivusuoja_ = DYNSS_PURETTU;
+                // Dynaamisen sivusuojan palautus valmis
+                // Tässä, jotta palautuisi myös purkukomennolla
+
         // Tarkistetaan, onko saavutettu sivusuojaksi lukittava tila
         if( sivusuoja() == ELEMENTTI_LUKITAAN && sivusuojaAsento() == valvottuAsento())
         {
             // Nyt saavutettu haluttu asento
             sivusuojaLukitus_ = ELEMENTTI_LUKITTU;
         }
+
 
     }
     else
@@ -183,8 +189,10 @@ QString KaannettavanElementinTila::vaihdeTila()
 
     if( paikallislukittu() )
         info.append('P');
-    if( dynaaminenSivusuoja_)
+    if(  dynaamisenSivusuojantila() == DYNSS_HAETTU)
         info.append('D');
+    else if( dynaamisenSivusuojantila() == DYNSS_PURETAAN)
+        info.append('d');
 
     return info;
 }
@@ -222,7 +230,7 @@ bool KaannettavanElementinTila::kaanna(bool hatavarainen)
 
 void KaannettavanElementinTila::haeDynaaminenSivusuoja()
 {
-    dynaaminenSivusuoja_ = true;
+    dynaaminenSivusuoja_ = DYNSS_HAETTU;
     vapautaSivusuoja();
 }
 
@@ -230,5 +238,10 @@ void KaannettavanElementinTila::palautaDynaamiseltaSivusuojalta(VaihteenAsento a
 {
     kaanna(asentoon);
     lukitseSivusuojaksi(asentoon);
-    dynaaminenSivusuoja_ = false;
+    dynaaminenSivusuoja_ = DYNSS_PURETAAN;
+}
+
+void KaannettavanElementinTila::dynaamisenSivusuojanpalautusValmis()
+{
+    dynaaminenSivusuoja_ = DYNSS_EI;
 }

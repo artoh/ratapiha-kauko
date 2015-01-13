@@ -46,6 +46,11 @@ void Vaihde::laiteSanoma(int laite, int sanoma)
     if( laite == 0x0)
     {
        vaihde_.tilaSanomasta(sanoma);
+       if( vaihde_.dynaamisenSivusuojantila() == Ratapiha::DYNSS_PURETTU)
+       {
+           kanta_.vapautaSivusuoja();
+           vaihde_.dynaamisenSivusuojanpalautusValmis();
+       }
     }
 }
 
@@ -197,7 +202,7 @@ void Vaihde::vapautaSivusuojasta(RaiteenPaa *mille)
         oikea_.vapautaSivusuoja();
     }
 
-    if( vaihde_.dynaaminenSivusuoja())
+    if( vaihde_.dynaamisenSivusuojantila() == Ratapiha::DYNSS_HAETTU)
     {
         // Tälle vaihteelle on haettu kauempaa dynaaminen sivusuoja
 
@@ -209,9 +214,6 @@ void Vaihde::vapautaSivusuojasta(RaiteenPaa *mille)
             tarvittavaAsento = Ratapiha::ASENTO_OIKEALLE;
 
         vaihde_.palautaDynaamiseltaSivusuojalta(tarvittavaAsento);
-
-        // Vapautetaan dynaaminen sivusuoja
-        kanta_.vapautaSivusuoja();
 
     }
     else
