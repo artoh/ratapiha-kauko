@@ -19,27 +19,42 @@
 **
 **************************************************************************/
 
+#include <QList>
 
 #include "suoranraiteenpaa.h"
+#include "ratapiha.h"
 
-SuoranRaiteenPaa::SuoranRaiteenPaa(RaideTieto *raide)
-    : RaiteenPaa(raide), opastin_(0), suojastus_(0)
+#ifndef LINJASUOJASTUS_H
+#define LINJASUOJASTUS_H
+
+/**
+ * @brief Linjan suojastus
+ *
+ * Kumpaakin suuntaa varten on oma LinjaSuojastus-olentonsa
+ */
+class LinjaSuojastus
 {
+protected:
+    LinjaSuojastus();
 
-}
+public:
+    Ratapiha::SuojastusTila tila() const { return tila_; }
 
-void SuoranRaiteenPaa::lisaaOpastin(int opastintunnus, int tyyppitieto)
-{
-    opastin_ = new Opastin(this, opastintunnus, tyyppitieto);
-}
 
-void SuoranRaiteenPaa::muodostaSuojastus()
-{
-    if( !suojastus_)
-        LinjaSuojastus::muodostaLinjaSuojastus(this);
-}
+    static LinjaSuojastus* muodostaLinjaSuojastus(SuoranRaiteenPaa *ekaPaa);
 
-void SuoranRaiteenPaa::asetaSuojastus(LinjaSuojastus *suojastus)
-{
-    suojastus_ = suojastus;
-}
+    QChar tilaKirjain() const;
+    QChar tilaKirjain(SuoranRaiteenPaa* paa) const;
+
+    bool voikoSuojastaa(SuoranRaiteenPaa *paa);
+    bool suojasta(SuoranRaiteenPaa *paa);
+
+private:
+    QList<SuoranRaiteenPaa*> linja_;
+
+    LinjaSuojastus *vastaSuunta_;
+    Ratapiha::SuojastusTila tila_;
+
+};
+
+#endif // LINJASUOJASTUS_H

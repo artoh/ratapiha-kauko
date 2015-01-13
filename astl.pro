@@ -28,7 +28,8 @@ SOURCES += astl/main.cpp \
     astl/kaannettavanelementintila.cpp \
     astl/kaukoyhteys.cpp \
     astl/kaukokaytonnakyma.cpp \
-    astl/kaukopalvelin.cpp
+    astl/kaukopalvelin.cpp \
+    astl/linjasuojastus.cpp
 
 HEADERS += \
     astl/raidetieto.h \
@@ -51,7 +52,8 @@ HEADERS += \
     ratapiha.h \
     astl/kaukoyhteys.h \
     astl/kaukokaytonnakyma.h \
-    astl/kaukopalvelin.h
+    astl/kaukopalvelin.h \
+    astl/linjasuojastus.h
 
 FORMS += \
     astl/asetinlaitepaneeli.ui

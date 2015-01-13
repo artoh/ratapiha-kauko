@@ -25,6 +25,7 @@
 
 #include "raiteenpaa.h"
 #include "opastin.h"
+#include "linjasuojastus.h"
 
 /**
  * @brief Suoran raiteen pää, jossa voi olla opastin ja raiteensulku
@@ -37,9 +38,14 @@ public:
 
     void lisaaOpastin(int opastintunnus, int tyyppitieto);
     Opastin* opastin()  { return opastin_; }
+    LinjaSuojastus* suojastus() { return suojastus_; }
+
+    void muodostaSuojastus();
+    void asetaSuojastus(LinjaSuojastus *suojastus);
 
 protected:
     Opastin *opastin_;
+    LinjaSuojastus *suojastus_;
 };
 
 #endif // SUORANRAITEENPAA_H

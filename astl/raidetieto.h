@@ -141,6 +141,12 @@ public:
 
     virtual void vapautaSivusuojasta(RaiteenPaa *mille) = 0;
 
+    /**
+     * @brief Tätä kutsutaan, kun kaikki raiteet ladattu. Käytetään ainakin suojastuksen
+     * muodostamiseen
+     */
+    virtual void alusta() {;}
+
 protected:
     int raideId_;
     QString liikennepaikka_;

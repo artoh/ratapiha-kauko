@@ -166,4 +166,12 @@ void SqlAsetinlaite::lataaRata()
     }
     qDebug() << opastimet << " opastinta";
 
+    // Alustaa lopuksi raiteet
+    QHashIterator<int, RaideTieto*> i(raiteet_);
+    while(i.hasNext())
+    {
+        i.next();
+        i.value()->alusta();
+    }
+
 }

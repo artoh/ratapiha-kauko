@@ -46,6 +46,7 @@ public:
     void vapautaSivusuojasta(RaiteenPaa *mille);
 
     QString raideTila();
+    void alusta();
 
 protected:
     SuoranRaiteenPaa etelaPaa_;

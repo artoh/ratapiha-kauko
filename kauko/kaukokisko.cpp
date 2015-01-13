@@ -212,7 +212,7 @@ void KaukoKisko::piirraRaide(QPainter *painter)
 
             kuvio.clear();
             painter->setBrush( QBrush( ulosnuoli));
-            kuvio << QPointF( alku+2, 3.0) << QPointF( alku + 18.0, -7.0) << QPointF(alku + 2.0, -11.0);
+            kuvio << QPointF( alku+2, 3.0) << QPointF( alku + 18.0, 7.0) << QPointF(alku + 2.0, 11.0);
             painter->drawPolygon(kuvio);
 
         }
@@ -280,7 +280,7 @@ void KaukoKisko::piirraRaide(QPainter *painter)
                 else if( raide()->pohjoinen()->suojastusTila() == SUOJASTUS_VARATTU)
                     sisaannuoli = Qt::yellow;
             }
-            else if( raide()->etela()->suojastusSuunta() == SUOJASTUS_ULOS)
+            else if( raide()->pohjoinen()->suojastusSuunta() == SUOJASTUS_ULOS)
             {
                 sisaannuoli = Qt::gray;
                 if( raide()->pohjoinen()->suojastusTila() == SUOJASTUS_VALMIS)
@@ -297,7 +297,7 @@ void KaukoKisko::piirraRaide(QPainter *painter)
 
             kuvio.clear();
             painter->setBrush( QBrush( ulosnuoli));
-            kuvio << QPointF( loppu - 2, 3.0) << QPointF( loppu - 18.0, -7.0) << QPointF(loppu - 2.0, -11.0);
+            kuvio << QPointF( loppu - 2, 3.0) << QPointF( loppu - 18.0, 7.0) << QPointF(loppu - 2.0, 11.0);
             painter->drawPolygon(kuvio);
 
         }

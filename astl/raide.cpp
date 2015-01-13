@@ -107,14 +107,24 @@ QString Raide::raideTila()
     {
         tila.append(" E");
         tila.append( etelaPaa_.opastin()->tilaTeksti());
+        if( etelaPaa_.suojastus())
+            tila.append( etelaPaa_.suojastus()->tilaKirjain(&etelaPaa_));
     }
     if( pohjoisPaa_.opastin())
     {
         tila.append(" P");
         tila.append( pohjoisPaa_.opastin()->tilaTeksti());
+        if( pohjoisPaa_.suojastus())
+            tila.append( pohjoisPaa_.suojastus()->tilaKirjain(&pohjoisPaa_));
     }
 
 
     return tila;
+}
+
+void Raide::alusta()
+{
+    etelaPaa_.muodostaSuojastus();
+    pohjoisPaa_.muodostaSuojastus();
 }
 

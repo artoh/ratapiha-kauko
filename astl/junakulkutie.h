@@ -34,6 +34,8 @@ protected:
     bool loppuEhdot(RaiteenPaa *maaliPaa);
 
     void laitaVarit();
+    void kulkutieLukitaan();
+
     int purkamisenAjastin_;
 
 };

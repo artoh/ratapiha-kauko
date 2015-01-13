@@ -117,7 +117,10 @@ protected:
      */
     virtual void laitaVarit() = 0;
 
-
+    /**
+     * @brief Kutsutaan, kun kulkutie pitää lukita
+     */
+    virtual void kulkutieLukitaan() {;}
 
 
     /**

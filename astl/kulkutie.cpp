@@ -72,6 +72,8 @@ void Kulkutie::lukitseKulkutielle()
 
     tila_ = Ratapiha::KULKUTIE_LUKITAAN;
 
+    kulkutieLukitaan(); // Tällä aktivoidaan suojastus
+
 }
 
 

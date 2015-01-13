@@ -1,6 +1,9 @@
 #include "junakulkutie.h"
 #include "opastin.h"
 
+#include "suoranraiteenpaa.h"
+#include "linjasuojastus.h"
+
 JunaKulkutie::JunaKulkutie(RaideTieto *mista, RaideTieto *minne)
     : Kulkutie(mista, minne),
       purkamisenAjastin_(0)
@@ -195,6 +198,14 @@ bool JunaKulkutie::kulkutieEhdot(RaiteenPaa *paa)
 
 bool JunaKulkutie::loppuEhdot(RaiteenPaa *maaliPaa)
 {
+    // Jos päättyy suojastukseen, pitää sen voida suojastaa
+    SuoranRaiteenPaa* spaa = dynamic_cast<SuoranRaiteenPaa*>(maaliPaa);
+    if( spaa )
+    {
+        if( spaa->suojastus() && !spaa->suojastus()->voikoSuojastaa(spaa) )
+            return false;
+    }
+
     // Päätyttävä raidepuskuriin tai opastimeen, joka voi
     // näyttää punaista
     if( !maaliPaa->liitettyPaa() )
@@ -251,5 +262,12 @@ void JunaKulkutie::laitaVarit()
             paaOpastin->asetaOpaste(Ratapiha::OPASTE_AJA);
     }
     // Nyt on värejä
+}
+
+void JunaKulkutie::kulkutieLukitaan()
+{
+    SuoranRaiteenPaa *spaa = dynamic_cast<SuoranRaiteenPaa*>(valmisKulkutie_.last()->aktiivinenVastapaa() );
+    if( spaa && spaa->suojastus())
+        spaa->suojastus()->suojasta(spaa);
 }
 
