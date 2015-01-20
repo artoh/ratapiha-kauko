@@ -62,12 +62,14 @@ void RaideTieto::asetinLaiteSanoma(int laite, int sanoma)
             vapaanaOlo_ = Ratapiha::RAIDE_VARATTU;
             if( kulkutie())
                 kulkutie()->raideVarautuu(this);
+            raideVarautuu();    // Suojastusta vartem
         }
         else if( sanoma == 0x82)
         {
             vapaanaOlo_ = Ratapiha::RAIDE_VAPAA;
             if( kulkutie())
                 kulkutie()->raideVapautuu(this);
+            raideVapautuu();    // Suojastusta varten
         }
         else
         {
@@ -176,3 +178,4 @@ void RaideTieto::tiedotAsetettu(int /* raideId */)
 {
 
 }
+

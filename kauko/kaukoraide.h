@@ -55,6 +55,7 @@ public:
 
     bool kulkutieVikatilassa() const { return kulkutieVikatilassa_; }
     bool kulkutiePuretaan() const { return kulkutiePuretaan_; }
+    bool suojastusKaytossa() const { return suojastusKaytossa_; }
 
 protected:
     KaukoRaiteenpaa etelaPaa_;
@@ -74,6 +75,7 @@ protected:
 
     bool kulkutieVikatilassa_;
     bool kulkutiePuretaan_;
+    bool suojastusKaytossa_;
 };
 
 #endif // KAUKORAIDE_H

@@ -147,6 +147,8 @@ public:
      */
     virtual void alusta() {;}
 
+
+    virtual void peruKulkutieRaiteelle() {;}
 protected:
     int raideId_;
     QString liikennepaikka_;
@@ -165,6 +167,10 @@ protected:
      * @param raideId
      */
     virtual void tiedotAsetettu(int raideId);
+
+    virtual void raideVarautuu() {;}
+    virtual void raideVapautuu() {;}
+
 };
 
 #endif // RAIDETIETO_H

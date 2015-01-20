@@ -49,11 +49,19 @@ public:
     bool voikoSuojastaa(SuoranRaiteenPaa *paa);
     bool suojasta(SuoranRaiteenPaa *paa);
 
+    void laitaVarit();
+
+    void raideVarautuu(RaideTieto *raide);
+    void raideVapautuu(RaideTieto *raide);
+    void heratePurkautuu();
+
 private:
     QList<SuoranRaiteenPaa*> linja_;
 
     LinjaSuojastus *vastaSuunta_;
     Ratapiha::SuojastusTila tila_;
+
+    bool suojastusValmis_;  // Kun suojastus on herätetty uutta yksikköä varten
 
 };
 

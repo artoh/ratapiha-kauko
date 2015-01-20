@@ -29,7 +29,8 @@ KaukoRaide::KaukoRaide(const QString &datarivi)
     : tyyppi_(RAIDE_TUNTEMATONTYYPPI),
       vapaana_(RAIDE_TIEDONSIIRTOVIRHE),
       kulkutieTyyppi_(EIKULKUTIETA),
-      elementinLukitus_(ELEMENTTI_VAPAA)
+      elementinLukitus_(ELEMENTTI_VAPAA),
+      suojastusKaytossa_(false)
 {
     QStringList listana = datarivi.split(" ");
 
@@ -93,6 +94,7 @@ void KaukoRaide::paivita(const QStringList& dataLista)
 
     kulkutieVikatilassa_ = ekatieto.contains('V');
     kulkutiePuretaan_ = ekatieto.contains('H');
+    suojastusKaytossa_ = false;
 
 
     for(int i=3; i < dataLista.count(); i++)
@@ -100,9 +102,17 @@ void KaukoRaide::paivita(const QStringList& dataLista)
         QString tieto = dataLista.at(i);
 
         if( tieto.startsWith("E"))
+        {
             etelaPaa_.paivita(tieto.mid(1));
+            if( tieto.contains('S'))
+                suojastusKaytossa_ = true;
+        }
         else if( tieto.startsWith("P"))
+        {
             pohjoisPaa_.paivita(tieto.mid(1));
+            if( tieto.contains('S'))
+                suojastusKaytossa_ = true;
+        }
         else if( tieto.startsWith('V') || tieto.startsWith('A') ||
                  tieto.startsWith("R"))
             vaihdeAB_.paivita(tieto.mid(1));

@@ -128,3 +128,27 @@ void Raide::alusta()
     pohjoisPaa_.muodostaSuojastus();
 }
 
+void Raide::raideVarautuu()
+{
+    if( etelaPaa_.suojastus())
+        etelaPaa_.suojastus()->raideVarautuu(this);
+    if( pohjoisPaa_.suojastus())
+        pohjoisPaa_.suojastus()->raideVarautuu(this);
+}
+
+void Raide::raideVapautuu()
+{
+    if( etelaPaa_.suojastus())
+        etelaPaa_.suojastus()->raideVapautuu(this);
+    if( pohjoisPaa_.suojastus())
+        pohjoisPaa_.suojastus()->raideVapautuu(this);
+}
+
+void Raide::peruKulkutieRaiteelle()
+{
+    if( etelaPaa_.suojastus())
+        etelaPaa_.suojastus()->heratePurkautuu();
+    if( pohjoisPaa_.suojastus())
+        pohjoisPaa_.suojastus()->heratePurkautuu();
+}
+

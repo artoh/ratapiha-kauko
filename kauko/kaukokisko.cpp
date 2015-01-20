@@ -93,6 +93,8 @@ QColor KaukoKisko::raidevari()
         return Qt::red;
     else if( raide()->kulkutieTyyppi() == JUNAKULKUTIE)
         return Qt::green;
+    else if( raide()->suojastusKaytossa())
+        return Qt::green;
     else if( raide()->vapaana() == RAIDE_VAPAA)
         return Qt::white;
     else if( raide()->vapaana() == RAIDE_VIKATILA)

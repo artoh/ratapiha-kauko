@@ -49,6 +49,7 @@ bool JunaKulkutie::PeruKulkutie()
             paa->liitettyPaa()->opastin()->asetaOpaste(Ratapiha::OPASTE_SEIS);
     }
     valmisKulkutie_.clear();    // Tyhjennetään kulkutie-elementtien lista
+    minne()->peruKulkutieRaiteelle();
     return true;
 
 }
@@ -65,6 +66,7 @@ void JunaKulkutie::valvoKulkutie(int kellonaika)
             paa->raide()->vapautaKulkutielta(this);
         }
         valmisKulkutie_.clear();    // Tyhjennetään kulkutie-elementtien lista
+        minne()->peruKulkutieRaiteelle();
         return;
     }
 
@@ -192,6 +194,8 @@ bool JunaKulkutie::kulkutieEhdot(RaiteenPaa *paa)
     if( paa->kulkutieLajit() == RaiteenPaa::VAINVAIHTO ||
             paa->liitettyPaa()->kulkutieLajit() == RaiteenPaa::VAINVAIHTO)
         return false; // Ei kelpaa junakulkutielle
+    if( paa->raide()->vapaanaOlo() != Ratapiha::RAIDE_VAPAA)
+        return false;   // Kulkutien pitää olla vapaana!
 
     return true;
 }

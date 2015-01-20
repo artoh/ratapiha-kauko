@@ -26,7 +26,8 @@
 
 LinjaSuojastus::LinjaSuojastus() :
     vastaSuunta_(0),
-    tila_(Ratapiha::SUOJASTUS_EIMAARITELTY)
+    tila_(Ratapiha::SUOJASTUS_EIMAARITELTY),
+    suojastusValmis_(false)
 {
 }
 
@@ -110,7 +111,7 @@ bool LinjaSuojastus::voikoSuojastaa(SuoranRaiteenPaa *paa)
     if( paa != linja_.first())
         return false;
 
-    // Suojastus on mahdollinen, jos liikenteen suunta on oikea tai määrittelemätön, eikä suojastuksen alueella ole kulkuteitä
+    // Suojastus on mahdollinen, jos liikenteen suunta on oikea tai määrittelemätön, eikä suojastuksen alueella ole kulkuteitä eikä raiteita varattu
     if( !vastaSuunta_)
         return false;
     if( vastaSuunta_->tila()==Ratapiha::SUOJASTUS_VALMIS || vastaSuunta_->tila()==Ratapiha::SUOJASTUS_VARATTU)
@@ -120,6 +121,8 @@ bool LinjaSuojastus::voikoSuojastaa(SuoranRaiteenPaa *paa)
     {
         if( linja_[i]->raide()->kulkutie())
             return false;       // Linjaa ei hyväksytä, jos kulkutie aktiivinen
+        if( tila_ == Ratapiha::SUOJASTUS_EIMAARITELTY && linja_[i]->raide()->vapaanaOlo() != Ratapiha::RAIDE_VAPAA)
+            return false;       // Uutta suojastusta ei hyväksytä, jos linjalla on akseleita
     }
 
     return true;
@@ -131,5 +134,94 @@ bool LinjaSuojastus::suojasta(SuoranRaiteenPaa *paa)
         return false;
     if( tila_ == Ratapiha::SUOJASTUS_EIMAARITELTY)
         tila_ = Ratapiha::SUOJASTUS_VALMIS;
+    laitaVarit();
+    suojastusValmis_ = true;
     return true;
+}
+
+void LinjaSuojastus::laitaVarit()
+{
+    for(int i=0; i < linja_.count()-1;i++)
+    {
+        if( linja_[i+1]->raide()->vapaanaOlo() == Ratapiha::RAIDE_VAPAA)
+            linja_[i]->opastin()->asetaOpaste(Ratapiha::OPASTE_AJA);
+    }
+}
+
+void LinjaSuojastus::raideVarautuu(RaideTieto *raide)
+{
+    if( tila_ == Ratapiha::SUOJASTUS_EIMAARITELTY)
+        return;     // Suojastus ehkä toiseen suuntaan
+
+
+    int indeksi = -1;
+    for( int i=0; i < linja_.count(); i++)
+    {
+        if( linja_[i]->raide() == raide )
+        {
+            indeksi = i;
+            break;
+        }
+    }
+
+    if( tila_ == Ratapiha::SUOJASTUS_VALMIS )
+        tila_ = Ratapiha::SUOJASTUS_VARATTU;
+
+    if( indeksi < 0)
+        return;     // Raidetta ei löydy
+    else if( indeksi == 0 )
+    {
+        suojastusValmis_ = false;
+    }
+    else if( indeksi > 0)
+        linja_.at(indeksi-1)->opastin()->asetaOpaste(Ratapiha::OPASTE_SEIS);
+
+    // Ensin pitäisi tarkistaa, että mennään oikeaan suuntaan
+}
+
+void LinjaSuojastus::raideVapautuu(RaideTieto *raide)
+{
+    if( tila_ == Ratapiha::SUOJASTUS_EIMAARITELTY)
+        return;     // Suojastus ehkä toiseen suuntaan
+
+    int indeksi = -1;   // Tämän raiteen indeksi
+    int varattuja = 0;  // Montako raidetta on varattuina
+    int ekavarattu = 9999;  // Ensimmäisen varatun raiteen indeksi
+
+    for( int i=0; i < linja_.count(); i++)
+    {
+        if( linja_[i]->raide() == raide )
+        {
+            indeksi = i;
+        }
+        if( linja_[i]->raide()->vapaanaOlo() == Ratapiha::RAIDE_VARATTU)
+        {
+            varattuja++;
+            if( i < ekavarattu)
+                ekavarattu = i;
+        }
+    }
+
+    // Jos koko linja jää tyhjäksi, puretaan suojastus
+    if( !varattuja )
+    {
+        if( suojastusValmis_)
+            tila_ = Ratapiha::SUOJASTUS_VALMIS;
+        else
+            tila_ = Ratapiha::SUOJASTUS_EIMAARITELTY;
+    }
+
+    // Jos linjalle on tulossa juna TAI linjalla on jo juna tämän takana, annetaan aja-opaste
+    if( indeksi > 0 && (ekavarattu < indeksi || suojastusValmis_))
+        linja_.at(indeksi-1)->opastin()->asetaOpaste(Ratapiha::OPASTE_AJA);
+}
+
+void LinjaSuojastus::heratePurkautuu()
+{
+    if( tila_ == Ratapiha::SUOJASTUS_VALMIS)
+    {
+        tila_ = Ratapiha::SUOJASTUS_EIMAARITELTY;
+        for(int i=0; i<linja_.count()-1; i++)
+            linja_[i]->opastin()->asetaOpaste(Ratapiha::OPASTE_SEIS);
+    }
 }

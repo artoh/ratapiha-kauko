@@ -48,9 +48,15 @@ public:
     QString raideTila();
     void alusta();
 
+    void peruKulkutieRaiteelle();
+
 protected:
     SuoranRaiteenPaa etelaPaa_;
     SuoranRaiteenPaa pohjoisPaa_;
+
+    void raideVarautuu();
+    void raideVapautuu();
+
 };
 
 #endif // RAIDE_H
