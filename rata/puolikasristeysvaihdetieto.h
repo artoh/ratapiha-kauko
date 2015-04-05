@@ -20,51 +20,43 @@
 **************************************************************************/
 
 
-#ifndef RATARISTEYSVAIHDE_H
-#define RATARISTEYSVAIHDE_H
+#ifndef PUOLIKASRISTEYSVAIHDETIETO_H
+#define PUOLIKASRISTEYSVAIHDETIETO_H
 
 #include "ratapiha.h"
-
-#include "kiskoliitos.h"
 #include "ratalaite.h"
 
-#include "puolikasristeysvaihdetieto.h"
 
 /**
- * @brief Risteysvaihde
+ * @brief The PuolikasRisteysVaihdeTieto class
+ * RataRisteysVaihteen puolikkaan a/b tai c/d tilatieto
  *
- *   A \/ C
- *   B /\ D
- *
- *  Muutettu käyttämään kahta PuolikasRisteysVaihdeTieto -oliota jotka tallettavat
- *  vaihteen puoliskoja koskevan tiedon, ja joilla molemmilla on omat
- *  laitunnuksensa 0x0 a/b, 0x1 c/d
+ * Luokka lisätty, kun molemmilla risteysvaihteen puoliskoille
+ * annetaan oma laitetunnuksensa 0 a/b, 1 c/d
  *
  */
-class RataRisteysVaihde : public KiskoLiitos
+class PuolikasRisteysVaihdeTieto : public Ratalaite
 {
 public:
-    RataRisteysVaihde(int liitosId, int x, int y);
-
-    Liitostyyppi tyyppi() const { return RISTEYSVAIHDE; }
-    Kiskonpaa *seuraava(Kiskonpaa *mista) const;
-    Kiskonpaa* siirrySeuraavalle(Kiskonpaa *mista);
-
-    bool onkoAktiivinenPaa(Kiskonpaa *paa) const;
-
-    void lisaaPaa(Kiskonpaa *kiskonpaa, int raidetunnus);
+    PuolikasRisteysVaihdeTieto();
+    ~PuolikasRisteysVaihdeTieto();
 
     void komento(int komento);
     void viiveValmis(int viesti);
 
+    Ratapiha::VaihteenAsento asento() const { return vaihteenAsento_; }
+    Ratapiha::VaihteenAsento pyydettyAsento() const { return pyydettyAsento_; }
+    bool valvottu() const { return valvottu_; }
 
-protected:
+    int vaihteenTila() const;
+    void ilmoitaTila() const;
+    void aukiaja(Ratapiha::VaihteenAsento asentoon);
 
-    PuolikasRisteysVaihdeTieto vaihdeAB_;
-    PuolikasRisteysVaihdeTieto vaihdeCD_;
-
-    Kiskonpaa *a_, *b_, *c_, *d_;
+private:
+    Ratapiha::VaihteenAsento vaihteenAsento_;
+    Ratapiha::VaihteenAsento pyydettyAsento_;
+    bool valvottu_;
 
 };
 
-#endif // RATARISTEYSVAIHDE_H
+#endif // PUOLIKASRISTEYSVAIHDETIETO_H

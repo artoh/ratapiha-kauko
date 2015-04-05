@@ -46,7 +46,8 @@ SOURCES += rata/main.cpp \
     rata/moottori.cpp \
     rata/jkvlaite.cpp \
     rata/vaunukataloogi.cpp \
-    rata/akselinlaskentalaite.cpp
+    rata/akselinlaskentalaite.cpp \
+    rata/puolikasristeysvaihdetieto.cpp
 
 HEADERS += \
     rata/kiskoliitos.h \
@@ -79,7 +80,8 @@ HEADERS += \
     rata/jkvlaite.h \
     rata/vaunukataloogi.h \
     rata/akselinlaskentalaite.h \
-    ratapiha.h
+    ratapiha.h \
+    rata/puolikasristeysvaihdetieto.h
 
 RESOURCES += \
     rata/rata.qrc
